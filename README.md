@@ -1,5 +1,7 @@
-# AthleteApiArt
+# Strava Print Visualizer
 An Android application which will leverage Strava API to generate aesthetic visualizations of athelete's workouts.
+
+This will be a significant learning experience to understand working with API in Android.
 
 http://www.strava.com/oauth/authorize?client_id=75992&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read_all
 
