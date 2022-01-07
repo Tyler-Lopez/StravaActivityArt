@@ -9,3 +9,4 @@ http://www.strava.com/oauth/authorize?client_id=75992&response_type=code&redirec
 https://github.com/SweetzpotAS/StravaZpot-Android<br>
 https://www.youtube.com/watch?v=sgscChKfGyg<br>
 https://developers.strava.com/docs/authentication/<br>
+https://www.youtube.com/watch?v=t6Sql3WMAnk "The Ultimate Retrofit Crash Course"<br>
