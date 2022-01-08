@@ -4,7 +4,9 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.accounts.AccountManagerCallback
 import android.accounts.AccountManagerFuture
+import android.content.Intent
 import android.media.session.MediaSessionManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.ComponentActivity
@@ -17,26 +19,22 @@ import com.example.stravaart.ui.theme.StravaArtTheme
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-    // https://developer.android.com/training/id-auth/authenticate
-        val am: AccountManager = AccountManager.get(this)
-        val options = Bundle()
+    // https://developers.strava.com/docs/authentication/
+        val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
+            .buildUpon()
+            .appendQueryParameter("client_id", "75992")
+       //     .appendQueryParameter("redirect_uri", "https://www.yourapp.com")
+       //     .appendQueryParameter("response_type", "code")
+            .appendQueryParameter("approval_prompt", "auto")
+            .appendQueryParameter("scope", "activity:read_all")
+            .build()
+        val intent = Intent(Intent.ACTION_VIEW, intentUri)
 
-        val onTokenAcquired = AccountManagerCallback<Bundle> {
-            TODO("Not yet implemented")
-        }
-
-        am.getAuthToken(
-            Account("test", "test"),
-           "read_all",
-            options,
-            this,
-            onTokenAcquired,
-            Handler()
-        )
 
         super.onCreate(savedInstanceState)
         setContent {
             StravaArtTheme {
+                startActivity(intent)
 
             }
         }
