@@ -14,11 +14,17 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AthleteApiArt.NoActionBar">
-            <intent-filter>
+            <intent-filter  android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data
+                    android:scheme="com.company.athleteapiart"
+                    android:host="myapp.com" />
             </intent-filter>
+
         </activity>
     </application>
 
