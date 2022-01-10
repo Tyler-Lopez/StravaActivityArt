@@ -14,11 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
-
-
-
 
 
 class MainActivity : ComponentActivity() {
@@ -32,51 +32,34 @@ class MainActivity : ComponentActivity() {
         .appendQueryParameter("scope", "activity:read_all")
         .build()
 
-    val intentSub = Intent(Intent.ACTION_VIEW, intentUri)
+    val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val uri = intent.data
+
         super.onCreate(savedInstanceState)
-        setContent {
-
-            var intentSubRes = intentSub.dataString
-
-            println("here")
-
-            AthleteApiArtTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    LoginScreen {
-                        startActivity(intentSub)
+            setContent {
+                AthleteApiArtTheme {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = if (uri == null) "login_screen" else "athlete_screen"
+                    ) {
+                        composable("login_screen") {
+                            LoginScreen {
+                                startActivity(loginIntent)
+                            }
+                        }
+                        composable("athlete_screen") {
+                            val accessToken = "$uri".substring(43).substringBefore('&')
+                            Text(text = accessToken)
+                        }
                     }
                 }
             }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val uri = intent.data
-        if (uri != null) {
-            setContent {
-                Text("${uri}")
-            }
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
         setIntent(intent)
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    AthleteApiArtTheme {
-        Greeting("Android")
     }
 }
