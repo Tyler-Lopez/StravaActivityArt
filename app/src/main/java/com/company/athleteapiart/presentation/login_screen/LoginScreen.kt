@@ -27,15 +27,35 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "ACTIVITIES VISUALIZER",
-            textAlign = TextAlign.Center,
-            fontSize = 35.sp,
-            letterSpacing = 0.sp,
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
+        Image(
+            painter = painterResource(
+                id = R.drawable.logo
+            ),
+            contentDescription = "App Logo",
             modifier = Modifier
                 .width(250.dp)
+                .padding(bottom = 10.dp)
+        )
+        Text(
+            text = "ACTIVITIES",
+            textAlign = TextAlign.Center,
+            fontSize = 35.sp,
+            letterSpacing = 1.sp,
+            color = Color.Gray,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier
+                .width(250.dp)
+        )
+        Text(
+            text = "VISUALIZER",
+            textAlign = TextAlign.Center,
+            fontSize = 35.sp,
+            letterSpacing = 1.sp,
+            color = Color.Gray,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .width(250.dp)
+                .padding(bottom = 10.dp)
         )
             Image(
                 painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
