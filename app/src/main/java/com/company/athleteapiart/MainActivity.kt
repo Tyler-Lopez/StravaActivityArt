@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
 
 
@@ -44,18 +45,14 @@ class MainActivity : ComponentActivity() {
             AthleteApiArtTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Column() {
-                        Button(onClick = {
-                            startActivity(intentSub)
-                        }) {
-                            Text("Login with Strava")
-                        }
-                        Text(intentSubRes ?: "")
+                    LoginScreen {
+                        startActivity(intentSub)
                     }
                 }
             }
         }
     }
+
     override fun onResume() {
         super.onResume()
         val uri = intent.data
@@ -64,19 +61,11 @@ class MainActivity : ComponentActivity() {
                 Text("${uri}")
             }
         }
-
     }
+
     override fun onNewIntent(intent: Intent) {
         setIntent(intent)
     }
-    // how to get access token from redirect uri in android
-    // https://stackapps.com/questions/3174/how-to-get-access-token-from-redirect-uri-in-android
-   // override fun onResume() {
-   //     super.onResume()
-
-
-
-  // }
 }
 
 @Composable
