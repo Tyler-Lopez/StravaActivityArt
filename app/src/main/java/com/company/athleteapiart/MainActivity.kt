@@ -17,13 +17,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.company.athleteapiart.presentation.athletescreen.AthleteScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.util.Oauth2
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
+    private val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
         .buildUpon()
         .appendQueryParameter("client_id", "75992")
         .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
@@ -32,10 +35,14 @@ class MainActivity : ComponentActivity() {
         .appendQueryParameter("scope", "activity:read_all")
         .build()
 
-    val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
+    private val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         val uri = intent.data
+        if (uri != null)
+            Oauth2.authorizationCode = uri.toString().substring(43).substringBefore('&')
+
 
         super.onCreate(savedInstanceState)
             setContent {
@@ -51,8 +58,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("athlete_screen") {
-                            val accessToken = "$uri".substring(43).substringBefore('&')
-                            Text(text = accessToken)
+                            AthleteScreen()
                         }
                     }
                 }
