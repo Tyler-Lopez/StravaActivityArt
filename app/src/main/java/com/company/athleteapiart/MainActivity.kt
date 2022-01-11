@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.company.athleteapiart.presentation.activity_select_screen.ActivitySelectScreen
 import com.company.athleteapiart.presentation.athletescreen.AthleteScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("athlete_screen") {
-                            AthleteScreen()
+                            ActivitySelectScreen()
                         }
                     }
                 }

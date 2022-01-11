@@ -74,16 +74,12 @@ dependencies {
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0-rc01'
 
-    //
-
     // Navigation
     implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
 
     // Maps
-    implementation 'com.google.maps.android:android-maps-utils-v3:2.3.0'
-
-    // Playstore
- //   implementation 'com.google.android.gms:play-services:9.2.1'
+    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'

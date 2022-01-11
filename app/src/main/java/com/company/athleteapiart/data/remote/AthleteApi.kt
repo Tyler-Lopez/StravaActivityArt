@@ -1,6 +1,7 @@
 package com.company.athleteapiart.data.remote
 
 import com.company.athleteapiart.data.remote.responses.Activities
+import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.data.remote.responses.Bearer
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -21,4 +22,11 @@ interface AthleteApi {
         @Query("access_token") accessToken: String,
         @Query("per_page") perPage: Int,
     ): Activities
+
+    @GET("api/v3/activities?")
+    suspend fun getActivityDetailed(
+        @Query("access_token") accessToken: String,
+        @Query("id") id: Long,
+        @Query("include_all_efforts") includeAllEfforts: Boolean
+    ) : ActivityDetailed
 }

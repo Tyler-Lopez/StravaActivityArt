@@ -2,6 +2,7 @@ package com.company.athleteapiart.repository
 
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Activities
+import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.data.remote.responses.Bearer
 import com.company.athleteapiart.util.Oauth2
 import com.company.athleteapiart.util.Resource
@@ -13,13 +14,13 @@ import javax.inject.Inject
 @ActivityScoped
 class ActivityRepository @Inject constructor(
     private val api: AthleteApi // Impl of API
-){
+) {
     suspend fun getAccessToken(
         clientId: Int,
         clientSecret: String,
         code: String,
         grantType: String
-    ) : Resource<Bearer> {
+    ): Resource<Bearer> {
         val response = try {
             api.getAccessToken(
                 clientId = clientId,
@@ -35,9 +36,27 @@ class ActivityRepository @Inject constructor(
     }
 
     suspend fun getActivities(
-    ) : Resource<Activities> {
+    ): Resource<Activities> {
         val response = try {
-            api.getActivities(accessToken = Oauth2.accessCode, perPage = 1)
+            api.getActivities(
+                accessToken = Oauth2.accessToken,
+                perPage = 20
+            )
+        } catch (e: Exception) {
+            return Resource.Error("An unknown error occurred.")
+        }
+        return Resource.Success(response)
+    }
+
+    suspend fun getActivity(
+        id: Long
+    ): Resource<ActivityDetailed> {
+        val response = try {
+            api.getActivityDetailed(
+                accessToken = Oauth2.accessToken,
+                id = id,
+                includeAllEfforts = true
+            )
         } catch (e: Exception) {
             return Resource.Error("An unknown error occurred.")
         }
