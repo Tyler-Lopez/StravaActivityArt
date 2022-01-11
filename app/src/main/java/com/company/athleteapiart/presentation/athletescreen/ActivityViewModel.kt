@@ -3,6 +3,8 @@ package com.company.athleteapiart.presentation.athletescreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.data.remote.responses.Activity
+import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.Oauth2
@@ -13,46 +15,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AthleteViewModel @Inject constructor(
+class ActivityViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
+    var activity = mutableStateOf<ActivityDetailed?>(null)
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
 
     init {
-
+        getActivity()
     }
 
-    fun getAccessToken() {
+    private fun getActivity() {
         viewModelScope.launch {
             isLoading.value = true
-            val result = repository.getAccessToken(
-                clientId = 75992,
-                clientSecret = clientSecret,
-                code = Oauth2.authorizationCode,
-                grantType = "authorization_code"
-            )
-            when (result) {
+            when (val result = repository.getActivity()) {
                 is Resource.Success -> {
-                    Oauth2.accessToken = result.data.access_token
-                    isLoading.value = false
-                    getActivities()
-                }
-                is Resource.Error -> {
-                    loadError.value = result.message
-                    isLoading.value = false
-                }
-            }
-        }
-    }
-
-    private fun getActivities() {
-        viewModelScope.launch {
-            when (val result = repository.getActivities()) {
-                is Resource.Success -> {
-                    AthleteActivities.activities.value = result.data
+                    activity.value = result.data
                     isLoading.value = false
                 }
                 is Resource.Error -> {

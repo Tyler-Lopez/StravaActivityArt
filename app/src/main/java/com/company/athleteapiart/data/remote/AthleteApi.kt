@@ -3,9 +3,7 @@ package com.company.athleteapiart.data.remote
 import com.company.athleteapiart.data.remote.responses.Activities
 import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.data.remote.responses.Bearer
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AthleteApi {
     @POST("oauth/token?")
@@ -19,14 +17,13 @@ interface AthleteApi {
     // Get activities from access token
     @GET("api/v3/athlete/activities?")
     suspend fun getActivities(
-        @Query("access_token") accessToken: String,
+        @Header("Authorization") authHeader: String,
         @Query("per_page") perPage: Int,
     ): Activities
 
-    @GET("api/v3/activities?")
+    @GET("api/v3/activities/{id}?")
     suspend fun getActivityDetailed(
-        @Query("access_token") accessToken: String,
-        @Query("id") id: Long,
-        @Query("include_all_efforts") includeAllEfforts: Boolean
+        @Path("id") id: Long,
+        @Header("Authorization") authHeader: String,
     ) : ActivityDetailed
 }

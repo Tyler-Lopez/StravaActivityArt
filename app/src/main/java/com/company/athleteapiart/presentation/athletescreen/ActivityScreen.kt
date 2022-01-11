@@ -13,26 +13,26 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.data.remote.responses.Activity
+import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.util.AthleteActivities
 import com.google.maps.android.PolyUtil
 
 //import com.google.maps.android.PolyUtil
 
 @Composable
-fun AthleteScreen(
-    viewModel: AthleteViewModel = hiltViewModel()
+fun ActivityScreen(
+    viewModel: ActivityViewModel = hiltViewModel()
 ) {
-    val activities by remember { AthleteActivities.activities }
+    val activity by remember { viewModel.activity }
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Button(onClick = {  }) {
-            Text("click")
-        }
-        activities.forEach {
-            ActivityDrawing(it)
+        if (isLoading) {
+            Text("Loading activity...")
+        } else {
+            ActivityDrawing(activity!!)
         }
     }
 
@@ -41,9 +41,9 @@ fun AthleteScreen(
 
 @Composable
 fun ActivityDrawing(
-    activity: Activity,
+    activity: ActivityDetailed,
 ) {
-
+    Text(activity.name)
     val latLngList = PolyUtil.decode(activity.map.summary_polyline)
 
     val lat = 43.60633

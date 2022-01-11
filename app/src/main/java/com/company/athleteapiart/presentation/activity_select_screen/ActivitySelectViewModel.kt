@@ -10,6 +10,7 @@ import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.Oauth2
 import com.company.athleteapiart.util.Resource
+import com.company.athleteapiart.util.clientSecret
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class ActivitySelectViewModel @Inject constructor(
             if (Oauth2.accessToken == "null") {
                 val result = repository.getAccessToken(
                     clientId = 75992,
-                    clientSecret = "1393501e79b0abb641468057d790b6df970771f8",
+                    clientSecret = clientSecret,
                     code = Oauth2.authorizationCode,
                     grantType = "authorization_code"
                 )

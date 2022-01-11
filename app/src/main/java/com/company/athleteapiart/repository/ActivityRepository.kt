@@ -4,6 +4,7 @@ import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Activities
 import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.data.remote.responses.Bearer
+import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.Oauth2
 import com.company.athleteapiart.util.Resource
 import dagger.hilt.android.scopes.ActivityScoped
@@ -39,7 +40,7 @@ class ActivityRepository @Inject constructor(
     ): Resource<Activities> {
         val response = try {
             api.getActivities(
-                accessToken = Oauth2.accessToken,
+                authHeader = "Bearer " + Oauth2.accessToken,
                 perPage = 20
             )
         } catch (e: Exception) {
@@ -49,13 +50,12 @@ class ActivityRepository @Inject constructor(
     }
 
     suspend fun getActivity(
-        id: Long
+
     ): Resource<ActivityDetailed> {
         val response = try {
             api.getActivityDetailed(
-                accessToken = Oauth2.accessToken,
-                id = id,
-                includeAllEfforts = true
+                authHeader = "Bearer " + Oauth2.accessToken,
+                id = AthleteActivities.selectedId,
             )
         } catch (e: Exception) {
             return Resource.Error("An unknown error occurred.")

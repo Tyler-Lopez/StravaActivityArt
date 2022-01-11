@@ -10,14 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.company.athleteapiart.presentation.athletescreen.ActivityDrawing
-import com.company.athleteapiart.presentation.athletescreen.AthleteViewModel
+import com.company.athleteapiart.presentation.athletescreen.ActivityScreen
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.formatIso8601
 
 @Composable
 fun ActivitySelectScreen(
-    viewModel: ActivitySelectViewModel = hiltViewModel()
+    viewModel: ActivitySelectViewModel = hiltViewModel(),
+    onActivitySelect: () -> Unit
 ) {
     val activities by remember { AthleteActivities.activities }
     val loadError by remember { viewModel.loadError }
@@ -36,6 +36,8 @@ fun ActivitySelectScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
+                        AthleteActivities.selectedId = it.id
+                        onActivitySelect()
                 }) {
                     Row(modifier = Modifier
                         .fillMaxWidth()
