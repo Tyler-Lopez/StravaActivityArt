@@ -20,5 +20,5 @@ data class Lap(
     val start_date: String,
     val start_date_local: String,
     val start_index: Int,
-    val total_elevation_gain: Int
+    val total_elevation_gain: Double
 )

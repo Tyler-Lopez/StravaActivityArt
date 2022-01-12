@@ -55,10 +55,10 @@ class ActivityRepository @Inject constructor(
         val response = try {
             api.getActivityDetailed(
                 authHeader = "Bearer " + Oauth2.accessToken,
-                id = AthleteActivities.selectedId,
+                id = AthleteActivities.selectedActivity.value?.id ?: 0L,
             )
         } catch (e: Exception) {
-            return Resource.Error("An unknown error occurred.")
+            return Resource.Error("An unknown error occurred.\n${e.message}")
         }
         return Resource.Success(response)
     }

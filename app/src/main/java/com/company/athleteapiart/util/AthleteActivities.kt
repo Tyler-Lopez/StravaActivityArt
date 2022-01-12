@@ -5,5 +5,5 @@ import com.company.athleteapiart.data.remote.responses.Activity
 
 object AthleteActivities {
     var activities = mutableStateOf<List<Activity>>(listOf())
-    var selectedId: Long = 0L
+    var selectedActivity = mutableStateOf<Activity?>(null)
 }

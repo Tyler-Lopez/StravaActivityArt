@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
         .appendQueryParameter("response_type", "code")
         .appendQueryParameter("approval_prompt", "auto")
-        .appendQueryParameter("scope", "activity:read_all")
+        .appendQueryParameter("scope", "read,read_all,activity:read,activity:read_all")
         .build()
 
     private val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)

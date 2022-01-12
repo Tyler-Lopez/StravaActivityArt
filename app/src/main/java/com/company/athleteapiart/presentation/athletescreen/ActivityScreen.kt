@@ -23,7 +23,7 @@ import com.google.maps.android.PolyUtil
 fun ActivityScreen(
     viewModel: ActivityViewModel = hiltViewModel()
 ) {
-    val activity by remember { viewModel.activity }
+    var activity by remember { viewModel.activity }
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
@@ -32,7 +32,10 @@ fun ActivityScreen(
         if (isLoading) {
             Text("Loading activity...")
         } else {
-            ActivityDrawing(activity!!)
+            activity.forEach {
+                ActivityDrawing(it)
+            }
+
         }
     }
 
@@ -46,8 +49,8 @@ fun ActivityDrawing(
     Text(activity.name)
     val latLngList = PolyUtil.decode(activity.map.summary_polyline)
 
-    val lat = 43.60633
-    val lon = -84.22043
+    val lat = latLngList[0].latitude
+    val lon = latLngList[0].longitude
 
     val points = mutableListOf<Offset>()
 
@@ -56,8 +59,8 @@ fun ActivityDrawing(
         .background(Color.Blue)) {
         for (i in 0..latLngList.lastIndex) {
             val point = Offset(
-                ((latLngList[i].latitude.minus(lat)) * 200000.0).toFloat() + this.center.x,
-                ((latLngList[i].longitude.minus(lon)) * 200000.0).toFloat() + this.center.y
+                ((latLngList[i].latitude.minus(lat)) * 100000.0).toFloat() + this.center.x,
+                ((latLngList[i].longitude.minus(lon)) * 100000.0).toFloat() + this.center.y
             )
             points.add(point)
         }

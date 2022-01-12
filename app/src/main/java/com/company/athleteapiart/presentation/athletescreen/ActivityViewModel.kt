@@ -19,7 +19,7 @@ class ActivityViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
-    var activity = mutableStateOf<ActivityDetailed?>(null)
+    var activity = mutableStateOf<List<ActivityDetailed>>(listOf())
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
@@ -33,10 +33,12 @@ class ActivityViewModel @Inject constructor(
             isLoading.value = true
             when (val result = repository.getActivity()) {
                 is Resource.Success -> {
-                    activity.value = result.data
+                    activity.value = listOf(result.data)
                     isLoading.value = false
                 }
                 is Resource.Error -> {
+                    println("ERROR FOUND")
+                    println(result.message)
                     isLoading.value = false
                 }
             }
