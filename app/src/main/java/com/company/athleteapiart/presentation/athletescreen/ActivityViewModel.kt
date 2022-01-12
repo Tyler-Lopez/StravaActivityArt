@@ -1,6 +1,9 @@
 package com.company.athleteapiart.presentation.athletescreen
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.remote.responses.Activity
@@ -43,5 +46,12 @@ class ActivityViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private var _onBitmapCreated = MutableLiveData<Bitmap?>(null)
+    var onBitmapGenerated: LiveData<Bitmap?> = _onBitmapCreated
+
+    fun bitmapCreated(bitmap: Bitmap?) {
+        _onBitmapCreated.value = bitmap
     }
 }

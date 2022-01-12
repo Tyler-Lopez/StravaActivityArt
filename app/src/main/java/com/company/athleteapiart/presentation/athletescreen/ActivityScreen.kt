@@ -1,20 +1,20 @@
 package com.company.athleteapiart.presentation.athletescreen
 
+import androidx.compose.runtime.getValue
+import android.graphics.Bitmap
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PointMode
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.data.remote.responses.ActivityDetailed
-import com.company.athleteapiart.util.AthleteActivities
+import com.company.athleteapiart.presentation.activity_visualize_screen.ActivityVisualizeView
 import com.google.maps.android.PolyUtil
 
 //import com.google.maps.android.PolyUtil
@@ -33,7 +33,7 @@ fun ActivityScreen(
             Text("Loading activity...")
         } else {
             activity.forEach {
-                ActivityDrawing(it)
+                ActivityDrawing(it, viewModel)
             }
 
         }
@@ -45,15 +45,25 @@ fun ActivityScreen(
 @Composable
 fun ActivityDrawing(
     activity: ActivityDetailed,
+    viewModel: ActivityViewModel
 ) {
     Text(activity.name)
+    AndroidView(
+        factory = { context ->
+            val activityVisualizeView = ActivityVisualizeView(ctx = context) {
+                viewModel.bitmapCreated(it)
+            }
+            activityVisualizeView
+        }
+    )
+    ActivityImageHandler(viewModel)
     val latLngList = PolyUtil.decode(activity.map.summary_polyline)
 
     val lat = latLngList[0].latitude
     val lon = latLngList[0].longitude
 
     val points = mutableListOf<Offset>()
-
+/*
     Canvas(modifier = Modifier
         .fillMaxSize()
         .background(Color.Blue)) {
@@ -73,7 +83,25 @@ fun ActivityDrawing(
         )
     }
 
+ */
+
 
     // Image(painter = painterResource(id = activity.map.id), contentDescription = "")
 
+}
+@Composable
+fun ActivityImageHandler(viewModel: ActivityViewModel) {
+    val bitmap = viewModel.onBitmapGenerated.observeAsState().value
+    ActivityImage(bitmap = bitmap)
+}
+
+@Composable
+fun ActivityImage(bitmap: Bitmap?) {
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = null,
+            contentScale = ContentScale.Fit
+        )
+    }
 }

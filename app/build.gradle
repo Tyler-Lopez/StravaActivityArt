@@ -81,6 +81,9 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:2.3.0'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
 
+    // Live Data States (image)
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
