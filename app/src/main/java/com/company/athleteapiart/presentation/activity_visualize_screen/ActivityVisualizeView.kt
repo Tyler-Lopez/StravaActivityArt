@@ -58,41 +58,60 @@ class ActivityVisualizeView(
 
                     val latLngList = PolyUtil.decode(summaryPolyline)
 
-                    var top = Double.MIN_VALUE
+                    var top = Double.MAX_VALUE.times(-1.0)
                     var bottom = Double.MAX_VALUE
                     var left = Double.MAX_VALUE
-                    var right = Double.MIN_VALUE
+                    var right = Double.MAX_VALUE.times(-1.0)
 
                     val normalizedLatLngList = mutableListOf<LatLng>()
                     for (latLng in latLngList) {
-                        val normalX = latLng.longitude.minus(latLngList[0].longitude)
-                        val normalY = latLng.latitude.minus(latLngList[0].latitude)
-
+                        //    val normalX = latLng.longitude.minus(latLngList[0].longitude)
+                        //    val normalY = latLng.latitude.minus(latLngList[0].latitude)
+                        val lat = latLng.latitude
+                        val lng = latLng.longitude
                         // Determine bounds
-                        if (normalY > top) top = normalY
-                        if (normalY < bottom) bottom = normalY
-                        if (normalX < left) left = normalX
-                        if (normalX > right) right = normalX
+                        if (lat > top) top = lat
+                        if (lat < bottom) bottom = lat
+                        if (lng < left) left = lng
+                        if (lng > right) right = lng
 
-                        normalizedLatLngList.add(LatLng(normalY, normalX))
+                        // normalizedLatLngList.add(LatLng(normalY, normalX))
                     }
 
                     val activityHeight = bottom - top
                     val activityWidth = right - left
-                    val largestSide = if (activityHeight < activityWidth) activityWidth else activityHeight
+
+
+                    for (latLng in latLngList) {
+                        println("Subtracting")
+                        println("${latLng.longitude}")
+                        println("Left is ${left} Right is ${right}")
+                        println("From")
+                        println("${(left.plus(right)).div(2.0)}")
+                        val normalX = latLng.longitude.minus((left.plus(right)).div(2.0))
+                        println("Result is")
+                        println("${normalX}")
+                        val normalY = latLng.latitude.minus((top.plus(bottom)).div(2.0))
+                        normalizedLatLngList.add(LatLng(normalY, normalX))
+                    }
+
+                    // TODO
+                    // Normalize on the center of the activityHeight in LatLng, not in float
+                    // basically: don't normalize until bounds are known!
+
                     val desiredWidth = 500f
-                    val multiplier = desiredWidth/largestSide
+                    val multiplier = 200000.0
+                    //desiredWidth / largestSide
 
                     val points = mutableListOf<Offset>()
 
                     for (normalLatLng in normalizedLatLngList) {
                         points.add(
                             Offset(
-                                x = (normalLatLng.longitude.minus(activityWidth/2.0).times(multiplier)).toFloat() + center.x,
-                                y = (normalLatLng.latitude.minus(activityHeight/2.0).times(multiplier)).toFloat() + center.y,
+                                x = (normalLatLng.longitude.times(multiplier)).toFloat() + center.x,
+                                y = (normalLatLng.latitude.times(multiplier)).toFloat() + center.y,
                             )
                         )
-
                     }
 
 
