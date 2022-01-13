@@ -68,4 +68,5 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         setIntent(intent)
     }
+
 }

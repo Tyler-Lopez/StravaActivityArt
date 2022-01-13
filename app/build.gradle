@@ -84,6 +84,10 @@ dependencies {
     // Live Data States (image)
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
+    // Permissions
+    implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
+
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
