@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
     private val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val uri = intent.data
