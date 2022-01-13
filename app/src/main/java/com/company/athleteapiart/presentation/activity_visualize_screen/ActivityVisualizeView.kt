@@ -78,30 +78,18 @@ class ActivityVisualizeView(
                         // normalizedLatLngList.add(LatLng(normalY, normalX))
                     }
 
-                    val activityHeight = bottom - top
-                    val activityWidth = right - left
-
-
                     for (latLng in latLngList) {
-                        println("Subtracting")
-                        println("${latLng.longitude}")
-                        println("Left is ${left} Right is ${right}")
-                        println("From")
-                        println("${(left.plus(right)).div(2.0)}")
                         val normalX = latLng.longitude.minus((left.plus(right)).div(2.0))
-                        println("Result is")
-                        println("${normalX}")
                         val normalY = latLng.latitude.minus((top.plus(bottom)).div(2.0))
                         normalizedLatLngList.add(LatLng(normalY, normalX))
                     }
 
-                    // TODO
-                    // Normalize on the center of the activityHeight in LatLng, not in float
-                    // basically: don't normalize until bounds are known!
+                    val heightNorm = top.minus(bottom)
+                    val widthNorm = right.minus(left)
+                    val largestSide = if (heightNorm < widthNorm) widthNorm else heightNorm
 
-                    val desiredWidth = 500f
-                    val multiplier = 200000.0
-                    //desiredWidth / largestSide
+                    val desiredWidth = 1500f
+                    val multiplier = desiredWidth.div(largestSide)
 
                     val points = mutableListOf<Offset>()
 
@@ -124,7 +112,7 @@ class ActivityVisualizeView(
                         points = points,
                         pointMode = PointMode.Polygon,
                         color = Color.Magenta,
-                        strokeWidth = 10f,
+                        strokeWidth = 15f,
                         cap = StrokeCap.Round,
                     )
 
