@@ -9,6 +9,7 @@ User connects with Strava
 
 User selects which activities to visualize by choosing filters.
 * FILTER by a certain type (run/cycle)
+* FILTER by a certain distance
 * FILTER by a certain time (last week, last month, last year, etc)
 * FILTER by a certain gear
 * Select manually whichever to export
