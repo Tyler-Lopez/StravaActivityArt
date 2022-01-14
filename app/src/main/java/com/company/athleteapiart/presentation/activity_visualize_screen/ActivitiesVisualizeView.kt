@@ -26,6 +26,7 @@ import com.company.athleteapiart.util.GraphicUtils
 import com.company.athleteapiart.util.pxToDp
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
+import kotlin.math.roundToInt
 
 // https://proandroiddev.com/create-bitmaps-from-jetpack-composables-bdb2c95db51
 class ActivityVisualizeView(
@@ -50,8 +51,9 @@ class ActivityVisualizeView(
                     .width(3420.pxToDp().dp)
                     .height(4320.pxToDp().dp)
             ) {
+                val divideFactor = 4320f/3420f
                 val maxWidth = this.maxWidth
-                val maxHeight = this.maxHeight
+                val maxHeight = maxWidth.times(divideFactor)
 
                 val activitiesPerColumn = 8
                 val desiredWidth = LocalDensity.current.run { maxWidth.toPx() - ((activitiesPerColumn) * 50f)} / activitiesPerColumn
@@ -132,6 +134,12 @@ class ActivityVisualizeView(
                             color = Color(252, 97, 0),
                             strokeWidth = 5f,
                             cap = StrokeCap.Round,
+                        )
+                        drawLine(
+                            color = Color.White,
+                            start = Offset(0f, maxHeight.toPx()),
+                            end = Offset(maxWidth.toPx(), maxHeight.toPx()),
+                            strokeWidth = 10f
                         )
 
 
