@@ -27,12 +27,6 @@ class ActivitiesVisualizeViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
 
-    init {
-
-    }
-
-
-
     private var _onBitmapCreated = MutableLiveData<Bitmap?>(null)
     var onBitmapGenerated: LiveData<Bitmap?> = _onBitmapCreated
 

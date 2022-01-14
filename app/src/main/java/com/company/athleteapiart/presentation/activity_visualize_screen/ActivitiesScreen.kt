@@ -16,16 +16,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import android.annotation.SuppressLint
 import androidx.compose.material.Button
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.company.athleteapiart.data.remote.responses.Activity
+import com.company.athleteapiart.ui.theme.StravaOrange
+import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.AthleteActivities.activities
+import com.company.athleteapiart.util.Constants.APP_NAME
 import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 
 
 @Composable
@@ -37,9 +44,14 @@ fun ActivitiesScreen(
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         if (isLoading) {
-            Text("Visualizing activities...")
+            Text("Applying filters...")
         } else {
             ActivitiesDrawing(activities, viewModel)
         }
@@ -48,60 +60,18 @@ fun ActivitiesScreen(
 }
 
 
-@SuppressLint("InlinedApi")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ActivitiesDrawing(
-    activity: List<Activity>,
+    activities: List<Activity>,
     viewModel: ActivitiesVisualizeViewModel
 ) {
     val bitmap = viewModel.onBitmapGenerated.observeAsState().value
     val context = LocalContext.current
 
-    val permissionState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        )
-    )
-    Button(onClick = {
-        if (bitmap != null) {
-            permissionState.permissions.forEach { perm ->
-                when {
-                    perm.hasPermission -> {
-                        saveImage(
-                            bitmap = bitmap,
-                            context = context,
-                            folderName = "ActivityVisualizer"
-                        )
-                    }
-                    perm.shouldShowRationale -> {
-                    }
-                    perm.isPermaDenied() -> {
 
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-
-        }
-    }) {
-
-        Text(
-            text = "Save Image"
-        )
-    }
-    AndroidView(
-        factory = { context ->
-            val activityVisualizeView = ActivityVisualizeView(
-                ctx = context,
-                activities = activities.value
-            ) {
-                viewModel.bitmapCreated(it)
-            }
-            activityVisualizeView
-        }
+    val permissionState = rememberPermissionState(
+        permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -111,7 +81,7 @@ fun ActivitiesDrawing(
         effect = {
             val observer = LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START) {
-                    permissionState.launchMultiplePermissionRequest()
+                    permissionState.launchPermissionRequest()
                 }
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -122,4 +92,51 @@ fun ActivitiesDrawing(
         }
     )
 
+    when {
+        permissionState.hasPermission -> {
+      //      Row(modifier = Modifier.fillMaxWidth().height(100.dp).background(color = StravaOrange))
+//
+      //      }
+            AndroidView(
+                factory = { context ->
+                    val activityVisualizeView = ActivitiesVisualizeView(
+                        ctx = context,
+                        activities = activities,
+                    ) {
+                        viewModel.bitmapCreated(it)
+                    }
+                    activityVisualizeView
+                }
+            )
+        }
+        permissionState.shouldShowRationale -> {
+            Text(
+                text = "$APP_NAME requires access to store files in your directory so that you may save your visualization.",
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
+        permissionState.isPermaDenied() -> {
+            Text(
+                text = "$APP_NAME has been denied access to store files in your directory." +
+                        " The save functionality will not work without it." +
+                        " To change this, please open your Settings, find this app, and enable permissions manually.",
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
+    }
 }
+
+
+/*
+= {
+                            if (bitmap != null) {
+                                saveImage(
+                                    bitmap = bitmap,
+                                    context = context,
+                                    folderName = "ActivityVisualizer"
+                                )
+                            }
+                        }
+ */
