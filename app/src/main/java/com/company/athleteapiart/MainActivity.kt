@@ -5,12 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.company.athleteapiart.presentation.activity_select_screen.ActivitySelectScreen
-import com.company.athleteapiart.presentation.athletescreen.ActivityScreen
+import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.util.Oauth2
@@ -58,7 +57,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("activity_screen") {
-                            ActivityScreen()
+                            ActivitiesScreen()
                         }
                     }
                 }

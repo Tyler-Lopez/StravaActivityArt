@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableActivityDetail
-import com.company.athleteapiart.presentation.athletescreen.ActivityScreen
 import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.formatIso8601
 
 @Composable
 fun ActivitySelectScreen(
@@ -48,7 +45,8 @@ fun ActivitySelectScreen(
                                 .shadow(2.dp)
                                 .background(Color.White)
                                 .clickable {
-                                    AthleteActivities.selectedActivity.value = activity
+                                    AthleteActivities.selectedActivities.value = activities
+                                //    AthleteActivities.selectedActivity.value = activity
                                     onActivitySelect()
                                 }
 
