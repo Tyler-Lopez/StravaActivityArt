@@ -2,7 +2,16 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PointMode
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.platform.LocalDensity
 import com.company.athleteapiart.data.remote.responses.Activity
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
+import kotlin.math.ceil
+import kotlin.math.sqrt
 
 fun activitiesVisualizeCanvas(
     maxWidth: Int,
@@ -23,6 +32,7 @@ fun activitiesVisualizeCanvas(
         Bitmap.Config.ARGB_8888
     )
     // Create canvas to draw on
+
     val canvas = Canvas(bitmap)
     val center = Offset(
         x = canvas.width / 2f,
@@ -39,8 +49,90 @@ fun activitiesVisualizeCanvas(
         ),
         backgroundColor
     )
-    val circlePaint = Paint()
-    circlePaint.color = Color.CYAN
+
+    // Determine how many rows are necessary
+    val rowCount = ceil(sqrt(activities.size.toDouble())).toInt()
+
+    // Determine width of each activity
+    val activityWidth = (maxWidth - (rowCount * 50)) / rowCount
+
+    // Iterate through each activity, determining X and Y position
+    var xOffset = 0f
+    var yOffset = activityWidth + 50f
+    var column = 0
+    for (activity in activities) {
+        val summaryPolyline = activity.map.summary_polyline
+        if (summaryPolyline == "null" || summaryPolyline == null) continue
+
+
+        column++
+        if (column == rowCount) {
+            xOffset = activityWidth + 50f
+            yOffset += activityWidth
+            column = 1
+        } else {
+            xOffset += activityWidth + 50f
+        }
+        println("activity width is $activityWidth")
+        println("row count is $rowCount")
+        println("x offset is $xOffset")
+
+
+        // Decode Polyline into a List<LatLng>
+        val latLngList = PolyUtil.decode(summaryPolyline)
+
+        var top = Double.MAX_VALUE.times(-1.0)
+        var bottom = Double.MAX_VALUE
+        var left = Double.MAX_VALUE
+        var right = Double.MAX_VALUE.times(-1.0)
+
+        val normalizedLatLngList = mutableListOf<LatLng>()
+        for (latLng in latLngList) {
+            val lat = latLng.latitude
+            val lng = latLng.longitude
+            // Determine bounds
+            if (lat > top) top = lat
+            if (lat < bottom) bottom = lat
+            if (lng < left) left = lng
+            if (lng > right) right = lng
+        }
+
+        for (latLng in latLngList) {
+            val normalX = latLng.longitude.minus((left.plus(right)).div(2.0))
+            val normalY = latLng.latitude.minus((top.plus(bottom)).div(2.0))
+            normalizedLatLngList.add(LatLng(normalY, normalX))
+        }
+
+        val heightNorm = top.minus(bottom)
+        val widthNorm = right.minus(left)
+        val largestSide = if (heightNorm < widthNorm) widthNorm else heightNorm
+
+
+        val multiplier = activityWidth.div(largestSide)
+
+        val points = mutableListOf<Float>()
+
+        for (normalLatLng in normalizedLatLngList) {
+            // x
+            points.add((normalLatLng.longitude.times(multiplier)).toFloat() + xOffset)
+            // y
+            points.add((normalLatLng.latitude.times(multiplier)).toFloat() + yOffset)
+        }
+
+        val pointsPaint = Paint()
+        pointsPaint.color = Color.CYAN
+        pointsPaint.isAntiAlias = true
+        pointsPaint.strokeCap = Paint.Cap.ROUND
+        pointsPaint.style = Paint.Style.STROKE
+        pointsPaint.strokeWidth = 3f
+
+        val path = Path()
+        path.setLastPoint(points[0], points[1])
+        for (i in 2 until points.lastIndex step 2) {
+            path.lineTo(points[i], points[i + 1])
+        }
+        canvas.drawPath(path, pointsPaint)
+    }
 
     return bitmap
 }
