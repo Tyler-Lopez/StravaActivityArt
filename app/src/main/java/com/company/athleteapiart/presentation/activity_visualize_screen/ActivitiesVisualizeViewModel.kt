@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.graphics.Bitmap
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,12 +28,6 @@ class ActivitiesVisualizeViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
 
-    private var _onBitmapCreated = MutableLiveData<Bitmap?>(null)
-    var onBitmapGenerated: LiveData<Bitmap?> = _onBitmapCreated
-
-    fun bitmapCreated(bitmap: Bitmap?) {
-        _onBitmapCreated.value = bitmap
-    }
 }
 
 
