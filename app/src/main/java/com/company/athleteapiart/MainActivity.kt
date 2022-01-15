@@ -5,6 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,6 +17,7 @@ import com.company.athleteapiart.presentation.activity_select_screen.ActivitySel
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.util.Oauth2
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,29 +45,44 @@ class MainActivity : ComponentActivity() {
 
 
         super.onCreate(savedInstanceState)
-            setContent {
-                AthleteApiArtTheme {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = if (uri == null) "login_screen" else "activities_screen"
-                    ) {
-                        composable("login_screen") {
-                            LoginScreen {
-                                startActivity(loginIntent)
+        setContent {
+            AthleteApiArtTheme {
+                Scaffold(
+                    topBar = {
+                        if (uri != null) {
+                            TopAppBar(
+                                backgroundColor = StravaOrange,
+                                modifier = Modifier.height(50.dp)
+                            ) {
+
                             }
                         }
-                        composable("activities_screen") {
-                            ActivitySelectScreen() {
-                                navController.navigate("activity_screen")
+
+                    }, content = {
+
+
+                        val navController = rememberNavController()
+                        NavHost(
+                            navController = navController,
+                            startDestination = if (uri == null) "login_screen" else "activities_screen"
+                        ) {
+                            composable("login_screen") {
+                                LoginScreen {
+                                    startActivity(loginIntent)
+                                }
+                            }
+                            composable("activities_screen") {
+                                ActivitySelectScreen() {
+                                    navController.navigate("activity_screen")
+                                }
+                            }
+                            composable("activity_screen") {
+                                ActivitiesScreen()
                             }
                         }
-                        composable("activity_screen") {
-                            ActivitiesScreen()
-                        }
-                    }
-                }
+                    })
             }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -56,7 +56,7 @@ class ActivitiesVisualizeView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = WarmGrey70)
+                    .background(color = WarmGrey30)
                     .drawBehind {
                         val drawScopeWidth = this.size.width
                         val drawScopeHeight = this.size.height
@@ -65,7 +65,7 @@ class ActivitiesVisualizeView(
                             .div(50f)
                             .toInt())) {
                             drawLine(
-                                color = WarmGrey80,
+                                color = WarmGrey40,
                                 start = Offset(
                                     x = i * 50f,
                                     y = 0f
@@ -82,7 +82,7 @@ class ActivitiesVisualizeView(
                             .div(50f)
                             .toInt())) {
                             drawLine(
-                                color = WarmGrey80,
+                                color = WarmGrey40,
                                 start = Offset(
                                     y = i * 50f,
                                     x = 0f
@@ -116,28 +116,28 @@ class ActivitiesVisualizeView(
                             .height(maxHeight)
                             .drawBehind {
                                 drawLine(
-                                    color = White,
+                                    color = WarmGrey10,
                                     start = Offset(
                                         x = 0f,
-                                        y = -10f,
+                                        y = -5f,
                                     ),
                                     end = Offset(
                                         x = this.size.width,
-                                        y = -10f
+                                        y = -5f
                                     ),
-                                    strokeWidth = 10f
+                                    strokeWidth = 5f
                                 )
                                 drawLine(
-                                    color = White,
+                                    color = WarmGrey10,
                                     start = Offset(
                                         x = 0f,
-                                        y = this.size.height + 10f,
+                                        y = this.size.height + 5f,
                                     ),
                                     end = Offset(
                                         x = this.size.width,
-                                        y = this.size.height + 10f,
+                                        y = this.size.height + 5f,
                                     ),
-                                    strokeWidth = 10f
+                                    strokeWidth = 5f
                                 )
                             }
                             .background(color = Color.Black)
