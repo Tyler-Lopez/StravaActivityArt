@@ -5,9 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -47,40 +49,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AthleteApiArtTheme {
-                Scaffold(
-                    topBar = {
-                        if (uri != null) {
-                            TopAppBar(
-                                backgroundColor = StravaOrange,
-                                modifier = Modifier.height(50.dp)
-                            ) {
-
-                            }
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = if (uri == null) "login_screen" else "activities_screen"
+                ) {
+                    composable("login_screen") {
+                        LoginScreen {
+                            startActivity(loginIntent)
                         }
-
-                    }, content = {
-
-
-                        val navController = rememberNavController()
-                        NavHost(
-                            navController = navController,
-                            startDestination = if (uri == null) "login_screen" else "activities_screen"
-                        ) {
-                            composable("login_screen") {
-                                LoginScreen {
-                                    startActivity(loginIntent)
-                                }
-                            }
-                            composable("activities_screen") {
-                                ActivitySelectScreen() {
-                                    navController.navigate("activity_screen")
-                                }
-                            }
-                            composable("activity_screen") {
-                                ActivitiesScreen()
-                            }
+                    }
+                    composable("activities_screen") {
+                        ActivitySelectScreen() {
+                            navController.navigate("activity_screen")
                         }
-                    })
+                    }
+                    composable("activity_screen") {
+                        ActivitiesScreen(navController = navController)
+                    }
+                }
             }
         }
     }

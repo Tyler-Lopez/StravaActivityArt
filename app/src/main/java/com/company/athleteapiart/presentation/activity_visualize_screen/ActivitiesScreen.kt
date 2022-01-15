@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import android.graphics.Bitmap
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -15,7 +14,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import android.annotation.SuppressLint
-import androidx.compose.material.Button
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -23,7 +24,10 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
 import com.company.athleteapiart.data.remote.responses.Activity
+import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableReturnButton
+import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableTopBar
 import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.AthleteActivities.activities
@@ -37,6 +41,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable
 fun ActivitiesScreen(
+    navController: NavController,
     viewModel: ActivitiesVisualizeViewModel = hiltViewModel()
 ) {
     var activities by remember { viewModel.activities }
@@ -44,18 +49,26 @@ fun ActivitiesScreen(
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (isLoading) {
-            Text("Applying filters...")
-        } else {
-            ActivitiesDrawing(activities, viewModel)
+    Scaffold(
+        topBar = {
+            ComposableTopBar {
+                ComposableReturnButton(navController = navController)
+            }
+        },
+        content = {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (isLoading) {
+                    Text("Applying filters...")
+                } else {
+                    ActivitiesDrawing(activities, viewModel)
+                }
+            }
         }
-    }
+    )
+
 
 }
 
@@ -94,9 +107,6 @@ fun ActivitiesDrawing(
 
     when {
         permissionState.hasPermission -> {
-      //      Row(modifier = Modifier.fillMaxWidth().height(100.dp).background(color = StravaOrange))
-//
-      //      }
             AndroidView(
                 factory = { context ->
                     val activityVisualizeView = ActivitiesVisualizeView(
