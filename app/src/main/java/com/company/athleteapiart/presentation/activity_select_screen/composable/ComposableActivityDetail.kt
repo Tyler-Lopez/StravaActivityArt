@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.ui.theme.Roboto
 import com.company.athleteapiart.ui.theme.RobotoCondensed
+import com.company.athleteapiart.util.meterToMiles
 import com.company.athleteapiart.util.timeToString
 
 @Composable
@@ -45,7 +46,7 @@ fun ComposableActivityDetail(
             ) {
                 ComposableHeaderValue(
                     header = "Distance",
-                    value = "%.2f".format(activity.distance * 0.000621371192) + " mi",
+                    value = "%.2f".format(activity.distance.meterToMiles()) + " mi",
                     modifier = Modifier
                         .padding(end = 10.dp)
                 )

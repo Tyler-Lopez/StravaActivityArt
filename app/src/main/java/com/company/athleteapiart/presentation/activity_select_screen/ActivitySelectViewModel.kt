@@ -20,15 +20,21 @@ class ActivitySelectViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
+
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
+    var page = 1
 
     init {
         if (AthleteActivities.activities.value.isEmpty())
-            getActivities()
+            getActivities(page)
     }
 
-    private fun getActivities() {
+    fun loadMoreActivities() {
+        getActivities(page)
+    }
+
+    private fun getActivities(page: Int) {
         viewModelScope.launch {
             isLoading.value = true
             if (Oauth2.accessToken == "null") {
@@ -49,17 +55,17 @@ class ActivitySelectViewModel @Inject constructor(
                     }
                 }
             }
-            for (i in 1..10) {
-                when (val result = repository.getActivities(page = i, perPage = 30)) {
-                    is Resource.Success -> {
-                        AthleteActivities.activities.value.addAll(result.data)
-                    }
-                    is Resource.Error -> {
-                        loadError.value = result.message
-                        isLoading.value = false
-                    }
+            when (val result = repository.getActivities(page = page, perPage = 50)) {
+                is Resource.Success -> {
+                    AthleteActivities.activities.value.addAll(result.data)
+                    this@ActivitySelectViewModel.page++
+                }
+                is Resource.Error -> {
+                    loadError.value = result.message
+                    isLoading.value = false
                 }
             }
+
 
             isLoading.value = false
             /*

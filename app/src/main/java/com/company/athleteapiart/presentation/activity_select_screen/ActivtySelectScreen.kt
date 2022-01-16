@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,9 +36,13 @@ fun ActivitySelectScreen(
         ) {
             if (isLoading) {
                 Text("Loading Activities")
-            } else if (loadError != "") {
-                Text(loadError)
             } else {
+                if (loadError != "") Text("$loadError An error occurred. Please try again.")
+                Button(onClick = {
+                    viewModel.loadMoreActivities()
+                }) {
+                    Text("Load more activities")
+                }
                 LazyColumn {
                     items(activities) { activity ->
                         ComposableActivityDetail(
@@ -51,7 +56,6 @@ fun ActivitySelectScreen(
                                 //    AthleteActivities.selectedActivity.value = activity
                                     onActivitySelect()
                                 }
-
                         )
                         Spacer(
                             modifier = Modifier

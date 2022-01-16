@@ -3,6 +3,7 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
 import com.company.athleteapiart.data.remote.responses.Activity
+import com.company.athleteapiart.util.meterToMiles
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
 import kotlin.math.ceil
@@ -94,7 +95,7 @@ fun activitiesVisualizeCanvas(
         }
 
         for (latLng in latLngList) {
-            val normalX = latLng.longitude.minus((left.plus(right)).div(2.0))
+            val normalX = latLng.longitude.minus((left.plus(right)).div(2.0)).times(-1.0)
             val normalY = latLng.latitude.minus((top.plus(bottom)).div(2.0))
             normalizedLatLngList.add(LatLng(normalY, normalX))
         }
@@ -116,7 +117,15 @@ fun activitiesVisualizeCanvas(
         }
 
         val pointsPaint = Paint()
-        pointsPaint.color = Color.CYAN
+
+        val distance = activity.distance.meterToMiles()
+
+        pointsPaint.color = when {
+            distance <= 5 -> Color.RED
+            distance <= 10 -> Color.rgb(255, 153, 51)
+            distance <= 20 -> Color.YELLOW
+            else -> Color.GREEN
+        }
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
         pointsPaint.style = Paint.Style.STROKE
