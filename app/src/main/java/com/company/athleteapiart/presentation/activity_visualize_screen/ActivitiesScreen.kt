@@ -123,7 +123,7 @@ fun ActivitiesScreen(
                         permissionState.hasPermission -> {
                             Column(
                                 modifier = Modifier
-                                    .width(360.dp)
+                                    .fillMaxSize()
                                     .background(color = WarmGrey30)
                                     .drawBehind {
                                         val drawScopeWidth = this.size.width

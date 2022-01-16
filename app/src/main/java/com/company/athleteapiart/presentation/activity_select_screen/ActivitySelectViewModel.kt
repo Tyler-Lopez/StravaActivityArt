@@ -49,6 +49,20 @@ class ActivitySelectViewModel @Inject constructor(
                     }
                 }
             }
+            for (i in 1..10) {
+                when (val result = repository.getActivities(page = i, perPage = 30)) {
+                    is Resource.Success -> {
+                        AthleteActivities.activities.value.addAll(result.data)
+                    }
+                    is Resource.Error -> {
+                        loadError.value = result.message
+                        isLoading.value = false
+                    }
+                }
+            }
+
+            isLoading.value = false
+            /*
             when (val result = repository.getActivities()) {
                 is Resource.Success -> {
                     AthleteActivities.activities.value = result.data
@@ -59,6 +73,8 @@ class ActivitySelectViewModel @Inject constructor(
                     isLoading.value = false
                 }
             }
+
+             */
         }
     }
 }

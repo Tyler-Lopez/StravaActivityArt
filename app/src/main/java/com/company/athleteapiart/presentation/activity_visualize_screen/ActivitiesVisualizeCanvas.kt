@@ -2,11 +2,6 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.PointMode
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.platform.LocalDensity
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
@@ -51,30 +46,31 @@ fun activitiesVisualizeCanvas(
     )
 
     // Determine how many rows are necessary
-    val rowCount = ceil(sqrt(activities.size.toDouble())).toInt()
+    val colCount = (ceil(sqrt(activities.size.toDouble()))).toInt()
 
     // Determine width of each activity
-    val activityWidth = (maxWidth - (rowCount * 50)) / rowCount
+    val activityWidth = (maxWidth - (colCount * 25)) / colCount
 
     // Iterate through each activity, determining X and Y position
     var xOffset = 0f
-    var yOffset = activityWidth + 50f
+    var yOffset = activityWidth + 25f
     var column = 0
     for (activity in activities) {
         val summaryPolyline = activity.map.summary_polyline
+        if (activity.type != "Run") continue
         if (summaryPolyline == "null" || summaryPolyline == null) continue
 
 
         column++
-        if (column == rowCount) {
-            xOffset = activityWidth + 50f
-            yOffset += activityWidth
+        if (column == colCount) {
+            xOffset = activityWidth + 25f
+            yOffset += activityWidth + 25f
             column = 1
         } else {
-            xOffset += activityWidth + 50f
+            xOffset += activityWidth + 25f
         }
         println("activity width is $activityWidth")
-        println("row count is $rowCount")
+        println("row count is $colCount")
         println("x offset is $xOffset")
 
 

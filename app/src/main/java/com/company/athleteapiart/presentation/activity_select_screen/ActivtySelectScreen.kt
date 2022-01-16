@@ -35,6 +35,8 @@ fun ActivitySelectScreen(
         ) {
             if (isLoading) {
                 Text("Loading Activities")
+            } else if (loadError != "") {
+                Text(loadError)
             } else {
                 LazyColumn {
                     items(activities) { activity ->
