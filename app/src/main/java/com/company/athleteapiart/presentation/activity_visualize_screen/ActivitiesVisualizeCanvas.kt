@@ -95,8 +95,8 @@ fun activitiesVisualizeCanvas(
         }
 
         for (latLng in latLngList) {
-            val normalX = latLng.longitude.minus((left.plus(right)).div(2.0)).times(-1.0)
-            val normalY = latLng.latitude.minus((top.plus(bottom)).div(2.0))
+            val normalX = latLng.longitude.minus((left.plus(right)).div(2.0))
+            val normalY = latLng.latitude.minus((top.plus(bottom)).div(2.0)).times(-1.0)
             normalizedLatLngList.add(LatLng(normalY, normalX))
         }
 
