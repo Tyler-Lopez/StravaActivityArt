@@ -112,7 +112,7 @@ fun activitiesVisualizeCanvas(
         for (normalLatLng in normalizedLatLngList) {
             // x
             points.add((normalLatLng.longitude.times(multiplier)).toFloat() + xOffset)
-            // y
+            //   y
             points.add((normalLatLng.latitude.times(multiplier)).toFloat() + yOffset)
         }
 
