@@ -18,8 +18,10 @@ interface AthleteApi {
     @GET("api/v3/athlete/activities?")
     suspend fun getActivities(
         @Header("Authorization") authHeader: String,
+        @Query("before") before: Int,
+        @Query("after") after: Int,
         @Query("page") page: Int,
-        @Query("per_page") perPage: Int,
+        @Query("per_page") perPage: Int
     ): Activities
 
     @GET("api/v3/activities/{id}?")

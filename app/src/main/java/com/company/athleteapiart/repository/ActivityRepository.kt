@@ -38,13 +38,17 @@ class ActivityRepository @Inject constructor(
 
     suspend fun getActivities(
         page: Int,
-        perPage: Int
+        perPage: Int,
+        before: Int,
+        after: Int
     ): Resource<Activities> {
         val response = try {
             api.getActivities(
                 authHeader = "Bearer " + Oauth2.accessToken,
                 page = page,
-                perPage = perPage
+                perPage = perPage,
+                before = before,
+                after = after
             )
         } catch (e: Exception) {
             return Resource.Error("${e.message} An unknown error occurred.")

@@ -29,27 +29,3 @@ class ActivitiesVisualizeViewModel @Inject constructor(
     var endReached = mutableStateOf(false)
 
 }
-
-
-
-// TEMPORARILY COMMENTED OUT
-// No longer utilizing this
-/*
-private fun getActivity() {
-    viewModelScope.launch {
-        isLoading.value = true
-        when (val result = repository.getActivity()) {
-            is Resource.Success -> {
-                activity.value = listOf(result.data)
-                isLoading.value = false
-            }
-            is Resource.Error -> {
-                println("ERROR FOUND")
-                println(result.message)
-                isLoading.value = false
-            }
-        }
-    }
-}
-
- */

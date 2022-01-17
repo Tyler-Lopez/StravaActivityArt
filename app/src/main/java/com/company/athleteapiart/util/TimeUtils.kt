@@ -3,6 +3,7 @@ package com.company.athleteapiart.util
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.company.athleteapiart.util.Constants.FIRST_YEAR
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -14,6 +15,7 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import java.util.*
 
+fun yearsAvailable() = FIRST_YEAR..LocalDateTime.now().year
 
 @SuppressLint("NewApi")
 fun String.formatIso8601(

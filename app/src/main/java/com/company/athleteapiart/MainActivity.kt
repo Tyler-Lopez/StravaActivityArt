@@ -11,9 +11,9 @@ import androidx.navigation.compose.rememberNavController
 import com.company.athleteapiart.presentation.activity_select_screen.ActivitySelectScreen
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
+import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.util.Oauth2
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = if (uri == null) "login_screen" else "activities_screen"
+                    startDestination = if (uri == null) "login_screen" else "time_select_screen"
                 ) {
                     composable("login_screen") {
                         LoginScreen {
@@ -59,6 +59,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("activity_screen") {
                         ActivitiesScreen(navController = navController)
+                    }
+                    composable("time_select_screen") {
+                        TimeSelectScreen(navController = navController)
                     }
                 }
             }

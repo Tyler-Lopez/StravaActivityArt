@@ -1,42 +1,49 @@
-package com.company.athleteapiart.presentation.activity_select_screen
+package com.company.athleteapiart.presentation.time_select_screen
 
-import android.content.AbstractThreadedSyncAdapter
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.data.remote.responses.Athlete
 import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.Oauth2
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.clientSecret
+import com.google.android.gms.common.util.CollectionUtils.setOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.lang.reflect.Array.set
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class ActivitySelectViewModel @Inject constructor(
+class TimeSelectViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
-
+    var activities = AthleteActivities.selectedActivities
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
-    var page = 1
+    var endReached = mutableStateOf(false)
 
-    init {
-        if (AthleteActivities.activities.value.isEmpty())
-            getActivities(page)
+
+
+    fun loadActivitiesByYear(year: Int) {
+        val after = (GregorianCalendar(year, 0, 1).timeInMillis / 1000).toInt()
+        val beforeDate = GregorianCalendar(year + 1, 0, 1)
+        beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)
+        val before = (beforeDate.timeInMillis / 1000).toInt()
+
+        isLoading.value = true
+        println("here, before is $before after is $after")
+        getActivities(
+            page = 1,
+            before = before,
+            after = after
+        )
     }
 
-    fun loadMoreActivities() {
-        getActivities(page)
-    }
-
-    private fun getActivities(page: Int) {
+    private fun getActivities(page: Int, before: Int, after: Int) {
         viewModelScope.launch {
-            isLoading.value = true
             if (Oauth2.accessToken == "null") {
                 val result = repository.getAccessToken(
                     clientId = 75992,
@@ -55,32 +62,29 @@ class ActivitySelectViewModel @Inject constructor(
                     }
                 }
             }
-            when (val result = repository.getActivities(page = page, perPage = 0, 0, 0)) {
+            when (val result = repository
+                .getActivities(
+                    page = page,
+                    perPage = 30,
+                    before = before,
+                    after = after
+                )
+            ) {
                 is Resource.Success -> {
-                    AthleteActivities.activities.value.addAll(result.data)
-                    this@ActivitySelectViewModel.page++
+                    if (result.data.isEmpty()) {
+                        isLoading.value = false
+                        endReached.value = true
+                    }
+                    else {
+                        AthleteActivities.activities.value.addAll(result.data)
+                        getActivities(page + 1, before, after)
+                    }
                 }
                 is Resource.Error -> {
                     loadError.value = result.message
                     isLoading.value = false
                 }
             }
-
-
-            isLoading.value = false
-            /*
-            when (val result = repository.getActivities()) {
-                is Resource.Success -> {
-                    AthleteActivities.activities.value = result.data
-                    isLoading.value = false
-                }
-                is Resource.Error -> {
-                    loadError.value = result.message
-                    isLoading.value = false
-                }
-            }
-
-             */
         }
     }
 }
