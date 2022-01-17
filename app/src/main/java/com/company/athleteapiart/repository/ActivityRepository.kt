@@ -30,7 +30,7 @@ class ActivityRepository @Inject constructor(
                 grantType = grantType
             )
         } catch (e: Exception) {
-            return Resource.Error("An unknown error occurred.")
+            return Resource.Error("${e.message}")
         }
 
         return Resource.Success(response)
@@ -51,7 +51,7 @@ class ActivityRepository @Inject constructor(
                 after = after
             )
         } catch (e: Exception) {
-            return Resource.Error("${e.message} An unknown error occurred.")
+            return Resource.Error("${e.message}")
         }
         return Resource.Success(response)
     }

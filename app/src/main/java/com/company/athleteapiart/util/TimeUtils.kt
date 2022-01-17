@@ -15,7 +15,11 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import java.util.*
 
-fun yearsAvailable() = FIRST_YEAR..LocalDateTime.now().year
+class TimeUtils {
+    companion object {
+        fun yearsAvailable() = FIRST_YEAR..LocalDateTime.now().year
+    }
+}
 
 @SuppressLint("NewApi")
 fun String.formatIso8601(

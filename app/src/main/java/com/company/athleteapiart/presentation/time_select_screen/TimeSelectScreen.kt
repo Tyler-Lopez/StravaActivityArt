@@ -32,6 +32,7 @@ import com.company.athleteapiart.presentation.activity_visualize_screen.Activiti
 import com.company.athleteapiart.presentation.activity_visualize_screen.activitiesVisualizeCanvas
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
+import com.company.athleteapiart.util.TimeUtils
 import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -47,12 +48,7 @@ fun TimeSelectScreen(
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
-
-    if (endReached) {
-        AthleteActivities.selectedActivities.value = AthleteActivities.activities.value
-        navController.navigate("activity_screen")
-    }
-
+    val activitiesSize by remember { viewModel.activitiesSize }
     Scaffold(
         topBar = {
             ComposableTopBar {
@@ -77,17 +73,31 @@ fun TimeSelectScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (isLoading) {
-                    Text("Loading Activities")
+                if (endReached) {
+                    AthleteActivities.selectedActivities.value = AthleteActivities.activities.value
+                    Text("${AthleteActivities.selectedActivities.value.size} activities loaded")
+                    Button(onClick = {
+                        navController.navigate("activity_screen")
+                    }) {
+                        Text("draw")
+
+
+                    }
+                }
+                else if (isLoading) {
+                    Text("Loading Activities ${activitiesSize}")
                 } else if (loadError != "") {
                     Text("$loadError error")
                     Text("activities size is ${AthleteActivities.activities.value.size}")
                 } else {
-                    Button(onClick = {
-                        viewModel.loadActivitiesByYear(2021)
-                    }) {
-                        Text("2021")
+                    for (year in TimeUtils.yearsAvailable()) {
+                        Button(onClick = {
+                            viewModel.loadActivitiesByYear(year)
+                        }) {
+                            Text("$year")
+                        }
                     }
+
                 }
             }
         }

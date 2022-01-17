@@ -24,6 +24,7 @@ class TimeSelectViewModel @Inject constructor(
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
+    var activitiesSize = mutableStateOf(AthleteActivities.activities.value.size)
 
 
 
@@ -33,6 +34,7 @@ class TimeSelectViewModel @Inject constructor(
         beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)
         val before = (beforeDate.timeInMillis / 1000).toInt()
 
+        if (isLoading.value) return
         isLoading.value = true
         println("here, before is $before after is $after")
         getActivities(
@@ -44,6 +46,7 @@ class TimeSelectViewModel @Inject constructor(
 
     private fun getActivities(page: Int, before: Int, after: Int) {
         viewModelScope.launch {
+            loadError.value = ""
             if (Oauth2.accessToken == "null") {
                 val result = repository.getAccessToken(
                     clientId = 75992,
@@ -56,35 +59,51 @@ class TimeSelectViewModel @Inject constructor(
                         Oauth2.accessToken = result.data.access_token
                     }
                     is Resource.Error -> {
-                        loadError.value = result.message
-                        isLoading.value = false
-                        return@launch
+                        if (result.message.contains("Unable to resolve host")) {
+                            getActivities(page, before, after)
+                        } else {
+                            loadError.value = result.message
+                            println("error occured ${loadError.value}")
+                            isLoading.value = false
+                        }
+                     //   getActivities(page, before, after)
                     }
                 }
             }
             when (val result = repository
                 .getActivities(
                     page = page,
-                    perPage = 30,
+                    perPage = 100,
                     before = before,
                     after = after
                 )
             ) {
                 is Resource.Success -> {
                     if (result.data.isEmpty()) {
-                        isLoading.value = false
                         endReached.value = true
+                        isLoading.value = false
                     }
                     else {
                         AthleteActivities.activities.value.addAll(result.data)
+                        activitiesSize.value = AthleteActivities.activities.value.size
                         getActivities(page + 1, before, after)
                     }
                 }
                 is Resource.Error -> {
-                    loadError.value = result.message
-                    isLoading.value = false
+                    if (result.message.contains("timeout", true)) {
+                        println("timed out trying again")
+                        getActivities(page, before, after)
+                    } else if (result.message.contains("Unable to resolve host")) {
+                        println("unable to resolve host trying again")
+                        getActivities(page, before, after)
+                    } else {
+                            //   getActivities(page, before, after)
+                                println("error here")
+                             loadError.value = result.message
+                               isLoading.value = false
+                        }
+                    }
                 }
             }
         }
-    }
 }
