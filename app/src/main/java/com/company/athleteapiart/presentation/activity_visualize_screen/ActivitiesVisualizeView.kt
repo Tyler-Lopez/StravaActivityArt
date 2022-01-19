@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.GraphicUtils
-import com.company.athleteapiart.util.pxToDp
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
 import kotlin.math.roundToInt

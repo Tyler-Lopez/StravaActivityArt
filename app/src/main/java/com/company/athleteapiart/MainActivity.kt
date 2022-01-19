@@ -1,10 +1,14 @@
 package com.company.athleteapiart
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,6 +19,7 @@ import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScree
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.util.Oauth2
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.prefs.Preferences
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -31,8 +36,12 @@ class MainActivity : ComponentActivity() {
 
     private val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
+    // https://www.youtube.com/watch?v=McnVx7l5awk
+    lateinit var dataStore: DataStore<Preferences>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Assign data store to create a data store
+
 
         val uri = intent.data
         if (uri != null)

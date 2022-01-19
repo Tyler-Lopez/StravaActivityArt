@@ -59,6 +59,14 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
 
+    // Datastore
+    // https://developer.android.com/codelabs/android-preferences-datastore#4
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "androidx.datastore:datastore:1.0.0"
+    implementation "androidx.datastore:datastore-rxjava2:1.0.0"
+    implementation "androidx.datastore:datastore-rxjava3:1.0.0"
+
+
     // ICONS
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
