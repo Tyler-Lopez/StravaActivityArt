@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.login_screen
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,13 +14,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.R
+import com.company.athleteapiart.presentation.time_select_screen.TimeSelectViewModel
 
 
 // https://developers.strava.com/guidelines/
 @Composable
 fun LoginScreen(
-    onClick: () -> (Unit)
+    // If login button is pushed, return intent
+    onClick: (Intent) -> (Unit),
+    viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +67,7 @@ fun LoginScreen(
                 contentDescription = "Connect with Strava",
                 modifier = Modifier
                     .width(250.dp)
-                    .clickable { onClick() }
+                    .clickable { onClick( viewModel.loginIntent ) }
             )
     }
 }
