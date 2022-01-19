@@ -31,6 +31,11 @@ class TimeUtils {
             if (hours == 0) toReturn.append("${seconds}s")
             return toReturn.toString()
         }
+
+        fun accessTokenExpired(time: Int): Boolean {
+            val now = (GregorianCalendar().timeInMillis / 1000).toInt()
+            return (now - time >= 20000)
+        }
     }
 }
 

@@ -14,8 +14,4 @@ object Oauth2 {
         accessTokenReceivedOn = (GregorianCalendar().timeInMillis / 1000).toInt()
     }
 
-    fun accessTokenExpired(): Boolean {
-        val now = (GregorianCalendar().timeInMillis / 1000).toInt()
-        return (now - accessTokenReceivedOn >= 21600)
-    }
 }
