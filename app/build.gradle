@@ -66,6 +66,10 @@ dependencies {
     implementation "androidx.datastore:datastore-rxjava2:1.0.0"
     implementation "androidx.datastore:datastore-rxjava3:1.0.0"
 
+    // ROOM
+    implementation 'androidx.room:room-runtime:2.4.1'
+    kapt 'androidx.room:room-compiler:2.4.1'
+
 
     // ICONS
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
