@@ -5,13 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.company.athleteapiart.data.dao.OAuth2Dao
-import com.company.athleteapiart.data.entities.OAuth2
+import com.company.athleteapiart.data.entities.OAuth2Entity
 
 @Database(
     entities = [
-        OAuth2::class
+        OAuth2Entity::class
     ],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 abstract class OAuth2Database : RoomDatabase() {
 
@@ -29,7 +30,7 @@ abstract class OAuth2Database : RoomDatabase() {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     OAuth2Database::class.java,
-                    "oauth2_db"
+                    "oauth2entity_db"
                 ).build().also {
                     INSTANCE = it
                 }

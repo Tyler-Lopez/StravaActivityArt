@@ -12,15 +12,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.company.athleteapiart.data.database.OAuth2Database
-import com.company.athleteapiart.presentation.activity_select_screen.ActivitySelectScreen
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.util.Oauth2
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.prefs.Preferences
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
