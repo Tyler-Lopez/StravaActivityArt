@@ -79,7 +79,7 @@ class TimeSelectViewModel @Inject constructor(
                 )
             ) {
                 is Resource.Success -> {
-                    if (result.data.isEmpty()) {
+                    if (result.data.size < 100) {
                         endReached.value = true
                         isLoading.value = false
                     }
