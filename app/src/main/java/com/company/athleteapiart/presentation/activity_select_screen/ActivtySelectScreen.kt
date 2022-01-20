@@ -52,7 +52,7 @@ fun ActivitySelectScreen(
                                 .shadow(2.dp)
                                 .background(Color.White)
                                 .clickable {
-                                    AthleteActivities.selectedActivities.value = activities
+                                //   AthleteActivities.selectedActivities.value = activities
                                 //    AthleteActivities.selectedActivity.value = activity
                                     onActivitySelect()
                                 }

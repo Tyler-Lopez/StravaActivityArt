@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
+import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableReturnButton
 import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableTopBar
 import com.company.athleteapiart.ui.theme.*
@@ -44,7 +45,7 @@ fun ActivitiesScreen(
     navigator: DestinationsNavigator,
     viewModel: ActivitiesVisualizeViewModel = hiltViewModel()
 ) {
-    var activities by remember { viewModel.activities }
+    var activities = viewModel.activities
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
