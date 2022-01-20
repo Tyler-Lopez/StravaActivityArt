@@ -27,19 +27,26 @@ class LoadActivitiesViewModel @Inject constructor(
 
 
     fun loadActivitiesByYear(year: Int) {
-        val after = (GregorianCalendar(year, 0, 1).timeInMillis / 1000).toInt()
-        val beforeDate = GregorianCalendar(year + 1, 0, 1)
-        beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)
-        val before = (beforeDate.timeInMillis / 1000).toInt()
-
-        if (isLoading.value) return
+        // Ensure we don't constantly invoke this
+        // May be a better way to do this?
+        // Overly cautious to not recursively invoke api right now
+        if (isLoading.value || endReached.value) return
         isLoading.value = true
-        println("here, before is $before after is $after")
-        getActivities(
-            page = 1,
-            before = before,
-            after = after
-        )
+
+
+        viewModelScope.launch {
+            val after = (GregorianCalendar(year, 0, 1).timeInMillis / 1000).toInt()
+            val beforeDate = GregorianCalendar(year + 1, 0, 1)
+            beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)
+            val before = (beforeDate.timeInMillis / 1000).toInt()
+
+            println("here, before is $before after is $after")
+            getActivities(
+                page = 1,
+                before = before,
+                after = after
+            )
+        }
     }
 
     private fun getActivities(page: Int, before: Int, after: Int) {
