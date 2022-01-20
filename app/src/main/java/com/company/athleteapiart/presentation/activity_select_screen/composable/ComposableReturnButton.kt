@@ -17,11 +17,11 @@ import com.company.athleteapiart.ui.theme.White
 
 @Composable
 fun ComposableReturnButton(
-    navController: NavController
+    onClick: () -> Unit
 ) {
     Button(
         modifier = Modifier.clip(CircleShape),
-        onClick = { navController.navigateUp() },
+        onClick = { onClick() },
         colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp)
 

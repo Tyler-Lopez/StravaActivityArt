@@ -14,6 +14,14 @@ interface AthleteApi {
         @Query("grant_type") grantType: String
     ): Bearer
 
+    @POST("oauth/token?")
+    suspend fun getAccessTokenFromRefresh(
+        @Query("client_id") clientId: Int,
+        @Query("client_secret") clientSecret: String,
+        @Query("refresh_token") refreshToken: String,
+        @Query("grant_type") grantType: String = "refresh_token"
+    ): Bearer
+
     // Get activities from access token
     @GET("api/v3/athlete/activities?")
     suspend fun getActivities(

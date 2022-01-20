@@ -2,10 +2,8 @@ package com.company.athleteapiart.repository
 
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Activities
-import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.data.remote.responses.Bearer
-import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.Oauth2
+import com.company.athleteapiart.util.OAuth2
 import com.company.athleteapiart.util.Resource
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -36,6 +34,26 @@ class ActivityRepository @Inject constructor(
         return Resource.Success(response)
     }
 
+    suspend fun getAccessTokenFromRefresh(
+        clientId: Int,
+        clientSecret: String,
+        refreshToken: String,
+        grantType: String
+    ): Resource<Bearer> {
+        val response = try {
+            api.getAccessTokenFromRefresh(
+                clientId = clientId,
+                clientSecret = clientSecret,
+                refreshToken = refreshToken,
+                grantType = grantType
+            )
+        } catch (e: Exception) {
+            return Resource.Error("${e.message}")
+        }
+
+        return Resource.Success(response)
+    }
+
     suspend fun getActivities(
         page: Int,
         perPage: Int,
@@ -44,7 +62,7 @@ class ActivityRepository @Inject constructor(
     ): Resource<Activities> {
         val response = try {
             api.getActivities(
-                authHeader = "Bearer " + Oauth2.accessToken,
+                authHeader = "Bearer " + OAuth2.accessToken,
                 page = page,
                 perPage = perPage,
                 before = before,
@@ -62,7 +80,7 @@ class ActivityRepository @Inject constructor(
     ): Resource<ActivityDetailed> {
         val response = try {
             api.getActivityDetailed(
-                authHeader = "Bearer " + Oauth2.accessToken,
+                authHeader = "Bearer " + OAuth2.accessToken,
                 id = AthleteActivities.selectedActivity.value?.id ?: 0L,
             )
         } catch (e: Exception) {

@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.company.athleteapiart.data.entities.OAuth2Entity
-import com.company.athleteapiart.util.Oauth2
 
 @Dao
 interface OAuth2Dao {

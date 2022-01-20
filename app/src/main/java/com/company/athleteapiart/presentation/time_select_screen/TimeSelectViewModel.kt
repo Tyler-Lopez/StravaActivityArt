@@ -5,13 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.Oauth2
+import com.company.athleteapiart.util.OAuth2
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.clientSecret
-import com.google.android.gms.common.util.CollectionUtils.setOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.lang.reflect.Array.set
 import java.util.*
 import javax.inject.Inject
 
@@ -47,16 +45,16 @@ class TimeSelectViewModel @Inject constructor(
     private fun getActivities(page: Int, before: Int, after: Int) {
         viewModelScope.launch {
             loadError.value = ""
-            if (Oauth2.accessToken == "null") {
+            if (OAuth2.accessToken == "null") {
                 val result = repository.getAccessToken(
                     clientId = 75992,
                     clientSecret = clientSecret,
-                    code = Oauth2.authorizationCode,
+                    code = OAuth2.authorizationCode,
                     grantType = "authorization_code"
                 )
                 when (result) {
                     is Resource.Success -> {
-                        Oauth2.accessToken = result.data.access_token
+                        OAuth2.accessToken = result.data.access_token
                     }
                     is Resource.Error -> {
                         if (result.message.contains("Unable to resolve host")) {

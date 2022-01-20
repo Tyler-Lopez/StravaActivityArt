@@ -1,21 +1,10 @@
 package com.company.athleteapiart.presentation.activity_visualize_screen
 
-import android.graphics.Bitmap
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.data.remote.responses.ActivityDetailed
 import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.Oauth2
-import com.company.athleteapiart.util.Resource
-import com.company.athleteapiart.util.clientSecret
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

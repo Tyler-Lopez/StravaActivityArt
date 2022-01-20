@@ -3,9 +3,7 @@ package com.company.athleteapiart.presentation.login_screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.dao.OAuth2Dao
@@ -13,10 +11,8 @@ import com.company.athleteapiart.data.database.OAuth2Database
 import com.company.athleteapiart.data.entities.OAuth2Entity
 import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.*
-import com.google.android.gms.common.util.CollectionUtils.setOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.lang.reflect.Array.set
 import java.util.*
 import javax.inject.Inject
 
@@ -41,16 +37,16 @@ class LoginScreenViewModel @Inject constructor(
         viewModelScope.launch {
             when {
                 // If the user just authorized with Strava...
-                Oauth2.authorizationCode != "null" -> {
+                OAuth2.authorizationCode != "null" -> {
                     val result = repository.getAccessToken(
                         clientId = 75992,
                         clientSecret = clientSecret,
-                        code = Oauth2.authorizationCode,
+                        code = OAuth2.authorizationCode,
                         grantType = "authorization_code"
                     )
                     when (result) {
                         is Resource.Success -> {
-                            Oauth2.accessToken = result.data.access_token
+                            OAuth2.accessToken = result.data.access_token
                             oAuthDao.value!!.clearOauth2()
                             oAuthDao.value!!.insertOauth2(
                                 OAuth2Entity(
@@ -74,12 +70,39 @@ class LoginScreenViewModel @Inject constructor(
                     isLoading.value = false
                 }
                 TimeUtils.accessTokenExpired(oAuth2Entity.receivedOn) -> {
+                    println("HERE HERE")
+                    println("ACCESS TOKEN IN NEED OF REFRESH")
                     // Get refresh token
+                    val result = repository.getAccessTokenFromRefresh(
+                        clientId = 75992,
+                        clientSecret = clientSecret,
+                        refreshToken = oAuth2Entity.refreshToken,
+                        grantType = "authorization_code"
+                    )
+                    when (result) {
+                        is Resource.Success -> {
+                            OAuth2.accessToken = result.data.access_token
+                            oAuthDao.value!!.clearOauth2()
+                            oAuthDao.value!!.insertOauth2(
+                                OAuth2Entity(
+                                    receivedOn = (GregorianCalendar().timeInMillis / 1000).toInt(),
+                                    accessToken = result.data.access_token,
+                                    refreshToken = result.data.refresh_token
+                                )
+                            )
+                            requestLogin.value = false
+                            isLoading.value = false
+                        }
+                        is Resource.Error -> {
+                            //   isLoading.value = false
+                            //   return@launch
+                        }
+                    }
 
                 }
                 else -> {
                     // Not expired, use token
-                    Oauth2.accessToken = oAuth2Entity.accessToken
+                    OAuth2.accessToken = oAuth2Entity.accessToken
                     requestLogin.value = false
                     isLoading.value = false
                 }

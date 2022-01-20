@@ -30,6 +30,7 @@ import com.company.athleteapiart.presentation.activity_select_screen.composable.
 import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableTopBar
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesVisualizeViewModel
 import com.company.athleteapiart.presentation.activity_visualize_screen.activitiesVisualizeCanvas
+import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.TimeUtils
@@ -37,24 +38,30 @@ import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @OptIn(ExperimentalPermissionsApi::class)
+@Destination(start = true)
 @Composable
 fun TimeSelectScreen(
-    navController: NavController,
+    navigator: DestinationsNavigator,
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
     val activitiesSize by remember { viewModel.activitiesSize }
+
     Scaffold(
         topBar = {
             ComposableTopBar {
-                ComposableReturnButton(navController = navController)
+                ComposableReturnButton(onClick = { navigator.navigateUp() })
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
@@ -77,14 +84,15 @@ fun TimeSelectScreen(
                     AthleteActivities.selectedActivities.value = AthleteActivities.activities.value
                     Text("${AthleteActivities.selectedActivities.value.size} activities loaded")
                     Button(onClick = {
-                        navController.navigate("activity_screen")
+                        navigator.navigate(
+                            direction = ActivitiesScreenDestination
+                        )
                     }) {
                         Text("draw")
 
 
                     }
-                }
-                else if (isLoading) {
+                } else if (isLoading) {
                     Text("Loading Activities ${activitiesSize}")
                 } else if (loadError != "") {
                     Text("$loadError error")

@@ -33,12 +33,15 @@ import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @OptIn(ExperimentalPermissionsApi::class)
+@Destination
 @Composable
 fun ActivitiesScreen(
-    navController: NavController,
+    navigator: DestinationsNavigator,
     viewModel: ActivitiesVisualizeViewModel = hiltViewModel()
 ) {
     var activities by remember { viewModel.activities }
@@ -52,7 +55,7 @@ fun ActivitiesScreen(
     Scaffold(
         topBar = {
             ComposableTopBar {
-                ComposableReturnButton(navController = navController)
+                ComposableReturnButton(onClick = { navigator.navigateUp() })
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
