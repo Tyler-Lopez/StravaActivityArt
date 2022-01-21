@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
 import com.company.athleteapiart.util.AthleteActivities
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -38,6 +39,9 @@ fun LoadActivitiesScreen(
             Text("$activitiesSize activities Loaded.")
             Button(onClick = {
                 AthleteActivities.selectedActivities = viewModel.activities.value
+                navigator.navigate(
+                    direction = ActivitiesScreenDestination
+                )
             }) {
                 Text("Draw")
             }

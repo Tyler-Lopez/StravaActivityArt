@@ -61,6 +61,7 @@ class LoadActivitiesViewModel @Inject constructor(
             ) {
                 is Resource.Success -> {
                     if (result.data.size < 100) {
+                        activities.value.addAll(result.data)
                         endReached.value = true
                         isLoading.value = false
                     }
