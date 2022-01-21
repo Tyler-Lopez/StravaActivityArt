@@ -77,7 +77,7 @@ class LoginScreenViewModel @Inject constructor(
                         clientId = 75992,
                         clientSecret = clientSecret,
                         refreshToken = oAuth2Entity.refreshToken,
-                        grantType = "authorization_code"
+                        grantType = "refresh_token"
                     )
                     when (result) {
                         is Resource.Success -> {
@@ -94,6 +94,7 @@ class LoginScreenViewModel @Inject constructor(
                             isLoading.value = false
                         }
                         is Resource.Error -> {
+                            println(result.message + " ERROR ON FETCH REFRESH")
                             //   isLoading.value = false
                             //   return@launch
                         }
