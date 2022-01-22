@@ -1,6 +1,8 @@
 package com.company.athleteapiart.presentation.load_activities_screen
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.remote.responses.Activity
@@ -19,11 +21,10 @@ class LoadActivitiesViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
-    var activities = mutableStateOf<MutableList<Activity>>(mutableListOf())
+    var activities = mutableStateListOf<Activity>()
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
-    var activitiesSize = mutableStateOf(activities.value.size)
 
 
     fun loadActivitiesByYear(year: Int) {
@@ -61,12 +62,12 @@ class LoadActivitiesViewModel @Inject constructor(
             ) {
                 is Resource.Success -> {
                     if (result.data.size < 100) {
-                        activities.value.addAll(result.data)
+                        activities.addAll(result.data)
                         endReached.value = true
                         isLoading.value = false
                     }
                     else {
-                        activities.value.addAll(result.data)
+                        activities.addAll(result.data)
                         getActivities(page + 1, before, after)
                     }
                 }

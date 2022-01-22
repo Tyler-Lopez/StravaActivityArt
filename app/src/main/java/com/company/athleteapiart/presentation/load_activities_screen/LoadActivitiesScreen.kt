@@ -20,25 +20,25 @@ fun LoadActivitiesScreen(
     navigator: DestinationsNavigator,
     viewModel: LoadActivitiesViewModel = hiltViewModel()
 ) {
+    val activities = viewModel.activities
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
-    val activitiesSize by remember { viewModel.activitiesSize }
 
-    if (viewModel.activities.value.isEmpty() && !viewModel.isLoading.value && !endReached)
+    if (viewModel.activities.isEmpty() && !viewModel.isLoading.value && !endReached)
         viewModel.loadActivitiesByYear(year)
 
     Column() {
         if (isLoading) {
             Text("Loading Activities")
-            Text("$activitiesSize activities loaded...")
+            Text("${activities.size} activities Loaded.")
         } else if (loadError != "") {
             Text("$loadError error")
-            Text("activities size is ${activitiesSize}")
+            Text("${activities.size} activities Loaded.")
         } else {
-            Text("$activitiesSize activities Loaded.")
+            Text("${activities.size} activities Loaded.")
             Button(onClick = {
-                AthleteActivities.selectedActivities = viewModel.activities.value
+                AthleteActivities.selectedActivities = viewModel.activities
                 navigator.navigate(
                     direction = ActivitiesScreenDestination
                 )
