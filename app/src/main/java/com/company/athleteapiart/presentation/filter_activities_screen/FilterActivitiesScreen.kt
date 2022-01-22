@@ -1,6 +1,9 @@
-package com.company.athleteapiart.presentation.load_activities_screen
+package com.company.athleteapiart.presentation.filter_activities_screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,31 +14,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.company.athleteapiart.presentation.composable.ComposableHeader
-import com.company.athleteapiart.presentation.composable.ComposableReturnButton
-import com.company.athleteapiart.presentation.composable.ComposableTopBar
-import com.company.athleteapiart.presentation.destinations.FilterActivitiesScreenDestination
+import com.company.athleteapiart.presentation.composable.*
+import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
 import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
-import com.company.athleteapiart.ui.theme.Roboto
-import com.company.athleteapiart.ui.theme.White
+import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun LoadActivitiesScreen(
-    year: Int,
+fun FilterActivitiesScreen(
     navigator: DestinationsNavigator,
-    viewModel: LoadActivitiesViewModel = hiltViewModel()
+    viewModel: FilterActivitiesViewModel = hiltViewModel()
 ) {
-    val activities = viewModel.activities
-    val endReached by remember { viewModel.endReached }
-    val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
-
-    if (viewModel.activities.isEmpty() && !viewModel.isLoading.value && !endReached)
-        viewModel.loadActivitiesByYear(year)
 
     Scaffold(
         topBar = {
@@ -48,7 +41,7 @@ fun LoadActivitiesScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = "Loading",
+                        text = "",
                         fontFamily = Roboto,
                         fontSize = 20.sp,
                         color = White,
@@ -77,18 +70,54 @@ fun LoadActivitiesScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             ComposableHeader(
-                                text = "Loading",
+                                text = "Processing",
                                 isBold = true
                             )
                         }
-                        Text("${activities.size} Activities Loaded")
-                    }
-                    loadError != "" -> {
-                        Text("$loadError error")
-                        Text("${activities.size} activities Loaded.")
                     }
                     else -> {
-                        navigator.navigate(direction = FilterActivitiesScreenDestination())
+                        ComposableParagraph(
+                            text = "${viewModel.activitySize} Activities Loaded",
+                            color = StravaOrange,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, start = 20.dp, end = 20.dp)
+                        )
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.9f)
+                                .padding(vertical = 10.dp, horizontal = 20.dp)
+                                .background(WarmGrey40)
+                                .border(
+                                    width = 2.dp,
+                                    color = WarmGrey20
+                                )
+
+                        ) {
+
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 10.dp, start = 20.dp, end = 20.dp),
+                                onClick = {
+                                    AthleteActivities.selectedActivities = AthleteActivities.activities.value
+                                    navigator.navigate(ActivitiesScreenDestination)
+                                }
+                            ) {
+                                ComposableHeader(
+                                    text = "Apply Filters",
+                                    color = White
+                                )
+                            }
+                        }
                     }
                 }
             }

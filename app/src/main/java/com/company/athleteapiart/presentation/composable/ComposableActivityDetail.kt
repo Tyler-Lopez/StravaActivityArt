@@ -1,6 +1,5 @@
-package com.company.athleteapiart.presentation.activity_select_screen.composable
+package com.company.athleteapiart.presentation.composable
 
-import android.hardware.lights.Light
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text

@@ -2,15 +2,12 @@ package com.company.athleteapiart.presentation.load_activities_screen
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.data.ActivitiesMetadata
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.repository.ActivityRepository
-import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.OAuth2
-import com.company.athleteapiart.util.Resource
-import com.company.athleteapiart.util.clientSecret
+import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -22,6 +19,7 @@ class LoadActivitiesViewModel @Inject constructor(
 ) : ViewModel() {
 
     var activities = mutableStateListOf<Activity>()
+    lateinit var activitiesMetadata: ActivitiesMetadata
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
@@ -41,7 +39,7 @@ class LoadActivitiesViewModel @Inject constructor(
             beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)
             val before = (beforeDate.timeInMillis / 1000).toInt()
 
-            println("here, before is $before after is $after")
+            AthleteActivities.activities.value.clear()
             getActivities(
                 page = 1,
                 before = before,
@@ -63,6 +61,7 @@ class LoadActivitiesViewModel @Inject constructor(
                 is Resource.Success -> {
                     if (result.data.size < 100) {
                         activities.addAll(result.data)
+                        AthleteActivities.activities.value = activities
                         endReached.value = true
                         isLoading.value = false
                     }

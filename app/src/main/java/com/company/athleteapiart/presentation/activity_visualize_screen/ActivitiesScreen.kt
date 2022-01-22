@@ -25,10 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.navigation.NavController
-import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableReturnButton
-import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableTopBar
+import com.company.athleteapiart.presentation.composable.ComposableReturnButton
+import com.company.athleteapiart.presentation.composable.ComposableTopBar
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage

@@ -1,22 +1,25 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableReturnButton
-import com.company.athleteapiart.presentation.activity_select_screen.composable.ComposableTopBar
-import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
+import com.company.athleteapiart.presentation.composable.ComposableAppNameHorizontal
+import com.company.athleteapiart.presentation.composable.ComposableHeader
+import com.company.athleteapiart.presentation.composable.ComposableParagraph
+import com.company.athleteapiart.presentation.composable.ComposableTopBar
 import com.company.athleteapiart.presentation.destinations.LoadActivitiesScreenDestination
-import com.company.athleteapiart.presentation.load_activities_screen.LoadActivitiesScreen
 import com.company.athleteapiart.ui.theme.*
-import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.TimeUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ramcosta.composedestinations.annotation.Destination
@@ -37,7 +40,7 @@ fun TimeSelectScreen(
     Scaffold(
         topBar = {
             ComposableTopBar {
-                ComposableReturnButton(onClick = { navigator.navigateUp() })
+                //  ComposableReturnButton(onClick = { navigator.navigateUp() })
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -45,7 +48,7 @@ fun TimeSelectScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = "Time Select",
+                        text = "",
                         fontFamily = Roboto,
                         fontSize = 20.sp,
                         color = White,
@@ -55,19 +58,60 @@ fun TimeSelectScreen(
             }
         },
         content = {
-
             Column(
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                for (year in TimeUtils.yearsAvailable()) {
-                    Button(onClick = {
-                        navigator.navigate(
-                            direction = LoadActivitiesScreenDestination(year)
+                ComposableAppNameHorizontal(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                )
+                ComposableParagraph(
+                    text = "To create a print of your activities, " +
+                            "begin by selecting which span of time you " +
+                            "would like to visualize activities from.",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp, horizontal = 20.dp)
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 10.dp, horizontal = 20.dp)
+                        .background(WarmGrey40)
+                        .border(
+                            width = 2.dp,
+                            color = WarmGrey20
                         )
-                    }) {
-                        Text("$year")
+
+                ) {
+                    item { Spacer(modifier = Modifier.height(5.dp)) }
+                    for (year in TimeUtils.yearsAvailable().reversed()) {
+                        item {
+                            Button(
+                                onClick = {
+                                    navigator.navigate(
+                                        direction = LoadActivitiesScreenDestination(year)
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 5.dp, horizontal = 20.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = WarmGrey20)
+                            ) {
+                                Text(
+                                    text = "$year",
+                                    fontFamily = Roboto,
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.Light,
+                                    color = StravaOrange
+                                )
+                            }
+                        }
                     }
+                    item { Spacer(modifier = Modifier.height(5.dp)) }
                 }
             }
         }

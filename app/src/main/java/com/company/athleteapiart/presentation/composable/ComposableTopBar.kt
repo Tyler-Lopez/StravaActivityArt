@@ -1,4 +1,4 @@
-package com.company.athleteapiart.presentation.activity_select_screen.composable
+package com.company.athleteapiart.presentation.composable
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
