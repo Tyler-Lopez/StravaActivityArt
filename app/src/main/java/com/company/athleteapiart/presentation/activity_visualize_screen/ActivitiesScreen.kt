@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.company.athleteapiart.presentation.composable.ComposableReturnButton
+import com.company.athleteapiart.presentation.composable.ComposableSaveImageButton
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
+import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
@@ -53,43 +55,25 @@ fun ActivitiesScreen(
 
     Scaffold(
         topBar = {
-            ComposableTopBar {
-                ComposableReturnButton(onClick = { navigator.navigateUp() })
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Button(
-                        colors = ButtonDefaults.buttonColors(StravaOrange),
-                        elevation = ButtonDefaults.elevation(0.dp),
-                        onClick = {
-                            saveImage(
-                                bitmap = activitiesVisualizeCanvas(
-                                    maxWidth = 3420,
-                                    activities = activities
-                                ),
-                                context = context,
-                                folderName = "ActivityVisualizer"
-                            )
-                        }
-                    ) {
-
-                        Text(
-                            text = "Save",
-                            fontFamily = Roboto,
-                            fontSize = 20.sp,
-                            color = White,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Icon(
-                            imageVector = Icons.Default.Save,
-                            contentDescription = "",
-                            tint = White,
-                            modifier = Modifier.padding(start = 5.dp)
+            ComposableTopBar(
+                leftContent = {
+                    ComposableReturnButton(onClick = {
+                        navigator.navigateUp()
+                    })
+                },
+                rightContent = {
+                    ComposableSaveImageButton {
+                        saveImage(
+                            bitmap = activitiesVisualizeCanvas(
+                                maxWidth = 3420,
+                                activities = activities
+                            ),
+                            context = context,
+                            folderName = "ActivityVisualizer"
                         )
                     }
                 }
-            }
+            )
         },
         content = {
             Column(

@@ -11,11 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.composable.ComposableAppNameHorizontal
-import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.composable.ComposableParagraph
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
 import com.company.athleteapiart.presentation.destinations.LoadActivitiesScreenDestination
@@ -39,23 +37,7 @@ fun TimeSelectScreen(
 
     Scaffold(
         topBar = {
-            ComposableTopBar {
-                //  ComposableReturnButton(onClick = { navigator.navigateUp() })
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = "",
-                        fontFamily = Roboto,
-                        fontSize = 20.sp,
-                        color = White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+            ComposableTopBar(null, null)
         },
         content = {
             Column(

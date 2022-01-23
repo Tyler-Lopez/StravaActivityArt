@@ -7,18 +7,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.composable.ComposableReturnButton
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
 import com.company.athleteapiart.presentation.destinations.FilterActivitiesScreenDestination
 import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
-import com.company.athleteapiart.ui.theme.Roboto
-import com.company.athleteapiart.ui.theme.White
-import com.company.athleteapiart.util.AthleteActivities
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -39,23 +34,16 @@ fun LoadActivitiesScreen(
 
     Scaffold(
         topBar = {
-            ComposableTopBar {
-                ComposableReturnButton(onClick = { navigator.navigate(TimeSelectScreenDestination) })
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = "Loading",
-                        fontFamily = Roboto,
-                        fontSize = 20.sp,
-                        color = White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+            ComposableTopBar(
+                leftContent = {
+                    ComposableReturnButton(onClick = {
+                        navigator.navigate(
+                            TimeSelectScreenDestination
+                        )
+                    })
+                },
+                rightContent = null
+            )
         },
         content = {
             Column(

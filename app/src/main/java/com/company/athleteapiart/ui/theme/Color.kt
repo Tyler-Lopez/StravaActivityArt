@@ -2,7 +2,6 @@ package com.company.athleteapiart.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Teal200 = Color(0xFF03DAC5)
 // https://1n4rcn88bk4ziht713dla5ub-wpengine.netdna-ssl.com/wp-content/uploads/2019/03/StravaBrandBook_Feb19-1.pdf
 // https://material.io/resources/color/#!/?view.left=1&view.right=1&primary.color=949494
 val WarmGrey90 = Color(0xFF494949)

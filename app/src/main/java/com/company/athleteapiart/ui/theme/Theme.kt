@@ -10,13 +10,13 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorPalette = darkColors(
     primary = StravaOrange,
     primaryVariant = DarkerOrange,
-    secondary = Teal200
+    secondary = StravaOrange
 )
 
 private val LightColorPalette = lightColors(
     primary = StravaOrange,
     primaryVariant = DarkerOrange,
-    secondary = Teal200,
+    secondary = StravaOrange,
     background = Color(242, 242, 242),
 
     /* Other default colors to override
