@@ -66,7 +66,7 @@ fun ActivitiesScreen(
                         saveImage(
                             bitmap = activitiesVisualizeCanvas(
                                 maxWidth = 3420,
-                                activities = activities
+                                activities = activities.value
                             ),
                             context = context,
                             folderName = "ActivityVisualizer"
@@ -162,7 +162,7 @@ fun ActivitiesScreen(
                                             maxWidth = LocalDensity.current.run {
                                                 maxWidth.toPx().toInt()
                                             },
-                                            activities = activities
+                                            activities = activities.value
                                         )
                                     )
                                 }

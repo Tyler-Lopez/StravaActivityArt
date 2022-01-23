@@ -3,6 +3,7 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
 import com.company.athleteapiart.data.remote.responses.Activity
+import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
@@ -13,6 +14,9 @@ fun activitiesVisualizeCanvas(
     maxWidth: Int,
     activities: List<Activity>
 ): Bitmap {
+
+    val format = AthleteActivities.formatting
+    val background = format.value.backgroundColor
 
     // Create a bitmap which is a scaled representation of a 3420x4320 image
     val desiredWidth = 3420f
@@ -36,6 +40,8 @@ fun activitiesVisualizeCanvas(
     )
     // Draw canvas background
     val backgroundColor = Paint()
+    backgroundColor.color = Color
+        .rgb(background.red, background.green, background.blue)
     canvas.drawRect(
         Rect(
             0,

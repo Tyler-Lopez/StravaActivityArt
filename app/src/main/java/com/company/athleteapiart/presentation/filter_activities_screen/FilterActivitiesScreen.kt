@@ -24,9 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
+import com.company.athleteapiart.presentation.destinations.FormatScreenDestination
 import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
+import com.company.athleteapiart.util.meterToMiles
+import com.company.athleteapiart.util.monthFromIso8601
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -37,6 +40,8 @@ fun FilterActivitiesScreen(
     viewModel: FilterActivitiesViewModel = hiltViewModel()
 ) {
     val isLoading by remember { viewModel.isLoading }
+    val minDistanceSlider by remember { viewModel.minDistanceSlider }
+    val maxDistanceSlider by remember { viewModel.maxDistanceSlider }
 
     Scaffold(
         topBar = {
@@ -142,56 +147,20 @@ fun FilterActivitiesScreen(
                                         text = "Distance",
                                         color = StravaOrange
                                     )
-                                    ComposableParagraph(text = "Minimum Distance")
-                                    Slider(
-                                        value = 10f,
-                                        onValueChange = {
-
-                                        },
-                                        valueRange = 0f..100f
+                                    val valueRange =
+                                        viewModel.minimumDistance..viewModel.maximumDistance
+                                    ComposableDistanceSlider(
+                                        header = "Minimum Distance",
+                                        value = minDistanceSlider,
+                                        valueRange = valueRange,
+                                        onValueChange = { viewModel.setMinDistanceSlider(it) }
                                     )
-                                    ComposableParagraph(text = "Maximum Distance")
-                                    Slider(
-                                        value = 10f,
-                                        onValueChange = {
-
-                                        },
-                                        valueRange = 0f..100f,
-                                        modifier = Modifier.drawBehind {
-                                            val incrementWidth =
-                                                (this.size.width - 10.dp.toPx()) / 10f
-                                            for (i in 0..10) {
-                                                drawLine(
-                                                    color = StravaOrange,
-                                                    start = Offset(
-                                                        x = 5.dp.toPx() + i * incrementWidth,
-                                                        y = this.center.y - 10f
-                                                    ),
-                                                    end = Offset(
-                                                        x = 5.dp.toPx() + i * incrementWidth,
-                                                        y = this.center.y + 10f
-                                                    ),
-                                                    cap = StrokeCap.Round,
-                                                    strokeWidth = 2f
-                                                )
-                                                drawIntoCanvas {
-                                                    val stroke = Paint()
-                                                    stroke.textAlign = Paint.Align.CENTER
-                                                    stroke.textSize = 25f
-                                                    stroke.color = Color.rgb(148, 148, 148)
-                                                    stroke.typeface = Typeface.create("Arial", Typeface.NORMAL)
-
-                                                    it.nativeCanvas.drawText(
-                                                        i.toString(),
-                                                        5.dp.toPx() + i * incrementWidth,
-                                                        this.center.y + 40f,
-                                                        stroke
-                                                    )
-                                                }
-                                            }
-                                        }
+                                    ComposableDistanceSlider(
+                                        header = "Maximum Distance",
+                                        value = maxDistanceSlider,
+                                        valueRange = valueRange,
+                                        onValueChange = { viewModel.setMaxDistanceSlider(it) }
                                     )
-                                    Spacer(modifier = Modifier.height(20.dp))
                                 }
                             }
                             item {
@@ -205,27 +174,32 @@ fun FilterActivitiesScreen(
             }
         },
         bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(75.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 10.dp, start = 20.dp, end = 20.dp),
-                    onClick = {
-                        AthleteActivities.selectedActivities =
-                            AthleteActivities.activities.value
-                        navigator.navigate(ActivitiesScreenDestination)
+            ComposableLargeButton(
+                text = "Apply Filters",
+                onClick = {
+                    
+                    AthleteActivities.filteredActivities.value.clear()
+
+                    for (activity in AthleteActivities.activities.value) {
+                        // Filter undesired months, activities, and distances
+                        val activityMonth = activity.start_date_local.monthFromIso8601()
+                        val activityType = activity.type
+                        if (
+                            // Month check
+                            !(viewModel.checkboxes.getOrDefault(activityMonth, false)) ||
+                            // Type check
+                            !(viewModel.checkboxes.getOrDefault(activityType, false)) ||
+                            // Distance check
+                            activity.distance < viewModel.minDistanceSlider.value ||
+                            activity.distance > viewModel.maxDistanceSlider.value
+                        ) {
+                            continue
+                        }
+                        AthleteActivities.filteredActivities.value.add(activity)
                     }
-                ) {
-                    ComposableHeader(
-                        text = "Apply Filters",
-                        color = White
-                    )
+                    navigator.navigate(FormatScreenDestination)
+
                 }
-            }
+            )
         })
 }

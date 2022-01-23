@@ -12,7 +12,7 @@ class ActivitiesVisualizeViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
-    var activities = AthleteActivities.selectedActivities
+    var activities = AthleteActivities.filteredActivities
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)

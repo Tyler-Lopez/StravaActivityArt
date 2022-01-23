@@ -87,7 +87,7 @@ fun TimeSelectScreen(
                                     text = "$year",
                                     fontFamily = Roboto,
                                     fontSize = 30.sp,
-                                    fontWeight = FontWeight.Light,
+                                    fontWeight = FontWeight.Normal,
                                     color = StravaOrange
                                 )
                             }

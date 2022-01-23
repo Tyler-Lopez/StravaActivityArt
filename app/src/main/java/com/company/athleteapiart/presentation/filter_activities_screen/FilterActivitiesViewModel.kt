@@ -20,10 +20,14 @@ class FilterActivitiesViewModel @Inject constructor(
 
     var isLoading = mutableStateOf(false)
     var checkboxes = mutableStateMapOf<String, Boolean>()
+    var minDistanceSlider = mutableStateOf(0f)
+    var maxDistanceSlider = mutableStateOf(0f)
+
 
     var months = mutableSetOf<String>()
     var activityTypes = mutableSetOf<String>()
-    var activitySize = 0
+    var minimumDistance = 0f
+    var maximumDistance = 0f
 
     init {
         isLoading.value = true
@@ -33,13 +37,19 @@ class FilterActivitiesViewModel @Inject constructor(
     fun flipValue(key: String) {
         checkboxes[key] = !checkboxes.getOrDefault(key, false)
     }
+
     private fun processActivities() {
         viewModelScope.launch {
             val activities = AthleteActivities.activities
-            activitySize = activities.value.size
             for (activity in activities.value) {
                 months.add(activity.start_date_local.monthFromIso8601())
                 activityTypes.add(activity.type)
+                if (minimumDistance > activity.distance) minimumDistance = activity
+                    .distance
+                    .toFloat()
+                if (maximumDistance < activity.distance) maximumDistance = activity
+                    .distance
+                    .toFloat()
             }
             for (month in months) {
                 checkboxes[month] = true
@@ -47,8 +57,17 @@ class FilterActivitiesViewModel @Inject constructor(
             for (activity in activityTypes) {
                 checkboxes[activity] = true
             }
+            setMaxDistanceSlider(maximumDistance)
             isLoading.value = false
         }
+    }
+
+    fun setMaxDistanceSlider(distance: Float) {
+        maxDistanceSlider.value = distance
+    }
+
+    fun setMinDistanceSlider(distance: Float) {
+        minDistanceSlider.value = distance
     }
 
 }

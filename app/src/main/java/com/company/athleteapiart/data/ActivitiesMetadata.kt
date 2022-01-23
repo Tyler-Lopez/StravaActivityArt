@@ -7,8 +7,3 @@ data class ActivitiesMetadata(
   //  val gearTypes: Set<String>,
     val months: Set<String>,
 )
-
-data class FilteredActivities(
-    val activities: List<Activity>,
-
-)
