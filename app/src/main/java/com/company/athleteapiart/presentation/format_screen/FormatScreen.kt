@@ -112,6 +112,28 @@ fun FormatScreen(
                             )
                         }
                     }
+                    item {
+                        ComposableItemContainer {
+                            ComposableHeader(
+                                text = "Activities Color",
+                                color = StravaOrange
+                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Checkbox(
+                                    checked = viewModel.useConditionalFormatting.value,
+                                    onCheckedChange = {
+                                        viewModel.useConditionalFormatting.value =
+                                            !viewModel.useConditionalFormatting.value
+                                    })
+                                ComposableParagraph(text = "Use Conditional Formatting?")
+                            }
+                            ComposableSubtext(
+                                text = "E.g. Color on distance, where short runs are red and long are green",
+                                modifier = Modifier.padding(horizontal = 20.dp)
+                            )
+
+                        }
+                    }
                 }
             }
         },
