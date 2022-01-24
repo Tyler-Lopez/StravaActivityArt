@@ -15,6 +15,10 @@ class FormatViewModel @Inject constructor(
     var backgroundColorGreen = mutableStateOf(0)
     var backgroundColorBlue = mutableStateOf(0)
 
+    var activityColorRed = mutableStateOf(255)
+    var activityColorGreen = mutableStateOf(255)
+    var activityColorBlue = mutableStateOf(255)
+
     var useConditionalFormatting = mutableStateOf(false)
 
 }

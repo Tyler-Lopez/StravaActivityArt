@@ -5,8 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Checkbox
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,8 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
-import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
-import com.company.athleteapiart.ui.theme.Black
 import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.ui.theme.WarmGrey20
 import com.company.athleteapiart.ui.theme.WarmGrey40
@@ -38,6 +34,11 @@ fun FormatScreen(
     val bgGreen by remember { viewModel.backgroundColorGreen }
     val bgBlue by remember { viewModel.backgroundColorBlue }
 
+    val actRed by remember { viewModel.activityColorRed }
+    val actGreen by remember { viewModel.activityColorGreen }
+    val actBlue by remember { viewModel.activityColorBlue }
+
+    val conditionallyFormat by remember { viewModel.useConditionalFormatting }
 
     Scaffold(
         topBar = {
@@ -131,8 +132,49 @@ fun FormatScreen(
                                 text = "E.g. Color on distance, where short runs are red and long are green",
                                 modifier = Modifier.padding(horizontal = 20.dp)
                             )
-
+                            if (conditionallyFormat) {
+                                //
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(70.dp)
+                                        .padding(10.dp)
+                                        .background(
+                                            color = Color(
+                                                actRed,
+                                                actGreen,
+                                                actBlue
+                                            )
+                                        )
+                                        .border(
+                                            width = 5.dp,
+                                            color = Color(1f, 1f, 1f, 0.2f)
+                                        )
+                                )
+                                ComposableRGBSlider(
+                                    text = "Red",
+                                    color = Color.Red,
+                                    value = actRed.toFloat(),
+                                    onValueChange = { viewModel.activityColorRed.value = it }
+                                )
+                                ComposableRGBSlider(
+                                    text = "Green",
+                                    color = Color(0, 128, 0),
+                                    value = actGreen.toFloat(),
+                                    onValueChange = { viewModel.activityColorGreen.value = it }
+                                )
+                                ComposableRGBSlider(
+                                    text = "Blue",
+                                    color = Color.Blue,
+                                    value = actBlue.toFloat(),
+                                    onValueChange = { viewModel.activityColorBlue.value = it }
+                                )
+                            }
                         }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
             }
@@ -142,7 +184,9 @@ fun FormatScreen(
                 text = "Visualize Activities",
                 onClick = {
                     AthleteActivities.formatting.value = ActivitiesFormat(
-                        backgroundColor = Color(bgRed, bgGreen, bgBlue)
+                        backgroundColor = Color(bgRed, bgGreen, bgBlue),
+                        conditionallyFormat = conditionallyFormat,
+                        activityColor = Color(actRed, actGreen, actBlue)
                     )
                     navigator.navigate(ActivitiesScreenDestination)
                 }

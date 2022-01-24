@@ -8,6 +8,6 @@ import com.company.athleteapiart.ui.theme.Black
 object AthleteActivities {
     var activities = mutableStateOf<MutableList<Activity>>(mutableListOf())
     var filteredActivities = mutableStateOf<MutableList<Activity>>(mutableListOf())
-    var formatting = mutableStateOf(ActivitiesFormat(backgroundColor = Black))
+    var formatting = mutableStateOf(ActivitiesFormat())
     val activitiesByMonth = mutableStateOf<MutableMap<String, List<Activity>>>(mutableMapOf())
 }

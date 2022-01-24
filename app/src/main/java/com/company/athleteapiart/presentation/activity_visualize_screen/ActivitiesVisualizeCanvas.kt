@@ -2,6 +2,7 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
+import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
@@ -17,6 +18,7 @@ fun activitiesVisualizeCanvas(
 
     val format = AthleteActivities.formatting
     val background = format.value.backgroundColor
+    val actColor = format.value.activityColor
 
     // Create a bitmap which is a scaled representation of a 3420x4320 image
     val desiredWidth = 3420f
@@ -127,10 +129,10 @@ fun activitiesVisualizeCanvas(
         val distance = activity.distance.meterToMiles()
 
         pointsPaint.color = when {
-            distance <= 5 -> Color.RED
-            distance <= 10 -> Color.rgb(255, 153, 51)
-            distance <= 20 -> Color.YELLOW
-            else -> Color.GREEN
+            //  distance <= 5 -> Color.RED
+            //   distance <= 10 -> Color.rgb(255, 153, 51)
+            //   distance <= 20 -> Color.YELLOW
+            else -> Color.rgb(actColor.red, actColor.green, actColor.blue)
         }
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
