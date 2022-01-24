@@ -11,15 +11,18 @@ data class ActivitiesFormat(
     val conditions: List<ConditionalFormatRule> = listOf()
 )
 
-abstract class ConditionalFormatRule {
+abstract class ConditionalFormatRule(
+    val color: Color
+) {
     abstract fun conditionMatched(value: Comparable<Any>): Boolean
 }
 
 // Match on less than, equal to, or greater than a given amount of miles
 class DistanceRule(
     private val conditionValue: Double,
-    private val distanceCondition: DistanceCondition
-) : ConditionalFormatRule() {
+    private val distanceCondition: DistanceCondition,
+    color: Color
+) : ConditionalFormatRule(color) {
     override fun conditionMatched(value: Comparable<Any>): Boolean {
         return when (distanceCondition) {
             DistanceCondition.LESS_THAN -> value < conditionValue
@@ -31,8 +34,18 @@ class DistanceRule(
 
 // Exact match to color by activity
 class ActivityRule(
-    private val conditionValue: String
-) : ConditionalFormatRule() {
+    private val conditionValue: String,
+    color: Color
+) : ConditionalFormatRule(color) {
+    override fun conditionMatched(value: Comparable<Any>): Boolean =
+        value.compareTo(conditionValue) == 0
+}
+
+// Exact match to color by month
+class MonthRule(
+    private val conditionValue: String,
+    color: Color
+) : ConditionalFormatRule(color) {
     override fun conditionMatched(value: Comparable<Any>): Boolean =
         value.compareTo(conditionValue) == 0
 }
@@ -43,7 +56,6 @@ enum class DistanceCondition(
     LESS_THAN("Less than"),
     EQUAL_TO("Equal to"),
     GREATER_THAN("Greater than")
-
 }
 
 

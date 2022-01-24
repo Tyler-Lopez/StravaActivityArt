@@ -30,6 +30,7 @@ fun ComposableRGBSlider(
     text: String,
     color: androidx.compose.ui.graphics.Color,
     value: Float,
+    modifier: Modifier = Modifier,
     onValueChange: (Int) -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
