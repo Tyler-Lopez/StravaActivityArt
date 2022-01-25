@@ -86,7 +86,7 @@ fun FilterActivitiesScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(0.9f)
-                                .padding(vertical = 10.dp, horizontal = 20.dp)
+                                .padding(vertical = 10.dp, horizontal = 10.dp)
                                 .background(WarmGrey40)
                                 .border(
                                     width = 2.dp,

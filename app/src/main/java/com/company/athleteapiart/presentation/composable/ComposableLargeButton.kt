@@ -24,7 +24,7 @@ fun ComposableLargeButton(
         Button(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 10.dp, start = 20.dp, end = 20.dp),
+                .padding(horizontal = 10.dp),
             onClick = {
                 onClick()
             }

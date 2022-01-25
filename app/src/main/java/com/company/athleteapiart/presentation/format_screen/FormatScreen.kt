@@ -62,7 +62,7 @@ fun FormatScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.9f)
-                        .padding(vertical = 10.dp, horizontal = 20.dp)
+                        .padding(vertical = 10.dp, horizontal = 10.dp)
                         .background(WarmGrey40)
                         .border(
                             width = 2.dp,
@@ -132,23 +132,19 @@ fun FormatScreen(
                                 text = "E.g. Rather than all activities having the same color, make short runs red and long green",
                                 modifier = Modifier.padding(horizontal = 20.dp)
                             )
-                            /*
-                            Box(
-                                modifier = Modifier.height(20.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(2.dp)
-                                        .clip(RoundedCornerShape(2.dp))
-                                        .background(color = WarmGrey50)
-                                )
-                            }
-
-                            ComposableParagraph(text = if (conditionallyFormat) "Default Color" else "Activity Color")
+                        }
+                    }
+                    item {
+                        ComposableItemContainer {
+                            ComposableHeader(
+                                text = if (conditionallyFormat) "Default Activity Color" else "Activity Color",
+                                color = StravaOrange
+                            )
                             if (conditionallyFormat) {
-                                ComposableSubtext(text = "If ")
+                                ComposableSubtext(
+                                    text = "If not defined by a conditional formatting rule, activities will be the following color",
+                                    modifier = Modifier.padding(horizontal = 20.dp)
+                                )
                             }
                             Box(
                                 modifier = Modifier
@@ -187,9 +183,9 @@ fun FormatScreen(
                                 onValueChange = { viewModel.activityColorBlue.value = it }
                             )
 
-                             */
                         }
                     }
+
 
 
                     item {

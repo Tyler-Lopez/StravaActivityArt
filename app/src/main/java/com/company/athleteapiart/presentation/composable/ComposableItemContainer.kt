@@ -17,9 +17,9 @@ fun ComposableItemContainer(
     Box(
         modifier = Modifier
             .padding(
-                top = 20.dp,
-                start = 20.dp,
-                end = 20.dp
+                top = 10.dp,
+                start = 10.dp,
+                end = 10.dp
             )
             .background(WarmGrey20)
             .fillMaxWidth()
@@ -28,7 +28,7 @@ fun ComposableItemContainer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp, horizontal = 20.dp),
+                .padding(vertical = 10.dp, horizontal = 10.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
