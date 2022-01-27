@@ -1,34 +1,22 @@
 package com.company.athleteapiart.presentation.filter_activities_screen
 
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
-import com.company.athleteapiart.presentation.destinations.FormatScreenDestination
+import com.company.athleteapiart.presentation.destinations.FormatScreenOneDestination
 import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.meterToMiles
 import com.company.athleteapiart.util.monthFromIso8601
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -197,7 +185,7 @@ fun FilterActivitiesScreen(
                         }
                         AthleteActivities.filteredActivities.value.add(activity)
                     }
-                    navigator.navigate(FormatScreenDestination)
+                    navigator.navigate(FormatScreenOneDestination)
 
                 }
             )

@@ -134,6 +134,7 @@ fun activitiesVisualizeCanvas(
             //   distance <= 20 -> Color.YELLOW
             else -> Color.rgb(actColor.red, actColor.green, actColor.blue)
         }
+
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
         pointsPaint.style = Paint.Style.STROKE

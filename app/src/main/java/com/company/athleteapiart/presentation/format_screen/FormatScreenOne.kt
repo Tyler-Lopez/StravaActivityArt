@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -12,13 +11,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
+import com.company.athleteapiart.presentation.destinations.FormatScreenTwoDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.ramcosta.composedestinations.annotation.Destination
@@ -26,17 +24,13 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun FormatScreen(
+fun FormatScreenOne(
     navigator: DestinationsNavigator,
-    viewModel: FormatViewModel = hiltViewModel()
+    viewModel: FormatOneViewModel = hiltViewModel()
 ) {
     val bgRed by remember { viewModel.backgroundColorRed }
     val bgGreen by remember { viewModel.backgroundColorGreen }
     val bgBlue by remember { viewModel.backgroundColorBlue }
-
-    val actRed by remember { viewModel.activityColorRed }
-    val actGreen by remember { viewModel.activityColorGreen }
-    val actBlue by remember { viewModel.activityColorBlue }
 
     val conditionallyFormat by remember { viewModel.useConditionalFormatting }
 
@@ -135,60 +129,6 @@ fun FormatScreen(
                         }
                     }
                     item {
-                        ComposableItemContainer {
-                            ComposableHeader(
-                                text = if (conditionallyFormat) "Default Activity Color" else "Activity Color",
-                                color = StravaOrange
-                            )
-                            if (conditionallyFormat) {
-                                ComposableSubtext(
-                                    text = "If not defined by a conditional formatting rule, activities will be the following color",
-                                    modifier = Modifier.padding(horizontal = 20.dp)
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(70.dp)
-                                    .padding(10.dp)
-                                    .background(
-                                        color = Color(
-                                            actRed,
-                                            actGreen,
-                                            actBlue
-                                        )
-                                    )
-                                    .border(
-                                        width = 5.dp,
-                                        color = Color(1f, 1f, 1f, 0.2f)
-                                    )
-                            )
-                            ComposableRGBSlider(
-                                text = "Red",
-                                color = Color.Red,
-                                value = actRed.toFloat(),
-                                modifier = Modifier.padding(start = 10.dp),
-                                onValueChange = { viewModel.activityColorRed.value = it }
-                            )
-                            ComposableRGBSlider(
-                                text = "Green",
-                                color = Color(0, 128, 0),
-                                value = actGreen.toFloat(),
-                                onValueChange = { viewModel.activityColorGreen.value = it }
-                            )
-                            ComposableRGBSlider(
-                                text = "Blue",
-                                color = Color.Blue,
-                                value = actBlue.toFloat(),
-                                onValueChange = { viewModel.activityColorBlue.value = it }
-                            )
-
-                        }
-                    }
-
-
-
-                    item {
                         Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
@@ -196,14 +136,13 @@ fun FormatScreen(
         },
         bottomBar = {
             ComposableLargeButton(
-                text = "Visualize Activities",
+                text = "Continue",
                 onClick = {
                     AthleteActivities.formatting.value = ActivitiesFormat(
                         backgroundColor = Color(bgRed, bgGreen, bgBlue),
-                        conditionallyFormat = conditionallyFormat,
-                        activityColor = Color(actRed, actGreen, actBlue)
+                        conditionallyFormat = conditionallyFormat
                     )
-                    navigator.navigate(ActivitiesScreenDestination)
+                    navigator.navigate(FormatScreenTwoDestination)
                 }
             )
         })

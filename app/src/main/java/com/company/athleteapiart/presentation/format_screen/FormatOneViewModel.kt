@@ -12,7 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class FormatViewModel @Inject constructor(
+class FormatOneViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
@@ -20,18 +20,6 @@ class FormatViewModel @Inject constructor(
     var backgroundColorGreen = mutableStateOf(0)
     var backgroundColorBlue = mutableStateOf(0)
 
-    var activityColorRed = mutableStateOf(255)
-    var activityColorGreen = mutableStateOf(255)
-    var activityColorBlue = mutableStateOf(255)
-
     var useConditionalFormatting = mutableStateOf(false)
-
-    var rules = mutableStateListOf<ConditionalFormatRule>()
-
-    fun newRule() {
-        rules.add(
-            DistanceRule(4.0, DistanceCondition.LESS_THAN, Color.Black)
-        )
-    }
 
 }
