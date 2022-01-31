@@ -33,18 +33,6 @@ fun LoadActivitiesScreen(
         viewModel.loadActivitiesByYear(year)
 
     Scaffold(
-        topBar = {
-            ComposableTopBar(
-                leftContent = {
-                    ComposableReturnButton(onClick = {
-                        navigator.navigate(
-                            TimeSelectScreenDestination
-                        )
-                    })
-                },
-                rightContent = null
-            )
-        },
         content = {
             Column(
                 modifier = Modifier

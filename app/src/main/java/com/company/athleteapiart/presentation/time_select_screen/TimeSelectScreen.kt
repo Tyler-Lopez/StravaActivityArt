@@ -36,19 +36,17 @@ fun TimeSelectScreen(
     val isLoading by remember { viewModel.isLoading }
 
     Scaffold(
-        topBar = {
-            ComposableTopBar(null, null)
-        },
         content = {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ComposableAppNameHorizontal(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp)
                 )
                 ComposableParagraph(
                     text = "To create a print of your activities, " +
@@ -56,16 +54,16 @@ fun TimeSelectScreen(
                             "would like to visualize activities from.",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 20.dp)
+                        .padding(top = 24.dp)
                 )
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(vertical = 10.dp, horizontal = 20.dp)
+                        .padding(vertical = 24.dp)
                         .background(WarmGrey40)
                         .border(
-                            width = 2.dp,
-                            color = WarmGrey20
+                            width = 8.dp,
+                            color = WarmGrey50
                         )
 
                 ) {

@@ -38,16 +38,6 @@ fun FormatScreenTwo(
 
 
     Scaffold(
-        topBar = {
-            ComposableTopBar(
-                leftContent = {
-                    ComposableReturnButton(onClick = {
-                        navigator.navigateUp()
-                    })
-                },
-                rightContent = null
-            )
-        },
         content = {
             Column(
                 modifier = Modifier

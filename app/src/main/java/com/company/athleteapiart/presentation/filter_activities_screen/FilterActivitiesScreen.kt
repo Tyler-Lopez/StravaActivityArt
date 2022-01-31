@@ -32,18 +32,6 @@ fun FilterActivitiesScreen(
     val maxDistanceSlider by remember { viewModel.maxDistanceSlider }
 
     Scaffold(
-        topBar = {
-            ComposableTopBar(
-                leftContent = {
-                    ComposableReturnButton(onClick = {
-                        navigator.navigate(
-                            TimeSelectScreenDestination
-                        )
-                    })
-                },
-                rightContent = null
-            )
-        },
         content = {
             Column(
                 modifier = Modifier

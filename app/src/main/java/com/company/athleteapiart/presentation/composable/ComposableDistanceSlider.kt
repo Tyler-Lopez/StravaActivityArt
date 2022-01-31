@@ -31,7 +31,7 @@ fun ComposableDistanceSlider(
     onValueChange: (Float) -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        ComposableParagraph(text = "Maximum Distance")
+        ComposableParagraph(text = header)
         Spacer(modifier = Modifier
             .padding(horizontal = 5.dp)
             .width(2.dp)

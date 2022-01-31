@@ -2,8 +2,13 @@ package com.company.athleteapiart.presentation.composable
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.company.athleteapiart.ui.theme.StravaOrange
 
@@ -12,18 +17,37 @@ fun ComposableTopBar(
     leftContent: @Composable (RowScope.() -> Unit)?,
     rightContent: @Composable (RowScope.() -> Unit)?
 ) {
-    TopAppBar(
-        backgroundColor = StravaOrange,
-        modifier = Modifier.height(65.dp)
+    CompositionLocalProvider(
+        LocalRippleTheme provides ClearRippleTheme
     ) {
-        if (leftContent != null) leftContent()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.End
+        TopAppBar(
+            backgroundColor = StravaOrange,
+            modifier = Modifier.height(65.dp)
         ) {
-            if (rightContent != null) rightContent()
+            if (leftContent != null) leftContent()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                if (rightContent != null) rightContent()
+            }
         }
     }
+}
+
+// https://stackoverflow.com/questions/69783654/how-to-disable-ripple-effect-on-navigation-bar-items-in-jetpack-compose-and-mate
+// Important to remove the ripple effect on screen transition
+object ClearRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor(): Color = Color.Transparent
+
+    @Composable
+    override fun rippleAlpha() = RippleAlpha(
+        draggedAlpha = 0.0f,
+        focusedAlpha = 0.0f,
+        hoveredAlpha = 0.0f,
+        pressedAlpha = 0.0f,
+    )
 }

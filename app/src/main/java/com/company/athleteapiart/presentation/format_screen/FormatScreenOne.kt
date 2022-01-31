@@ -35,16 +35,6 @@ fun FormatScreenOne(
     val conditionallyFormat by remember { viewModel.useConditionalFormatting }
 
     Scaffold(
-        topBar = {
-            ComposableTopBar(
-                leftContent = {
-                    ComposableReturnButton(onClick = {
-                        navigator.navigateUp()
-                    })
-                },
-                rightContent = null
-            )
-        },
         content = {
             Column(
                 modifier = Modifier
