@@ -9,19 +9,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.composable.ComposableReturnButton
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
 import com.company.athleteapiart.presentation.destinations.FilterActivitiesScreenDestination
-import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
+// MAY BE DELETED SOON, IMPLEMENTED IN TIME SELECT INSTEAD
 @Composable
 fun LoadActivitiesScreen(
     year: Int,
-    navigator: DestinationsNavigator,
+    navController: NavHostController,
     viewModel: LoadActivitiesViewModel = hiltViewModel()
 ) {
     val activities = viewModel.activities
@@ -33,6 +33,9 @@ fun LoadActivitiesScreen(
         viewModel.loadActivitiesByYear(year)
 
     Scaffold(
+        topBar = {
+            ComposableTopBar(null, null)
+        },
         content = {
             Column(
                 modifier = Modifier
@@ -64,7 +67,7 @@ fun LoadActivitiesScreen(
                         Text("${activities.size} activities Loaded.")
                     }
                     else -> {
-                        navigator.navigate(direction = FilterActivitiesScreenDestination())
+                   //     navigator.navigate(direction = FilterActivitiesScreenDestination())
                     }
                 }
             }

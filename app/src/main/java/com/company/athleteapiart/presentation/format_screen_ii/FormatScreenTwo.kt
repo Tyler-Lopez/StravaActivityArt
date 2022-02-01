@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
@@ -24,10 +26,9 @@ import com.company.athleteapiart.util.AthleteActivities
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
 @Composable
 fun FormatScreenTwo(
-    navigator: DestinationsNavigator,
+    navController: NavHostController,
     viewModel: FormatTwoViewModel = hiltViewModel()
 ) {
     val conditionallyFormat by remember { viewModel.useConditionalFormatting }
@@ -38,6 +39,9 @@ fun FormatScreenTwo(
 
 
     Scaffold(
+        topBar = {
+                 ComposableTopBar(null, null)
+        },
         content = {
             Column(
                 modifier = Modifier
@@ -119,7 +123,7 @@ fun FormatScreenTwo(
                 text = "Continue",
                 onClick = {
                     AthleteActivities.formatting.value.activityColor = Color(actRed, actGreen, actBlue)
-                    navigator.navigate(ActivitiesScreenDestination)
+                    navController.navigate("${Screen.VisualizeActivities}")
                 }
             )
         })

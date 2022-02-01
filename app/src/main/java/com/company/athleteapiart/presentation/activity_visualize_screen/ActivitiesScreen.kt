@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.composable.ComposableReturnButton
 import com.company.athleteapiart.presentation.composable.ComposableSaveImageButton
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
-import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
@@ -39,10 +39,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination
 @Composable
 fun ActivitiesScreen(
-    navigator: DestinationsNavigator,
+    navController: NavHostController,
     viewModel: ActivitiesVisualizeViewModel = hiltViewModel()
 ) {
     var activities = viewModel.activities
@@ -58,7 +57,7 @@ fun ActivitiesScreen(
             ComposableTopBar(
                 leftContent = {
                     ComposableReturnButton(onClick = {
-                        navigator.navigateUp()
+                        navController.navigateUp()
                     })
                 },
                 rightContent = {

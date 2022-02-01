@@ -4,24 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.company.athleteapiart.presentation.NavGraphs
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
-import com.company.athleteapiart.presentation.composable.ComposableTopBar
+import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
+import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
+import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.manualcomposablecalls.ManualComposableCallsBuilder
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,6 +26,7 @@ class MainActivity : ComponentActivity() {
 
     // Create view model with URI if received
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -50,7 +48,33 @@ class MainActivity : ComponentActivity() {
                         }
                     })
                 else {
-                    DestinationsNavHost(navGraph = NavGraphs.root)
+                    val navController = rememberAnimatedNavController()
+                    AnimatedNavHost(
+                        navController,
+                        startDestination = "${Screen.TimeSelect}",
+                        enterTransition = { EnterTransition.None },
+                        exitTransition = { ExitTransition.None },
+                        popEnterTransition = { EnterTransition.None },
+                        popExitTransition = { ExitTransition.None }
+                    ) {
+                        composable(
+                            "${Screen.TimeSelect}"
+                        ) {
+                            TimeSelectScreen(navController)
+                        }
+                        composable(route = "${Screen.FilterActivities}") {
+                            FilterActivitiesScreen(navController)
+                        }
+                        composable(route = "${Screen.FormatActivitiesOne}") {
+                            FormatScreenOne(navController)
+                        }
+                        composable(route = "${Screen.FormatActivitiesTwo}") {
+                            FormatScreenTwo(navController)
+                        }
+                        composable(route = "${Screen.VisualizeActivities}") {
+                            ActivitiesScreen(navController)
+                        }
+                    }
                 }
             }
         }

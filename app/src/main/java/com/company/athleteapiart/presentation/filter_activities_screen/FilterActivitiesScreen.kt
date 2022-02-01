@@ -12,19 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.presentation.destinations.FormatScreenOneDestination
-import com.company.athleteapiart.presentation.destinations.TimeSelectScreenDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.monthFromIso8601
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
 @Composable
 fun FilterActivitiesScreen(
-    navigator: DestinationsNavigator,
+    navController: NavHostController,
     viewModel: FilterActivitiesViewModel = hiltViewModel()
 ) {
     val isLoading by remember { viewModel.isLoading }
@@ -32,6 +29,9 @@ fun FilterActivitiesScreen(
     val maxDistanceSlider by remember { viewModel.maxDistanceSlider }
 
     Scaffold(
+        topBar = {
+            ComposableTopBar(null, null)
+        },
         content = {
             Column(
                 modifier = Modifier
@@ -173,8 +173,7 @@ fun FilterActivitiesScreen(
                         }
                         AthleteActivities.filteredActivities.value.add(activity)
                     }
-                    navigator.navigate(FormatScreenOneDestination)
-
+                    navController.navigate("${Screen.FormatActivitiesOne}")
                 }
             )
         })

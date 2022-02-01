@@ -1,99 +1,174 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.ComposableAppNameHorizontal
+import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.composable.ComposableParagraph
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
-import com.company.athleteapiart.presentation.destinations.LoadActivitiesScreenDestination
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.TimeUtils
+import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Destination(start = true)
 @Composable
 fun TimeSelectScreen(
-    navigator: DestinationsNavigator,
+    navController: NavHostController,
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
+    val activities = viewModel.activities
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
     val isLoading by remember { viewModel.isLoading }
 
-    Scaffold(
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ComposableAppNameHorizontal(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                ComposableParagraph(
-                    text = "To create a print of your activities, " +
-                            "begin by selecting which span of time you " +
-                            "would like to visualize activities from.",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp)
-                )
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 24.dp)
-                        .background(WarmGrey40)
-                        .border(
-                            width = 8.dp,
-                            color = WarmGrey50
-                        )
+    val spacingMd = MaterialTheme.spacing.md
+    val spacingXxs = MaterialTheme.spacing.xxs
 
-                ) {
-                    item { Spacer(modifier = Modifier.height(5.dp)) }
-                    for (year in TimeUtils.yearsAvailable().reversed()) {
-                        item {
-                            Button(
-                                onClick = {
-                                    navigator.navigate(
-                                        direction = LoadActivitiesScreenDestination(year)
-                                    )
-                                },
+    Scaffold(
+        topBar = {
+            ComposableTopBar(null, null)
+        },
+        content = {
+            when {
+                // If the user just selected a YEAR
+                // Get activities from Strava API
+                isLoading -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colors.primary
+                        )
+                        Row(
+                            modifier = Modifier
+                                .padding(vertical = 10.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.Bottom,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            ComposableHeader(
+                                text = "Loading",
+                                isBold = true
+                            )
+                        }
+                        Text("${activities.size} Activities Loaded")
+                    }
+                }
+                // If error occurred when fetching data
+                loadError != "" -> {
+
+                }
+                // If data has been successfully received
+                endReached -> {
+                    navController.navigate("${Screen.FilterActivities}")
+                }
+                // Otherwise, present options to user
+                else -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(spacingMd),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ComposableAppNameHorizontal(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                        ComposableParagraph(
+                            text = "To create a print of your activities, " +
+                                    "begin by selecting which span of time you " +
+                                    "would like to visualize activities from.",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = spacingMd)
+                        )
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = spacingMd)
+                        ) {
+
+                            // Determine size of each button from width
+                            val maxWidth = this.maxWidth
+                            val yearsPerRow = if (maxWidth >= 600.dp) 3 else 2
+                            val buttonSize = (maxWidth - spacingMd * yearsPerRow) / yearsPerRow
+
+                            FlowRow(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 5.dp, horizontal = 20.dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = WarmGrey20)
+                                    .background(
+                                        brush = Brush
+                                            .verticalGradient(
+                                                colors = listOf(
+                                                    WarmGrey30,
+                                                    WarmGrey40
+                                                )
+                                            ),
+                                    )
+                                    .border(
+                                        width = spacingXxs,
+                                        color = WarmGrey50
+                                    )
+                                    .padding(
+                                        start = spacingMd
+                                    )
+                                    .verticalScroll(rememberScrollState())
                             ) {
-                                Text(
-                                    text = "$year",
-                                    fontFamily = Roboto,
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = StravaOrange
+                                var yearIncrement = 1;
+                                for (year in TimeUtils.yearsAvailable().reversed()) {
+                                    Button(
+                                        onClick = {
+                                            viewModel.loadActivitiesByYear(year)
+                                        },
+                                        modifier = Modifier
+                                            .width(buttonSize)
+                                            .padding(
+                                                end = if (yearIncrement % yearsPerRow == 0) 0.dp else spacingMd,
+                                                top = spacingMd
+                                            ),
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange)
+                                    ) {
+                                        Text(
+                                            text = "$year",
+                                            fontFamily = Lato,
+                                            fontSize = 30.sp,
+                                            letterSpacing = 4.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = White
+                                        )
+                                    }
+                                    yearIncrement++
+                                }
+
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(spacingMd)
+                                        .fillMaxWidth()
                                 )
                             }
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(5.dp)) }
                 }
             }
-        }
-    )
+        })
 }

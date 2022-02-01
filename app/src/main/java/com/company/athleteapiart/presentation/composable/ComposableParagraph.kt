@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.company.athleteapiart.ui.theme.Lato
 import com.company.athleteapiart.ui.theme.Roboto
 import com.company.athleteapiart.ui.theme.WarmGrey50
 
@@ -20,8 +21,8 @@ fun ComposableParagraph(
 ) {
     Text(
         text = text,
-        fontSize = 24.sp,
-        fontFamily = Roboto,
+        fontSize = 32.sp,
+        fontFamily = Lato,
         textAlign = TextAlign.Center,
         color = color,
         modifier = modifier

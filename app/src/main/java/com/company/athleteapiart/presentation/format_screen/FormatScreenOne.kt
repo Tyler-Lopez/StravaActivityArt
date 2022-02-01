@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.presentation.destinations.FormatScreenTwoDestination
@@ -22,10 +25,9 @@ import com.company.athleteapiart.util.AthleteActivities
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
 @Composable
 fun FormatScreenOne(
-    navigator: DestinationsNavigator,
+    navController: NavHostController,
     viewModel: FormatOneViewModel = hiltViewModel()
 ) {
     val bgRed by remember { viewModel.backgroundColorRed }
@@ -35,6 +37,9 @@ fun FormatScreenOne(
     val conditionallyFormat by remember { viewModel.useConditionalFormatting }
 
     Scaffold(
+        topBar = {
+            ComposableTopBar(null, null)
+        },
         content = {
             Column(
                 modifier = Modifier
@@ -50,7 +55,7 @@ fun FormatScreenOne(
                         .background(WarmGrey40)
                         .border(
                             width = 2.dp,
-                            color = WarmGrey20
+                            color = WarmGrey20,
                         )
 
                 ) {
@@ -132,7 +137,7 @@ fun FormatScreenOne(
                         backgroundColor = Color(bgRed, bgGreen, bgBlue),
                         conditionallyFormat = conditionallyFormat
                     )
-                    navigator.navigate(FormatScreenTwoDestination)
+                    navController.navigate("${Screen.FormatActivitiesTwo}")
                 }
             )
         })
