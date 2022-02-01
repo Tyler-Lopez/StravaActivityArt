@@ -7,9 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
-import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.navigation
+import com.google.accompanist.navigation.animation.composable
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
 import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
@@ -21,12 +24,12 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     // Create view model with URI if received
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -38,6 +41,7 @@ class MainActivity : ComponentActivity() {
             AthleteApiArtTheme {
                 val viewModel = MainViewModel(uri = intent.data)
                 var isLoading by remember { mutableStateOf(true) }
+                val navController = rememberAnimatedNavController()
 
                 if (isLoading)
                     LoginScreen(onClick = { intent ->
@@ -48,31 +52,48 @@ class MainActivity : ComponentActivity() {
                         }
                     })
                 else {
-                    val navController = rememberAnimatedNavController()
-                    AnimatedNavHost(
-                        navController,
-                        startDestination = "${Screen.TimeSelect}",
-                        enterTransition = { EnterTransition.None },
-                        exitTransition = { ExitTransition.None },
-                        popEnterTransition = { EnterTransition.None },
-                        popExitTransition = { ExitTransition.None }
-                    ) {
+                    AnimatedNavHost(navController, startDestination = Screen.TimeSelect.route) {
                         composable(
-                            "${Screen.TimeSelect}"
+                            route = Screen.TimeSelect.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
                         ) {
-                            TimeSelectScreen(navController)
+                            TimeSelectScreen(navController = navController)
                         }
-                        composable(route = "${Screen.FilterActivities}") {
-                            FilterActivitiesScreen(navController)
+                        composable(
+                            route = Screen.FilterActivities.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {
+                            FilterActivitiesScreen(navController = navController)
                         }
-                        composable(route = "${Screen.FormatActivitiesOne}") {
-                            FormatScreenOne(navController)
+                        composable(
+                            route = Screen.FormatActivitiesOne.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {                            FormatScreenOne(navController = navController)
                         }
-                        composable(route = "${Screen.FormatActivitiesTwo}") {
-                            FormatScreenTwo(navController)
+                        composable(
+                            route = Screen.FormatActivitiesTwo.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {                            FormatScreenTwo(navController = navController)
                         }
-                        composable(route = "${Screen.VisualizeActivities}") {
-                            ActivitiesScreen(navController)
+                        composable(
+                            route = Screen.VisualizeActivities.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {                            ActivitiesScreen(navController = navController)
                         }
                     }
                 }
@@ -81,6 +102,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         setIntent(intent)
     }
 }

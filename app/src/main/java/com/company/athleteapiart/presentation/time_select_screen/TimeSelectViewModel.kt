@@ -21,7 +21,7 @@ class TimeSelectViewModel @Inject constructor(
 ) : ViewModel() {
 
     var loadError = mutableStateOf("")
-    var isLoading = mutableStateOf(true)
+    var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
     var activities = mutableStateListOf<Activity>()
 

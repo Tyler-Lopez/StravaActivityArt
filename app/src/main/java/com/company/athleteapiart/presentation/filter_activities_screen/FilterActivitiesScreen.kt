@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_activities_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.monthFromIso8601
+import com.company.athleteapiart.util.navigateAndReplaceStartRoute
 
 @Composable
 fun FilterActivitiesScreen(
@@ -28,9 +30,23 @@ fun FilterActivitiesScreen(
     val minDistanceSlider by remember { viewModel.minDistanceSlider }
     val maxDistanceSlider by remember { viewModel.maxDistanceSlider }
 
+    // We cleared the stack prior to opening this screen
+    // Ensure if you push back it goes back to selecting a year and does not close the app
+    BackHandler {
+        navController.backQueue.clear()
+        navController.navigate(Screen.TimeSelect.route)
+    }
+
     Scaffold(
         topBar = {
-            ComposableTopBar(null, null)
+            ComposableTopBar(
+                leftContent = {
+                    ComposableReturnButton {
+                        navController.backQueue.clear()
+                        navController.navigate(Screen.TimeSelect.route)
+                    }
+                }, null
+            )
         },
         content = {
             Column(
@@ -153,7 +169,7 @@ fun FilterActivitiesScreen(
             ComposableLargeButton(
                 text = "Apply Filters",
                 onClick = {
-                    
+
                     AthleteActivities.filteredActivities.value.clear()
 
                     for (activity in AthleteActivities.activities.value) {
@@ -161,7 +177,7 @@ fun FilterActivitiesScreen(
                         val activityMonth = activity.start_date_local.monthFromIso8601()
                         val activityType = activity.type
                         if (
-                            // Month check
+                        // Month check
                             !(viewModel.checkboxes.getOrDefault(activityMonth, false)) ||
                             // Type check
                             !(viewModel.checkboxes.getOrDefault(activityType, false)) ||

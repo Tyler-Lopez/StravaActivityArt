@@ -6,9 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.company.athleteapiart.presentation.destinations.ActivitiesScreenDestination
 import com.company.athleteapiart.ui.theme.White
-import com.company.athleteapiart.util.AthleteActivities
 
 @Composable
 fun ComposableLargeButton(

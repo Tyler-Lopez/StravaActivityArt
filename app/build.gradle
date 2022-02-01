@@ -106,7 +106,7 @@ dependencies {
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0-rc01'
 
     // Navigation
-    implementation "androidx.navigation:navigation-compose:2.4.0-alpha04"
+    implementation("androidx.navigation:navigation-compose:2.5.0-alpha01")
 
     // Navigation library
     // Commented out due to a switch to use accompanist library
@@ -129,7 +129,7 @@ dependencies {
 
     // Navigation Animated Library
     // This is important to avoid the goofy awkward look of the top bar fading in and out
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.22.1-rc"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'

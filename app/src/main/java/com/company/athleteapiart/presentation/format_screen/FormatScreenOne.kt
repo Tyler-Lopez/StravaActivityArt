@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,11 +18,8 @@ import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.presentation.destinations.FormatScreenTwoDestination
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun FormatScreenOne(

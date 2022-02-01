@@ -11,11 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.composable.ComposableHeader
-import com.company.athleteapiart.presentation.composable.ComposableReturnButton
 import com.company.athleteapiart.presentation.composable.ComposableTopBar
-import com.company.athleteapiart.presentation.destinations.FilterActivitiesScreenDestination
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 // MAY BE DELETED SOON, IMPLEMENTED IN TIME SELECT INSTEAD
 @Composable

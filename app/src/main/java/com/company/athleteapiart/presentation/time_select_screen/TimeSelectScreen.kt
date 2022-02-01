@@ -13,6 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.accompanist.navigation.animation.navigation
+import com.google.accompanist.navigation.animation.composable
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.ComposableAppNameHorizontal
 import com.company.athleteapiart.presentation.composable.ComposableHeader
@@ -31,6 +33,8 @@ fun TimeSelectScreen(
     navController: NavHostController,
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
+
+
     val activities = viewModel.activities
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
@@ -47,7 +51,7 @@ fun TimeSelectScreen(
             when {
                 // If the user just selected a YEAR
                 // Get activities from Strava API
-                isLoading -> {
+                isLoading || endReached -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -70,16 +74,19 @@ fun TimeSelectScreen(
                                 isBold = true
                             )
                         }
-                        Text("${activities.size} Activities Loaded")
+                    }
+                    // If data has been successfully received
+                    if (endReached) {
+                        navController.navigate("${Screen.FilterActivities}") {
+                            popUpTo(Screen.TimeSelect.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 }
                 // If error occurred when fetching data
                 loadError != "" -> {
 
-                }
-                // If data has been successfully received
-                endReached -> {
-                    navController.navigate("${Screen.FilterActivities}")
                 }
                 // Otherwise, present options to user
                 else -> {
@@ -96,7 +103,7 @@ fun TimeSelectScreen(
                         )
                         ComposableParagraph(
                             text = "To create a print of your activities, " +
-                                    "begin by selecting which span of time you " +
+                                    "begin by selecting which year you " +
                                     "would like to visualize activities from.",
                             modifier = Modifier
                                 .fillMaxWidth()
