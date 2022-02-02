@@ -99,7 +99,10 @@ fun FilterActivitiesScreen(
                                             text = "Months",
                                             color = StravaOrange,
                                             isBold = true,
-                                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                            modifier = Modifier.padding(
+                                                start = MaterialTheme.spacing.xxs,
+                                                bottom = MaterialTheme.spacing.sm
+                                            )
                                         )
                                         for (month in viewModel.months.reversed()) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -124,7 +127,11 @@ fun FilterActivitiesScreen(
                                             text = "Activity Types",
                                             color = StravaOrange,
                                             isBold = true,
-                                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+
+                                            modifier = Modifier.padding(
+                                                start = MaterialTheme.spacing.xxs,
+                                                bottom = MaterialTheme.spacing.sm
+                                            )
 
                                         )
                                         for (activity in viewModel.activityTypes) {
@@ -148,22 +155,34 @@ fun FilterActivitiesScreen(
                                             text = "Distance",
                                             color = StravaOrange,
                                             isBold = true,
-                                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                            modifier = Modifier.padding(
+                                                start = MaterialTheme.spacing.xxs,
+                                                bottom = MaterialTheme.spacing.sm
+                                            )
 
                                         )
                                         val valueRange =
                                             viewModel.minimumDistance..viewModel.maximumDistance
                                         ComposableDistanceSlider(
-                                            header = "Minimum Distance",
+                                            header = "Min",
                                             value = minDistanceSlider,
                                             valueRange = valueRange,
-                                            onValueChange = { viewModel.setMinDistanceSlider(it) }
+                                            onValueChange = {
+                                                if (it < maxDistanceSlider)
+                                                    viewModel.setMinDistanceSlider(it)
+                                                else viewModel.setMinDistanceSlider(maxDistanceSlider)
+
+                                            }
                                         )
                                         ComposableDistanceSlider(
-                                            header = "Maximum Distance",
+                                            header = "Max",
                                             value = maxDistanceSlider,
                                             valueRange = valueRange,
-                                            onValueChange = { viewModel.setMaxDistanceSlider(it) }
+                                            onValueChange = {
+                                                if (it > minDistanceSlider)
+                                                    viewModel.setMaxDistanceSlider(it)
+                                                else viewModel.setMaxDistanceSlider(minDistanceSlider)
+                                            }
                                         )
                                     }
                                     Spacer(

@@ -40,7 +40,7 @@ fun ComposableDistanceSlider(
     ) {
         ComposableParagraph(
             text = header,
-            color = color,
+            color = color
         )
         Spacer(modifier = Modifier
             .padding(horizontal = 5.dp)

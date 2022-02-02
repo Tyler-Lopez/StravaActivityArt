@@ -73,8 +73,8 @@ fun FormatScreenOne(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(70.dp)
-                                        .padding(10.dp)
+                                        .padding(MaterialTheme.spacing.sm)
+                                        .height(64.dp)
                                         .background(
                                             color = Color(
                                                 bgRed,
@@ -86,8 +86,6 @@ fun FormatScreenOne(
                                             width = 5.dp,
                                             color = Color(1f, 1f, 1f, 0.2f)
                                         )
-                                        .padding(vertical = MaterialTheme.spacing.xl)
-
                                 )
                                 ComposableRGBSlider(
                                     text = "Red",
@@ -121,9 +119,9 @@ fun FormatScreenOne(
                                     )
                                 )
                                 ComposableSubtext(
-                                    text = "Enable this if you would like to color activities " +
-                                            "according to a property, such as making short runs " +
-                                            "red and long green",
+                                    text = "Enable this to color activities " +
+                                            "according to a property, such as shorter runs being red " +
+                                            "and longer green",
                                     modifier = Modifier.padding(
                                         start = MaterialTheme.spacing.xxs,
                                         end = MaterialTheme.spacing.xxs,
