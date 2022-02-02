@@ -11,11 +11,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.monthFromIso8601
@@ -29,6 +31,8 @@ fun FilterActivitiesScreen(
     val isLoading by remember { viewModel.isLoading }
     val minDistanceSlider by remember { viewModel.minDistanceSlider }
     val maxDistanceSlider by remember { viewModel.maxDistanceSlider }
+
+    val spacingMd = MaterialTheme.spacing.md
 
     // We cleared the stack prior to opening this screen
     // Ensure if you push back it goes back to selecting a year and does not close the app
@@ -45,14 +49,20 @@ fun FilterActivitiesScreen(
                         navController.backQueue.clear()
                         navController.navigate(Screen.TimeSelect.route)
                     }
-                }, null
+                },
+                rightContent = {
+                    ComposableParagraph(
+                        text = "Filters",
+                        color = Color.White
+                    )
+                }
             )
         },
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when {
@@ -74,91 +84,92 @@ fun FilterActivitiesScreen(
                         }
                     }
                     else -> {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(0.9f)
-                                .padding(vertical = 10.dp, horizontal = 10.dp)
-                                .background(WarmGrey40)
-                                .border(
-                                    width = 2.dp,
-                                    color = WarmGrey20
-                                )
-
+                        ComposableScreenWrapper(
+                            // Create room for large button
+                            modifier = Modifier.padding(bottom = 75.dp)
                         ) {
-                            item {
-                                ComposableItemContainer {
-                                    ComposableHeader(
-                                        text = "Months",
-                                        color = StravaOrange
-                                    )
-                                    for (month in viewModel.months.reversed()) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Checkbox(
-                                                checked = viewModel
-                                                    .checkboxes
-                                                    .getOrDefault(
-                                                        month,
-                                                        false
-                                                    ),
-                                                onCheckedChange = {
-                                                    viewModel.flipValue(month)
-                                                })
-                                            ComposableParagraph(text = month)
+                            ComposableParagraph(
+                                text = "Exclude certain activities prior to visualization if desired",
+                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
+                            )
+                            ComposableShadowBox {
+                                Column {
+                                    ComposableItemContainer {
+                                        ComposableHeader(
+                                            text = "Months",
+                                            color = StravaOrange,
+                                            isBold = true,
+                                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                        )
+                                        for (month in viewModel.months.reversed()) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Checkbox(
+                                                    checked = viewModel
+                                                        .checkboxes
+                                                        .getOrDefault(
+                                                            month,
+                                                            false
+                                                        ),
+                                                    onCheckedChange = {
+                                                        viewModel.flipValue(month)
+                                                    })
+                                                ComposableParagraph(text = month)
+                                            }
                                         }
                                     }
-                                }
-                            }
+                                    ComposableItemContainer(
+                                        modifier = Modifier.padding(vertical = MaterialTheme.spacing.sm)
+                                    ) {
+                                        ComposableHeader(
+                                            text = "Activity Types",
+                                            color = StravaOrange,
+                                            isBold = true,
+                                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
 
-                            item {
-                                ComposableItemContainer {
-                                    ComposableHeader(
-                                        text = "Activity Types",
-                                        color = StravaOrange
-                                    )
-                                    for (activity in viewModel.activityTypes) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Checkbox(
-                                                checked = viewModel
-                                                    .checkboxes
-                                                    .getOrDefault(
-                                                        activity,
-                                                        false
-                                                    ),
-                                                onCheckedChange = {
-                                                    viewModel.flipValue(activity)
-                                                })
-                                            ComposableParagraph(text = activity)
+                                        )
+                                        for (activity in viewModel.activityTypes) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Checkbox(
+                                                    checked = viewModel
+                                                        .checkboxes
+                                                        .getOrDefault(
+                                                            activity,
+                                                            false
+                                                        ),
+                                                    onCheckedChange = {
+                                                        viewModel.flipValue(activity)
+                                                    })
+                                                ComposableParagraph(text = activity)
+                                            }
                                         }
                                     }
+                                    ComposableItemContainer {
+                                        ComposableHeader(
+                                            text = "Distance",
+                                            color = StravaOrange,
+                                            isBold = true,
+                                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+
+                                        )
+                                        val valueRange =
+                                            viewModel.minimumDistance..viewModel.maximumDistance
+                                        ComposableDistanceSlider(
+                                            header = "Minimum Distance",
+                                            value = minDistanceSlider,
+                                            valueRange = valueRange,
+                                            onValueChange = { viewModel.setMinDistanceSlider(it) }
+                                        )
+                                        ComposableDistanceSlider(
+                                            header = "Maximum Distance",
+                                            value = maxDistanceSlider,
+                                            valueRange = valueRange,
+                                            onValueChange = { viewModel.setMaxDistanceSlider(it) }
+                                        )
+                                    }
+                                    Spacer(
+                                        modifier = Modifier.height(250.dp)
+                                    )
                                 }
-                            }
-                            item {
-                                ComposableItemContainer {
-                                    ComposableHeader(
-                                        text = "Distance",
-                                        color = StravaOrange
-                                    )
-                                    val valueRange =
-                                        viewModel.minimumDistance..viewModel.maximumDistance
-                                    ComposableDistanceSlider(
-                                        header = "Minimum Distance",
-                                        value = minDistanceSlider,
-                                        valueRange = valueRange,
-                                        onValueChange = { viewModel.setMinDistanceSlider(it) }
-                                    )
-                                    ComposableDistanceSlider(
-                                        header = "Maximum Distance",
-                                        value = maxDistanceSlider,
-                                        valueRange = valueRange,
-                                        onValueChange = { viewModel.setMaxDistanceSlider(it) }
-                                    )
-                                }
-                            }
-                            item {
-                                Spacer(
-                                    modifier = Modifier.height(250.dp)
-                                )
                             }
                         }
                     }
@@ -167,7 +178,7 @@ fun FilterActivitiesScreen(
         },
         bottomBar = {
             ComposableLargeButton(
-                text = "Apply Filters",
+                text = "Continue",
                 onClick = {
 
                     AthleteActivities.filteredActivities.value.clear()

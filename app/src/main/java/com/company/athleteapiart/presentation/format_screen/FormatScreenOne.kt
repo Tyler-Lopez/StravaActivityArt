@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Checkbox
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.presentation.composable.*
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 
@@ -34,93 +36,103 @@ fun FormatScreenOne(
 
     Scaffold(
         topBar = {
-            ComposableTopBar(null, null)
+            ComposableTopBar(
+                leftContent = {
+                    ComposableReturnButton {
+                        navController.navigateUp()
+                    }
+                },
+                rightContent = {
+                    ComposableParagraph(
+                        text = "Format",
+                        color = Color.White
+                    )
+                }
+            )
         },
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.9f)
-                        .padding(vertical = 10.dp, horizontal = 10.dp)
-                        .background(WarmGrey40)
-                        .border(
-                            width = 2.dp,
-                            color = WarmGrey20,
-                        )
-
+                ComposableScreenWrapper(
+                    // Create room for large button
+                    modifier = Modifier.padding(bottom = 75.dp)
                 ) {
-                    item {
-                        ComposableItemContainer {
-                            ComposableHeader(
-                                text = "Background Color",
-                                color = StravaOrange
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(70.dp)
-                                    .padding(10.dp)
-                                    .background(
-                                        color = Color(
-                                            bgRed,
-                                            bgGreen,
-                                            bgBlue
+                    ComposableShadowBox {
+                        Column {
+                            ComposableItemContainer {
+                                ComposableHeader(
+                                    text = "Background Color",
+                                    color = StravaOrange,
+                                    isBold = true,
+                                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(70.dp)
+                                        .padding(10.dp)
+                                        .background(
+                                            color = Color(
+                                                bgRed,
+                                                bgGreen,
+                                                bgBlue
+                                            )
                                         )
-                                    )
-                                    .border(
-                                        width = 5.dp,
-                                        color = Color(1f, 1f, 1f, 0.2f)
-                                    )
-                            )
-                            ComposableRGBSlider(
-                                text = "Red",
-                                color = Color.Red,
-                                value = bgRed.toFloat(),
-                                onValueChange = { viewModel.backgroundColorRed.value = it }
-                            )
-                            ComposableRGBSlider(
-                                text = "Green",
-                                color = Color(0, 128, 0),
-                                value = bgGreen.toFloat(),
-                                onValueChange = { viewModel.backgroundColorGreen.value = it }
-                            )
-                            ComposableRGBSlider(
-                                text = "Blue",
-                                color = Color.Blue,
-                                value = bgBlue.toFloat(),
-                                onValueChange = { viewModel.backgroundColorBlue.value = it }
-                            )
-                        }
-                    }
-                    item {
-                        ComposableItemContainer {
-                            ComposableHeader(
-                                text = "Conditional Formatting",
-                                color = StravaOrange
-                            )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Checkbox(
-                                    checked = viewModel.useConditionalFormatting.value,
-                                    onCheckedChange = {
-                                        viewModel.useConditionalFormatting.value =
-                                            !viewModel.useConditionalFormatting.value
-                                    })
-                                ComposableParagraph(text = "Use Conditional Formatting?")
+                                        .border(
+                                            width = 5.dp,
+                                            color = Color(1f, 1f, 1f, 0.2f)
+                                        )
+                                )
+                                ComposableRGBSlider(
+                                    text = "Red",
+                                    color = Color.Red,
+                                    value = bgRed.toFloat(),
+                                    onValueChange = { viewModel.backgroundColorRed.value = it }
+                                )
+                                ComposableRGBSlider(
+                                    text = "Green",
+                                    color = Color(0, 128, 0),
+                                    value = bgGreen.toFloat(),
+                                    onValueChange = { viewModel.backgroundColorGreen.value = it }
+                                )
+                                ComposableRGBSlider(
+                                    text = "Blue",
+                                    color = Color.Blue,
+                                    value = bgBlue.toFloat(),
+                                    onValueChange = { viewModel.backgroundColorBlue.value = it }
+                                )
                             }
-                            ComposableSubtext(
-                                text = "E.g. Rather than all activities having the same color, make short runs red and long green",
-                                modifier = Modifier.padding(horizontal = 20.dp)
+                            ComposableItemContainer(
+                                modifier = Modifier.padding(vertical = MaterialTheme.spacing.sm)
+                            ) {
+                                ComposableHeader(
+                                    text = "Conditional Formatting",
+                                    color = StravaOrange,
+                                    isBold = true,
+                                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Checkbox(
+                                        checked = viewModel.useConditionalFormatting.value,
+                                        onCheckedChange = {
+                                            viewModel.useConditionalFormatting.value =
+                                                !viewModel.useConditionalFormatting.value
+                                        })
+                                    ComposableParagraph(text = "Use Conditional Formatting?")
+                                }
+                                ComposableSubtext(
+                                    text = "E.g. Rather than all activities having the same color, make short runs red and long green",
+                                    modifier = Modifier.padding(horizontal = 20.dp)
+                                )
+                            }
+                            Spacer(
+                                modifier = Modifier.height(250.dp)
                             )
                         }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
             }

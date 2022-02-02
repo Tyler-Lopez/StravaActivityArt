@@ -34,6 +34,7 @@ class TimeSelectViewModel @Inject constructor(
 
 
         viewModelScope.launch {
+            AthleteActivities.currYear.value = year
             val after = (GregorianCalendar(year, 0, 1).timeInMillis / 1000).toInt()
             val beforeDate = GregorianCalendar(year + 1, 0, 1)
             beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)

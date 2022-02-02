@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,10 +17,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.composable
 import com.company.athleteapiart.Screen
-import com.company.athleteapiart.presentation.composable.ComposableAppNameHorizontal
-import com.company.athleteapiart.presentation.composable.ComposableHeader
-import com.company.athleteapiart.presentation.composable.ComposableParagraph
-import com.company.athleteapiart.presentation.composable.ComposableTopBar
+import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.TimeUtils
@@ -45,7 +43,13 @@ fun TimeSelectScreen(
 
     Scaffold(
         topBar = {
-            ComposableTopBar(null, null)
+            ComposableTopBar(null,
+                rightContent = {
+                    ComposableParagraph(
+                        text = "Home",
+                        color = Color.White
+                    )
+                })
         },
         content = {
             when {
@@ -90,31 +94,17 @@ fun TimeSelectScreen(
                 }
                 // Otherwise, present options to user
                 else -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(spacingMd),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                    ComposableScreenWrapper {
                         ComposableAppNameHorizontal(
                             modifier = Modifier
                                 .fillMaxWidth()
                         )
                         ComposableParagraph(
-                            text = "To create a print of your activities, " +
-                                    "begin by selecting which year you " +
-                                    "would like to visualize activities from.",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = spacingMd)
+                            text = "Which year would you like to visualize" +
+                                    " activities from?",
+                            modifier = Modifier.padding(vertical = MaterialTheme.spacing.md)
                         )
-                        BoxWithConstraints(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = spacingMd)
-                        ) {
-
+                        ComposableShadowBox {
                             // Determine size of each button from width
                             val maxWidth = this.maxWidth
                             val yearsPerRow = if (maxWidth >= 600.dp) 3 else 2
@@ -123,23 +113,7 @@ fun TimeSelectScreen(
                             FlowRow(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(
-                                        brush = Brush
-                                            .verticalGradient(
-                                                colors = listOf(
-                                                    WarmGrey30,
-                                                    WarmGrey40
-                                                )
-                                            ),
-                                    )
-                                    .border(
-                                        width = spacingXxs,
-                                        color = WarmGrey50
-                                    )
-                                    .padding(
-                                        start = spacingMd
-                                    )
-                                    .verticalScroll(rememberScrollState())
+                                    .padding(start = spacingMd)
                             ) {
                                 var yearIncrement = 1;
                                 for (year in TimeUtils.yearsAvailable().reversed()) {

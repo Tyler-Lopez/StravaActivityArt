@@ -12,16 +12,17 @@ import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.ui.theme.Lato
 import com.company.athleteapiart.ui.theme.Roboto
 import com.company.athleteapiart.ui.theme.WarmGrey50
+import com.company.athleteapiart.ui.theme.WarmGrey90
 
 @Composable
 fun ComposableParagraph(
     text: String,
-    color: Color = WarmGrey50,
+    color: Color = WarmGrey90,
     modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
-        fontSize = 32.sp,
+        fontSize = 28.sp,
         fontFamily = Lato,
         textAlign = TextAlign.Center,
         color = color,

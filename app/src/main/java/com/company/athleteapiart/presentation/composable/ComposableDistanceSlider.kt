@@ -21,17 +21,19 @@ import androidx.compose.ui.unit.dp
 import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.ui.theme.WarmGrey40
 import com.company.athleteapiart.ui.theme.WarmGrey50
+import com.company.athleteapiart.ui.theme.WarmGrey90
 import com.company.athleteapiart.util.meterToMiles
 
 @Composable
 fun ComposableDistanceSlider(
     header: String,
     value: Float,
+    color: androidx.compose.ui.graphics.Color = WarmGrey90,
     valueRange: ClosedFloatingPointRange<Float>,
     onValueChange: (Float) -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        ComposableParagraph(text = header)
+        ComposableParagraph(text = header, color = color)
         Spacer(modifier = Modifier
             .padding(horizontal = 5.dp)
             .width(2.dp)
@@ -55,43 +57,7 @@ fun ComposableDistanceSlider(
             onValueChange(it)
         },
         valueRange = valueRange,
-        modifier = Modifier.padding(horizontal = 10.dp).drawBehind {
-            val incrementWidth =
-                (this.size.width - 10.dp.toPx()) / 4f
-            for (i in 0..4) {
-                drawLine(
-                    color = StravaOrange,
-                    start = Offset(
-                        x = 5.dp.toPx() + i * incrementWidth,
-                        y = this.center.y - 10f
-                    ),
-                    end = Offset(
-                        x = 5.dp.toPx() + i * incrementWidth,
-                        y = this.center.y + 10f
-                    ),
-                    cap = StrokeCap.Round,
-                    strokeWidth = 3f
-                )
-
-                drawIntoCanvas {
-                    val stroke = Paint()
-                    stroke.textAlign = Paint.Align.CENTER
-                    stroke.textSize = 25f
-                    stroke.color = Color.rgb(141, 141, 141)
-
-
-                    it.nativeCanvas.drawText(
-                        "%.1f".format(
-                            (((valueRange.endInclusive / 4f) * i)).toDouble()
-                                .meterToMiles()
-                        ),
-                        5.dp.toPx() + i * incrementWidth,
-                        this.center.y + 40f,
-                        stroke
-                    )
-                }
-            }
-        }
+        modifier = Modifier.padding(horizontal = 10.dp)
     )
     Spacer(modifier = Modifier.height(20.dp))
 }
