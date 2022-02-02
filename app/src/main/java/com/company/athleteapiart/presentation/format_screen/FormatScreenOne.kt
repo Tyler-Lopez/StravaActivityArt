@@ -68,7 +68,7 @@ fun FormatScreenOne(
                                     text = "Background Color",
                                     color = StravaOrange,
                                     isBold = true,
-                                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                    modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
                                 )
                                 Box(
                                     modifier = Modifier
@@ -86,6 +86,8 @@ fun FormatScreenOne(
                                             width = 5.dp,
                                             color = Color(1f, 1f, 1f, 0.2f)
                                         )
+                                        .padding(vertical = MaterialTheme.spacing.xl)
+
                                 )
                                 ComposableRGBSlider(
                                     text = "Red",
@@ -113,7 +115,19 @@ fun FormatScreenOne(
                                     text = "Conditional Formatting",
                                     color = StravaOrange,
                                     isBold = true,
-                                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                    modifier = Modifier.padding(
+                                        start = MaterialTheme.spacing.xxs,
+                                        bottom = MaterialTheme.spacing.sm
+                                    )
+                                )
+                                ComposableSubtext(
+                                    text = "Enable this if you would like to color activities " +
+                                            "according to a property, such as making short runs " +
+                                            "red and long green",
+                                    modifier = Modifier.padding(
+                                        start = MaterialTheme.spacing.xxs,
+                                        end = MaterialTheme.spacing.xxs,
+                                        bottom = MaterialTheme.spacing.sm)
                                 )
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Checkbox(
@@ -122,12 +136,9 @@ fun FormatScreenOne(
                                             viewModel.useConditionalFormatting.value =
                                                 !viewModel.useConditionalFormatting.value
                                         })
-                                    ComposableParagraph(text = "Use Conditional Formatting?")
+                                    ComposableParagraph(text = "Enable?")
                                 }
-                                ComposableSubtext(
-                                    text = "E.g. Rather than all activities having the same color, make short runs red and long green",
-                                    modifier = Modifier.padding(horizontal = 20.dp)
-                                )
+
                             }
                             Spacer(
                                 modifier = Modifier.height(250.dp)

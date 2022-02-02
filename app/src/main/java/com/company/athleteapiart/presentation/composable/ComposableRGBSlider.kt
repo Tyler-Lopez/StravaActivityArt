@@ -40,7 +40,7 @@ fun ComposableRGBSlider(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(start = MaterialTheme.spacing.sm)
     ) {
-        ComposableParagraph(text = text, color = color)
+        ComposableParagraph(text = text, color = color, isBold = true)
         Spacer(
             modifier = Modifier
                 .padding(horizontal = 5.dp)
@@ -63,25 +63,6 @@ fun ComposableRGBSlider(
         valueRange = 0f..255f,
         modifier = Modifier
             .padding(horizontal = 10.dp)
-            .drawBehind {
-                val incrementWidth =
-                    (this.size.width - 18.dp.toPx()) / 4f
-                for (i in 0..4) {
-                    drawLine(
-                        color = color,
-                        start = Offset(
-                            x = 9.dp.toPx() + i * incrementWidth,
-                            y = this.center.y - 10f
-                        ),
-                        end = Offset(
-                            x = 9.dp.toPx() + i * incrementWidth,
-                            y = this.center.y + 10f
-                        ),
-                        cap = StrokeCap.Round,
-                        strokeWidth = 3f
-                    )
-                }
-            }
     )
     Spacer(modifier = Modifier.height(20.dp))
 }

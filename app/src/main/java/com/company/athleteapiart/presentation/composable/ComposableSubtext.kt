@@ -11,20 +11,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.company.athleteapiart.ui.theme.Roboto
-import com.company.athleteapiart.ui.theme.WarmGrey50
+import com.company.athleteapiart.ui.theme.*
 
 @Composable
 fun ComposableSubtext(
     text: String,
-    color: Color = WarmGrey50,
+    color: Color = WarmGrey80,
     modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
-        fontSize = 20.sp,
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Light,
+        fontSize = 24.sp,
+        fontFamily = Lato,
+        fontWeight = FontWeight.Medium,
         fontStyle = FontStyle.Italic,
         textAlign = TextAlign.Start,
         color = color,
