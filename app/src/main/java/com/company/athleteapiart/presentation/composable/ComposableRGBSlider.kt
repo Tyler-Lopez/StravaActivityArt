@@ -7,6 +7,7 @@ import androidx.annotation.FloatRange
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.SliderColors
 import androidx.compose.material.SliderDefaults
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.ui.theme.WarmGrey40
 import com.company.athleteapiart.ui.theme.WarmGrey50
@@ -33,7 +35,10 @@ fun ComposableRGBSlider(
     modifier: Modifier = Modifier,
     onValueChange: (Int) -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(start = MaterialTheme.spacing.sm)
+    ) {
         ComposableParagraph(text = text, color = color)
         Spacer(
             modifier = Modifier
@@ -45,7 +50,7 @@ fun ComposableRGBSlider(
         )
         ComposableParagraph(
             text = "${value.toInt()}",
-            color = WarmGrey50,
+            color = WarmGrey90,
         )
     }
     Slider(

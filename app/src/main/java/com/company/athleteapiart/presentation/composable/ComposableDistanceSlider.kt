@@ -7,6 +7,7 @@ import androidx.annotation.FloatRange
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.ui.theme.WarmGrey40
 import com.company.athleteapiart.ui.theme.WarmGrey50
@@ -32,8 +34,14 @@ fun ComposableDistanceSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     onValueChange: (Float) -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        ComposableParagraph(text = header, color = color)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(start = MaterialTheme.spacing.sm)
+    ) {
+        ComposableParagraph(
+            text = header,
+            color = color,
+        )
         Spacer(modifier = Modifier
             .padding(horizontal = 5.dp)
             .width(2.dp)
