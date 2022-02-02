@@ -25,6 +25,7 @@ import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.StravaOrange
 import com.company.athleteapiart.ui.theme.WarmGrey40
 import com.company.athleteapiart.ui.theme.WarmGrey50
+import com.company.athleteapiart.ui.theme.WarmGrey90
 import com.company.athleteapiart.util.meterToMiles
 
 @Composable
