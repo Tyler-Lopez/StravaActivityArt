@@ -11,11 +11,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.composable
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
 import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
+import com.company.athleteapiart.presentation.format_screen.FormatScreenThree
 import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
@@ -77,7 +79,8 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { ExitTransition.None },
                             popEnterTransition = { EnterTransition.None },
                             popExitTransition = { ExitTransition.None }
-                        ) {                            FormatScreenOne(navController = navController)
+                        ) {
+                            FormatScreenOne(navController = navController)
                         }
                         composable(
                             route = Screen.FormatActivitiesTwo.route,
@@ -85,7 +88,17 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { ExitTransition.None },
                             popEnterTransition = { EnterTransition.None },
                             popExitTransition = { ExitTransition.None }
-                        ) {                            FormatScreenTwo(navController = navController)
+                        ) {
+                            FormatScreenTwo(navController = navController)
+                        }
+                        composable(
+                            route = Screen.FormatActivitiesThree.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {
+                            FormatScreenThree(navController = navController)
                         }
                         composable(
                             route = Screen.VisualizeActivities.route,
@@ -93,7 +106,8 @@ class MainActivity : ComponentActivity() {
                             exitTransition = { ExitTransition.None },
                             popEnterTransition = { EnterTransition.None },
                             popExitTransition = { ExitTransition.None }
-                        ) {                            ActivitiesScreen(navController = navController)
+                        ) {
+                            ActivitiesScreen(navController = navController)
                         }
                     }
                 }

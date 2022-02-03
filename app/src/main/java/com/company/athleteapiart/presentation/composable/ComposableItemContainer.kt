@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.WarmGrey20
@@ -19,9 +20,12 @@ fun ComposableItemContainer(
 ) {
     Box(
         modifier = modifier
+            .shadow(
+                5.dp
+            )
             .background(WarmGrey20)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(5.dp))
+
     ) {
         Column(
             modifier = Modifier

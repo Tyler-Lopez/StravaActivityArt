@@ -140,12 +140,6 @@ fun TimeSelectScreen(
                                     }
                                     yearIncrement++
                                 }
-
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(spacingMd)
-                                        .fillMaxWidth()
-                                )
                             }
                         }
                     }

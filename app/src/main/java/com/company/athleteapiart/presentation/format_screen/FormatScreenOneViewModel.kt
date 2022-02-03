@@ -8,18 +8,17 @@ import com.company.athleteapiart.data.ConditionalFormatRule
 import com.company.athleteapiart.data.DistanceCondition
 import com.company.athleteapiart.data.DistanceRule
 import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.util.AthleteActivities
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class FormatOneViewModel @Inject constructor(
+class FormatScreenOneViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
     var backgroundColorRed = mutableStateOf(0)
     var backgroundColorGreen = mutableStateOf(0)
     var backgroundColorBlue = mutableStateOf(0)
-
-    var useConditionalFormatting = mutableStateOf(false)
 
 }

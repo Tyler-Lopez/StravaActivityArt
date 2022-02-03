@@ -1,9 +1,7 @@
 package com.company.athleteapiart.presentation.format_screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,14 +14,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 
 
 @Composable
-fun FormatScreenTwo(
+fun FormatScreenThree(
     navController: NavHostController,
-    viewModel: FormatTwoViewModel = hiltViewModel()
+    viewModel: FormatScreenThreeViewModel = hiltViewModel()
 ) {
     val conditionallyFormat by remember { viewModel.useConditionalFormatting }
 
@@ -64,30 +63,25 @@ fun FormatScreenTwo(
                             ComposableItemContainer {
                                 ComposableHeader(
                                     text = if (conditionallyFormat) "Default Activity Color" else "Activity Color",
-                                    color = StravaOrange
+                                    color = StravaOrange,
+                                    isBold = true,
+                                    modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
                                 )
                                 if (conditionallyFormat) {
                                     ComposableSubtext(
                                         text = "If not defined by a conditional formatting rule, activities will be the following color",
-                                        modifier = Modifier.padding(horizontal = 20.dp)
+                                        modifier = Modifier.padding(
+                                            horizontal = MaterialTheme.spacing.xxs,
+                                            vertical = MaterialTheme.spacing.sm
+                                        )
                                     )
                                 }
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(70.dp)
-                                        .padding(10.dp)
-                                        .background(
-                                            color = Color(
-                                                actRed,
-                                                actGreen,
-                                                actBlue
-                                            )
-                                        )
-                                        .border(
-                                            width = 5.dp,
-                                            color = Color(1f, 1f, 1f, 0.2f)
-                                        )
+                                ComposableColorBox(
+                                    color = Color(
+                                        actRed,
+                                        actGreen,
+                                        actBlue
+                                    )
                                 )
                                 ComposableRGBSlider(
                                     text = "Red",
@@ -109,9 +103,6 @@ fun FormatScreenTwo(
                                     onValueChange = { viewModel.activityColorBlue.value = it }
                                 )
                             }
-                            Spacer(
-                                modifier = Modifier.height(250.dp)
-                            )
                         }
                     }
                 }

@@ -16,8 +16,8 @@ import com.company.athleteapiart.ui.theme.*
 @Composable
 fun ComposableSubtext(
     text: String,
+    modifier: Modifier = Modifier,
     color: Color = WarmGrey80,
-    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,

@@ -7,7 +7,7 @@ sealed class Screen(
     object FilterActivities : Screen("FilterActivities")
     object FormatActivitiesOne : Screen("FormatActivitiesOne")
     object FormatActivitiesTwo : Screen("FormatActivitiesTwo")
+    object FormatActivitiesThree : Screen("FormatActivitiesThree")
     object VisualizeActivities : Screen("VisualizeActivities")
-
     override fun toString(): String = route
 }
