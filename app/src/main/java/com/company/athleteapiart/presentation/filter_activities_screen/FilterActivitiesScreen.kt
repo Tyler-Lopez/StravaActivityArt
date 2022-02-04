@@ -51,7 +51,7 @@ fun FilterActivitiesScreen(
                     }
                 },
                 rightContent = {
-                    ComposableParagraph(
+                    ComposableSubtext(
                         text = "Filters",
                         color = Color.White
                     )

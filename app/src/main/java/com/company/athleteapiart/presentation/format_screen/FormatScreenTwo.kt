@@ -36,7 +36,7 @@ fun FormatScreenTwo(
                     }
                 },
                 rightContent = {
-                    ComposableParagraph(
+                    ComposableSubtext(
                         text = "Format",
                         color = Color.White
                     )

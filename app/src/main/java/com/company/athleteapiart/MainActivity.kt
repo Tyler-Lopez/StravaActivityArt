@@ -19,6 +19,7 @@ import com.company.athleteapiart.presentation.filter_activities_screen.FilterAct
 import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
 import com.company.athleteapiart.presentation.format_screen.FormatScreenThree
 import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
+import com.company.athleteapiart.presentation.format_screen.FormatScreenFour
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
@@ -99,6 +100,15 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = { ExitTransition.None }
                         ) {
                             FormatScreenThree(navController = navController)
+                        }
+                        composable(
+                            route = Screen.FormatActivitiesFour.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {
+                            FormatScreenFour(navController = navController)
                         }
                         composable(
                             route = Screen.VisualizeActivities.route,

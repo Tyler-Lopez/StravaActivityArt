@@ -1,8 +1,11 @@
 package com.company.athleteapiart.presentation.format_screen
 
+import android.graphics.Paint
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -13,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
+import com.company.athleteapiart.data.ConditionalFormatRule
+import com.company.athleteapiart.data.DistanceCondition
+import com.company.athleteapiart.data.DistanceRule
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
@@ -20,16 +26,15 @@ import com.company.athleteapiart.util.AthleteActivities
 
 
 @Composable
-fun FormatScreenThree(
+fun FormatScreenFour(
     navController: NavHostController,
-    viewModel: FormatScreenThreeViewModel = hiltViewModel()
+    viewModel: FormatScreenFourViewModel = hiltViewModel()
 ) {
-    val conditionallyFormat by remember { viewModel.useConditionalFormatting }
+
 
     val actRed by remember { viewModel.activityColorRed }
     val actGreen by remember { viewModel.activityColorGreen }
     val actBlue by remember { viewModel.activityColorBlue }
-
 
     Scaffold(
         topBar = {
@@ -41,7 +46,7 @@ fun FormatScreenThree(
                 },
                 rightContent = {
                     ComposableSubtext(
-                        text = "Format",
+                        text = "Conditions",
                         color = Color.White
                     )
                 }
@@ -58,24 +63,41 @@ fun FormatScreenThree(
                     // Create room for large button
                     modifier = Modifier.padding(bottom = 75.dp)
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = MaterialTheme.spacing.md)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            ComposableParagraph(
+                                text = "Condition 1",
+                            )
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Button(
+                                onClick = {
+
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange)
+                            ) {
+                                ComposableParagraph(text = "Add Condition", color = White)
+                            }
+                        }
+
+                    }
                     ComposableShadowBox {
+
                         Column {
                             ComposableItemContainer {
                                 ComposableHeader(
-                                    text = if (conditionallyFormat) "Default Activity Color" else "Activity Color",
+                                    text = "Condition Color",
                                     color = StravaOrange,
                                     isBold = true,
                                     modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
                                 )
-                                if (conditionallyFormat) {
-                                    ComposableSubtext(
-                                        text = "If not defined by a conditional formatting rule, activities will be the following color",
-                                        modifier = Modifier.padding(
-                                            horizontal = MaterialTheme.spacing.xxs,
-                                            vertical = MaterialTheme.spacing.sm
-                                        )
-                                    )
-                                }
                                 ComposableColorBox(
                                     color = Color(
                                         actRed,
@@ -88,19 +110,25 @@ fun FormatScreenThree(
                                     color = Color.Red,
                                     value = actRed.toFloat(),
                                     modifier = Modifier.padding(start = 10.dp),
-                                    onValueChange = { viewModel.activityColorRed.value = it }
+                                    onValueChange = {
+                                        viewModel.activityColorRed.value = it
+                                    }
                                 )
                                 ComposableRGBSlider(
                                     text = "Green",
                                     color = Color(0, 128, 0),
                                     value = actGreen.toFloat(),
-                                    onValueChange = { viewModel.activityColorGreen.value = it }
+                                    onValueChange = {
+                                        viewModel.activityColorGreen.value = it
+                                    }
                                 )
                                 ComposableRGBSlider(
                                     text = "Blue",
                                     color = Color.Blue,
                                     value = actBlue.toFloat(),
-                                    onValueChange = { viewModel.activityColorBlue.value = it }
+                                    onValueChange = {
+                                        viewModel.activityColorBlue.value = it
+                                    }
                                 )
                             }
                         }
@@ -112,13 +140,9 @@ fun FormatScreenThree(
             ComposableLargeButton(
                 text = "Continue",
                 onClick = {
-                    AthleteActivities.formatting.value.activityColor =
+                    AthleteActivities.formatting.value.conditions.first().color =
                         Color(actRed, actGreen, actBlue)
-                    navController.navigate(
-                        if (conditionallyFormat)
-                            "${Screen.FormatActivitiesFour}"
-                        else "${Screen.VisualizeActivities}"
-                    )
+                    navController.navigate("${Screen.VisualizeActivities}")
                 }
             )
         })

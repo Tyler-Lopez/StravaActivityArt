@@ -45,7 +45,7 @@ fun TimeSelectScreen(
         topBar = {
             ComposableTopBar(null,
                 rightContent = {
-                    ComposableParagraph(
+                    ComposableSubtext(
                         text = "Home",
                         color = Color.White
                     )

@@ -8,11 +8,11 @@ data class ActivitiesFormat(
     val backgroundColor: Color = Black,
     var activityColor: Color = White,
     var conditionallyFormat: Boolean = false,
-    val conditions: List<ConditionalFormatRule> = listOf()
+    var conditions: MutableList<ConditionalFormatRule> = mutableListOf()
 )
 
 abstract class ConditionalFormatRule(
-    val color: Color
+    var color: Color
 ) {
     abstract fun conditionMatched(value: Comparable<Any>): Boolean
 }

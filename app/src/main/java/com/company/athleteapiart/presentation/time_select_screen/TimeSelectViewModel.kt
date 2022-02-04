@@ -61,12 +61,19 @@ class TimeSelectViewModel @Inject constructor(
             ) {
                 is Resource.Success -> {
                     if (result.data.size < 100) {
-                        activities.addAll(result.data)
+                        for (activity in result.data) {
+                            if (activity.map.summary_polyline != "null" && activity.map.summary_polyline != null)
+                                activities.add(activity)
+                        }
                         AthleteActivities.activities.value = activities
                         endReached.value = true
                         isLoading.value = false
                     } else {
-                        activities.addAll(result.data)
+                        for (activity in result.data) {
+                            if (activity.map.summary_polyline != "null" && activity.map.summary_polyline != null)
+                                activities.add(activity)
+                        }
+                       // activities.addAll(result.data)
                         getActivities(page + 1, before, after)
                     }
                 }
