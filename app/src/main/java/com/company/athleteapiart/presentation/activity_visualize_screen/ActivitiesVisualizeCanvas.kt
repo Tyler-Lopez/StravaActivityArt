@@ -2,13 +2,14 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
-import com.company.athleteapiart.data.ActivitiesFormat
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.max
 import kotlin.math.sqrt
 
 fun activitiesVisualizeCanvas(
@@ -54,34 +55,88 @@ fun activitiesVisualizeCanvas(
         backgroundColor
     )
 
-    // Determine how many rows are necessary
-    val colCount = (ceil(sqrt(activities.size.toDouble()))).toInt()
+    println(maxWidth)
+    println(maxHeight)
 
-    // Determine width of each activity
-    val activityWidth = (maxWidth - (colCount * 25)) / colCount
+    val x = maxWidth.toFloat() * 0.9f
+    val y = maxHeight.toFloat() * 0.9f
+    val marginX = (maxWidth.toFloat() * 0.1f) / 2f
+    val marginY = (maxHeight.toFloat() * 0.1f) / 2f
+
+    // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
+//    val activityWidth  = desiredWidth / sqrt((area / activities.size).toDouble()).toFloat()
+
+    val ratio = x / y
+    val n = activities.size
+    var colCount: Float = sqrt(n * ratio).toFloat()
+    var rowCount: Float = n / colCount
+
+    // Find option to fill whole height
+    var numRowsFromHeight = ceil(rowCount)
+    var numColsFromHeight = ceil(n / numRowsFromHeight)
+    while (numRowsFromHeight * ratio < numColsFromHeight) {
+        numRowsFromHeight++
+        numColsFromHeight = ceil(n / numRowsFromHeight)
+    }
+    val sizeFromHeight = y / numRowsFromHeight
+
+    // Find option to fill whole width
+    var numColsFromWidth = ceil(colCount)
+    var numRowsFromWidth = ceil(n / numColsFromWidth)
+    while (numColsFromWidth < ratio * numRowsFromWidth) {
+        numColsFromWidth++
+        numRowsFromWidth = ceil(n / numColsFromWidth)
+    }
+    val sizeFromWidth = x / numColsFromWidth
+
+    var activityWidth: Float
+    if (sizeFromHeight < sizeFromWidth) {
+        rowCount = numRowsFromWidth
+        colCount = numColsFromWidth
+        activityWidth = sizeFromWidth.toFloat()
+    } else {
+        rowCount = numRowsFromHeight
+        colCount = numColsFromHeight
+        activityWidth = sizeFromHeight.toFloat()
+    }
 
     // Iterate through each activity, determining X and Y position
-    var xOffset = 0f
-    var yOffset = activityWidth + 25f
-    var column = 0
+    val initialX = (x - (activityWidth * colCount)) / 2
+    val initialY = (y - (activityWidth * rowCount)) / 2
+
+    var xOffset = initialX + marginX
+    var yOffset = initialY + marginY
+    var column = colCount.toInt()
+
+    var activityCount = 1
+    println("$colCount" + " col count")
+    println(activityWidth)
     for (activity in activities) {
         val summaryPolyline = activity.map.summary_polyline
-        if (activity.type != "Run") continue
-        if (summaryPolyline == "null" || summaryPolyline == null) continue
+        //if (activity.type != "Run") continue
+      //  if (summaryPolyline == "null" || summaryPolyline == null) continue
 
 
-        column++
-        if (column == colCount) {
-            xOffset = activityWidth + 25f
-            yOffset += activityWidth + 25f
-            column = 1
-        } else {
-            xOffset += activityWidth + 25f
+        if (column == colCount.toInt()) {
+            xOffset = initialX + marginX
+            if (activityCount != 1) yOffset += activityWidth
+            column = 0
+        } else  {
+            xOffset += activityWidth
         }
-        println("activity width is $activityWidth")
-        println("row count is $colCount")
-        println("x offset is $xOffset")
 
+        val blankSpaces = ((rowCount * colCount) - activities.size).toInt()
+        println("row count is $rowCount")
+        println("col count is $colCount")
+        println("total number should have is ${rowCount * colCount}")
+        println("blank spaces is $blankSpaces")
+        println("activities size is ${activities.size}")
+        if (activityCount - 1 == (activities.size - (colCount.toInt() - blankSpaces))) {
+                xOffset += ((blankSpaces * activityWidth / 2))
+        }
+
+        activityCount++
+        column++
 
         // Decode Polyline into a List<LatLng>
         val latLngList = PolyUtil.decode(summaryPolyline)
@@ -113,15 +168,15 @@ fun activitiesVisualizeCanvas(
         val largestSide = if (heightNorm < widthNorm) widthNorm else heightNorm
 
 
-        val multiplier = activityWidth.div(largestSide)
+        val multiplier = (activityWidth.times(0.8f)).div(largestSide)
 
         val points = mutableListOf<Float>()
 
         for (normalLatLng in normalizedLatLngList) {
             // x
-            points.add((normalLatLng.longitude.times(multiplier)).toFloat() + xOffset)
+            points.add((normalLatLng.longitude.times(multiplier)).toFloat() + xOffset + (activityWidth / 2f))
             //   y
-            points.add((normalLatLng.latitude.times(multiplier)).toFloat() + yOffset)
+            points.add((normalLatLng.latitude.times(multiplier)).toFloat() + yOffset + (activityWidth / 2f))
         }
 
         val pointsPaint = Paint()

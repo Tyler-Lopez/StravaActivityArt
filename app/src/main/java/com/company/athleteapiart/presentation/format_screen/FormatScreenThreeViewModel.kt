@@ -18,8 +18,8 @@ class FormatScreenThreeViewModel @Inject constructor(
             .conditionallyFormat
     )
 
-    var activityColorRed = mutableStateOf(0)
-    var activityColorGreen = mutableStateOf(0)
-    var activityColorBlue = mutableStateOf(0)
+    var activityColorRed = mutableStateOf(255)
+    var activityColorGreen = mutableStateOf(255)
+    var activityColorBlue = mutableStateOf(255)
 
 }

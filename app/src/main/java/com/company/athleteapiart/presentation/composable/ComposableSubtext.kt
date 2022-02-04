@@ -24,7 +24,7 @@ fun ComposableSubtext(
         fontSize = 24.sp,
         fontFamily = Lato,
         fontWeight = FontWeight.Medium,
-        fontStyle = FontStyle.Italic,
+      //  fontStyle = FontStyle.Italic,
         textAlign = TextAlign.Start,
         color = color,
         modifier = modifier
