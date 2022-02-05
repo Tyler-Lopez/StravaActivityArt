@@ -19,8 +19,8 @@ abstract class ConditionalFormatRule(
 
 // Match on less than, equal to, or greater than a given amount of miles
 class DistanceRule(
-    private val conditionValue: Double,
-    private val distanceCondition: DistanceCondition,
+    var conditionValue: Double,
+    var distanceCondition: DistanceCondition,
     color: Color
 ) : ConditionalFormatRule(color) {
     override fun conditionMatched(value: Comparable<Any>): Boolean {
@@ -55,7 +55,9 @@ enum class DistanceCondition(
 ) {
     LESS_THAN("Less than"),
     EQUAL_TO("Equal to"),
-    GREATER_THAN("Greater than")
+    GREATER_THAN("Greater than");
+
+    override fun toString(): String = this.display
 }
 
 

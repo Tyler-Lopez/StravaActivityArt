@@ -32,7 +32,7 @@ fun ComposableDistanceSlider(
     value: Float,
     color: androidx.compose.ui.graphics.Color = WarmGrey90,
     valueRange: ClosedFloatingPointRange<Float>,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -67,5 +67,4 @@ fun ComposableDistanceSlider(
         valueRange = valueRange,
         modifier = Modifier.padding(horizontal = 10.dp)
     )
-    Spacer(modifier = Modifier.height(20.dp))
 }

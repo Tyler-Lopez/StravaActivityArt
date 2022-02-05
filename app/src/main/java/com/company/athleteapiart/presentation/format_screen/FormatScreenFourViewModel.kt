@@ -18,12 +18,15 @@ import javax.inject.Inject
 class FormatScreenFourViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
-    var currentRule: Int = 1
-    private val rules = AthleteActivities.formatting.value.conditions
-
+    var currentRule = mutableStateOf(1)
+    val rules = AthleteActivities.formatting.value.conditions
+    var distanceSlider = mutableStateOf(0f)
+    var distanceCondition = mutableStateOf(DistanceCondition.LESS_THAN)
+    var maxDistance = mutableStateOf(0f)
     var activityColorRed = mutableStateOf(255)
     var activityColorGreen = mutableStateOf(255)
     var activityColorBlue = mutableStateOf(255)
+
 
 
     init {
@@ -38,6 +41,15 @@ class FormatScreenFourViewModel @Inject constructor(
         activityColorRed.value = (rules.first().color.red * 255).toInt()
         activityColorGreen.value = (rules.first().color.green * 255).toInt()
         activityColorBlue.value = (rules.first().color.blue * 255).toInt()
+
+        for (activity in AthleteActivities.filteredActivities.value) {
+            if (activity.distance > maxDistance.value)
+                maxDistance.value = activity.distance.toFloat()
+        }
+    }
+
+    fun setDistanceSlider(distance: Float) {
+        distanceSlider.value = distance
     }
 
 

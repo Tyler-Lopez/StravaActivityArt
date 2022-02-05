@@ -23,6 +23,7 @@ import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
+import com.company.athleteapiart.util.meterToMiles
 
 
 @Composable
@@ -35,6 +36,9 @@ fun FormatScreenFour(
     val actRed by remember { viewModel.activityColorRed }
     val actGreen by remember { viewModel.activityColorGreen }
     val actBlue by remember { viewModel.activityColorBlue }
+    val distanceSlider by remember { viewModel.distanceSlider }
+    val distanceCondition by remember { viewModel.distanceCondition }
+    val currIndex by remember { viewModel.currentRule }
 
     Scaffold(
         topBar = {
@@ -72,7 +76,7 @@ fun FormatScreenFour(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             ComposableParagraph(
-                                text = "Condition 1",
+                                text = "Condition $currIndex",
                             )
                         }
 
@@ -89,14 +93,59 @@ fun FormatScreenFour(
 
                     }
                     ComposableShadowBox {
-
                         Column {
                             ComposableItemContainer {
+                                ComposableHeader(
+                                    text = "Condition",
+                                    color = StravaOrange,
+                                    isBold = true,
+                                    modifier = Modifier.padding(
+                                        start = MaterialTheme.spacing.xxs,
+                                        bottom = MaterialTheme.spacing.sm
+                                    )
+                                )
+                                for (condition in DistanceCondition.values()) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        RadioButton(
+                                            selected = distanceCondition == condition,
+                                            onClick = {
+                                                viewModel.distanceCondition.value = condition
+                                            })
+                                        ComposableParagraph(
+                                            text = condition.toString(),
+                                            modifier = Modifier.padding(end = MaterialTheme.spacing.sm)
+                                        )
+                                        ComposableParagraph(
+                                            text = "%.1f"
+                                                .format(
+                                                    (distanceSlider)
+                                                        .toDouble()
+                                                        .meterToMiles()
+                                                ) + " mi",
+                                            color = StravaOrange
+                                        )
+                                    }
+
+                                }
+                                val valueRange =
+                                    0f..viewModel.maxDistance.value
+                                Slider(
+                                    value = distanceSlider,
+                                    onValueChange = {
+                                        viewModel.setDistanceSlider(it)
+                                    },
+                                    valueRange = valueRange,
+                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                )
+                            }
+                            ComposableItemContainer(modifier = Modifier.padding(vertical = MaterialTheme.spacing.sm)) {
                                 ComposableHeader(
                                     text = "Condition Color",
                                     color = StravaOrange,
                                     isBold = true,
-                                    modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
+                                    modifier = Modifier.padding(
+                                        start = MaterialTheme.spacing.xxs
+                                    )
                                 )
                                 ComposableColorBox(
                                     color = Color(
@@ -140,8 +189,15 @@ fun FormatScreenFour(
             ComposableLargeButton(
                 text = "Continue",
                 onClick = {
-                    AthleteActivities.formatting.value.conditions.first().color =
-                        Color(actRed, actGreen, actBlue)
+                    val currRule = viewModel.rules.first()
+                    if (currRule is DistanceRule) {
+                        currRule.color = Color(actRed, actGreen, actBlue)
+                        currRule.distanceCondition = distanceCondition
+                        currRule.conditionValue = distanceSlider.toDouble().meterToMiles()
+                        println(currRule.color.toString())
+                        println(distanceCondition.toString())
+                        println(currRule.conditionValue.toString())
+                    }
                     navController.navigate("${Screen.VisualizeActivities}")
                 }
             )

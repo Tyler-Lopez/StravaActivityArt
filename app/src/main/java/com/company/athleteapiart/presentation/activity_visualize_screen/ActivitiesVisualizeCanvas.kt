@@ -57,8 +57,6 @@ fun activitiesVisualizeCanvas(
         backgroundColor
     )
 
-    println(maxWidth)
-    println(maxHeight)
 
     val x = maxWidth.toFloat() * 0.9f
     val y = maxHeight.toFloat() * 0.9f
@@ -111,8 +109,7 @@ fun activitiesVisualizeCanvas(
     var column = colCount.toInt()
 
     var activityCount = 1
-    println("$colCount" + " col count")
-    println(activityWidth)
+
     for (activity in activities) {
         val summaryPolyline = activity.map.summary_polyline
         //if (activity.type != "Run") continue
@@ -128,11 +125,7 @@ fun activitiesVisualizeCanvas(
         }
 
         val blankSpaces = ((rowCount * colCount) - activities.size).toInt()
-        println("row count is $rowCount")
-        println("col count is $colCount")
-        println("total number should have is ${rowCount * colCount}")
-        println("blank spaces is $blankSpaces")
-        println("activities size is ${activities.size}")
+
         if (activityCount - 1 == (activities.size - (colCount.toInt() - blankSpaces))) {
                 xOffset += ((blankSpaces * activityWidth / 2))
         }
