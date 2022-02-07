@@ -1,6 +1,8 @@
 package com.company.athleteapiart.presentation.format_screen
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,10 +69,22 @@ fun FormatScreenFour(
                             .fillMaxWidth()
                             .padding(bottom = MaterialTheme.spacing.md)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            ComposableParagraph(
-                                text = "Condition $currIndex",
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .horizontalScroll(
+                                    state = rememberScrollState()
+                                )
+                        ) {
+                            for (i in 0..viewModel.rules.lastIndex) {
+                                Button(onClick = {
+                                    viewModel.setCurrRule(i)
+                                }) {
+                                    ComposableParagraph(
+                                        text = "Condition $i" + if (viewModel.currRule.value == i) "*" else "-",
+                                    )
+                                }
+                            }
                         }
 
                         Row(verticalAlignment = Alignment.CenterVertically) {

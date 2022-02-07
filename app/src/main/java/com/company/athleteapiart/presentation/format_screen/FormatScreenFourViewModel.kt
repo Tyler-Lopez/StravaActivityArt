@@ -8,6 +8,7 @@ import com.company.athleteapiart.data.DistanceRule
 import com.company.athleteapiart.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
+import com.company.athleteapiart.util.milesToMeters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -35,14 +36,32 @@ class FormatScreenFourViewModel @Inject constructor(
                     color = Color.Red
                 )
             )
-        red.value = (rules.first().color.red * 255).toInt()
-        green.value = (rules.first().color.green * 255).toInt()
-        blue.value = (rules.first().color.blue * 255).toInt()
 
         for (activity in AthleteActivities.filteredActivities.value) {
             if (activity.distance > maxDistance.value)
                 maxDistance.value = activity.distance.toFloat()
         }
+
+        updateValues()
+    }
+
+    private fun updateValues() {
+        red.value = (rules[currRule.value].color.red * 255).toInt()
+        green.value = (rules[currRule.value].color.green * 255).toInt()
+        blue.value = (rules[currRule.value].color.blue * 255).toInt()
+        if (rules[currRule.value] is DistanceRule) {
+            distanceCondition.value = (rules[currRule.value] as DistanceRule)
+                .distanceCondition
+            distanceSlider.value = (rules[currRule.value] as DistanceRule)
+                .conditionValue
+                .milesToMeters()
+                .toFloat()
+        }
+    }
+
+    fun setCurrRule(i: Int) {
+        currRule.value = i
+        updateValues()
     }
 
     fun incrementRule() {
@@ -54,6 +73,7 @@ class FormatScreenFourViewModel @Inject constructor(
             )
         )
         currRule.value++
+        updateValues()
     }
 
     // Update color in ViewModel AND in specific rule
