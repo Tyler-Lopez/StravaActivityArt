@@ -1,11 +1,7 @@
 package com.company.athleteapiart.presentation.format_screen
 
-import android.graphics.Paint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -16,13 +12,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
-import com.company.athleteapiart.data.ConditionalFormatRule
 import com.company.athleteapiart.data.DistanceCondition
-import com.company.athleteapiart.data.DistanceRule
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
-import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 
 
@@ -33,12 +26,12 @@ fun FormatScreenFour(
 ) {
 
 
-    val actRed by remember { viewModel.activityColorRed }
-    val actGreen by remember { viewModel.activityColorGreen }
-    val actBlue by remember { viewModel.activityColorBlue }
+    val actRed by remember { viewModel.red }
+    val actGreen by remember { viewModel.green }
+    val actBlue by remember { viewModel.blue }
     val distanceSlider by remember { viewModel.distanceSlider }
     val distanceCondition by remember { viewModel.distanceCondition }
-    val currIndex by remember { viewModel.currentRule }
+    val currIndex by remember { viewModel.currRule }
 
     Scaffold(
         topBar = {
@@ -83,7 +76,7 @@ fun FormatScreenFour(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Button(
                                 onClick = {
-
+                                    viewModel.incrementRule()
                                 },
                                 colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange)
                             ) {
@@ -109,7 +102,7 @@ fun FormatScreenFour(
                                         RadioButton(
                                             selected = distanceCondition == condition,
                                             onClick = {
-                                                viewModel.distanceCondition.value = condition
+                                                viewModel.setDistanceCondition(condition)
                                             })
                                         ComposableParagraph(
                                             text = condition.toString(),
@@ -160,7 +153,11 @@ fun FormatScreenFour(
                                     value = actRed.toFloat(),
                                     modifier = Modifier.padding(start = 10.dp),
                                     onValueChange = {
-                                        viewModel.activityColorRed.value = it
+                                        viewModel
+                                            .changeColor(
+                                                FormatScreenFourViewModel.ColorChoice.RED,
+                                                it
+                                            )
                                     }
                                 )
                                 ComposableRGBSlider(
@@ -168,7 +165,11 @@ fun FormatScreenFour(
                                     color = Color(0, 128, 0),
                                     value = actGreen.toFloat(),
                                     onValueChange = {
-                                        viewModel.activityColorGreen.value = it
+                                        viewModel
+                                            .changeColor(
+                                                FormatScreenFourViewModel.ColorChoice.GREEN,
+                                                it
+                                            )
                                     }
                                 )
                                 ComposableRGBSlider(
@@ -176,7 +177,11 @@ fun FormatScreenFour(
                                     color = Color.Blue,
                                     value = actBlue.toFloat(),
                                     onValueChange = {
-                                        viewModel.activityColorBlue.value = it
+                                        viewModel
+                                            .changeColor(
+                                                FormatScreenFourViewModel.ColorChoice.BLUE,
+                                                it
+                                            )
                                     }
                                 )
                             }
@@ -189,15 +194,6 @@ fun FormatScreenFour(
             ComposableLargeButton(
                 text = "Continue",
                 onClick = {
-                    val currRule = viewModel.rules.first()
-                    if (currRule is DistanceRule) {
-                        currRule.color = Color(actRed, actGreen, actBlue)
-                        currRule.distanceCondition = distanceCondition
-                        currRule.conditionValue = distanceSlider.toDouble().meterToMiles()
-                        println(currRule.color.toString())
-                        println(distanceCondition.toString())
-                        println(currRule.conditionValue.toString())
-                    }
                     navController.navigate("${Screen.VisualizeActivities}")
                 }
             )
