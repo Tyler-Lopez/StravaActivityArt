@@ -34,6 +34,8 @@ fun FormatScreenFour(
     val distanceSlider by remember { viewModel.distanceSlider }
     val distanceCondition by remember { viewModel.distanceCondition }
     val currIndex by remember { viewModel.currRule }
+    val rulesSize by remember { viewModel.rulesSize }
+
 
     Scaffold(
         topBar = {
@@ -76,7 +78,7 @@ fun FormatScreenFour(
                                     state = rememberScrollState()
                                 )
                         ) {
-                            for (i in 0..viewModel.rules.lastIndex) {
+                            for (i in 0 until rulesSize) {
                                 Button(onClick = {
                                     viewModel.setCurrRule(i)
                                 }) {
@@ -85,19 +87,15 @@ fun FormatScreenFour(
                                     )
                                 }
                             }
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Button(
                                 onClick = {
                                     viewModel.incrementRule()
                                 },
                                 colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange)
                             ) {
-                                ComposableParagraph(text = "Add Condition", color = White)
+                                ComposableParagraph(text = "+", color = White)
                             }
                         }
-
                     }
                     ComposableShadowBox {
                         Column {

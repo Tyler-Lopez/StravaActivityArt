@@ -19,6 +19,9 @@ class FormatScreenFourViewModel @Inject constructor(
 
     var currRule = mutableStateOf(0)
     val rules = AthleteActivities.formatting.value.conditions
+    var rulesSize = mutableStateOf(
+        AthleteActivities.formatting.value.conditions.size
+    )
     var distanceSlider = mutableStateOf(0f)
     var distanceCondition = mutableStateOf(DistanceCondition.LESS_THAN)
     var maxDistance = mutableStateOf(0f)
@@ -57,6 +60,7 @@ class FormatScreenFourViewModel @Inject constructor(
                 .milesToMeters()
                 .toFloat()
         }
+        rulesSize.value = AthleteActivities.formatting.value.conditions.size
     }
 
     fun setCurrRule(i: Int) {
