@@ -10,5 +10,7 @@ sealed class Screen(
     object FormatActivitiesThree : Screen("FormatActivitiesThree")
     object FormatActivitiesFour : Screen("FormatActivitiesFour")
     object VisualizeActivities : Screen("VisualizeActivities")
+    object SaveImage : Screen("SaveImage")
+
     override fun toString(): String = route
 }

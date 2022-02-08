@@ -21,6 +21,7 @@ import com.company.athleteapiart.presentation.format_screen.FormatScreenThree
 import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
 import com.company.athleteapiart.presentation.format_screen.FormatScreenFour
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
+import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -118,6 +119,15 @@ class MainActivity : ComponentActivity() {
                             popExitTransition = { ExitTransition.None }
                         ) {
                             ActivitiesScreen(navController = navController)
+                        }
+                        composable(
+                            route = Screen.SaveImage.route,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None }
+                        ) {
+                            SaveImageScreen(navController = navController)
                         }
                     }
                 }

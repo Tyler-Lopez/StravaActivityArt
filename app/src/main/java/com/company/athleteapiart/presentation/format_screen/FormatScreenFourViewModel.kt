@@ -80,6 +80,11 @@ class FormatScreenFourViewModel @Inject constructor(
         updateValues()
     }
 
+    fun removeRule() {
+        rules.removeAt(currRule.value)
+        currRule.value--
+        updateValues()
+    }
     // Update color in ViewModel AND in specific rule
     fun changeColor(color: ColorChoice, value: Int) {
         when (color) {

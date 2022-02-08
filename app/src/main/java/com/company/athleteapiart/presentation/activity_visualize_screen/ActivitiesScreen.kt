@@ -13,17 +13,19 @@ import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
-import com.company.athleteapiart.presentation.composable.ComposableReturnButton
-import com.company.athleteapiart.presentation.composable.ComposableSaveImageButton
-import com.company.athleteapiart.presentation.composable.ComposableTopBar
+import com.company.athleteapiart.Screen
+import com.company.athleteapiart.presentation.composable.*
+import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.isPermaDenied
 import com.company.athleteapiart.util.saveImage
@@ -54,6 +56,11 @@ fun ActivitiesScreen(
                     })
                 },
                 rightContent = {
+                    ComposableSubtext(
+                        text = "Image Preview",
+                        color = Color.White
+                    )
+                    /*
                     ComposableSaveImageButton {
                         saveImage(
                             bitmap = activitiesVisualizeCanvas(
@@ -64,14 +71,17 @@ fun ActivitiesScreen(
                             folderName = "ActivityVisualizer"
                         )
                     }
+
+                     */
                 }
             )
         },
         content = {
             Column(
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                horizontalAlignment = Alignment.CenterHorizontally,
+
+                ) {
                 if (isLoading) {
                     Text("Applying filters...")
                 } else {
@@ -102,8 +112,8 @@ fun ActivitiesScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(color = WarmGrey30)
-                                    .drawBehind {
+                                    .background(color = White)
+                                   /* .drawBehind {
                                         val drawScopeWidth = this.size.width
                                         val drawScopeHeight = this.size.height
 
@@ -140,34 +150,52 @@ fun ActivitiesScreen(
                                                 strokeWidth = 5f
                                             )
                                         }
-                                    },
+                                    }*/,
+                                //.padding(bottom = 75.dp),
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                BoxWithConstraints(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    contentAlignment = Alignment.Center
+                                ComposableScreenWrapper(
+                                    // Create room for large button
+                                    //     modifier = Modifier.padding(bottom = 75.dp)
                                 ) {
-                                    val maxWidth = this.maxWidth
-                                    ActivityImageHandler(
-                                        activitiesVisualizeCanvas(
-                                            maxWidth = LocalDensity.current.run {
-                                                maxWidth.toPx().toInt()
-                                            },
-                                            activities = activities.value
-                                        )
-                                    )
+                                    ComposableShadowBox {
+                                        Column {
+                                            BoxWithConstraints(
+                                                modifier = Modifier
+                                                    .fillMaxSize(),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                val maxWidth = this.maxWidth
+                                                ActivityImageHandler(
+                                                    activitiesVisualizeCanvas(
+                                                        maxWidth = LocalDensity.current.run {
+                                                            maxWidth.toPx().toInt()
+                                                        },
+                                                        activities = activities.value
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
-
                         }
                         permissionState.shouldShowRationale -> {
                         }
                         permissionState.isPermaDenied() -> {
                         }
                     }
+
                 }
             }
+        },
+        bottomBar = {
+            ComposableLargeButton(
+                text = "Save Image",
+                onClick = {
+                    navController.navigate(Screen.SaveImage.route)
+                }
+            )
         }
     )
 }

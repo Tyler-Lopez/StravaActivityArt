@@ -95,14 +95,14 @@ fun TimeSelectScreen(
                 // Otherwise, present options to user
                 else -> {
                     ComposableScreenWrapper {
-                        ComposableAppNameHorizontal(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
+                        //   ComposableAppNameHorizontal(
+                        //       modifier = Modifier
+                        //           .fillMaxWidth()
+                        //    )
                         ComposableParagraph(
                             text = "Which year would you like to visualize" +
                                     " activities from?",
-                            modifier = Modifier.padding(vertical = MaterialTheme.spacing.md)
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
                         )
                         ComposableShadowBox {
                             // Determine size of each button from width

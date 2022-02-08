@@ -52,7 +52,7 @@ fun FormatScreenTwo(
             ) {
                 ComposableScreenWrapper(
                     // Create room for large button
-                    modifier = Modifier.padding(bottom = 75.dp)
+            //        modifier = Modifier.padding(bottom = 75.dp)
                 ) {
                     ComposableShadowBox {
                         Column {

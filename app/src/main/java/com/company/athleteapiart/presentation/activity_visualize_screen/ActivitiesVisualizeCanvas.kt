@@ -197,12 +197,10 @@ fun activitiesVisualizeCanvas(
             }
         }
 
-
-
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
         pointsPaint.style = Paint.Style.STROKE
-        pointsPaint.strokeWidth = 3f
+        pointsPaint.strokeWidth = sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0025f
 
         val path = Path()
         path.setLastPoint(points[0], points[1])

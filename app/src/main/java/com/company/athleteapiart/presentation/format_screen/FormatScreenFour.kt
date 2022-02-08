@@ -1,14 +1,22 @@
 package com.company.athleteapiart.presentation.format_screen
 
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -79,36 +87,78 @@ fun FormatScreenFour(
                                 )
                         ) {
                             for (i in 0 until rulesSize) {
-                                Button(onClick = {
-                                    viewModel.setCurrRule(i)
-                                }) {
+                                val selected = viewModel.currRule.value == i
+                                Button(
+                                    onClick = {
+                                        viewModel.setCurrRule(i)
+                                    },
+                                    colors =
+                                    ButtonDefaults.buttonColors(
+                                        if (selected) WarmGrey20 else White
+                                    ),
+                                    modifier = Modifier
+                                        .padding(end = MaterialTheme.spacing.sm)
+                                        .border(width = if (selected) 2.dp else 0.dp, color = White)
+                                ) {
                                     ComposableParagraph(
-                                        text = "Condition $i" + if (viewModel.currRule.value == i) "*" else "-",
+                                        text = "${i + 1}",
+                                        color = if (selected) StravaOrange else WarmGrey50,
                                     )
                                 }
                             }
-                            Button(
-                                onClick = {
-                                    viewModel.incrementRule()
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange)
-                            ) {
-                                ComposableParagraph(text = "+", color = White)
-                            }
+                            Icon(
+                                Icons.Rounded.Add,
+                                "",
+                                tint = White,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(StravaOrange)
+                                    .padding(4.dp)
+                                    .clickable(
+                                        onClick = {
+                                            viewModel.incrementRule()
+                                        })
+                            )
                         }
                     }
                     ComposableShadowBox {
                         Column {
                             ComposableItemContainer {
-                                ComposableHeader(
-                                    text = "Condition",
-                                    color = StravaOrange,
-                                    isBold = true,
-                                    modifier = Modifier.padding(
-                                        start = MaterialTheme.spacing.xxs,
-                                        bottom = MaterialTheme.spacing.sm
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.sm)
+                                ) {
+                                    ComposableHeader(
+                                        text = "Condition ${viewModel.currRule.value + 1}",
+                                        color = StravaOrange,
+                                        isBold = true,
+                                        modifier = Modifier.padding(
+                                            horizontal = MaterialTheme.spacing.xxs
+
+                                        )
                                     )
-                                )
+                                    if (currIndex != 0)
+                                        Icon(
+                                            Icons.Rounded.Close,
+                                            "",
+                                            tint = White,
+                                            modifier = Modifier
+                                                .padding(
+                                                    horizontal = MaterialTheme.spacing.xxs
+                                                )
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(StravaOrange)
+                                                .padding(
+                                                    horizontal = MaterialTheme.spacing.xxs
+                                                )
+                                                .clickable(
+                                                    onClick = {
+                                                        viewModel.removeRule()
+                                                    })
+                                        )
+                                }
                                 for (condition in DistanceCondition.values()) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         RadioButton(

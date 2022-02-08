@@ -22,6 +22,7 @@ fun saveImage(bitmap: Bitmap, context: Context, folderName: String) {
         // RELATIVE_PATH and IS_PENDING are introduced in API 29.
 
         val uri: Uri? = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
         if (uri != null) {
             saveImageToStream(bitmap, context.contentResolver.openOutputStream(uri))
             values.put(MediaStore.Images.Media.IS_PENDING, false)
