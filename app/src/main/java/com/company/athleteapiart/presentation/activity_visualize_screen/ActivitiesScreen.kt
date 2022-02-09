@@ -112,45 +112,7 @@ fun ActivitiesScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(color = White)
-                                   /* .drawBehind {
-                                        val drawScopeWidth = this.size.width
-                                        val drawScopeHeight = this.size.height
-
-                                        for (i in 0..(drawScopeWidth
-                                            .div(50f)
-                                            .toInt())) {
-                                            drawLine(
-                                                color = WarmGrey40,
-                                                start = Offset(
-                                                    x = i * 50f,
-                                                    y = 0f
-                                                ),
-                                                end = Offset(
-                                                    x = i * 50f,
-                                                    y = drawScopeHeight
-                                                ),
-                                                strokeWidth = 5f
-                                            )
-                                        }
-
-                                        for (i in 0..(drawScopeHeight
-                                            .div(50f)
-                                            .toInt())) {
-                                            drawLine(
-                                                color = WarmGrey40,
-                                                start = Offset(
-                                                    y = i * 50f,
-                                                    x = 0f
-                                                ),
-                                                end = Offset(
-                                                    y = i * 50f,
-                                                    x = drawScopeWidth
-                                                ),
-                                                strokeWidth = 5f
-                                            )
-                                        }
-                                    }*/,
+                                    .background(color = White),
                                 //.padding(bottom = 75.dp),
                                 verticalArrangement = Arrangement.Center
                             ) {
