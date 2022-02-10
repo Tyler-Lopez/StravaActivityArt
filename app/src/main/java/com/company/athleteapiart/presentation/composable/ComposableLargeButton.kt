@@ -23,21 +23,33 @@ fun ComposableLargeButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    Button(
-        colors = ButtonDefaults.buttonColors(StravaOrange),
-        onClick = {
-            onClick()
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
-        shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomStart = 5.dp, bottomEnd = 5.dp)
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        ComposableHeader(
-            text = text,
-            color = White,
-            isBold = true
-        )
+        val isThin = this.maxWidth < 414.dp
+        Button(
+            colors = ButtonDefaults.buttonColors(StravaOrange),
+            onClick = {
+                onClick()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = if (isThin) 0.dp else MaterialTheme.spacing.md,
+                    vertical = if (isThin) 0.dp else MaterialTheme.spacing.sm
+                ),
+            shape = RoundedCornerShape(
+                topStart = 0.dp,
+                topEnd = 0.dp,
+                bottomStart = if (isThin) 0.dp else 5.dp,
+                bottomEnd = if (isThin) 0.dp else 5.dp
+            )
+        ) {
+            ComposableHeader(
+                text = text,
+                color = White,
+                isBold = true
+            )
+        }
     }
-
 }

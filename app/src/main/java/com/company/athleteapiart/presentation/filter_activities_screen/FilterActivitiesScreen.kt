@@ -90,7 +90,7 @@ fun FilterActivitiesScreen(
                         ) {
                             ComposableParagraph(
                                 text = "Exclude certain activities prior to visualization if desired",
-                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
+                                modifier = Modifier.padding(MaterialTheme.spacing.md)
                             )
                             ComposableShadowBox {
                                 Column {

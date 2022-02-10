@@ -21,12 +21,17 @@ class LoginScreenViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
-    var isLoading = mutableStateOf(true)
+    var isLoading = mutableStateOf(false)
     var requestLogin = mutableStateOf(false)
+    var endReached = mutableStateOf(false)
+
     private val oAuthDao = mutableStateOf<OAuth2Dao?>(null)
 
 
     fun loadDao(context: Context) {
+
+        println("here at loaddao")
+        isLoading.value = true
         viewModelScope.launch {
             oAuthDao.value = OAuth2Database.getInstance(context.applicationContext).oAuth2Dao
             getAccessToken(oAuthDao.value?.getOauth2())
@@ -35,6 +40,8 @@ class LoginScreenViewModel @Inject constructor(
 
     private fun getAccessToken(oAuth2Entity: OAuth2Entity?) {
         viewModelScope.launch {
+            println("here start of viewmodel scope")
+            println(OAuth2.authorizationCode)
             when {
                 // If the user just authorized with Strava...
                 OAuth2.authorizationCode != "null" -> {
@@ -55,7 +62,9 @@ class LoginScreenViewModel @Inject constructor(
                                     refreshToken = result.data.refresh_token
                                 )
                             )
+                            println("here")
                             requestLogin.value = false
+                            endReached.value = true
                             isLoading.value = false
                         }
                         is Resource.Error -> {
@@ -64,9 +73,11 @@ class LoginScreenViewModel @Inject constructor(
                         }
                     }
                 }
-                oAuth2Entity == null -> {
+                oAuth2Entity == null || OAuth2.authorizationCode == "null" -> {
                     // Determine that we do not have access token before, ask user to connect
+                    println("No access token, user should connect")
                     requestLogin.value = true
+                    endReached.value = true
                     isLoading.value = false
                 }
                 TimeUtils.accessTokenExpired(oAuth2Entity.receivedOn) -> {

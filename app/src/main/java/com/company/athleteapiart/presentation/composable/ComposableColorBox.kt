@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.company.athleteapiart.ui.spacing
+import com.company.athleteapiart.ui.theme.StravaOrange
 
 @Composable
 fun ComposableColorBox(
@@ -29,6 +30,8 @@ fun ComposableColorBox(
                     color.blue
                 )
             )
+            .border(4.dp, StravaOrange)
+            .padding(4.dp)
             .border(
                 width = 5.dp,
                 color = Color(1f, 1f, 1f, 0.2f)

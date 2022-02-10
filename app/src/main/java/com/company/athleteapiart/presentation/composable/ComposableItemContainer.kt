@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.WarmGrey20
+import com.company.athleteapiart.ui.theme.White
 
 @Composable
 fun ComposableItemContainer(
@@ -23,7 +24,7 @@ fun ComposableItemContainer(
             .shadow(
                 5.dp
             )
-            .background(WarmGrey20)
+            .background(White)
             .fillMaxWidth()
 
     ) {

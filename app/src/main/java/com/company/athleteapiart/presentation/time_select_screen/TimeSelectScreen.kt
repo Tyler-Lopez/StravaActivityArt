@@ -95,25 +95,22 @@ fun TimeSelectScreen(
                 // Otherwise, present options to user
                 else -> {
                     ComposableScreenWrapper {
-                        //   ComposableAppNameHorizontal(
-                        //       modifier = Modifier
-                        //           .fillMaxWidth()
-                        //    )
                         ComposableParagraph(
                             text = "Which year would you like to visualize" +
                                     " activities from?",
-                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
+                            modifier = Modifier.padding(MaterialTheme.spacing.md)
                         )
                         ComposableShadowBox {
                             // Determine size of each button from width
                             val maxWidth = this.maxWidth
-                            val yearsPerRow = if (maxWidth >= 600.dp) 3 else 2
+                            val yearsPerRow = if (maxWidth >= 600.dp) 3 else if (maxWidth >= 414.dp) 2 else 1
+                            println(maxWidth.toString() + " MAX WIDTH")
                             val buttonSize = (maxWidth - spacingMd * yearsPerRow) / yearsPerRow
 
                             FlowRow(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = spacingMd)
+                                    .padding(start = spacingMd, end = if (yearsPerRow <= 1) spacingMd else 0.dp)
                             ) {
                                 var yearIncrement = 1;
                                 for (year in TimeUtils.yearsAvailable().reversed()) {
@@ -140,6 +137,7 @@ fun TimeSelectScreen(
                                     }
                                     yearIncrement++
                                 }
+                                Spacer(modifier=Modifier.height(spacingMd).fillMaxWidth())
                             }
                         }
                     }

@@ -15,11 +15,12 @@ fun ComposableHeader(
     text: String,
     isBold: Boolean = false,
     color: Color = WarmGrey50,
+    center: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
-        textAlign = TextAlign.Center,
+        textAlign = if (center) TextAlign.Center else TextAlign.Start,
         fontSize = 35.sp,
         fontFamily = Lato,
         letterSpacing = 1.sp,

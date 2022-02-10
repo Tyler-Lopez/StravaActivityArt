@@ -12,10 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.dp
 import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.WarmGrey30
-import com.company.athleteapiart.ui.theme.WarmGrey40
-import com.company.athleteapiart.ui.theme.WarmGrey50
+import com.company.athleteapiart.ui.theme.*
 
 @Composable
 fun ComposableShadowBox(
@@ -23,25 +22,31 @@ fun ComposableShadowBox(
     content: @Composable BoxWithConstraintsScope.() -> Unit
 ) {
     val scrollState = rememberScrollState()
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush
-                    .verticalGradient(
-                        colors = listOf(
-                            WarmGrey30,
-                            WarmGrey40
-                        )
-                    ),
-            )
-            .border(
-                width = MaterialTheme.spacing.xs,
-                color = WarmGrey50
-            )
-            .verticalScroll(scrollState),
-        contentAlignment = Alignment.Center
-    ) {
-        content()
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+        val isThin = this.maxWidth < 414.dp
+
+        BoxWithConstraints(
+            modifier = modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush
+                        .verticalGradient(
+                            colors = listOf(
+                                WarmGrey40,
+                                WarmGrey70
+                            )
+                        ),
+                )
+                .border(
+                    width = if (isThin) 0.dp else MaterialTheme.spacing.xs,
+                    color = WarmGrey50
+                )
+                .verticalScroll(scrollState)
+                .padding(bottom = if (isThin) 64.dp else 0.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            content()
+        }
     }
 }
