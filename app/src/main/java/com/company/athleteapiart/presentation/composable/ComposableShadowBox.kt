@@ -33,7 +33,7 @@ fun ComposableShadowBox(
                     brush = Brush
                         .verticalGradient(
                             colors = listOf(
-                                WarmGrey40,
+                                WarmGrey60,
                                 WarmGrey70
                             )
                         ),

@@ -133,6 +133,7 @@ fun ActivitiesScreen(
                                                         maxWidth = LocalDensity.current.run {
                                                             maxWidth.toPx().toInt()
                                                         },
+                                                        LocalContext.current,
                                                         activities = activities.value
                                                     )
                                                 )

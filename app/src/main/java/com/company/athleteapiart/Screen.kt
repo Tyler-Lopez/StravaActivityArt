@@ -9,6 +9,7 @@ sealed class Screen(
     object FormatActivitiesTwo : Screen("FormatActivitiesTwo")
     object FormatActivitiesThree : Screen("FormatActivitiesThree")
     object FormatActivitiesFour : Screen("FormatActivitiesFour")
+    object ErrorNoActivities : Screen("ErrorNoActivities")
     object VisualizeActivities : Screen("VisualizeActivities")
     object SaveImage : Screen("SaveImage")
 

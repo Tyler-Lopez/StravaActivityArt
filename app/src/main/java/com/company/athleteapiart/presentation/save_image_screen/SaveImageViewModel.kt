@@ -32,6 +32,7 @@ class SaveImageViewModel @Inject constructor(
             saveImage(
                 bitmap = activitiesVisualizeCanvas(
                     maxWidth = 3420,
+                    context = context,
                     activities = activities.value
                 ),
                 context = context,

@@ -8,6 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.ui.theme.Lato
+import com.company.athleteapiart.ui.theme.MaisonNeue
 import com.company.athleteapiart.ui.theme.WarmGrey50
 
 @Composable
@@ -22,7 +23,7 @@ fun ComposableHeader(
         text = text,
         textAlign = if (center) TextAlign.Center else TextAlign.Start,
         fontSize = 35.sp,
-        fontFamily = Lato,
+        fontFamily = MaisonNeue,
         letterSpacing = 1.sp,
         color = color,
         fontWeight = if (isBold) FontWeight.SemiBold else FontWeight.Normal,

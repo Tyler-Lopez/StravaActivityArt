@@ -1,7 +1,9 @@
 package com.company.athleteapiart.presentation.activity_visualize_screen
 
+import android.content.Context
 import android.graphics.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import com.company.athleteapiart.data.DistanceRule
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.util.AthleteActivities
@@ -15,6 +17,7 @@ import kotlin.math.sqrt
 
 fun activitiesVisualizeCanvas(
     maxWidth: Int,
+    context: Context,
     activities: List<Activity>
 ): Bitmap {
 
@@ -59,9 +62,9 @@ fun activitiesVisualizeCanvas(
 
 
     val x = maxWidth.toFloat() * 0.9f
-    val y = maxHeight.toFloat() * 0.9f
+    val y = maxHeight.toFloat().times(if (true) 0.85f else 0.9f)
     val marginX = (maxWidth.toFloat() * 0.1f) / 2f
-    val marginY = (maxHeight.toFloat() * 0.1f) / 2f
+    val marginY = (maxHeight.toFloat().times(if (true) 0.1f else 0.1f)) / 2f
 
     // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
 //    val activityWidth  = desiredWidth / sqrt((area / activities.size).toDouble()).toFloat()
@@ -178,14 +181,8 @@ fun activitiesVisualizeCanvas(
 
         val distance = activity.distance.meterToMiles()
 
-        pointsPaint.color = when {
+        pointsPaint.color = Color.rgb(actColor.red, actColor.green, actColor.blue)
 
-
-            //  distance <= 5 -> Color.RED
-            //   distance <= 10 -> Color.rgb(255, 153, 51)
-            //   distance <= 20 -> Color.YELLOW
-            else -> Color.rgb(actColor.red, actColor.green, actColor.blue)
-        }
 
         // Are they any condition rules
         for (condition in conditions) {
@@ -200,7 +197,7 @@ fun activitiesVisualizeCanvas(
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
         pointsPaint.style = Paint.Style.STROKE
-        pointsPaint.strokeWidth = sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0025f
+        pointsPaint.strokeWidth = sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0035f
 
         val path = Path()
         path.setLastPoint(points[0], points[1])
@@ -209,6 +206,15 @@ fun activitiesVisualizeCanvas(
         }
         canvas.drawPath(path, pointsPaint)
     }
+
+    val textPaint = Paint()
+    textPaint.textSize = maxWidth * 0.04f
+    textPaint.color = Color.WHITE
+    textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
+    canvas.drawText("REBECCA YURGENS", maxWidth * 0.075f, center.y + center.y - maxWidth * 0.06f, textPaint)
+    textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
+    textPaint.color = Color.argb(100, 255, 255, 255)
+    canvas.drawText("2022", center.x + center.x - maxWidth * 0.175f, center.y + center.y - maxWidth * 0.06f, textPaint)
 
     return bitmap
 }

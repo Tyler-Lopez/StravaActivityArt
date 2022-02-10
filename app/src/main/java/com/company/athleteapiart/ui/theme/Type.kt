@@ -16,6 +16,14 @@ val Roboto = FontFamily(
     Font(R.font.roboto_bold, FontWeight.Bold),
 )
 
+val MaisonNeue = FontFamily(
+    Font(R.font.maisonneue_black, FontWeight.Black),
+    Font(R.font.maisonneue_bold, FontWeight.Bold),
+    Font(R.font.maisonneue_medium, FontWeight.Medium),
+    Font(R.font.maisonneue_light, FontWeight.Light),
+    Font(R.font.maisonneue_thin, FontWeight.Thin)
+)
+
 val Lato = FontFamily(
     Font(R.font.lato_light, FontWeight.Light),
     Font(R.font.lato_lightitalic, FontWeight.Light, FontStyle.Italic),

@@ -59,7 +59,8 @@ fun LoginScreen(
             text = "ART",
             isBold = true,
             center = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(bottom = MaterialTheme.spacing.md)
+
         )
 
         if (!isLoading && endReached) {
@@ -70,9 +71,9 @@ fun LoginScreen(
                     painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
                     contentDescription = "Connect with Strava",
                     modifier = Modifier
-                        .width(250.dp)
-                        .padding(MaterialTheme.spacing.md)
+                        .width(300.dp)
                         .clickable { onClick(viewModel.loginIntent) }
+
                 )
             }
         }

@@ -81,9 +81,18 @@ fun TimeSelectScreen(
                     }
                     // If data has been successfully received
                     if (endReached) {
-                        navController.navigate("${Screen.FilterActivities}") {
-                            popUpTo(Screen.TimeSelect.route) {
-                                inclusive = true
+                        if (viewModel.activities.size <= 0) {
+                            navController.navigate("${Screen.ErrorNoActivities}") {
+                                popUpTo(Screen.TimeSelect.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                        else {
+                            navController.navigate("${Screen.FilterActivities}") {
+                                popUpTo(Screen.TimeSelect.route) {
+                                    inclusive = true
+                                }
                             }
                         }
                     }

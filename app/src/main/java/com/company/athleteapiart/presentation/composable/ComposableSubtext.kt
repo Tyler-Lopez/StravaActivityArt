@@ -22,7 +22,7 @@ fun ComposableSubtext(
     Text(
         text = text,
         fontSize = 24.sp,
-        fontFamily = Lato,
+        fontFamily = MaisonNeue,
         fontWeight = FontWeight.Medium,
       //  fontStyle = FontStyle.Italic,
         textAlign = TextAlign.Start,

@@ -86,7 +86,7 @@ fun FilterActivitiesScreen(
                     else -> {
                         ComposableScreenWrapper(
                             // Create room for large button
-                       //     modifier = Modifier.padding(bottom = 75.dp)
+                            //     modifier = Modifier.padding(bottom = 75.dp)
                         ) {
                             ComposableParagraph(
                                 text = "Exclude certain activities prior to visualization if desired",
@@ -170,7 +170,9 @@ fun FilterActivitiesScreen(
                                             onValueChange = {
                                                 if (it < maxDistanceSlider)
                                                     viewModel.setMinDistanceSlider(it)
-                                                else viewModel.setMinDistanceSlider(maxDistanceSlider)
+                                                else viewModel.setMinDistanceSlider(
+                                                    maxDistanceSlider
+                                                )
 
                                             }
                                         )
@@ -181,7 +183,9 @@ fun FilterActivitiesScreen(
                                             onValueChange = {
                                                 if (it > minDistanceSlider)
                                                     viewModel.setMaxDistanceSlider(it)
-                                                else viewModel.setMaxDistanceSlider(minDistanceSlider)
+                                                else viewModel.setMaxDistanceSlider(
+                                                    minDistanceSlider
+                                                )
                                             }
                                         )
                                     }
@@ -219,7 +223,15 @@ fun FilterActivitiesScreen(
                         }
                         AthleteActivities.filteredActivities.value.add(activity)
                     }
-                    navController.navigate("${Screen.FormatActivitiesOne}")
+
+                    if (AthleteActivities.filteredActivities.value.size <= 0) {
+                        navController.navigate("${Screen.ErrorNoActivities}") {
+                            popUpTo(Screen.TimeSelect.route) {
+                                inclusive = true
+                            }
+                        }
+                    } else
+                        navController.navigate("${Screen.FormatActivitiesOne}")
                 }
             )
         })
