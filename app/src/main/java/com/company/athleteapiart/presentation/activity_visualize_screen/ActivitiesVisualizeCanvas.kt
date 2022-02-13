@@ -56,7 +56,7 @@ fun activitiesVisualizeCanvas(
 
     val x = maxWidth.times(0.8f)
     val y = maxHeight.times(if (true) 0.75f else 0.8f)
-    
+
     val marginX = (maxWidth.times(0.2f)).div(2f)
     val marginY = (maxHeight.times(0.2f)).div(2f)
 
@@ -104,8 +104,10 @@ fun activitiesVisualizeCanvas(
     var column = colCount.toInt()
 
     var activityCount = 1
+    var totalDistance = 0.0
 
     for (activity in activities) {
+        totalDistance += activity.distance
         val summaryPolyline = activity.map.summary_polyline
         //if (activity.type != "Run") continue
       //  if (summaryPolyline == "null" || summaryPolyline == null) continue
@@ -204,16 +206,16 @@ fun activitiesVisualizeCanvas(
     val textPaint = Paint()
     textPaint.textSize = textSize
     textPaint.color = Color.WHITE
-    textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
-    textPaint.letterSpacing = 0.3f
-    canvas.drawText(format.value.leftString.uppercase(), marginX, maxHeight.times(0.96f) - marginY + textSize, textPaint)
+    textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_book.otf")
+    textPaint.letterSpacing = 0.2f
+    canvas.drawText(format.value.leftString, marginX, maxHeight.times(0.96f) - marginY + textSize, textPaint)
     textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
     textPaint.color = Color.argb(100, 255, 255, 255)
 
 
     // Place YEAR in right side of screen
     val bounds = Rect()
-    val rightText = format.value.rightString
+    val rightText = "${totalDistance.meterToMiles().roundToInt()} mi | ${format.value.rightString}"
     textPaint.getTextBounds(rightText, 0, rightText.length, bounds)
 
     canvas.drawText(
