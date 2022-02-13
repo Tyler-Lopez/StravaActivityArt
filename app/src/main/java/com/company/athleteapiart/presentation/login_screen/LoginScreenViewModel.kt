@@ -29,8 +29,6 @@ class LoginScreenViewModel @Inject constructor(
 
 
     fun loadDao(context: Context) {
-
-        println("here at loaddao")
         isLoading.value = true
         viewModelScope.launch {
             oAuthDao.value = OAuth2Database.getInstance(context.applicationContext).oAuth2Dao
@@ -40,7 +38,6 @@ class LoginScreenViewModel @Inject constructor(
 
     private fun getAccessToken(oAuth2Entity: OAuth2Entity?) {
         viewModelScope.launch {
-            println("here start of viewmodel scope")
             println(OAuth2.authorizationCode)
             when {
                 // If the user just authorized with Strava...
@@ -53,16 +50,18 @@ class LoginScreenViewModel @Inject constructor(
                     )
                     when (result) {
                         is Resource.Success -> {
-                            OAuth2.accessToken = result.data.access_token
                             oAuthDao.value!!.clearOauth2()
                             oAuthDao.value!!.insertOauth2(
                                 OAuth2Entity(
                                     receivedOn = (GregorianCalendar().timeInMillis / 1000).toInt(),
+                                    firstName = result.data.athlete.firstname,
+                                    lastName = result.data.athlete.lastname,
                                     accessToken = result.data.access_token,
                                     refreshToken = result.data.refresh_token
                                 )
                             )
-                            println("here")
+                            OAuth2.accessToken = result.data.access_token
+                            AthleteActivities.formatting.value.leftString = "${result.data.athlete.firstname} ${result.data.athlete.lastname}"
                             requestLogin.value = false
                             endReached.value = true
                             isLoading.value = false
@@ -97,10 +96,13 @@ class LoginScreenViewModel @Inject constructor(
                             oAuthDao.value!!.insertOauth2(
                                 OAuth2Entity(
                                     receivedOn = (GregorianCalendar().timeInMillis / 1000).toInt(),
+                                    firstName = result.data.athlete.firstname,
+                                    lastName = result.data.athlete.lastname,
                                     accessToken = result.data.access_token,
                                     refreshToken = result.data.refresh_token
                                 )
                             )
+                            AthleteActivities.formatting.value.leftString = "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
                             requestLogin.value = false
                             isLoading.value = false
                         }
@@ -114,6 +116,7 @@ class LoginScreenViewModel @Inject constructor(
                 }
                 else -> {
                     // Not expired, use token
+                    AthleteActivities.formatting.value.leftString = "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
                     OAuth2.accessToken = oAuth2Entity.accessToken
                     requestLogin.value = false
                     isLoading.value = false

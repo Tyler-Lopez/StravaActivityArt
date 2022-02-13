@@ -93,9 +93,7 @@ fun FormatScreenOne(
             ComposableLargeButton(
                 text = "Continue",
                 onClick = {
-                    AthleteActivities.formatting.value = ActivitiesFormat(
-                        backgroundColor = Color(bgRed, bgGreen, bgBlue),
-                    )
+                    AthleteActivities.formatting.value.backgroundColor = Color(bgRed, bgGreen, bgBlue)
                     navController.navigate("${Screen.FormatActivitiesTwo}")
                 }
             )

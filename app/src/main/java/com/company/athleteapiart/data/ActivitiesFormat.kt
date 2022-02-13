@@ -5,7 +5,9 @@ import com.company.athleteapiart.ui.theme.Black
 import com.company.athleteapiart.ui.theme.White
 
 data class ActivitiesFormat(
-    val backgroundColor: Color = Black,
+    var leftString: String = "ATHLETE NAME",
+    var rightString: String = "YEAR",
+    var backgroundColor: Color = Black,
     var activityColor: Color = White,
     var conditionallyFormat: Boolean = false,
     var conditions: MutableList<ConditionalFormatRule> = mutableListOf()

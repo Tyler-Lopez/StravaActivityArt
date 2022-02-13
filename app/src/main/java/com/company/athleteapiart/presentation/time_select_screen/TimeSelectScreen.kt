@@ -20,6 +20,7 @@ import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
+import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.TimeUtils
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -125,6 +126,7 @@ fun TimeSelectScreen(
                                 for (year in TimeUtils.yearsAvailable().reversed()) {
                                     Button(
                                         onClick = {
+                                            AthleteActivities.formatting.value.rightString = "$year"
                                             viewModel.loadActivitiesByYear(year)
                                         },
                                         modifier = Modifier

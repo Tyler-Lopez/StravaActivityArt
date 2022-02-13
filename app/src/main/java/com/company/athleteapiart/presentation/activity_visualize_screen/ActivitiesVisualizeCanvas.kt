@@ -10,10 +10,7 @@ import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.sqrt
+import kotlin.math.*
 
 fun activitiesVisualizeCanvas(
     maxWidth: Int,
@@ -27,8 +24,8 @@ fun activitiesVisualizeCanvas(
     val actColor = format.value.activityColor
 
     // Create a bitmap which is a scaled representation of a 3420x4320 image
-    val desiredWidth = 3420f
-    val desiredHeight = 4320f
+    val desiredWidth = 3840f
+    val desiredHeight = 2160f
     val ratioMultiplier = desiredHeight / desiredWidth
     // Determine height of image given width
     val maxHeight = (maxWidth * ratioMultiplier).toInt()
@@ -39,13 +36,9 @@ fun activitiesVisualizeCanvas(
         maxHeight,
         Bitmap.Config.ARGB_8888
     )
-    // Create canvas to draw on
 
+    // Create canvas to draw on
     val canvas = Canvas(bitmap)
-    val center = Offset(
-        x = canvas.width / 2f,
-        y = canvas.height / 2f
-    )
     // Draw canvas background
     val backgroundColor = Paint()
     backgroundColor.color = Color
@@ -61,25 +54,13 @@ fun activitiesVisualizeCanvas(
     )
 
 
-    val x = maxWidth.times(0.9f)
-    val y = maxHeight.times(if (true) 0.85f else 0.9f)
-    val marginX = (maxWidth.times(0.1f)).div(2f)
-    val marginY = (maxHeight.times(0.1f)).div(2f)
+    val x = maxWidth.times(0.8f)
+    val y = maxHeight.times(if (true) 0.75f else 0.8f)
+    
+    val marginX = (maxWidth.times(0.2f)).div(2f)
+    val marginY = (maxHeight.times(0.2f)).div(2f)
 
-    val testPaint = Paint()
-    testPaint.color = Color.CYAN
-    canvas.drawRect(
-        Rect(
-            marginX.toInt(),
-            marginY.toInt(),
-            x.toInt() + marginX.toInt(),
-            y.toInt() + marginY.toInt()
-        ),
-        testPaint
-    )
     // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
-//    val activityWidth  = desiredWidth / sqrt((area / activities.size).toDouble()).toFloat()
-
     val ratio = x / y
     val n = activities.size
     var colCount: Float = sqrt(n * ratio).toFloat()
@@ -208,7 +189,7 @@ fun activitiesVisualizeCanvas(
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
         pointsPaint.style = Paint.Style.STROKE
-        pointsPaint.strokeWidth = sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0035f
+        pointsPaint.strokeWidth = sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0015f
 
         val path = Path()
         path.setLastPoint(points[0], points[1])
@@ -218,15 +199,29 @@ fun activitiesVisualizeCanvas(
         canvas.drawPath(path, pointsPaint)
     }
 
-    val textSize = y * 0.05f
+    // Place NAME in left side of screen
+    val textSize = min(x, y) * 0.05f
     val textPaint = Paint()
     textPaint.textSize = textSize
     textPaint.color = Color.WHITE
     textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
-    canvas.drawText("REBECCA YURGENS", marginX, maxHeight.times(0.95f) - marginY + textSize, textPaint)
+    textPaint.letterSpacing = 0.3f
+    canvas.drawText(format.value.leftString.uppercase(), marginX, maxHeight.times(0.96f) - marginY + textSize, textPaint)
     textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
     textPaint.color = Color.argb(100, 255, 255, 255)
-    canvas.drawText("2022", maxWidth.times(0.9f) - (textSize * 4), maxHeight.times(0.95f) - marginY + textSize, textPaint)
+
+
+    // Place YEAR in right side of screen
+    val bounds = Rect()
+    val rightText = format.value.rightString
+    textPaint.getTextBounds(rightText, 0, rightText.length, bounds)
+
+    canvas.drawText(
+        rightText,
+        maxWidth - marginX - bounds.width(),
+        maxHeight.times(0.96f) - marginY + textSize,
+        textPaint
+    )
 
     return bitmap
 }
