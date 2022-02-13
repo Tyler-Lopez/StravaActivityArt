@@ -61,11 +61,22 @@ fun activitiesVisualizeCanvas(
     )
 
 
-    val x = maxWidth.toFloat() * 0.9f
-    val y = maxHeight.toFloat().times(if (true) 0.85f else 0.9f)
-    val marginX = (maxWidth.toFloat() * 0.1f) / 2f
-    val marginY = (maxHeight.toFloat().times(if (true) 0.1f else 0.1f)) / 2f
+    val x = maxWidth.times(0.9f)
+    val y = maxHeight.times(if (true) 0.85f else 0.9f)
+    val marginX = (maxWidth.times(0.1f)).div(2f)
+    val marginY = (maxHeight.times(0.1f)).div(2f)
 
+    val testPaint = Paint()
+    testPaint.color = Color.CYAN
+    canvas.drawRect(
+        Rect(
+            marginX.toInt(),
+            marginY.toInt(),
+            x.toInt() + marginX.toInt(),
+            y.toInt() + marginY.toInt()
+        ),
+        testPaint
+    )
     // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
 //    val activityWidth  = desiredWidth / sqrt((area / activities.size).toDouble()).toFloat()
 
@@ -207,14 +218,15 @@ fun activitiesVisualizeCanvas(
         canvas.drawPath(path, pointsPaint)
     }
 
+    val textSize = y * 0.05f
     val textPaint = Paint()
-    textPaint.textSize = maxWidth * 0.04f
+    textPaint.textSize = textSize
     textPaint.color = Color.WHITE
     textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
-    canvas.drawText("REBECCA YURGENS", maxWidth * 0.075f, center.y + center.y - maxWidth * 0.06f, textPaint)
+    canvas.drawText("REBECCA YURGENS", marginX, maxHeight.times(0.95f) - marginY + textSize, textPaint)
     textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
     textPaint.color = Color.argb(100, 255, 255, 255)
-    canvas.drawText("2022", center.x + center.x - maxWidth * 0.175f, center.y + center.y - maxWidth * 0.06f, textPaint)
+    canvas.drawText("2022", maxWidth.times(0.9f) - (textSize * 4), maxHeight.times(0.95f) - marginY + textSize, textPaint)
 
     return bitmap
 }
