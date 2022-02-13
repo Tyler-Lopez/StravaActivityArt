@@ -110,21 +110,21 @@ fun activitiesVisualizeCanvas(
         totalDistance += activity.distance
         val summaryPolyline = activity.map.summary_polyline
         //if (activity.type != "Run") continue
-      //  if (summaryPolyline == "null" || summaryPolyline == null) continue
+        //  if (summaryPolyline == "null" || summaryPolyline == null) continue
 
 
         if (column == colCount.toInt()) {
             xOffset = initialX + marginX
             if (activityCount != 1) yOffset += activityWidth
             column = 0
-        } else  {
+        } else {
             xOffset += activityWidth
         }
 
         val blankSpaces = ((rowCount * colCount) - activities.size).toInt()
 
         if (activityCount - 1 == (activities.size - (colCount.toInt() - blankSpaces))) {
-                xOffset += ((blankSpaces * activityWidth / 2))
+            xOffset += ((blankSpaces * activityWidth / 2))
         }
 
         activityCount++
@@ -182,7 +182,8 @@ fun activitiesVisualizeCanvas(
         for (condition in conditions) {
             if (condition is DistanceRule) {
                 if (condition.conditionMatched(distance as Comparable<Any>)) {
-                    pointsPaint.color = Color.rgb(condition.color.red, condition.color.green, condition.color.blue)
+                    pointsPaint.color =
+                        Color.rgb(condition.color.red, condition.color.green, condition.color.blue)
                     break
                 }
             }
@@ -191,7 +192,8 @@ fun activitiesVisualizeCanvas(
         pointsPaint.isAntiAlias = true
         pointsPaint.strokeCap = Paint.Cap.ROUND
         pointsPaint.style = Paint.Style.STROKE
-        pointsPaint.strokeWidth = sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0015f
+        pointsPaint.strokeWidth =
+            sqrt(maxWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0015f
 
         val path = Path()
         path.setLastPoint(points[0], points[1])
@@ -206,9 +208,14 @@ fun activitiesVisualizeCanvas(
     val textPaint = Paint()
     textPaint.textSize = textSize
     textPaint.color = Color.WHITE
-    textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_book.otf")
+    textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
     textPaint.letterSpacing = 0.2f
-    canvas.drawText(format.value.leftString, marginX, maxHeight.times(0.96f) - marginY + textSize, textPaint)
+    canvas.drawText(
+        format.value.leftString,
+        marginX,
+        maxHeight.times(0.97f) - marginY + textSize,
+        textPaint
+    )
     textPaint.typeface = Typeface.createFromAsset(context.assets, "maisonneue_demi.otf")
     textPaint.color = Color.argb(100, 255, 255, 255)
 
@@ -221,7 +228,7 @@ fun activitiesVisualizeCanvas(
     canvas.drawText(
         rightText,
         maxWidth - marginX - bounds.width(),
-        maxHeight.times(0.96f) - marginY + textSize,
+        maxHeight.times(0.97f) - marginY + textSize,
         textPaint
     )
 
