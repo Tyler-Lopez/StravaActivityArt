@@ -7,16 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.composable
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
@@ -29,6 +25,7 @@ import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.util.noAnimationComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,16 +33,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    // Create view model with URI if received
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
-
-
-
         setContent {
             AthleteApiArtTheme {
                 val viewModel = MainViewModel(uri = intent.data)
@@ -62,18 +51,8 @@ class MainActivity : ComponentActivity() {
                     })
                 else {
                     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                        val isThin = this.maxWidth < 414.dp
-
                         AnimatedNavHost(navController, startDestination = Screen.TimeSelect.route) {
-                            composable(
-                                route = Screen.TimeSelect.route,
-                                enterTransition = { EnterTransition.None },
-                                exitTransition = { ExitTransition.None },
-                                popEnterTransition = { EnterTransition.None },
-                                popExitTransition = { ExitTransition.None }
-                            ) {
-                                TimeSelectScreen(navController = navController)
-                            }
+                            noAnimationComposable(Screen.TimeSelect.route) { TimeSelectScreen(navController = navController)}
                             composable(
                                 route = Screen.FilterActivities.route,
                                 enterTransition = { EnterTransition.None },
