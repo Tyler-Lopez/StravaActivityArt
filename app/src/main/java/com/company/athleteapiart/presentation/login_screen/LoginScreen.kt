@@ -4,10 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Print
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -20,7 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.R
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.StravaOrange
 
 
 // https://developers.strava.com/guidelines/
