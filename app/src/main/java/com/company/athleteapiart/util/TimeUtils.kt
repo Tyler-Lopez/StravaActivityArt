@@ -1,18 +1,11 @@
 package com.company.athleteapiart.util
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.company.athleteapiart.util.Constants.FIRST_YEAR
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatterBuilder
-import java.time.format.FormatStyle
 import java.util.*
 
 class TimeUtils {

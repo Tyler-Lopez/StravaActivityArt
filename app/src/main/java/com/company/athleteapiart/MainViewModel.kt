@@ -1,6 +1,5 @@
 package com.company.athleteapiart
 
-import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.company.athleteapiart.util.OAuth2

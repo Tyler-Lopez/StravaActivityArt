@@ -5,10 +5,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import android.os.FileUtils
 import android.provider.MediaStore
 import java.io.File
-import java.io.File.separator
 import java.io.FileOutputStream
 import java.io.OutputStream
 

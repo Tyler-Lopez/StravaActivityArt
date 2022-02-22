@@ -3,12 +3,10 @@ package com.company.athleteapiart.util
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.*
-import com.company.athleteapiart.Screen
-import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
 import com.google.accompanist.navigation.animation.*
 
 @ExperimentalAnimationApi
-public fun NavGraphBuilder.noAnimationComposable(
+fun NavGraphBuilder.noAnimComposable(
     route: String,
     content: @Composable () -> Unit
 ) {

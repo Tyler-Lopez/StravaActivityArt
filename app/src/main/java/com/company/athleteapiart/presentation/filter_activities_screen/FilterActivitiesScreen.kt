@@ -21,7 +21,6 @@ import com.company.athleteapiart.ui.spacing
 import com.company.athleteapiart.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.monthFromIso8601
-import com.company.athleteapiart.util.navigateAndReplaceStartRoute
 
 @Composable
 fun FilterActivitiesScreen(
