@@ -14,6 +14,7 @@ class GetAccessTokenUseCase @Inject constructor(
         code: String,
         grantType: String
     ): Resource<Bearer> {
+
         val response = try {
             api.getAccessToken(
                 clientId = clientId,
@@ -22,7 +23,7 @@ class GetAccessTokenUseCase @Inject constructor(
                 grantType = grantType
             )
         } catch (e: Exception) {
-            return Resource.Error("${e.message}")
+            return Resource.Error("An error occurred retrieving access token. ${e.message}")
         }
 
         return Resource.Success(response)
