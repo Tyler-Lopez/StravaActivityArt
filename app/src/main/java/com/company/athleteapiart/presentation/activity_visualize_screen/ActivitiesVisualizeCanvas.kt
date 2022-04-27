@@ -2,9 +2,7 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.content.Context
 import android.graphics.*
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalContext
-import com.company.athleteapiart.data.DistanceRule
+import com.company.athleteapiart.domain.model.DistanceRule
 import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles

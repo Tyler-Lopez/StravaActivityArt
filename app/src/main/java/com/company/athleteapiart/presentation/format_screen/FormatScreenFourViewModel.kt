@@ -3,9 +3,9 @@ package com.company.athleteapiart.presentation.format_screen
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import com.company.athleteapiart.data.DistanceCondition
-import com.company.athleteapiart.data.DistanceRule
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.model.DistanceCondition
+import com.company.athleteapiart.domain.model.DistanceRule
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 import com.company.athleteapiart.util.milesToMeters

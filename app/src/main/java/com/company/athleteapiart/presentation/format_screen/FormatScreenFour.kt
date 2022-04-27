@@ -5,27 +5,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Remove
-import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
-import com.company.athleteapiart.data.DistanceCondition
+import com.company.athleteapiart.domain.model.DistanceCondition
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.*
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.util.meterToMiles
 
 

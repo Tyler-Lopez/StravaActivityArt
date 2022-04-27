@@ -1,4 +1,4 @@
-package com.company.athleteapiart.data
+package com.company.athleteapiart.domain.model
 
 import com.company.athleteapiart.data.remote.responses.Activity
 

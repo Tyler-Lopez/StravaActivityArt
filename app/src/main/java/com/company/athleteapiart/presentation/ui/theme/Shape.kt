@@ -1,4 +1,4 @@
-package com.company.athleteapiart.ui.theme
+package com.company.athleteapiart.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

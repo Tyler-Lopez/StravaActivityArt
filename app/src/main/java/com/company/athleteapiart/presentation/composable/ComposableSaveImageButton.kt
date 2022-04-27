@@ -12,11 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.company.athleteapiart.presentation.activity_visualize_screen.activitiesVisualizeCanvas
-import com.company.athleteapiart.ui.theme.Roboto
-import com.company.athleteapiart.ui.theme.StravaOrange
-import com.company.athleteapiart.ui.theme.White
-import com.company.athleteapiart.util.saveImage
+import com.company.athleteapiart.presentation.ui.theme.Roboto
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
+import com.company.athleteapiart.presentation.ui.theme.White
 
 @Composable
 fun ComposableSaveImageButton(

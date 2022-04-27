@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.company.athleteapiart.ui.theme.StravaOrange
-import com.company.athleteapiart.ui.theme.White
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
+import com.company.athleteapiart.presentation.ui.theme.White
 
 @Composable
 fun ComposableReturnButton(

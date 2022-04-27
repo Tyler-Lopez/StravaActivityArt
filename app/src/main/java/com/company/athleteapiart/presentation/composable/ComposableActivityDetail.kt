@@ -11,8 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.ui.theme.Roboto
-import com.company.athleteapiart.ui.theme.RobotoCondensed
+import com.company.athleteapiart.presentation.ui.theme.Roboto
+import com.company.athleteapiart.presentation.ui.theme.RobotoCondensed
 import com.company.athleteapiart.util.TimeUtils
 import com.company.athleteapiart.util.meterToMiles
 

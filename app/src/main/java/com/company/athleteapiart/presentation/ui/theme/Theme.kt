@@ -1,4 +1,4 @@
-package com.company.athleteapiart.ui.theme
+package com.company.athleteapiart.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -7,8 +7,8 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
-import com.company.athleteapiart.ui.LocalSpacing
-import com.company.athleteapiart.ui.Spacing
+import com.company.athleteapiart.presentation.ui.LocalSpacing
+import com.company.athleteapiart.presentation.ui.Spacing
 
 private val DarkColorPalette = darkColors(
     primary = StravaOrange,

@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.company.athleteapiart.ui.spacing
+import com.company.athleteapiart.presentation.ui.spacing
 
 @Composable
 fun ComposableScreenWrapper(

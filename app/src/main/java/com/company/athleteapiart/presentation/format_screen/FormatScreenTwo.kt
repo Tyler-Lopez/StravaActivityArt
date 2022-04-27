@@ -6,18 +6,15 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.*
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 
 

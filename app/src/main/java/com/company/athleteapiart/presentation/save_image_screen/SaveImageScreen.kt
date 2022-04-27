@@ -1,9 +1,6 @@
 package com.company.athleteapiart.presentation.save_image_screen
 
-import android.content.Intent
 import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,14 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.presentation.login_screen.LoginScreenViewModel
-import com.company.athleteapiart.presentation.time_select_screen.TimeSelectViewModel
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.StravaOrange
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 import com.company.athleteapiart.util.Constants
-import java.io.File
 
 @Composable
 fun SaveImageScreen(

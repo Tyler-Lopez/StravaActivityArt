@@ -2,7 +2,7 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

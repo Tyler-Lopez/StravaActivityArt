@@ -20,7 +20,7 @@ import com.company.athleteapiart.presentation.format_screen.FormatScreenFour
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
-import com.company.athleteapiart.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.util.noAnimComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController

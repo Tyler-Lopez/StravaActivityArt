@@ -2,11 +2,10 @@ package com.company.athleteapiart.presentation.save_image_screen
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.presentation.activity_visualize_screen.activitiesVisualizeCanvas
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.saveImage

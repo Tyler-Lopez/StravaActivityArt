@@ -1,10 +1,7 @@
 package com.company.athleteapiart.presentation.filter_activities_screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,8 +14,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.*
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.monthFromIso8601
 

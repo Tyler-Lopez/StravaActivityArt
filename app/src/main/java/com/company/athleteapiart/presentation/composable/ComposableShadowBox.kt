@@ -3,18 +3,16 @@ package com.company.athleteapiart.presentation.composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.*
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.*
 
 @Composable
 fun ComposableShadowBox(

@@ -4,9 +4,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.ActivitiesMetadata
+import com.company.athleteapiart.domain.model.ActivitiesMetadata
 import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

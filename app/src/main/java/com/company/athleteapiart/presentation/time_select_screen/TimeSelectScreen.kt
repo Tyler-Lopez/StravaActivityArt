@@ -1,6 +1,5 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
-import androidx.compose.foundation.*
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -8,18 +7,15 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.navigation
-import com.google.accompanist.navigation.animation.composable
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.*
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.TimeUtils
 import com.google.accompanist.flowlayout.FlowRow

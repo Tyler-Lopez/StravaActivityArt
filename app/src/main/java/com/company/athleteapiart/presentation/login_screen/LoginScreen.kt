@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.athleteapiart.R
 import com.company.athleteapiart.presentation.composable.ComposableHeader
-import com.company.athleteapiart.ui.spacing
+import com.company.athleteapiart.presentation.ui.spacing
 
 
 // https://developers.strava.com/guidelines/

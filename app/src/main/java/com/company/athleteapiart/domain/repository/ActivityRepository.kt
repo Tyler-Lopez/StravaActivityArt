@@ -1,4 +1,4 @@
-package com.company.athleteapiart.repository
+package com.company.athleteapiart.domain.repository
 
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Activities

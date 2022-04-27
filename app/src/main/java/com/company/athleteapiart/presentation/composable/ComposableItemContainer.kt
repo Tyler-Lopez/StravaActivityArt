@@ -2,17 +2,14 @@ package com.company.athleteapiart.presentation.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.WarmGrey20
-import com.company.athleteapiart.ui.theme.White
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.White
 
 @Composable
 fun ComposableItemContainer(

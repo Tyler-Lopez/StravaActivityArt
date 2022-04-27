@@ -1,4 +1,4 @@
-package com.company.athleteapiart.ui
+package com.company.athleteapiart.presentation.ui
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable

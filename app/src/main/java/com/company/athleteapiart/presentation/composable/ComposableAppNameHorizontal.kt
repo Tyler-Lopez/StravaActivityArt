@@ -9,8 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.StravaOrange
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 
 @Composable
 fun ComposableAppNameHorizontal(

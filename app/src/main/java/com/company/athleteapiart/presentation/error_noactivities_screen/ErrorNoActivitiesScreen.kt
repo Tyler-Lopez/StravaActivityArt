@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.ui.spacing
-import com.company.athleteapiart.ui.theme.StravaOrange
+import com.company.athleteapiart.presentation.ui.spacing
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 
 @Composable
 fun ErrorNoActivitiesScreen(

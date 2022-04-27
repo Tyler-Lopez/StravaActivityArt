@@ -1,4 +1,4 @@
-package com.company.athleteapiart.ui.theme
+package com.company.athleteapiart.presentation.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.dao.OAuth2Dao
 import com.company.athleteapiart.data.database.OAuth2Database
 import com.company.athleteapiart.data.entities.OAuth2Entity
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

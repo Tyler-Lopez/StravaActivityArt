@@ -1,12 +1,10 @@
 package com.company.athleteapiart.presentation.filter_activities_screen
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.monthFromIso8601
 import dagger.hilt.android.lifecycle.HiltViewModel

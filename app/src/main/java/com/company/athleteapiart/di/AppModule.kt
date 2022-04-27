@@ -1,7 +1,7 @@
 package com.company.athleteapiart.di
 
 import com.company.athleteapiart.data.remote.AthleteApi
-import com.company.athleteapiart.repository.ActivityRepository
+import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
