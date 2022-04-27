@@ -16,5 +16,5 @@ class ActivitiesVisualizeViewModel @Inject constructor(
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
-
+    
 }
