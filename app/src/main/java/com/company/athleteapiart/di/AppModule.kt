@@ -1,7 +1,6 @@
 package com.company.athleteapiart.di
 
 import com.company.athleteapiart.data.remote.AthleteApi
-import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
 import com.company.athleteapiart.domain.use_case.get_access_token_refresh.GetAccessTokenRefreshUseCase
@@ -32,7 +31,7 @@ object AppModule {
         GetAccessTokenUseCase(api),
         GetAccessTokenRefreshUseCase(api)
     )
-    
+
     @Singleton
     @Provides
     fun provideAthleteApi(): AthleteApi {
