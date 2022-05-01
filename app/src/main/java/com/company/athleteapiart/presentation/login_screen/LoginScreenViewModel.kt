@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.dao.OAuth2Dao
 import com.company.athleteapiart.data.database.OAuth2Database
 import com.company.athleteapiart.data.entities.OAuth2Entity
+import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
-    private val getAccessTokenUseCase: GetAccessTokenUseCase
+    private val authenticationUseCases: AuthenticationUseCases
 ) : ViewModel() {
 
-    var loginScreenState: MutableState<LoginScreenState> = mutableStateOf(LoginScreenState.Launch)
+    val loginScreenState: MutableState<LoginScreenState> = mutableStateOf(LoginScreenState.Launch)
 
 
     /*
@@ -134,6 +135,22 @@ class LoginScreenViewModel @Inject constructor(
     }
 
      */
+
+    fun handleUri(uri: Uri?) {
+
+        // Ensure URI is not null
+        if (uri == null)
+            return
+
+        // Set state of screen to loading
+        loginScreenState.value = LoginScreenState.Loading
+
+        // Parse URI into the access code as a string
+        val accessCode = parseUri(uri)
+
+
+
+    }
 
     private fun parseUri(uri: Uri): String =
         uri.toString().substring(43).substringBefore('&')

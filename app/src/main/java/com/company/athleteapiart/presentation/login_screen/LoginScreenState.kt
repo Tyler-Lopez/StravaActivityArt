@@ -1,8 +1,8 @@
 package com.company.athleteapiart.presentation.login_screen
 
 sealed class LoginScreenState {
-    object Launch
-    object Loading
-    object Standby
-    object Authorized
+    object Launch : LoginScreenState()
+    object Loading : LoginScreenState()
+    object Standby : LoginScreenState()
+    object Authorized : LoginScreenState()
 }

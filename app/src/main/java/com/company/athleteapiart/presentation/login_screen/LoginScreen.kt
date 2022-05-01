@@ -34,6 +34,22 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val screenState by remember { viewModel.loginScreenState }
+
+    when (screenState) {
+        Launch -> {
+
+        }
+        Loading -> {
+
+        }
+        Standby -> {
+
+        }
+        Authorized -> {
+
+        }
+    }
+
     // val isLoading by remember { viewModel.isLoading }
     //  val endReached by remember { viewModel.endReached }
     //   val requestLogin by remember { viewModel.requestLogin }
@@ -41,11 +57,7 @@ fun LoginScreen(
     // if (!isLoading && !endReached)
     //    viewModel.loadDao(LocalContext.current)
 
-    when (screenState) {
-        Loading -> {
 
-        }
-    }
     Column(
         modifier = Modifier
             .fillMaxSize(),

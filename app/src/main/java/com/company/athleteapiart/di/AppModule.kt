@@ -2,6 +2,9 @@ package com.company.athleteapiart.di
 
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.domain.repository.ActivityRepository
+import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
+import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
+import com.company.athleteapiart.domain.use_case.get_access_token_refresh.GetAccessTokenRefreshUseCase
 import com.company.athleteapiart.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -15,12 +18,21 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+  //  @Singleton
+  //  @Provides
+  //  fun provideActivityRepository(
+  //      api: AthleteApi
+  //  ) = ActivityRepository(api)
+
     @Singleton
     @Provides
-    fun provideActivityRepository(
+    fun provideAuthenticationUseCases(
         api: AthleteApi
-    ) = ActivityRepository(api)
-
+    ) = AuthenticationUseCases(
+        GetAccessTokenUseCase(api),
+        GetAccessTokenRefreshUseCase(api)
+    )
+    
     @Singleton
     @Provides
     fun provideAthleteApi(): AthleteApi {
