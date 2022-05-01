@@ -3,13 +3,13 @@ package com.company.athleteapiart.presentation.login_screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.dao.OAuth2Dao
 import com.company.athleteapiart.data.database.OAuth2Database
 import com.company.athleteapiart.data.entities.OAuth2Entity
-import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +22,10 @@ class LoginScreenViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase
 ) : ViewModel() {
 
+    var loginScreenState: MutableState<LoginScreenState> = mutableStateOf(LoginScreenState.Launch)
+
+
+    /*
     var isLoading = mutableStateOf(false)
     var requestLogin = mutableStateOf(false)
     var endReached = mutableStateOf(false)
@@ -62,7 +66,8 @@ class LoginScreenViewModel @Inject constructor(
                                 )
                             )
                             OAuth2.accessToken = result.data.access_token
-                            AthleteActivities.formatting.value.leftString = "${result.data.athlete.firstname} ${result.data.athlete.lastname}"
+                            AthleteActivities.formatting.value.leftString =
+                                "${result.data.athlete.firstname} ${result.data.athlete.lastname}"
                             requestLogin.value = false
                             endReached.value = true
                             isLoading.value = false
@@ -103,7 +108,8 @@ class LoginScreenViewModel @Inject constructor(
                                     refreshToken = result.data.refresh_token
                                 )
                             )
-                            AthleteActivities.formatting.value.leftString = "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
+                            AthleteActivities.formatting.value.leftString =
+                                "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
                             requestLogin.value = false
                             isLoading.value = false
                         }
@@ -117,7 +123,8 @@ class LoginScreenViewModel @Inject constructor(
                 }
                 else -> {
                     // Not expired, use token
-                    AthleteActivities.formatting.value.leftString = "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
+                    AthleteActivities.formatting.value.leftString =
+                        "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
                     OAuth2.accessToken = oAuth2Entity.accessToken
                     requestLogin.value = false
                     isLoading.value = false
@@ -126,14 +133,24 @@ class LoginScreenViewModel @Inject constructor(
         }
     }
 
-    private val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
-        .buildUpon()
-        .appendQueryParameter("client_id", "75992")
-        .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
-        .appendQueryParameter("response_type", "code")
-        .appendQueryParameter("approval_prompt", "auto")
-        .appendQueryParameter("scope", "read,read_all,activity:read,activity:read_all")
-        .build()
+     */
 
-    val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
+    private fun parseUri(uri: Uri): String =
+        uri.toString().substring(43).substringBefore('&')
+
+    fun startLoginIntent(context: Context) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://www.strava.com/oauth/mobile/authorize")
+                    .buildUpon()
+                    .appendQueryParameter("client_id", "75992")
+                    .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
+                    .appendQueryParameter("response_type", "code")
+                    .appendQueryParameter("approval_prompt", "auto")
+                    .appendQueryParameter("scope", "read,read_all,activity:read,activity:read_all")
+                    .build()
+            )
+        )
+    }
 }
