@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
@@ -33,8 +32,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AthleteApiArtTheme {
-                MainViewModel(uri = intent.data) // Not yet used
-            //    var isLoading by remember { mutableStateOf(true) }
+                //    MainViewModel(uri = intent.data) // Not yet used
+                //    var isLoading by remember { mutableStateOf(true) }
                 val navController = rememberAnimatedNavController()
                 /* Let's remove this logic here and decide that in the login screen viewmodel...
                 if (isLoading)
@@ -48,39 +47,42 @@ class MainActivity : ComponentActivity() {
                 else {
 
                  */
-                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                        AnimatedNavHost(navController, startDestination = Screen.TimeSelect.route) {
-                            noAnimComposable(Screen.Login.route) {
-                                LoginScreen(navController = navController)
-                            }
-                            noAnimComposable(Screen.TimeSelect.route) {
-                                TimeSelectScreen(navController = navController)
-                            }
-                            noAnimComposable(Screen.FilterActivities.route) {
-                                FilterActivitiesScreen(navController = navController)
-                            }
-                            noAnimComposable(Screen.FormatActivitiesOne.route) {
-                                FormatScreenOne(navController = navController)
-                            }
-                            noAnimComposable(Screen.FormatActivitiesTwo.route) {
-                                FormatScreenTwo(navController = navController)
-                            }
-                            noAnimComposable(Screen.FormatActivitiesThree.route) {
-                                FormatScreenThree(navController = navController)
-                            }
-                            noAnimComposable(Screen.FormatActivitiesFour.route) {
-                                FormatScreenFour(navController = navController)
-                            }
-                            noAnimComposable(Screen.VisualizeActivities.route) {
-                                ActivitiesScreen(navController = navController)
-                            }
-                            noAnimComposable(Screen.SaveImage.route) {
-                                SaveImageScreen(navController = navController)
-                            }
-                            noAnimComposable(Screen.ErrorNoActivities.route) {
-                                ErrorNoActivitiesScreen(navController = navController)
-                            }
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    AnimatedNavHost(navController, startDestination = Screen.Login.route) {
+                        noAnimComposable(Screen.Login.route) {
+                            LoginScreen(
+                                uri = intent.data,
+                                navController = navController
+                            )
                         }
+                        noAnimComposable(Screen.TimeSelect.route) {
+                            TimeSelectScreen(navController = navController)
+                        }
+                        noAnimComposable(Screen.FilterActivities.route) {
+                            FilterActivitiesScreen(navController = navController)
+                        }
+                        noAnimComposable(Screen.FormatActivitiesOne.route) {
+                            FormatScreenOne(navController = navController)
+                        }
+                        noAnimComposable(Screen.FormatActivitiesTwo.route) {
+                            FormatScreenTwo(navController = navController)
+                        }
+                        noAnimComposable(Screen.FormatActivitiesThree.route) {
+                            FormatScreenThree(navController = navController)
+                        }
+                        noAnimComposable(Screen.FormatActivitiesFour.route) {
+                            FormatScreenFour(navController = navController)
+                        }
+                        noAnimComposable(Screen.VisualizeActivities.route) {
+                            ActivitiesScreen(navController = navController)
+                        }
+                        noAnimComposable(Screen.SaveImage.route) {
+                            SaveImageScreen(navController = navController)
+                        }
+                        noAnimComposable(Screen.ErrorNoActivities.route) {
+                            ErrorNoActivitiesScreen(navController = navController)
+                        }
+                        //    }
                     }
                 }
             }
