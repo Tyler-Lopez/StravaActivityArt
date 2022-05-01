@@ -4,6 +4,7 @@ sealed class Screen(
     val route: String
 ) {
     object TimeSelect : Screen("TimeSelect")
+    object Login : Screen("Login")
     object FilterActivities : Screen("FilterActivities")
     object FormatActivitiesOne : Screen("FormatActivitiesOne")
     object FormatActivitiesTwo : Screen("FormatActivitiesTwo")
