@@ -14,6 +14,7 @@ import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class LoginScreenViewModel @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases
 ) : ViewModel() {
 
-    val loginScreenState: MutableState<LoginScreenState> = mutableStateOf(LoginScreenState.Launch)
+    var loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
 
 
     /*
@@ -137,18 +138,20 @@ class LoginScreenViewModel @Inject constructor(
      */
 
     fun handleUri(uri: Uri?) {
+        viewModelScope.launch {
+            // Ensure URI is not null
+            if (uri == null) {
+                loginScreenState.value = LoginScreenState.STANDBY
+                println("Here, login screen state changed to ${loginScreenState.value}")
+            } else {
 
-        // Ensure URI is not null
-        if (uri == null)
-            return
+                // Set state of screen to loading
+                loginScreenState.value = LoginScreenState.LOADING
 
-        // Set state of screen to loading
-        loginScreenState.value = LoginScreenState.Loading
-
-        // Parse URI into the access code as a string
-        val accessCode = parseUri(uri)
-
-
+                // Parse URI into the access code as a string
+                val accessCode = parseUri(uri)
+            }
+        }
 
     }
 

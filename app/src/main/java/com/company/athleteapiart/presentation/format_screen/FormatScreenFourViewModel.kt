@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.company.athleteapiart.domain.model.DistanceCondition
 import com.company.athleteapiart.domain.model.DistanceRule
-import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 import com.company.athleteapiart.util.milesToMeters
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FormatScreenFourViewModel @Inject constructor(
-    private val repository: ActivityRepository
+  //  private val repository: ActivityRepository
 ) : ViewModel() {
 
     var currRule = mutableStateOf(0)

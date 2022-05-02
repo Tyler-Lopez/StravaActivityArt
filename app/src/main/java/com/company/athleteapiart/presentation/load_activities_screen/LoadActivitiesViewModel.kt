@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.domain.model.ActivitiesMetadata
 import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.domain.repository.ActivityRepository
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoadActivitiesViewModel @Inject constructor(
-    private val repository: ActivityRepository
+    // private val repository: ActivityRepository
 ) : ViewModel() {
 
     var activities = mutableStateListOf<Activity>()
@@ -49,6 +48,7 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     private fun getActivities(page: Int, before: Int, after: Int) {
+        /*
         viewModelScope.launch {
             when (val result = repository
                 .getActivities(
@@ -87,5 +87,7 @@ class LoadActivitiesViewModel @Inject constructor(
                 }
             }
         }
+         */
+
     }
 }

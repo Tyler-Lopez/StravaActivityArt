@@ -5,12 +5,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,6 +20,7 @@ import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
+import kotlinx.coroutines.launch
 
 
 // https://developers.strava.com/guidelines/
@@ -35,15 +36,19 @@ fun LoginScreen(
     when (screenState) {
         // Just launched Login screen, check URI for access code
         // In future, check ROOM database for previous code
-        Launch -> {
-            viewModel.handleUri(uri)
+        LAUNCH -> {
+            // SideEffect composable invoked on every recomposition
+            // Necessary to ensure we recompose screenState
+            SideEffect {
+                viewModel.handleUri(uri)
+            }
         }
         // In process of trying to get response from Strava where we input in URI
-        Loading -> {
+        LOADING -> {
             // Loading Screen Composable goes here later
         }
         // Wait for user to press Login
-        Standby -> {
+        STANDBY -> {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -88,7 +93,8 @@ fun LoginScreen(
             }
         }
         // User has been successfully authorized
-        Authorized -> {
+        AUTHORIZED -> {
+            Text("t")
             navController.navigate(Screen.TimeSelect.route)
         }
     }
