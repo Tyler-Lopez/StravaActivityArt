@@ -25,8 +25,6 @@ import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
 // https://developers.strava.com/guidelines/
 @Composable
 fun LoginScreen(
-    //onClick: (Intent?) -> Unit,
-    // If login button is pushed, return intent
     uri: Uri?,
     navController: NavHostController,
     viewModel: LoginScreenViewModel = hiltViewModel()
@@ -94,20 +92,4 @@ fun LoginScreen(
             navController.navigate(Screen.TimeSelect.route)
         }
     }
-
-    // val isLoading by remember { viewModel.isLoading }
-    //  val endReached by remember { viewModel.endReached }
-    //   val requestLogin by remember { viewModel.requestLogin }
-
-    // if (!isLoading && !endReached)
-    //    viewModel.loadDao(LocalContext.current)
-
-    //     if (!isLoading && endReached) {
-    //        if (!requestLogin) {
-    //            onClick(null)
-    //     } else {
-
-    //    }
-    //    }
-}
 }
