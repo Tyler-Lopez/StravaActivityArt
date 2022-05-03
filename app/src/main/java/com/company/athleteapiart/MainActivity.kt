@@ -32,22 +32,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AthleteApiArtTheme {
-                //    MainViewModel(uri = intent.data) // Not yet used
-                //    var isLoading by remember { mutableStateOf(true) }
+
                 val navController = rememberAnimatedNavController()
-                /* Let's remove this logic here and decide that in the login screen viewmodel...
-                if (isLoading)
-                    LoginScreen(onClick = { intent ->
-                        if (intent == null) {
-                            isLoading = false
-                        } else {
-                            startActivity(intent)
-                        }
-                    })
-                else {
-
-                 */
-
 
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     AnimatedNavHost(navController, startDestination = Screen.Login.route) {
@@ -89,6 +75,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+
             }
         }
     }
