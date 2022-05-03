@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.login_screen
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -10,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,7 +20,6 @@ import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
-import kotlinx.coroutines.launch
 
 
 // https://developers.strava.com/guidelines/
@@ -28,9 +27,9 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     uri: Uri?,
     navController: NavHostController,
+    onLoginIntent: (Intent) -> Unit,
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val screenState by remember { viewModel.loginScreenState }
 
     when (screenState) {
@@ -40,7 +39,7 @@ fun LoginScreen(
             // SideEffect composable invoked on every recomposition
             // Necessary to ensure we recompose screenState
             SideEffect {
-                viewModel.handleUri(uri)
+                viewModel.handleUri(null)
             }
         }
         // In process of trying to get response from Strava where we input in URI
@@ -62,8 +61,6 @@ fun LoginScreen(
                         .size(300.dp)
                         .padding(MaterialTheme.spacing.md)
                 )
-
-
                 ComposableHeader(
                     text = "ACTIVITIES",
                     isBold = true,
@@ -86,9 +83,9 @@ fun LoginScreen(
                     modifier = Modifier
                         .width(300.dp)
                         .clickable {
-                            viewModel.startLoginIntent(context)
+                            println("Here intent is ${viewModel.loginIntent}")
+                            onLoginIntent(viewModel.loginIntent)
                         }
-
                 )
             }
         }

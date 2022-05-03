@@ -24,8 +24,18 @@ class LoginScreenViewModel @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases
 ) : ViewModel() {
 
-    var loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
+    val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
 
+    private val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
+        .buildUpon()
+        .appendQueryParameter("client_id", "75992")
+        .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
+        .appendQueryParameter("response_type", "code")
+        .appendQueryParameter("approval_prompt", "auto")
+        .appendQueryParameter("scope", "activity:read,activity:read_all")
+        .build()
+
+    val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
     /*
     var isLoading = mutableStateOf(false)
@@ -158,19 +168,4 @@ class LoginScreenViewModel @Inject constructor(
     private fun parseUri(uri: Uri): String =
         uri.toString().substring(43).substringBefore('&')
 
-    fun startLoginIntent(context: Context) {
-        context.startActivity(
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://www.strava.com/oauth/mobile/authorize")
-                    .buildUpon()
-                    .appendQueryParameter("client_id", "75992")
-                    .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
-                    .appendQueryParameter("response_type", "code")
-                    .appendQueryParameter("approval_prompt", "auto")
-                    .appendQueryParameter("scope", "read,read_all,activity:read,activity:read_all")
-                    .build()
-            )
-        )
-    }
 }

@@ -1,6 +1,7 @@
 package com.company.athleteapiart
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -47,12 +49,17 @@ class MainActivity : ComponentActivity() {
                 else {
 
                  */
+
+
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     AnimatedNavHost(navController, startDestination = Screen.Login.route) {
                         noAnimComposable(Screen.Login.route) {
                             LoginScreen(
                                 uri = intent.data,
-                                navController = navController
+                                navController = navController,
+                                onLoginIntent = {
+                                    startActivity(it)
+                                }
                             )
                         }
                         noAnimComposable(Screen.TimeSelect.route) {
@@ -82,7 +89,6 @@ class MainActivity : ComponentActivity() {
                         noAnimComposable(Screen.ErrorNoActivities.route) {
                             ErrorNoActivitiesScreen(navController = navController)
                         }
-                        //    }
                     }
                 }
             }
