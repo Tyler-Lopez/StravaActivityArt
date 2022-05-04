@@ -23,10 +23,8 @@ class GetAccessTokenUseCase @Inject constructor(
             .oAuth2Dao
             .getOauth2()
 
-        println("Here, read oAuth as $oAuth2Entity and ${oAuth2Entity?.accessToken} and ${oAuth2Entity?.firstName}")
-        println(oAuth2Entity)
-
-        return when {
+        return when (oAuth2Entity) {
+            null -> Resource.Error("User has never authenticated with Strava before.")
             else -> Resource.Error("User has not yet authenticated with Strava")
         }
     }
