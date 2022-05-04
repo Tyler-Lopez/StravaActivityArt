@@ -13,14 +13,18 @@ class GetAccessTokenUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
     private val clientId = 75992
-    
+
     // Invoked publicly, checks Room database for previous entry
     // Returns error if not yet connected
     suspend fun getAccessToken(context: Context): Resource<Bearer> {
+
         val oAuth2Entity = OAuth2Database
             .getInstance(context.applicationContext)
             .oAuth2Dao
             .getOauth2()
+
+        println("Here, read oAuth as $oAuth2Entity and ${oAuth2Entity?.accessToken} and ${oAuth2Entity?.firstName}")
+        println(oAuth2Entity)
 
         return when {
             else -> Resource.Error("User has not yet authenticated with Strava")

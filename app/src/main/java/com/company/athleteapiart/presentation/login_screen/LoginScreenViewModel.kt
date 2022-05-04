@@ -153,6 +153,7 @@ class LoginScreenViewModel @Inject constructor(
             val oAuth2Entity =
                 authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
 
+            println("oAuth2Entity read as ${oAuth2Entity.data}")
             // Ensure URI is not null
             when {
                 authorizationCode.value != null -> {
@@ -168,7 +169,8 @@ class LoginScreenViewModel @Inject constructor(
                     loginScreenState.value = LoginScreenState.AUTHORIZED
                 }
                 // We received an access token
-                oAuth2Entity != null -> {
+                oAuth2Entity.data != null -> {
+                    println("oAuthEntity data wasn't null")
 
                 }
                 // We have not yet connected with Strava

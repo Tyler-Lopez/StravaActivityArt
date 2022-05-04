@@ -16,6 +16,6 @@ interface OAuth2Dao {
     suspend fun clearOauth2()
 
     @Query("SELECT * FROM oauth2entity")
-    suspend fun getOauth2(): OAuth2Entity
+    suspend fun getOauth2(): OAuth2Entity?
 
 }
