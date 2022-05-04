@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.R
-import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
@@ -31,10 +30,10 @@ fun LoginScreen(
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val screenState by remember { viewModel.loginScreenState }
-    val oAuth2 by remember { viewModel.accessCode }
+    val oAuth2 by remember { viewModel.authorizationCode }
 
-    println("Here composing login screen")
-    println("And login state is $screenState")
+    val context = LocalContext.current
+
     when (screenState) {
         // Just launched Login screen, check URI for access code
         // In future, check ROOM database for previous code
@@ -42,7 +41,10 @@ fun LoginScreen(
             // SideEffect composable invoked on every recomposition
             // Necessary to ensure we recompose screenState
             SideEffect {
-                viewModel.handleUri(uri)
+                viewModel.attemptGetAccessToken(
+                    uri = uri,
+                    context = context
+                )
             }
         }
         // In process of trying to get response from Strava where we input in URI
@@ -95,7 +97,6 @@ fun LoginScreen(
         }
         // User has been successfully authorized
         AUTHORIZED -> {
-            Text("Access code is ${oAuth2?.accessCode}")
           //  navController.navigate(Screen.TimeSelect.route)
         }
     }

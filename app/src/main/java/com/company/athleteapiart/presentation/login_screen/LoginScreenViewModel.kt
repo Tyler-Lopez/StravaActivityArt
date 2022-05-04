@@ -1,11 +1,13 @@
 package com.company.athleteapiart.presentation.login_screen
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.data.database.OAuth2Database
 import com.company.athleteapiart.domain.model.OAuth2
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.util.*
@@ -18,9 +20,6 @@ class LoginScreenViewModel @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases,
 ) : ViewModel() {
 
-    val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
-    val accessCode: MutableState<OAuth2?> = mutableStateOf(null)
-
     private val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
         .buildUpon()
         .appendQueryParameter("client_id", "75992")
@@ -30,7 +29,10 @@ class LoginScreenViewModel @Inject constructor(
         .appendQueryParameter("scope", "activity:read,activity:read_all")
         .build()
 
+    val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
+    val authorizationCode: MutableState<String?> = mutableStateOf(null)
     val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
+
 
     /*
     var isLoading = mutableStateOf(false)
@@ -44,17 +46,17 @@ class LoginScreenViewModel @Inject constructor(
         isLoading.value = true
         viewModelScope.launch {
             oAuthDao.value = OAuth2Database.getInstance(context.applicationContext).oAuth2Dao
-            getAccessToken(oAuthDao.value?.getOauth2())
+            getAccessTokenFromAuthorizationCode(oAuthDao.value?.getOauth2())
         }
     }
 
-    private fun getAccessToken(oAuth2Entity: OAuth2Entity?) {
+    private fun getAccessTokenFromAuthorizationCode(oAuth2Entity: OAuth2Entity?) {
         viewModelScope.launch {
             println(OAuth2Legacy.authorizationCode)
             when {
                 // If the user just authorized with Strava...
                 OAuth2Legacy.authorizationCode != "null" -> {
-                    val result = repository.getAccessToken(
+                    val result = repository.getAccessTokenFromAuthorizationCode(
                         clientId = 75992,
                         clientSecret = clientSecret,
                         code = OAuth2Legacy.authorizationCode,
@@ -142,24 +144,36 @@ class LoginScreenViewModel @Inject constructor(
 
      */
 
-    fun handleUri(uri: Uri?) {
+    fun attemptGetAccessToken(
+        uri: Uri?,
+        context: Context
+    ) {
         viewModelScope.launch {
+
+            val oAuth2Entity =
+                authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
+
             // Ensure URI is not null
             when {
-                uri == null -> loginScreenState.value = LoginScreenState.STANDBY
-                accessCode.value != null -> {
+                authorizationCode.value != null -> {
                     loginScreenState.value = LoginScreenState.AUTHORIZED
                 }
-                else -> {
+                // We just connected with Strava
+                uri != null -> {
                     // Set state of screen to loading
                     loginScreenState.value = LoginScreenState.LOADING
 
                     // Parse URI into the access code as a string
-                    accessCode.value = OAuth2(
-                        accessCode = parseUri(uri)
-                    )
+                    authorizationCode.value = parseUri(uri)
                     loginScreenState.value = LoginScreenState.AUTHORIZED
                 }
+                // We received an access token
+                oAuth2Entity != null -> {
+
+                }
+                // We have not yet connected with Strava
+                else -> loginScreenState.value = LoginScreenState.STANDBY
+
             }
         }
     }
