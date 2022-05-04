@@ -1,6 +1,7 @@
 package com.company.athleteapiart.di
 
 import com.company.athleteapiart.data.remote.AthleteApi
+import com.company.athleteapiart.domain.model.OAuth2
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
 import com.company.athleteapiart.domain.use_case.get_access_token_refresh.GetAccessTokenRefreshUseCase
@@ -16,12 +17,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-  //  @Singleton
-  //  @Provides
-  //  fun provideActivityRepository(
-  //      api: AthleteApi
-  //  ) = ActivityRepository(api)
 
     @Singleton
     @Provides
@@ -41,4 +36,5 @@ object AppModule {
             .build()
             .create(AthleteApi::class.java) // Creates singleton implementation of interface
     }
+
 }

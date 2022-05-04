@@ -2,8 +2,7 @@ package com.company.athleteapiart.domain.use_case.get_activities
 
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Activities
-import com.company.athleteapiart.data.remote.responses.Bearer
-import com.company.athleteapiart.util.OAuth2
+import com.company.athleteapiart.util.OAuth2Legacy
 import com.company.athleteapiart.util.Resource
 import javax.inject.Inject
 
@@ -18,7 +17,7 @@ class GetActivitiesUseCase @Inject constructor(
     ): Resource<Activities> {
         val response = try {
             api.getActivities(
-                authHeader = "Bearer " + OAuth2.accessToken,
+                authHeader = "Bearer " + OAuth2Legacy.accessToken,
                 page = page,
                 perPage = perPage,
                 before = before,

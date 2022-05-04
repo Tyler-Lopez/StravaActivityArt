@@ -29,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             AthleteApiArtTheme {
@@ -42,6 +43,9 @@ class MainActivity : ComponentActivity() {
                                 uri = intent.data,
                                 navController = navController,
                                 onLoginIntent = {
+                                    // Send us to the screen to connect with Strava and
+                                    // prevent going back to this activity after
+                                    finish()
                                     startActivity(it)
                                 }
                             )

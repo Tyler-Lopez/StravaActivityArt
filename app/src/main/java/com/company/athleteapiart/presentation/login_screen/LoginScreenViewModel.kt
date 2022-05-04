@@ -1,30 +1,25 @@
 package com.company.athleteapiart.presentation.login_screen
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.dao.OAuth2Dao
-import com.company.athleteapiart.data.database.OAuth2Database
-import com.company.athleteapiart.data.entities.OAuth2Entity
+import com.company.athleteapiart.domain.model.OAuth2
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
-import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
-    private val authenticationUseCases: AuthenticationUseCases
+    private val authenticationUseCases: AuthenticationUseCases,
 ) : ViewModel() {
 
     val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
+    val accessCode: MutableState<OAuth2?> = mutableStateOf(null)
 
     private val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
         .buildUpon()
@@ -55,14 +50,14 @@ class LoginScreenViewModel @Inject constructor(
 
     private fun getAccessToken(oAuth2Entity: OAuth2Entity?) {
         viewModelScope.launch {
-            println(OAuth2.authorizationCode)
+            println(OAuth2Legacy.authorizationCode)
             when {
                 // If the user just authorized with Strava...
-                OAuth2.authorizationCode != "null" -> {
+                OAuth2Legacy.authorizationCode != "null" -> {
                     val result = repository.getAccessToken(
                         clientId = 75992,
                         clientSecret = clientSecret,
-                        code = OAuth2.authorizationCode,
+                        code = OAuth2Legacy.authorizationCode,
                         grantType = "authorization_code"
                     )
                     when (result) {
@@ -77,7 +72,7 @@ class LoginScreenViewModel @Inject constructor(
                                     refreshToken = result.data.refresh_token
                                 )
                             )
-                            OAuth2.accessToken = result.data.access_token
+                            OAuth2Legacy.accessToken = result.data.access_token
                             AthleteActivities.formatting.value.leftString =
                                 "${result.data.athlete.firstname} ${result.data.athlete.lastname}"
                             requestLogin.value = false
@@ -90,7 +85,7 @@ class LoginScreenViewModel @Inject constructor(
                         }
                     }
                 }
-                oAuth2Entity == null || OAuth2.authorizationCode == "null" -> {
+                oAuth2Entity == null || OAuth2Legacy.authorizationCode == "null" -> {
                     // Determine that we do not have access token before, ask user to connect
                     println("No access token, user should connect")
                     requestLogin.value = true
@@ -109,7 +104,7 @@ class LoginScreenViewModel @Inject constructor(
                     )
                     when (result) {
                         is Resource.Success -> {
-                            OAuth2.accessToken = result.data.access_token
+                            OAuth2Legacy.accessToken = result.data.access_token
                             oAuthDao.value!!.clearOauth2()
                             oAuthDao.value!!.insertOauth2(
                                 OAuth2Entity(
@@ -137,7 +132,7 @@ class LoginScreenViewModel @Inject constructor(
                     // Not expired, use token
                     AthleteActivities.formatting.value.leftString =
                         "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
-                    OAuth2.accessToken = oAuth2Entity.accessToken
+                    OAuth2Legacy.accessToken = oAuth2Entity.accessToken
                     requestLogin.value = false
                     isLoading.value = false
                 }
@@ -150,19 +145,23 @@ class LoginScreenViewModel @Inject constructor(
     fun handleUri(uri: Uri?) {
         viewModelScope.launch {
             // Ensure URI is not null
-            if (uri == null) {
-                loginScreenState.value = LoginScreenState.STANDBY
-                println("Here, login screen state changed to ${loginScreenState.value}")
-            } else {
+            when {
+                uri == null -> loginScreenState.value = LoginScreenState.STANDBY
+                accessCode.value != null -> {
+                    loginScreenState.value = LoginScreenState.AUTHORIZED
+                }
+                else -> {
+                    // Set state of screen to loading
+                    loginScreenState.value = LoginScreenState.LOADING
 
-                // Set state of screen to loading
-                loginScreenState.value = LoginScreenState.LOADING
-
-                // Parse URI into the access code as a string
-                val accessCode = parseUri(uri)
+                    // Parse URI into the access code as a string
+                    accessCode.value = OAuth2(
+                        accessCode = parseUri(uri)
+                    )
+                    loginScreenState.value = LoginScreenState.AUTHORIZED
+                }
             }
         }
-
     }
 
     private fun parseUri(uri: Uri): String =

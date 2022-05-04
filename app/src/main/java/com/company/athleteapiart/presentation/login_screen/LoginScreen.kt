@@ -31,7 +31,10 @@ fun LoginScreen(
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val screenState by remember { viewModel.loginScreenState }
+    val oAuth2 by remember { viewModel.accessCode }
 
+    println("Here composing login screen")
+    println("And login state is $screenState")
     when (screenState) {
         // Just launched Login screen, check URI for access code
         // In future, check ROOM database for previous code
@@ -39,12 +42,13 @@ fun LoginScreen(
             // SideEffect composable invoked on every recomposition
             // Necessary to ensure we recompose screenState
             SideEffect {
-                viewModel.handleUri(null)
+                viewModel.handleUri(uri)
             }
         }
         // In process of trying to get response from Strava where we input in URI
         LOADING -> {
             // Loading Screen Composable goes here later
+            Text("Loading state")
         }
         // Wait for user to press Login
         STANDBY -> {
@@ -91,8 +95,8 @@ fun LoginScreen(
         }
         // User has been successfully authorized
         AUTHORIZED -> {
-            Text("t")
-            navController.navigate(Screen.TimeSelect.route)
+            Text("Access code is ${oAuth2?.accessCode}")
+          //  navController.navigate(Screen.TimeSelect.route)
         }
     }
 }
