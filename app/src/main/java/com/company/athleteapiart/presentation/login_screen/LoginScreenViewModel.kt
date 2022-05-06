@@ -56,11 +56,13 @@ class LoginScreenViewModel @Inject constructor(
             loginScreenState.value = LoginScreenState.LOADING
 
             // Attempt to receive access token from ROOM database
-            val responseRoom =
-                authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
+            val responseRoom = getAccessTokenUseCase.getAccessToken(context)
+
             // Update access token with whatever result was
             accessToken.value = responseRoom.data?.accessToken
+
             when (responseRoom) {
+
                 // Successfully received
                 is Resource.Success -> {
                     // Update ROOM database
