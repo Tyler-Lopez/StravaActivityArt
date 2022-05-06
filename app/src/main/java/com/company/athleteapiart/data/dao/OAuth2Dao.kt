@@ -2,13 +2,14 @@ package com.company.athleteapiart.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.company.athleteapiart.data.entities.OAuth2Entity
 
 @Dao
 interface OAuth2Dao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOauth2(oAuth2Entity: OAuth2Entity)
 
     // https://stackoverflow.com/questions/44244508/room-persistance-library-delete-all
