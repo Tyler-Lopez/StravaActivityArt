@@ -27,121 +27,16 @@ class LoginScreenViewModel @Inject constructor(
         .appendQueryParameter("scope", "activity:read,activity:read_all")
         .build()
 
+    // Use cases
+    private val getAccessTokenUseCase = authenticationUseCases.getAccessTokenUseCase
+    private val setAccessTokenUseCase = authenticationUseCases.setAccessTokenUseCase
+    private val clearAccessTokenUseCase = authenticationUseCases.clearAccessTokenUseCase
+
+    // State - observed in the view
     val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
-    val authorizationCode: MutableState<String?> = mutableStateOf(null)
+
     val accessToken: MutableState<String?> = mutableStateOf(null)
     val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
-
-
-    /*
-    var isLoading = mutableStateOf(false)
-    var requestLogin = mutableStateOf(false)
-    var endReached = mutableStateOf(false)
-
-    private val oAuthDao = mutableStateOf<OAuth2Dao?>(null)
-
-
-    fun loadDao(context: Context) {
-        isLoading.value = true
-        viewModelScope.launch {
-            oAuthDao.value = OAuth2Database.getInstance(context.applicationContext).oAuth2Dao
-            getAccessTokenFromAuthorizationCode(oAuthDao.value?.getOauth2())
-        }
-    }
-
-    private fun getAccessTokenFromAuthorizationCode(oAuth2Entity: OAuth2Entity?) {
-        viewModelScope.launch {
-            println(OAuth2Legacy.authorizationCode)
-            when {
-                // If the user just authorized with Strava...
-                OAuth2Legacy.authorizationCode != "null" -> {
-                    val result = repository.getAccessTokenFromAuthorizationCode(
-                        clientId = 75992,
-                        clientSecret = clientSecret,
-                        code = OAuth2Legacy.authorizationCode,
-                        grantType = "authorization_code"
-                    )
-                    when (result) {
-                        is Resource.Success -> {
-                            oAuthDao.value!!.clearOauth2()
-                            oAuthDao.value!!.insertOauth2(
-                                OAuth2Entity(
-                                    receivedOn = (GregorianCalendar().timeInMillis / 1000).toInt(),
-                                    firstName = result.data.athlete.firstname,
-                                    lastName = result.data.athlete.lastname,
-                                    accessToken = result.data.access_token,
-                                    refreshToken = result.data.refresh_token
-                                )
-                            )
-                            OAuth2Legacy.accessToken = result.data.access_token
-                            AthleteActivities.formatting.value.leftString =
-                                "${result.data.athlete.firstname} ${result.data.athlete.lastname}"
-                            requestLogin.value = false
-                            endReached.value = true
-                            isLoading.value = false
-                        }
-                        is Resource.Error -> {
-                            //   isLoading.value = false
-                            //   return@launch
-                        }
-                    }
-                }
-                oAuth2Entity == null || OAuth2Legacy.authorizationCode == "null" -> {
-                    // Determine that we do not have access token before, ask user to connect
-                    println("No access token, user should connect")
-                    requestLogin.value = true
-                    endReached.value = true
-                    isLoading.value = false
-                }
-                TimeUtils.accessTokenExpired(oAuth2Entity.receivedOn) -> {
-                    println("HERE HERE")
-                    println("ACCESS TOKEN IN NEED OF REFRESH")
-                    // Get refresh token
-                    val result = repository.getAccessTokenFromRefresh(
-                        clientId = 75992,
-                        clientSecret = clientSecret,
-                        refreshToken = oAuth2Entity.refreshToken,
-                        grantType = "refresh_token"
-                    )
-                    when (result) {
-                        is Resource.Success -> {
-                            OAuth2Legacy.accessToken = result.data.access_token
-                            oAuthDao.value!!.clearOauth2()
-                            oAuthDao.value!!.insertOauth2(
-                                OAuth2Entity(
-                                    receivedOn = (GregorianCalendar().timeInMillis / 1000).toInt(),
-                                    firstName = result.data.athlete.firstname,
-                                    lastName = result.data.athlete.lastname,
-                                    accessToken = result.data.access_token,
-                                    refreshToken = result.data.refresh_token
-                                )
-                            )
-                            AthleteActivities.formatting.value.leftString =
-                                "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
-                            requestLogin.value = false
-                            isLoading.value = false
-                        }
-                        is Resource.Error -> {
-                            println(result.message + " ERROR ON FETCH REFRESH")
-                            //   isLoading.value = false
-                            //   return@launch
-                        }
-                    }
-
-                }
-                else -> {
-                    // Not expired, use token
-                    AthleteActivities.formatting.value.leftString =
-                        "${oAuth2Entity.firstName} ${oAuth2Entity.lastName}"
-                    OAuth2Legacy.accessToken = oAuth2Entity.accessToken
-                    requestLogin.value = false
-                    isLoading.value = false
-                }
-            }
-        }
-    }
-
-     */
 
     /*
 
@@ -156,43 +51,45 @@ class LoginScreenViewModel @Inject constructor(
         context: Context
     ) {
         viewModelScope.launch {
+
+            // Set state of screen to loading
+            loginScreenState.value = LoginScreenState.LOADING
+
             // Attempt to receive access token from ROOM database
-            when (val responseRoom =
-                authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)) {
+            val responseRoom =
+                authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
+            // Update access token with whatever result was
+            accessToken.value = responseRoom.data?.accessToken
+            when (responseRoom) {
                 // Successfully received
                 is Resource.Success -> {
-                    accessToken.value = responseRoom.data.accessToken
+                    // Update ROOM database
+                    setAccessTokenUseCase.setAccessToken(context, responseRoom.data)
+                    loginScreenState.value = LoginScreenState.AUTHORIZED
                 }
                 // Not able to receive access token from ROOM database
                 is Resource.Error -> {
                     when {
-                        // TODO This is kind of weird and should be removed, probably not needed
-                        authorizationCode.value != null -> {
-                            println("SHOULD NOT HAVE REACHED HERE, POSSIBLY?")
-                            loginScreenState.value = LoginScreenState.AUTHORIZED
-                        }
                         // We just connected with Strava but have not parsed or done work with code
                         uri != null -> {
-                            // Set state of screen to loading
-                            loginScreenState.value = LoginScreenState.LOADING
-
                             // URI --> Authentication Code --> Access Token
                             // If successful, also add to ROOM in Use Case
                             val responseCode = authenticationUseCases
                                 .getAccessTokenUseCase
-                                .getAccessTokenFromAuthorizationCode(context, parseUri(uri))
+                                .getAccessTokenFromAuthorizationCode(parseUri(uri))
+
+                            // Update access token with whatever result was
+                            accessToken.value = responseCode.data?.accessToken
 
                             when (responseCode) {
                                 is Resource.Success -> {
+                                    setAccessTokenUseCase.setAccessToken(context, responseCode.data)
                                     loginScreenState.value = LoginScreenState.AUTHORIZED
                                 }
                                 is Resource.Error -> {
 
                                 }
                             }
-
-
-                            // TODO get access token from use case
                         }
                         // We have not yet connected with Strava
                         else -> loginScreenState.value = LoginScreenState.STANDBY

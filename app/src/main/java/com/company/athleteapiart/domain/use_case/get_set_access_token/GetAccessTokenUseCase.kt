@@ -47,11 +47,10 @@ class GetAccessTokenUseCase @Inject constructor(
                             accessToken = data.access_token,
                             refreshToken = data.refresh_token
                         )
-                        setAccessToken(
-                            context = context,
-                            oAuth2Entity = receivedOAuth
+                        Resource.Success(
+                            data = receivedOAuth,
+                            message = "REFRESH"
                         )
-                        Resource.Success(receivedOAuth)
                     }
                     // Was not able to successfully refresh the token
                     else -> Resource.Error("An error occurred attempting to refresh the token")
@@ -63,9 +62,8 @@ class GetAccessTokenUseCase @Inject constructor(
     }
 
     suspend fun getAccessTokenFromAuthorizationCode(
-        context: Context,
         code: String
-    ): Resource<Bearer> {
+    ): Resource<OAuth2Entity> {
         val data = try {
             api.getAccessToken(
                 clientId = clientId,
@@ -76,8 +74,8 @@ class GetAccessTokenUseCase @Inject constructor(
         } catch (e: Exception) {
             return Resource.Error("An error occurred retrieving access token. ${e.message}")
         }
-        setAccessToken(
-            context, OAuth2Entity(
+        return Resource.Success(
+            OAuth2Entity(
                 receivedOn = data.expires_at,
                 firstName = data.athlete.firstname,
                 lastName = data.athlete.lastname,
@@ -85,7 +83,6 @@ class GetAccessTokenUseCase @Inject constructor(
                 refreshToken = data.refresh_token
             )
         )
-        return Resource.Success(data)
     }
 
     // Invoked privately only if the Room database access token is expired
@@ -108,18 +105,7 @@ class GetAccessTokenUseCase @Inject constructor(
         return Resource.Success(response)
     }
 
-    // Invoked privately to set access token in Room database
-    private suspend fun setAccessToken(
-        context: Context,
-        oAuth2Entity: OAuth2Entity
-    ) {
-        val oAuth2Dao = OAuth2Database
-            .getInstance(context.applicationContext)
-            .oAuth2Dao
-
-        oAuth2Dao.insertOauth2(oAuth2Entity = oAuth2Entity)
-    }
-
+    // Returns TRUE if an access token is 20k seconds old
     private fun accessTokenIsExpired(time: Int): Boolean {
         val now = (GregorianCalendar().timeInMillis / 1000).toInt()
         return (now - time >= 20000)

@@ -30,7 +30,7 @@ fun LoginScreen(
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val screenState by remember { viewModel.loginScreenState }
-    val oAuth2 by remember { viewModel.authorizationCode }
+    val accessToken by remember { viewModel.accessToken }
 
     val context = LocalContext.current
 
@@ -97,6 +97,7 @@ fun LoginScreen(
         }
         // User has been successfully authorized
         AUTHORIZED -> {
+            Text(accessToken ?: "no access token")
           //  navController.navigate(Screen.TimeSelect.route)
         }
     }
