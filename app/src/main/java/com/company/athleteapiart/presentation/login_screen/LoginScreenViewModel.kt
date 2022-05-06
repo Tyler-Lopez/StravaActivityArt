@@ -143,16 +143,19 @@ class LoginScreenViewModel @Inject constructor(
 
      */
 
+    /*
+
+    Invoked when screen is in a LAUNCH state
+    Attempts to obtain a valid access token from both ROOM and URI intent
+
+     */
     fun attemptGetAccessToken(
         uri: Uri?,
         context: Context
     ) {
         viewModelScope.launch {
-
             // Attempt to receive access token from ROOM database
-            val response = authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
-
-            when (response) {
+            when (val response = authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)) {
                 // Successfully received
                 is Resource.Success -> {
                     accessToken.value = response.data.accessToken
@@ -184,6 +187,7 @@ class LoginScreenViewModel @Inject constructor(
         }
     }
 
+    // Invoked to parse authorization code from the URI string from intent
     private fun parseUri(uri: Uri): String =
         uri.toString().substring(43).substringBefore('&')
 
