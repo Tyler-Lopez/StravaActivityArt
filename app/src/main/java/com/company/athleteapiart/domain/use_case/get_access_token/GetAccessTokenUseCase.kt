@@ -7,6 +7,7 @@ import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Bearer
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.clientSecret
+import java.util.*
 import javax.inject.Inject
 
 class GetAccessTokenUseCase @Inject constructor(
@@ -23,8 +24,12 @@ class GetAccessTokenUseCase @Inject constructor(
             .oAuth2Dao
             .getOauth2()
 
-        return when (oAuth2Entity) {
-            null -> Resource.Error("User has never authenticated with Strava before.")
+        return when {
+            // There is no previous entry in the ROOM database
+            oAuth2Entity == null -> Resource.Error("User has never authenticated with Strava before.")
+            // There is a previous, expired entry
+            accessTokenIsExpired(oAuth2Entity.receivedOn) -> Resource.Error("User has not yet authenticated with Strava")
+            // There is a previous non-expired entry
             else -> Resource.Error("User has not yet authenticated with Strava")
         }
     }
@@ -64,5 +69,10 @@ class GetAccessTokenUseCase @Inject constructor(
         }
 
         return Resource.Success(response)
+    }
+
+    private fun accessTokenIsExpired(time: Int): Boolean {
+        val now = (GregorianCalendar().timeInMillis / 1000).toInt()
+        return (now - time >= 20000)
     }
 }

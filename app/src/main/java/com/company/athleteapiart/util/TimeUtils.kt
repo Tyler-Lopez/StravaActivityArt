@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TimeUtils {
+
     companion object {
 
         fun yearsAvailable() = FIRST_YEAR..LocalDateTime.now().year
