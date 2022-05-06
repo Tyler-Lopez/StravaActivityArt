@@ -1,4 +1,4 @@
-package com.company.athleteapiart.domain.use_case.get_access_token
+package com.company.athleteapiart.domain.use_case.get_set_access_token
 
 import android.content.Context
 import com.company.athleteapiart.data.database.OAuth2Database
@@ -17,7 +17,7 @@ class GetAccessTokenUseCase @Inject constructor(
 
     // Invoked publicly, checks Room database for previous entry
     // Returns error if not yet connected
-    suspend fun getAccessToken(context: Context): Resource<Bearer> {
+    suspend fun getAccessToken(context: Context): Resource<OAuth2Entity> {
 
         val oAuth2Entity = OAuth2Database
             .getInstance(context.applicationContext)
@@ -28,9 +28,37 @@ class GetAccessTokenUseCase @Inject constructor(
             // There is no previous entry in the ROOM database
             oAuth2Entity == null -> Resource.Error("User has never authenticated with Strava before.")
             // There is a previous, expired entry
-            accessTokenIsExpired(oAuth2Entity.receivedOn) -> Resource.Error("User has not yet authenticated with Strava")
-            // There is a previous non-expired entry
-            else -> Resource.Error("User has not yet authenticated with Strava")
+            accessTokenIsExpired(oAuth2Entity.receivedOn) -> {
+                // Attempt to refresh the access token
+                val response =
+                    getAccessTokenFromRefreshToken(
+                        clientId = clientId,
+                        clientSecret = clientSecret,
+                        code = oAuth2Entity.refreshToken
+                    )
+                when (response) {
+                    // Successfully refreshed the token
+                    is Resource.Success -> {
+                        val data = response.data
+                        val receivedOAuth = OAuth2Entity(
+                            receivedOn = data.expires_at,
+                            firstName = data.athlete.firstname,
+                            lastName = data.athlete.lastname,
+                            accessToken = data.access_token,
+                            refreshToken = data.refresh_token
+                        )
+                        setAccessToken(
+                            context = context,
+                            oAuth2Entity = receivedOAuth
+                        )
+                        Resource.Success(receivedOAuth)
+                    }
+                    // Was not able to successfully refresh the token
+                    else -> Resource.Error("An error occurred attempting to refresh the token")
+                }
+            }
+            // There is a previous non-expired entry, return the oAuth2Entity
+            else -> Resource.Success(oAuth2Entity)
         }
     }
 
@@ -69,6 +97,18 @@ class GetAccessTokenUseCase @Inject constructor(
         }
 
         return Resource.Success(response)
+    }
+
+    // Invoked privately to set access token in Room database
+    private suspend fun setAccessToken(
+        context: Context,
+        oAuth2Entity: OAuth2Entity
+    ) {
+        val oAuth2Dao = OAuth2Database
+            .getInstance(context.applicationContext)
+            .oAuth2Dao
+
+        oAuth2Dao.insertOauth2(oAuth2Entity = oAuth2Entity)
     }
 
     private fun accessTokenIsExpired(time: Int): Boolean {

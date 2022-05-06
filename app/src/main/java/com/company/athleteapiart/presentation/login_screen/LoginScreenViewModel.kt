@@ -7,8 +7,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.database.OAuth2Database
-import com.company.athleteapiart.domain.model.OAuth2
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +29,7 @@ class LoginScreenViewModel @Inject constructor(
 
     val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
     val authorizationCode: MutableState<String?> = mutableStateOf(null)
+    val accessToken: MutableState<String?> = mutableStateOf(null)
     val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
 
@@ -150,32 +149,37 @@ class LoginScreenViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
 
-            val oAuth2Entity =
-                authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
+            // Attempt to receive access token from ROOM database
+            val response = authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)
 
-            println("oAuth2Entity read as ${oAuth2Entity.data}")
-            // Ensure URI is not null
-            when {
-                authorizationCode.value != null -> {
-                    loginScreenState.value = LoginScreenState.AUTHORIZED
+            when (response) {
+                // Successfully received
+                is Resource.Success -> {
+                    accessToken.value = response.data.accessToken
                 }
-                // We just connected with Strava
-                uri != null -> {
-                    // Set state of screen to loading
-                    loginScreenState.value = LoginScreenState.LOADING
+                // Not able to receive access token from ROOM database
+                is Resource.Error -> {
+                    when {
+                        // TODO This is kind of weird and should be removed, probably not needed
+                        authorizationCode.value != null -> {
+                            println("SHOULD NOT HAVE REACHED HERE, POSSIBLY?")
+                            loginScreenState.value = LoginScreenState.AUTHORIZED
+                        }
+                        // We just connected with Strava but have not parsed or done work with code
+                        uri != null -> {
+                            // Set state of screen to loading
+                            loginScreenState.value = LoginScreenState.LOADING
 
-                    // Parse URI into the access code as a string
-                    authorizationCode.value = parseUri(uri)
-                    loginScreenState.value = LoginScreenState.AUTHORIZED
+                            // Parse URI into the access code as a string
+                            authorizationCode.value = parseUri(uri)
+                            loginScreenState.value = LoginScreenState.AUTHORIZED
+
+                            // TODO get access token from use case
+                        }
+                        // We have not yet connected with Strava
+                        else -> loginScreenState.value = LoginScreenState.STANDBY
+                    }
                 }
-                // We received an access token
-                oAuth2Entity.data != null -> {
-                    println("oAuthEntity data wasn't null")
-
-                }
-                // We have not yet connected with Strava
-                else -> loginScreenState.value = LoginScreenState.STANDBY
-
             }
         }
     }
