@@ -145,20 +145,23 @@ class LoginScreenViewModel @Inject constructor(
 
     /*
 
+    FUNCTION: attemptGetAccessToken
     Invoked when screen is in a LAUNCH state
     Attempts to obtain a valid access token from both ROOM and URI intent
 
      */
+
     fun attemptGetAccessToken(
         uri: Uri?,
         context: Context
     ) {
         viewModelScope.launch {
             // Attempt to receive access token from ROOM database
-            when (val response = authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)) {
+            when (val responseRoom =
+                authenticationUseCases.getAccessTokenUseCase.getAccessToken(context)) {
                 // Successfully received
                 is Resource.Success -> {
-                    accessToken.value = response.data.accessToken
+                    accessToken.value = responseRoom.data.accessToken
                 }
                 // Not able to receive access token from ROOM database
                 is Resource.Error -> {
@@ -173,9 +176,21 @@ class LoginScreenViewModel @Inject constructor(
                             // Set state of screen to loading
                             loginScreenState.value = LoginScreenState.LOADING
 
-                            // Parse URI into the access code as a string
-                            authorizationCode.value = parseUri(uri)
-                            loginScreenState.value = LoginScreenState.AUTHORIZED
+                            // URI --> Authentication Code --> Access Token
+                            // If successful, also add to ROOM in Use Case
+                            val responseCode = authenticationUseCases
+                                .getAccessTokenUseCase
+                                .getAccessTokenFromAuthorizationCode(context, parseUri(uri))
+
+                            when (responseCode) {
+                                is Resource.Success -> {
+                                    loginScreenState.value = LoginScreenState.AUTHORIZED
+                                }
+                                is Resource.Error -> {
+
+                                }
+                            }
+
 
                             // TODO get access token from use case
                         }

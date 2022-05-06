@@ -63,9 +63,10 @@ class GetAccessTokenUseCase @Inject constructor(
     }
 
     suspend fun getAccessTokenFromAuthorizationCode(
+        context: Context,
         code: String
     ): Resource<Bearer> {
-        val response = try {
+        val data = try {
             api.getAccessToken(
                 clientId = clientId,
                 clientSecret = clientSecret,
@@ -75,8 +76,16 @@ class GetAccessTokenUseCase @Inject constructor(
         } catch (e: Exception) {
             return Resource.Error("An error occurred retrieving access token. ${e.message}")
         }
-
-        return Resource.Success(response)
+        setAccessToken(
+            context, OAuth2Entity(
+                receivedOn = data.expires_at,
+                firstName = data.athlete.firstname,
+                lastName = data.athlete.lastname,
+                accessToken = data.access_token,
+                refreshToken = data.refresh_token
+            )
+        )
+        return Resource.Success(data)
     }
 
     // Invoked privately only if the Room database access token is expired
