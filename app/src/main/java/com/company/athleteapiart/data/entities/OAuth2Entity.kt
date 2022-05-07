@@ -6,9 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class OAuth2Entity(
     @PrimaryKey
+    val athleteId: Int,
     val receivedOn: Int,
-    val firstName: String,
-    val lastName: String,
     val accessToken: String,
     val refreshToken: String
 )

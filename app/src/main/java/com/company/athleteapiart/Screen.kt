@@ -5,6 +5,7 @@ sealed class Screen(
 ) {
     object TimeSelect : Screen("TimeSelect")
     object Login : Screen("Login")
+    object Welcome : Screen("Welcome")
     object FilterActivities : Screen("FilterActivities")
     object FormatActivitiesOne : Screen("FormatActivitiesOne")
     object FormatActivitiesTwo : Screen("FormatActivitiesTwo")
@@ -13,6 +14,15 @@ sealed class Screen(
     object ErrorNoActivities : Screen("ErrorNoActivities")
     object VisualizeActivities : Screen("VisualizeActivities")
     object SaveImage : Screen("SaveImage")
+
+    fun withArgs(vararg args: String): String {
+        return buildString {
+            append(route)
+            args.forEach { arg ->
+                append("/$arg")
+            }
+        }
+    }
 
     override fun toString(): String = route
 }

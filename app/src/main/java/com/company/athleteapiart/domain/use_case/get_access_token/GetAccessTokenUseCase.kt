@@ -1,4 +1,4 @@
-package com.company.athleteapiart.domain.use_case.get_set_access_token
+package com.company.athleteapiart.domain.use_case.get_access_token
 
 import android.content.Context
 import com.company.athleteapiart.data.database.OAuth2Database
@@ -40,10 +40,10 @@ class GetAccessTokenUseCase @Inject constructor(
                     // Successfully refreshed the token
                     is Resource.Success -> {
                         val data = response.data
+                        println(data)
                         val receivedOAuth = OAuth2Entity(
+                            athleteId = oAuth2Entity.athleteId,
                             receivedOn = data.expires_at,
-                            firstName = data.athlete.firstname,
-                            lastName = data.athlete.lastname,
                             accessToken = data.access_token,
                             refreshToken = data.refresh_token
                         )
@@ -76,9 +76,8 @@ class GetAccessTokenUseCase @Inject constructor(
         }
         return Resource.Success(
             OAuth2Entity(
+                athleteId = data.athlete.id,
                 receivedOn = data.expires_at,
-                firstName = data.athlete.firstname,
-                lastName = data.athlete.lastname,
                 accessToken = data.access_token,
                 refreshToken = data.refresh_token
             )

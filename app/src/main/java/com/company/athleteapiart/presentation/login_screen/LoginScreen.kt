@@ -16,12 +16,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.R
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
 
 
-// https://developers.strava.com/guidelines/
+/*
+
+ LoginScreen
+
+ This is the start of navigation, this screen handles authenticating the user with Strava.
+ One authenticated, they are redirected to the Welcome Screen.
+
+ https://developers.strava.com/guidelines/
+
+ */
+
 @Composable
 fun LoginScreen(
     uri: Uri?,
@@ -30,7 +41,6 @@ fun LoginScreen(
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val screenState by remember { viewModel.loginScreenState }
-    val accessToken by remember { viewModel.accessToken }
 
     val context = LocalContext.current
 
@@ -96,9 +106,14 @@ fun LoginScreen(
             }
         }
         // User has been successfully authorized
-        AUTHORIZED -> {
-            Text(accessToken ?: "no access token")
-          //  navController.navigate(Screen.TimeSelect.route)
-        }
+        // Redirect them to the welcome screen
+        AUTHORIZED -> navController
+            .navigate(
+                Screen.Welcome.withArgs(
+                    // * Is the spread operator to convert an Array<String> into vararg String
+                    *viewModel.getNavArgs()
+                )
+            )
+
     }
 }

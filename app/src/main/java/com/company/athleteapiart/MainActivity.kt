@@ -8,6 +8,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
 import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
@@ -19,8 +21,10 @@ import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreen
 import com.company.athleteapiart.util.noAnimComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     AnimatedNavHost(navController, startDestination = Screen.Login.route) {
-                        noAnimComposable(Screen.Login.route) {
+                        composable(Screen.Login.route) {
                             LoginScreen(
                                 uri = intent.data,
                                 navController = navController,
@@ -50,31 +54,58 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        noAnimComposable(Screen.TimeSelect.route) {
+                        composable(
+                            route = Screen.Welcome.route + "/{athleteId}/{accessToken}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.IntType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) { entry ->
+                            WelcomeScreen(
+                                athleteId = entry.arguments?.getInt("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                navController = navController
+                            )
+                        }
+                        composable(
+                            route = Screen.TimeSelect.route + "/{accessToken}",
+                            arguments = listOf(
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) {
                             TimeSelectScreen(navController = navController)
                         }
-                        noAnimComposable(Screen.FilterActivities.route) {
+                        composable(Screen.FilterActivities.route) {
                             FilterActivitiesScreen(navController = navController)
                         }
-                        noAnimComposable(Screen.FormatActivitiesOne.route) {
+                        composable(Screen.FormatActivitiesOne.route) {
                             FormatScreenOne(navController = navController)
                         }
-                        noAnimComposable(Screen.FormatActivitiesTwo.route) {
+                        composable(Screen.FormatActivitiesTwo.route) {
                             FormatScreenTwo(navController = navController)
                         }
-                        noAnimComposable(Screen.FormatActivitiesThree.route) {
+                        composable(Screen.FormatActivitiesThree.route) {
                             FormatScreenThree(navController = navController)
                         }
-                        noAnimComposable(Screen.FormatActivitiesFour.route) {
+                        composable(Screen.FormatActivitiesFour.route) {
                             FormatScreenFour(navController = navController)
                         }
-                        noAnimComposable(Screen.VisualizeActivities.route) {
+                        composable(Screen.VisualizeActivities.route) {
                             ActivitiesScreen(navController = navController)
                         }
-                        noAnimComposable(Screen.SaveImage.route) {
+                        composable(Screen.SaveImage.route) {
                             SaveImageScreen(navController = navController)
                         }
-                        noAnimComposable(Screen.ErrorNoActivities.route) {
+                        composable(Screen.ErrorNoActivities.route) {
                             ErrorNoActivitiesScreen(navController = navController)
                         }
                     }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.data.entities.OAuth2Entity
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,8 +36,11 @@ class LoginScreenViewModel @Inject constructor(
     // State - observed in the view
     val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
 
-    val accessToken: MutableState<String?> = mutableStateOf(null)
+    private var oAuth2Entity: OAuth2Entity? = null
     val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
+
+    fun getNavArgs(): Array<String> =
+        arrayOf(oAuth2Entity?.athleteId.toString(), oAuth2Entity?.accessToken ?: "null")
 
     /*
 
@@ -59,7 +63,7 @@ class LoginScreenViewModel @Inject constructor(
             val responseRoom = getAccessTokenUseCase.getAccessToken(context)
 
             // Update access token with whatever result was
-            accessToken.value = responseRoom.data?.accessToken
+            oAuth2Entity = responseRoom.data
 
             when (responseRoom) {
 
@@ -81,7 +85,7 @@ class LoginScreenViewModel @Inject constructor(
                                 .getAccessTokenFromAuthorizationCode(parseUri(uri))
 
                             // Update access token with whatever result was
-                            accessToken.value = responseCode.data?.accessToken
+                            oAuth2Entity = responseCode.data
 
                             when (responseCode) {
                                 is Resource.Success -> {
