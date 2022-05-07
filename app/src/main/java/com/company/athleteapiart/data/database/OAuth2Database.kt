@@ -14,6 +14,7 @@ import com.company.athleteapiart.data.entities.OAuth2Entity
     version = 1,
     exportSchema = false
 )
+
 abstract class OAuth2Database : RoomDatabase() {
 
     abstract val oAuth2Dao: OAuth2Dao
