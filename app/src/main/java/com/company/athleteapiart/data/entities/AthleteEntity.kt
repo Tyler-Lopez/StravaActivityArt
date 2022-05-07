@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class UserEntity(
+data class AthleteEntity(
     @PrimaryKey
     val athleteId: Int,
     val receivedOn: Int,
