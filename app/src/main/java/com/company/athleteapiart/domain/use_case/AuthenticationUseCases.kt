@@ -7,5 +7,5 @@ import com.company.athleteapiart.domain.use_case.set_access_token.SetAccessToken
 data class AuthenticationUseCases(
     val getAccessTokenUseCase: GetAccessTokenUseCase,
     val setAccessTokenUseCase: SetAccessTokenUseCase,
-    val clearAccessTokenUseCase: ClearAccessTokenUseCase,
+    val clearAccessTokenUseCase: ClearAccessTokenUseCase
 )
