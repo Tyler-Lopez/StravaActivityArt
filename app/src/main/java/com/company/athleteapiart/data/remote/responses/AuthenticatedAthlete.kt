@@ -1,24 +1,32 @@
 package com.company.athleteapiart.data.remote.responses
 
-data class Athlete(
+data class AuthenticatedAthlete(
+    val athlete_type: Int,
     val badge_type_id: Int,
-    val bio: String,
+    val bikes: List<Bike>,
     val city: String,
-    val country: Any,
+    val clubs: List<Any>,
+    val country: String,
     val created_at: String,
+    val date_preference: String,
     val firstname: String,
     val follower: Any,
+    val follower_count: Int,
     val friend: Any,
+    val friend_count: Int,
+    val ftp: Any,
     val id: Long,
     val lastname: String,
+    val measurement_preference: String,
+    val mutual_friend_count: Int,
     val premium: Boolean,
     val profile: String,
     val profile_medium: String,
     val resource_state: Int,
     val sex: String,
+    val shoes: List<Shoe>,
     val state: String,
-    val summit: Boolean,
     val updated_at: String,
-    val username: Any,
-    val weight: Double
+    val username: String,
+    val weight: Int
 )

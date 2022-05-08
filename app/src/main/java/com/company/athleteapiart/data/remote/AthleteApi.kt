@@ -2,6 +2,7 @@ package com.company.athleteapiart.data.remote
 
 import com.company.athleteapiart.data.remote.responses.Activities
 import com.company.athleteapiart.data.remote.responses.ActivityDetailed
+import com.company.athleteapiart.data.remote.responses.AuthenticatedAthlete
 import com.company.athleteapiart.data.remote.responses.Bearer
 import retrofit2.http.*
 
@@ -31,6 +32,13 @@ interface AthleteApi {
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
     ): Activities
+
+    // Get Authenticated Athlete from access token
+    @GET("api/v3/athlete")
+    suspend fun getAuthenticatedAthlete(
+        @Header("Authorization") authHeader: String
+    ): AuthenticatedAthlete
+
 
     @GET("api/v3/activities/{id}?")
     suspend fun getActivityDetailed(

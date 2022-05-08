@@ -38,7 +38,7 @@ fun WelcomeScreen(
     when (screenState) {
         LAUNCH -> SideEffect {
             viewModel.getAthlete(
-                athleteId = athleteId,
+                context = context,
                 accessToken = accessToken
             )
         }
@@ -46,6 +46,7 @@ fun WelcomeScreen(
         STANDBY -> {
             Column {
                 Text("welcome screen $accessToken id is $athleteId")
+                Text("${viewModel.athlete.value?.profileMedium}")
                 Button(
                     onClick = {
                         viewModel.logout(context = context)

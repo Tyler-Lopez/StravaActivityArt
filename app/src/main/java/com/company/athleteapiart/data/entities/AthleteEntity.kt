@@ -6,8 +6,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class AthleteEntity(
     @PrimaryKey
-    val athleteId: Int,
+    val athleteId: Long,
+    val userName: String,
     val receivedOn: Int,
     val firstName: String,
+    val profileMedium: String,
+    val datePreference: String?,
     val lastName: String
 )
