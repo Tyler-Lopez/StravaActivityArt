@@ -42,6 +42,10 @@ class LoginScreenViewModel @Inject constructor(
     fun getNavArgs(): Array<String> =
         arrayOf(oAuth2Entity?.athleteId.toString(), oAuth2Entity?.accessToken ?: "null")
 
+
+    init {
+        println("Init invoked on loginScreenViewModel state is ${loginScreenState.value}")
+    }
     /*
 
     FUNCTION: attemptGetAccessToken
@@ -65,6 +69,7 @@ class LoginScreenViewModel @Inject constructor(
             // Update access token with whatever result was
             oAuth2Entity = responseRoom.data
 
+            println("Here, response room is ${responseRoom.data}")
             when (responseRoom) {
 
                 // Successfully received
@@ -78,6 +83,7 @@ class LoginScreenViewModel @Inject constructor(
                     when {
                         // We just connected with Strava but have not parsed or done work with code
                         uri != null -> {
+                            println("Here, uri is not null it is $uri")
                             // URI --> Authentication Code --> Access Token
                             // If successful, also add to ROOM in Use Case
                             val responseCode = authenticationUseCases
@@ -93,7 +99,7 @@ class LoginScreenViewModel @Inject constructor(
                                     loginScreenState.value = LoginScreenState.AUTHORIZED
                                 }
                                 is Resource.Error -> {
-
+                                    println("Response code from uri is error")
                                 }
                             }
                         }

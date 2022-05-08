@@ -1,6 +1,7 @@
 package com.company.athleteapiart
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +35,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        // Don't love the way of doing this
+        // The reason for this is to only fetch from URI on activity creation and never after
+        // So we use it once, then set it null
+        var receivedFromUri: Uri? = intent.data
+
         super.onCreate(savedInstanceState)
         setContent {
             AthleteApiArtTheme {
@@ -44,7 +50,8 @@ class MainActivity : ComponentActivity() {
                     AnimatedNavHost(navController, startDestination = Screen.Login.route) {
                         composable(Screen.Login.route) {
                             LoginScreen(
-                                uri = intent.data,
+                                // Use URI then set null
+                                uri = receivedFromUri.also { receivedFromUri = null},
                                 navController = navController,
                                 onLoginIntent = {
                                     // Send us to the screen to connect with Strava and

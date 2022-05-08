@@ -47,16 +47,15 @@ fun LoginScreen(
     when (screenState) {
         // Just launched Login screen, check URI for access code
         // In future, check ROOM database for previous code
-        LAUNCH -> {
-            // SideEffect composable invoked on every recomposition
-            // Necessary to ensure we recompose screenState
-            SideEffect {
-                viewModel.attemptGetAccessToken(
-                    uri = uri,
-                    context = context
-                )
-            }
+        // SideEffect composable invoked on every recomposition
+        // Necessary to ensure we recompose screenState
+        LAUNCH -> SideEffect {
+            viewModel.attemptGetAccessToken(
+                uri = uri,
+                context = context
+            )
         }
+
         // In process of trying to get response from Strava where we input in URI
         LOADING -> {
             // Loading Screen Composable goes here later
@@ -107,13 +106,19 @@ fun LoginScreen(
         }
         // User has been successfully authorized
         // Redirect them to the welcome screen
-        AUTHORIZED -> navController
-            .navigate(
-                Screen.Welcome.withArgs(
-                    // * Is the spread operator to convert an Array<String> into vararg String
-                    *viewModel.getNavArgs()
-                )
-            )
-
+        AUTHORIZED ->
+            LaunchedEffect(Unit) {
+                (navController.currentBackStackEntry?.destination?.route == Screen.Login.route)
+                navController.navigate(
+                    route = Screen.Welcome.withArgs(
+                        // * Is the spread operator to convert an Array<String> into vararg String
+                        *viewModel.getNavArgs()
+                    )
+                ) {
+                    popUpTo(Screen.Login.route) {
+                        inclusive = true
+                    }
+                }
+            }
     }
 }
