@@ -34,7 +34,8 @@ class GetAthleteUseCase @Inject constructor(
                 userName = data.username,
                 receivedOn = (GregorianCalendar().timeInMillis / 1000).toInt(),
                 firstName = data.firstname,
-                profileMedium = data.profile_medium,
+                profilePictureMedium = data.profile_medium,
+                profilePictureLarge = data.profile,
                 datePreference = data.date_preference,
                 lastName = data.lastname
             )

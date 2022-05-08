@@ -10,7 +10,8 @@ data class AthleteEntity(
     val userName: String,
     val receivedOn: Int,
     val firstName: String,
-    val profileMedium: String,
+    val profilePictureMedium: String,
+    val profilePictureLarge: String,
     val datePreference: String?,
     val lastName: String
 )

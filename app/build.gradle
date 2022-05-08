@@ -85,6 +85,8 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.4.1'
     implementation 'androidx.room:room-ktx:2.4.1'
 
+    // Coil - Image Loading Library
+    implementation 'io.coil-kt:coil-compose:2.0.0-rc01'
 
     // ICONS
     implementation "androidx.compose.material:material-icons-extended:$compose_version"

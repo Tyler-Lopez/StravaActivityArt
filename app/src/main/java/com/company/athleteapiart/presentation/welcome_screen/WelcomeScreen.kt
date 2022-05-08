@@ -2,16 +2,30 @@ package com.company.athleteapiart.presentation.welcome_screen
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreenState.*
 import com.company.athleteapiart.presentation.login_screen.LoginScreenViewModel
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
+import com.google.android.gms.maps.model.Circle
 
 
 /*
@@ -44,9 +58,34 @@ fun WelcomeScreen(
         }
         LOADING -> Text("Loading")
         STANDBY -> {
-            Column {
-                Text("welcome screen $accessToken id is $athleteId")
-                Text("${viewModel.athlete.value?.profileMedium}")
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(128.dp)
+                        .clip(CircleShape)
+                        .border(width = 5.dp, color = StravaOrange, shape = CircleShape)
+                )
+                Text("Welcome ${viewModel.athleteName}")
+                Button(
+                    onClick = {
+
+                    }
+                ) {
+                    Text("Make Activity Art")
+                }
+                Button(
+                    onClick = {
+
+                    }
+                ) {
+                    Text("About")
+                }
                 Button(
                     onClick = {
                         viewModel.logout(context = context)

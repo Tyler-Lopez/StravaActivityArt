@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.data.entities.AthleteEntity
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
@@ -30,7 +32,11 @@ class WelcomeScreenViewModel @Inject constructor(
     val screenState = mutableStateOf(WelcomeScreenState.LAUNCH)
 
     // Received Athlete
-    var athlete = mutableStateOf<AthleteEntity?>(null)
+    private val athlete = mutableStateOf<AthleteEntity?>(null)
+    val athleteImageUrl: String
+        get() = athlete.value?.profilePictureLarge ?: "via.placeholder.com/128"
+    val athleteName: String
+        get() = "${athlete.value?.firstName} ${athlete.value?.lastName}"
 
     fun getAthlete(
         context: Context,
