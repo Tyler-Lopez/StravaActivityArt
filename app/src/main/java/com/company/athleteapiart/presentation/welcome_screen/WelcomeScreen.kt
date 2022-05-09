@@ -40,7 +40,7 @@ https://developers.strava.com/guidelines/
 
 @Composable
 fun WelcomeScreen(
-    athleteId: Int,
+    athleteId: Long,
     accessToken: String,
     navController: NavHostController,
     viewModel: WelcomeScreenViewModel = hiltViewModel()
@@ -53,6 +53,7 @@ fun WelcomeScreen(
         LAUNCH -> SideEffect {
             viewModel.getAthlete(
                 context = context,
+                athleteId = athleteId,
                 accessToken = accessToken
             )
         }

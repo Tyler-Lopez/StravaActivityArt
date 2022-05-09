@@ -16,5 +16,5 @@ interface AthleteDao {
     suspend fun clearAthlete()
 
     @Query("SELECT * FROM athleteEntity WHERE athleteEntity.athleteId LIKE :athleteId")
-    suspend fun getAthleteById(athleteId: Int): AthleteEntity?
+    suspend fun getAthleteById(athleteId: Long): AthleteEntity?
 }

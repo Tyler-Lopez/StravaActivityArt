@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             )
                         ) { entry ->
                             WelcomeScreen(
-                                athleteId = entry.arguments?.getInt("athleteId") ?: -1,
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
                                 accessToken = entry.arguments?.getString("accessToken") ?: "null",
                                 navController = navController
                             )
