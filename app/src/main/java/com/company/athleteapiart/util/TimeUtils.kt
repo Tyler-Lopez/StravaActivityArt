@@ -12,6 +12,37 @@ class TimeUtils {
 
     companion object {
 
+        fun parseIso8601(string: String): Map<String, Int> {
+            val instant = Instant.parse(string)
+            val dateArr = LocalDateTime
+                .ofInstant(instant, ZoneOffset.UTC)
+                .format(DateTimeFormatter.ofPattern("dd MM uuuu HH mm"))
+                .split(" ")
+            return mapOf(
+                "day" to dateArr[0].toInt(),
+                "month" to dateArr[1].toInt(),
+                "year" to dateArr[2].toInt(),
+                "hour" to dateArr[3].toInt(),
+                "minute" to dateArr[4].toInt()
+            )
+        }
+
+        fun monthIntToString(int: Int) = when(int) {
+            1 -> "January"
+            2 -> "February"
+            3 -> "March"
+            4 -> "April"
+            5 -> "May"
+            6 -> "June"
+            7 -> "July"
+            8 -> "August"
+            9 -> "September"
+            10 -> "October"
+            11 -> "November"
+            12 -> "December"
+            else -> "Unknown"
+        }
+
         fun yearsAvailable() = FIRST_YEAR..LocalDateTime.now().year
 
         fun timeToString(input: Int): String {
@@ -34,47 +65,3 @@ class TimeUtils {
 }
 
 
-@SuppressLint("NewApi")
-fun String.monthFromIso8601(): String {
-    val instant = Instant.parse(this)
-    return when (LocalDateTime
-        .ofInstant(instant, ZoneOffset.UTC)
-        .format(DateTimeFormatter.ofPattern("MM"))) {
-        "01" -> "January"
-        "02" -> "February"
-        "03" -> "March"
-        "04" -> "April"
-        "05" -> "May"
-        "06" -> "June"
-        "07" -> "July"
-        "08" -> "August"
-        "09" -> "September"
-        "10" -> "October"
-        "11" -> "November"
-        "12" -> "December"
-        else -> "Unknown"
-    }
-}
-
-@SuppressLint("NewApi")
-fun String.formatIso8601(
-    delimiter: Char = '-',
-    showDay: Boolean = true,
-    showMonth: Boolean = true,
-    showYear: Boolean = true,
-    ascending: Boolean = false
-): String {
-    val instant = Instant.parse(this)
-    val day = if (showDay) "dd" else ""
-    val month = if (showMonth) "MM" else ""
-    val year = if (showYear) "uuuu" else ""
-    return LocalDateTime
-        .ofInstant(instant, ZoneOffset.UTC)
-        .format(
-            DateTimeFormatter.ofPattern(
-                if (ascending)
-                    "$day $month $year"
-                else "$month $day $year"
-            )
-        ).trim().replace(' ', delimiter)
-}

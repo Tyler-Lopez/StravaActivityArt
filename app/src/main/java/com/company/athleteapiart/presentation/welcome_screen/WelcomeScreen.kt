@@ -73,25 +73,16 @@ fun WelcomeScreen(
                         .border(width = 5.dp, color = StravaOrange, shape = CircleShape)
                 )
                 Text("Welcome ${viewModel.athleteName}")
-                Button(
-                    onClick = {
-
-                    }
-                ) {
+                // Navigate user to screen where they may select which years of activities to visualize
+                Button(onClick = { }) {
                     Text("Make Activity Art")
                 }
-                Button(
-                    onClick = {
-                        navController.navigate(route = Screen.About.route)
-                    }
-                ) {
+                // Navigates user to a simple screen showing information about app & author
+                Button(onClick = { navController.navigate(route = Screen.About.route) }) {
                     Text("About")
                 }
-                Button(
-                    onClick = {
-                        viewModel.logout(context = context)
-                    }
-                ) {
+                // De-authenticates the user and clears OAuth2 database entry
+                Button(onClick = { viewModel.logout(context = context) }) {
                     Text("Logout")
                 }
             }
