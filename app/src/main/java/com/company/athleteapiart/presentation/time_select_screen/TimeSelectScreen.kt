@@ -29,7 +29,7 @@ fun TimeSelectScreen(
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
 
-
+/*
     val activities = viewModel.activities
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
@@ -151,4 +151,6 @@ fun TimeSelectScreen(
                 }
             }
         })
+
+ */
 }

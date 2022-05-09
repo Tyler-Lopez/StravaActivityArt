@@ -8,6 +8,7 @@ import com.company.athleteapiart.data.entities.AthleteEntity
 
 @Dao
 interface AthleteDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAthlete(athleteEntity: AthleteEntity)
 
@@ -15,6 +16,7 @@ interface AthleteDao {
     @Query("DELETE FROM athleteentity")
     suspend fun clearAthlete()
 
-    @Query("SELECT * FROM athleteEntity WHERE athleteEntity.athleteId LIKE :athleteId")
+    @Query("SELECT * FROM athleteEntity WHERE athleteEntity.athleteId = :athleteId")
     suspend fun getAthleteById(athleteId: Long): AthleteEntity?
+
 }

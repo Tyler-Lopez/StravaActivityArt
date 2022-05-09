@@ -13,9 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimeSelectViewModel @Inject constructor(
-   // private val repository: ActivityRepository
+    // private val repository: ActivityRepository
 ) : ViewModel() {
 
+    /*
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
@@ -95,4 +96,5 @@ class TimeSelectViewModel @Inject constructor(
 
 
 }
+     */
 }

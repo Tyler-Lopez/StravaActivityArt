@@ -10,7 +10,9 @@ data class ActivityEntity(
     val athleteId: Long,
     val activityName: String, // "Happy Friday"
     val activityType: String, // "Ride"
-    val activityTimeLocal: String, // "2018-02-16T06:56:25Z"
+    val activityYear: Int, // 2018
+    val activityMonth: Int, // 2
+    val activityDate: String, // "2018-02-16T14:52:54Z"
     val activityDistance: Double,
     val summaryPolyline: String?,
     val locationCity: String?,
