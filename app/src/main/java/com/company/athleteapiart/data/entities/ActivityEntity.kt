@@ -8,12 +8,9 @@ data class ActivityEntity(
     @PrimaryKey
     val activityId: Long,
     val athleteId: Long,
-    val activityName: String,
-    val activityType: String, // e.g. "Ride"
-    val activityDayLocal: Int,
-    val activityMonthLocal: Int,
-    val activityYearLocal: Int,
-    val activityTimezone: String,
+    val activityName: String, // "Happy Friday"
+    val activityType: String, // "Ride"
+    val activityTimeLocal: String, // "2018-02-16T06:56:25Z"
     val activityDistance: Double,
     val summaryPolyline: String?,
     val locationCity: String?,
