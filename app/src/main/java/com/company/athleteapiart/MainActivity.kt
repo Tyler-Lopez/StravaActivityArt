@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.company.athleteapiart.presentation.about_screen.AboutScreen
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
 import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     AnimatedNavHost(navController, startDestination = Screen.Login.route) {
+                        // Authenticating the user with Strava and retrieving access token
                         composable(Screen.Login.route) {
                             LoginScreen(
                                 // Use URI then set null
@@ -61,6 +63,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+                        // Rec
                         composable(
                             route = Screen.Welcome.route + "/{athleteId}/{accessToken}",
                             arguments = listOf(
@@ -80,6 +83,8 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
+                        // Simple screen showing information about application
+                        composable(route = Screen.About.route) { AboutScreen() }
                         composable(
                             route = Screen.TimeSelect.route + "/{accessToken}",
                             arguments = listOf(

@@ -82,7 +82,7 @@ fun WelcomeScreen(
                 }
                 Button(
                     onClick = {
-
+                        navController.navigate(route = Screen.About.route)
                     }
                 ) {
                     Text("About")

@@ -6,6 +6,7 @@ sealed class Screen(
     object TimeSelect : Screen("TimeSelect")
     object Login : Screen("Login")
     object Welcome : Screen("Welcome")
+    object About : Screen("About")
     object FilterActivities : Screen("FilterActivities")
     object FormatActivitiesOne : Screen("FormatActivitiesOne")
     object FormatActivitiesTwo : Screen("FormatActivitiesTwo")
