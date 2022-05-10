@@ -92,7 +92,6 @@ fun WelcomeScreen(
                 Button(onClick = { viewModel.logout(context = context) }) {
                     Text("Logout")
                 }
-                Text("also this athlete has cached this ${viewModel.athleteCacheThing}")
             }
         }
         LOGOUT ->

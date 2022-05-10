@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
 import android.content.Context
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimeSelectViewModel @Inject constructor(
-    private val athleteUseCases: AthleteUseCases,
-    private val activitiesUseCases: ActivitiesUseCases
+    athleteUseCases: AthleteUseCases,
+    activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
 
     // Use cases
@@ -28,11 +29,14 @@ class TimeSelectViewModel @Inject constructor(
     private val setAthleteUseCases = athleteUseCases.setAthleteUseCase
 
     // In this screen we will store how many activities this user has for each year
-    private val loadedActivities = mutableMapOf<Int, Int>()
+    val loadedActivities = mutableStateListOf<Triple<Int, Int, Boolean>>()
 
     // State - observed in the view
     val timeSelectScreenState = mutableStateOf(TimeSelectScreenState.LAUNCH)
-
+    val loadingMessage: String
+        get() = if (timeSelectScreenState.value == TimeSelectScreenState.LOADING) "Loading..." else "Finished Loading"
+    val selectedActivitiesCount: Int
+        get() = loadedActivities.sumOf { if (it.third) it.second else 0 }
 
 
     // Invoked publicly from Screen in LAUNCH state
@@ -93,7 +97,8 @@ class TimeSelectViewModel @Inject constructor(
                             year,
                             if (currentYear != year) 11 else currentMonth - 1
                         )
-                        loadedActivities[year] = data.size
+                        if (data.isNotEmpty())
+                            loadedActivities.add(Triple(year, data.size, false))
                     }
                     is Error -> {
                         break
@@ -106,7 +111,7 @@ class TimeSelectViewModel @Inject constructor(
         }
     }
 
-    fun getYearlyActivitiesCount(year: Int) = loadedActivities.getOrDefault(year, 0)
+    //   fun getYearlyActivitiesCount(year: Int) = loadedActivities.getOrDefault(year, 0)
 
     // Update ROOM of ActivityDatabase and AthleteDatabase to cache and reflect cache
     private suspend fun cacheActivities(

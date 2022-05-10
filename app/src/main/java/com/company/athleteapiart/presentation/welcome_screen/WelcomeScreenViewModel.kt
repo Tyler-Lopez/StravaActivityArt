@@ -32,8 +32,6 @@ class WelcomeScreenViewModel @Inject constructor(
         get() = athlete.value?.profilePictureLarge ?: "via.placeholder.com/128"
     val athleteName: String
         get() = "${athlete.value?.firstName} ${athlete.value?.lastName}"
-    val athleteCacheThing: Map<Int, Int>?
-        get() = athlete.value?.yearMonthsCached
 
     fun getAthlete(
         context: Context,

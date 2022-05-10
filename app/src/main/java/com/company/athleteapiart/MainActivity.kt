@@ -104,7 +104,23 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
-                        composable(Screen.FilterActivities.route) {
+                        composable(
+                            route = Screen.FilterActivities.route + "/{athleteId}/{accessToken}/{yearsRaw}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("yearsRaw") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) {
                             FilterActivitiesScreen(navController = navController)
                         }
                         composable(Screen.FormatActivitiesOne.route) {
