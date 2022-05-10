@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.company.athleteapiart.data.Converters
 import com.company.athleteapiart.data.dao.AthleteDao
 import com.company.athleteapiart.data.entities.AthleteEntity
 
@@ -16,6 +18,7 @@ import com.company.athleteapiart.data.entities.AthleteEntity
     exportSchema = false
 )
 
+@TypeConverters(Converters::class)
 abstract class AthleteDatabase : RoomDatabase() {
 
     abstract val athleteDao: AthleteDao

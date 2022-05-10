@@ -16,4 +16,12 @@ class SetAthleteUseCase {
 
         athleteDao.insertAthlete(athleteEntity = athleteEntity)
     }
+
+    suspend fun updateAthleteYearlySummary(
+        context: Context,
+        athleteId: Long,
+        activtyCount: Int
+    ) {
+
+    }
 }

@@ -17,7 +17,6 @@ import com.company.athleteapiart.presentation.composable.*
 import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.monthFromIso8601
 
 @Composable
 fun FilterActivitiesScreen(
@@ -204,7 +203,8 @@ fun FilterActivitiesScreen(
 
                     for (activity in AthleteActivities.activities.value) {
                         // Filter undesired months, activities, and distances
-                        val activityMonth = activity.start_date_local.monthFromIso8601()
+                            val activityMonth = "1" //TODO THIS IS TEMP WHILE REWORKING
+                      //  val activityMonth = activity.start_date_local.monthFromIso8601()
                         val activityType = activity.type
                         if (
                         // Month check

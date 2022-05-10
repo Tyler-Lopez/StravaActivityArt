@@ -1,11 +1,14 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
-import androidx.compose.runtime.mutableStateListOf
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.athleteapiart.data.remote.responses.Activity
-import com.company.athleteapiart.util.AthleteActivities
+import com.company.athleteapiart.data.entities.ActivityEntity
+import com.company.athleteapiart.data.entities.AthleteEntity
+import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
+import com.company.athleteapiart.domain.use_case.AthleteUseCases
+import com.company.athleteapiart.util.Resource.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -13,9 +16,95 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimeSelectViewModel @Inject constructor(
-    // private val repository: ActivityRepository
+    private val athleteUseCases: AthleteUseCases,
+    private val activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
 
+    // Use cases
+    private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
+    private val insertActivitiesUseCase = activitiesUseCases.insertActivitiesUseCase
+    private val getAthleteUseCases = athleteUseCases.getAthleteUseCase
+    private val setAthleteUseCases = athleteUseCases.setAthleteUseCase
+
+    // State - observed in the view
+    val timeSelectScreenState = mutableStateOf(TimeSelectScreenState.LAUNCH)
+
+    // TEMP TO DEBUG
+    val loadedActivities = mutableStateOf<List<ActivityEntity>?>(null)
+
+    fun loadActivities(
+        context: Context,
+        athleteId: Long,
+        accessToken: String
+    ) {
+        timeSelectScreenState.value = TimeSelectScreenState.LOADING
+
+        viewModelScope.launch {
+
+            val athlete = athleteUseCases.getAthleteUseCase.getAthlete(context, athleteId, accessToken).data!!
+            val yearsMonthsCached: MutableMap<Int, Int> = mutableMapOf()
+            yearsMonthsCached.putAll(athlete.yearMonthsCached)
+
+            // Determine if current year and get current month
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+            val year = 2018
+            val response = getActivitiesUseCase
+                .getActivitiesByYear(
+                    context = context,
+                    athleteEntity = getAthleteUseCases.getAthlete(
+                        context,
+                        athleteId,
+                        accessToken
+                    ).data!!,
+                    accessToken = accessToken,
+                    year = year
+                )
+
+            val data = response.data
+
+            if (currentYear != year)
+                yearsMonthsCached[year] = 11
+
+            insertActivitiesUseCase.insertActivities(
+                context = context,
+                activities = response.data?.toTypedArray() ?: arrayOf()
+            )
+            println("Here $yearsMonthsCached")
+            println("Here ${yearsMonthsCached[2018]}")
+            setAthleteUseCases.setAthlete(
+                context = context,
+                athleteEntity = AthleteEntity(
+                    athleteId = athlete.athleteId,
+                    userName = athlete.userName,
+                    receivedOn = athlete.receivedOn,
+                    profilePictureMedium = athlete.profilePictureMedium,
+                    profilePictureLarge =  athlete.profilePictureLarge,
+                    firstName = athlete.firstName,
+                    lastName = athlete.lastName,
+                    yearMonthsCached = yearsMonthsCached
+                )
+            )
+
+
+
+            when (response) {
+                is Success -> {
+
+                }
+                is Error -> {
+
+                }
+            }
+
+
+            loadedActivities.value = response.data
+            println(response.message + " is response")
+
+
+            timeSelectScreenState.value = TimeSelectScreenState.STANDBY
+        }
+    }
     /*
     var loadError = mutableStateOf("")
     var isLoading = mutableStateOf(false)

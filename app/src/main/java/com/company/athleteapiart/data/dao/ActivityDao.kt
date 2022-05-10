@@ -14,13 +14,26 @@ interface ActivityDao {
 
     @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.athleteId = :athleteId")
     suspend fun getActivitiesByYear(
-        athleteId: Int,
+        athleteId: Long,
         year: Int
     ): List<ActivityEntity>
 
     @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.activityMonth = :month AND activityEntity.athleteId = :athleteId")
     suspend fun getActivitiesByMonthYear(
-        athleteId: Int,
+        athleteId: Long,
+        month: Int,
+        year: Int
+    ): List<ActivityEntity>
+
+    @Query(
+        "SELECT * " +
+                "FROM activityentity " +
+                "WHERE activityEntity.activityYear = :year " +
+                "AND activityEntity.activityMonth <= :month " +
+                "AND activityEntity.athleteId = :athleteId"
+    )
+    suspend fun getActivitiesByYearUpToMonth(
+        athleteId: Long,
         month: Int,
         year: Int
     ): List<ActivityEntity>

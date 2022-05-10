@@ -74,7 +74,14 @@ fun WelcomeScreen(
                 )
                 Text("Welcome ${viewModel.athleteName}")
                 // Navigate user to screen where they may select which years of activities to visualize
-                Button(onClick = { }) {
+                Button(onClick = {
+                    navController.navigate(
+                        Screen.TimeSelect.withArgs(
+                            athleteId.toString(),
+                            accessToken
+                        )
+                    )
+                }) {
                     Text("Make Activity Art")
                 }
                 // Navigates user to a simple screen showing information about app & author
@@ -85,6 +92,7 @@ fun WelcomeScreen(
                 Button(onClick = { viewModel.logout(context = context) }) {
                     Text("Logout")
                 }
+                Text("also this athlete has cached this ${viewModel.athleteCacheThing}")
             }
         }
         LOGOUT ->

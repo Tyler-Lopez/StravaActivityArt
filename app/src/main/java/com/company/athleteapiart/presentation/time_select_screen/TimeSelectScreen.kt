@@ -1,34 +1,39 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
-import androidx.compose.runtime.getValue
-import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.material.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.company.athleteapiart.Screen
-import com.company.athleteapiart.presentation.composable.*
-import com.company.athleteapiart.presentation.ui.spacing
-import com.company.athleteapiart.presentation.ui.theme.*
-import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.TimeUtils
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
 
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TimeSelectScreen(
+    athleteId: Long,
+    accessToken: String,
     navController: NavHostController,
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
+    val screenState by remember { viewModel.timeSelectScreenState }
 
+    val context = LocalContext.current
+
+    when (screenState) {
+        LAUNCH  -> SideEffect {
+            viewModel.loadActivities(
+                context = context,
+                athleteId = athleteId,
+                accessToken = accessToken
+            )
+        }
+        LOADING -> {
+            Text("Loading")
+        }
+        STANDBY -> {
+            Text("In standby, loaded ${viewModel.loadedActivities.value?.size} activities")
+        }
+    }
 /*
     val activities = viewModel.activities
     val endReached by remember { viewModel.endReached }

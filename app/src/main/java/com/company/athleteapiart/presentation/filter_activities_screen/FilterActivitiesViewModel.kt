@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.util.AthleteActivities
-import com.company.athleteapiart.util.monthFromIso8601
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,7 +38,7 @@ class FilterActivitiesViewModel @Inject constructor(
         viewModelScope.launch {
             val activities = AthleteActivities.activities
             for (activity in activities.value) {
-                months.add(activity.start_date_local.monthFromIso8601())
+             //   months.add(activity.start_date_local.monthFromIso8601()) // TODO
                 activityTypes.add(activity.type)
                 if (minimumDistance > activity.distance) minimumDistance = activity
                     .distance

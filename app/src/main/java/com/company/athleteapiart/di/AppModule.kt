@@ -1,11 +1,14 @@
 package com.company.athleteapiart.di
 
 import com.company.athleteapiart.data.remote.AthleteApi
+import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.domain.use_case.AuthenticationUseCases
 import com.company.athleteapiart.domain.use_case.clear_access_token.ClearAccessTokenUseCase
 import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessTokenUseCase
+import com.company.athleteapiart.domain.use_case.get_activities.GetActivitiesUseCase
 import com.company.athleteapiart.domain.use_case.get_athlete.GetAthleteUseCase
+import com.company.athleteapiart.domain.use_case.insert_activities.InsertActivitiesUseCase
 import com.company.athleteapiart.domain.use_case.set_access_token.SetAccessTokenUseCase
 import com.company.athleteapiart.domain.use_case.set_athlete.SetAthleteUseCase
 import com.company.athleteapiart.util.Constants.BASE_URL
@@ -38,6 +41,15 @@ object AppModule {
     ) = AthleteUseCases(
         getAthleteUseCase = GetAthleteUseCase(api),
         setAthleteUseCase = SetAthleteUseCase()
+    )
+
+    @Singleton
+    @Provides
+    fun provideActivitiesUseCases(
+        api: AthleteApi
+    ) = ActivitiesUseCases(
+        getActivitiesUseCase = GetActivitiesUseCase(api),
+        insertActivitiesUseCase = InsertActivitiesUseCase()
     )
 
     @Singleton

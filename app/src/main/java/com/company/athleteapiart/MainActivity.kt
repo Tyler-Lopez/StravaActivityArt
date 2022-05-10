@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Login.route) {
                             LoginScreen(
                                 // Use URI then set null
-                                uri = receivedFromUri.also { receivedFromUri = null},
+                                uri = receivedFromUri.also { receivedFromUri = null },
                                 navController = navController,
                                 onLoginIntent = {
                                     // Send us to the screen to connect with Strava and
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             route = Screen.Welcome.route + "/{athleteId}/{accessToken}",
                             arguments = listOf(
                                 navArgument("athleteId") {
-                                    type = NavType.IntType
+                                    type = NavType.LongType
                                     nullable = false
                                 },
                                 navArgument("accessToken") {
@@ -86,15 +86,23 @@ class MainActivity : ComponentActivity() {
                         // Simple screen showing information about application
                         composable(route = Screen.About.route) { AboutScreen() }
                         composable(
-                            route = Screen.TimeSelect.route + "/{accessToken}",
+                            route = Screen.TimeSelect.route + "/{athleteId}/{accessToken}",
                             arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
                                 navArgument("accessToken") {
                                     type = NavType.StringType
                                     nullable = false
                                 }
                             )
-                        ) {
-                            TimeSelectScreen(navController = navController)
+                        ) { entry ->
+                            TimeSelectScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                navController = navController
+                            )
                         }
                         composable(Screen.FilterActivities.route) {
                             FilterActivitiesScreen(navController = navController)
