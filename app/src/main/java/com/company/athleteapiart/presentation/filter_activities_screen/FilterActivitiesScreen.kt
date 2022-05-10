@@ -20,9 +20,17 @@ import com.company.athleteapiart.util.AthleteActivities
 
 @Composable
 fun FilterActivitiesScreen(
+    athleteId: Long,
+    accessToken: String,
+    years: Array<Int>,
     navController: NavHostController,
     viewModel: FilterActivitiesViewModel = hiltViewModel()
 ) {
+    Column() {
+        for (year in years)
+            Text("You selected $year")
+    }
+    /*
     val isLoading by remember { viewModel.isLoading }
     val minDistanceSlider by remember { viewModel.minDistanceSlider }
     val maxDistanceSlider by remember { viewModel.maxDistanceSlider }
@@ -231,4 +239,6 @@ fun FilterActivitiesScreen(
                 }
             )
         })
+
+     */
 }

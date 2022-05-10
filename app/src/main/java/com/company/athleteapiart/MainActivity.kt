@@ -24,6 +24,7 @@ import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
 import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreen
+import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.noAnimComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -120,8 +121,18 @@ class MainActivity : ComponentActivity() {
                                     nullable = false
                                 }
                             )
-                        ) {
-                            FilterActivitiesScreen(navController = navController)
+                        ) { entry ->
+                            val years = (entry.arguments?.getString("yearsRaw") ?: "")
+                                .split(Constants.NAV_YEAR_DELIMITER)
+                                .filter { it.isNotEmpty() }
+                                .map { it.toInt() }
+                                .toTypedArray()
+                            FilterActivitiesScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                years = years,
+                                navController = navController
+                            )
                         }
                         composable(Screen.FormatActivitiesOne.route) {
                             FormatScreenOne(navController = navController)

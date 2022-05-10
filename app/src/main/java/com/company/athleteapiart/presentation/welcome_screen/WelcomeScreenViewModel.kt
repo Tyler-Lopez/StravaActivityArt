@@ -45,6 +45,7 @@ class WelcomeScreenViewModel @Inject constructor(
                 is Success -> {
                     val data = response.data
                     athlete.value = data
+                    setAthleteUseCase.setAthlete(context = context, athleteEntity = data)
                     screenState.value = WelcomeScreenState.STANDBY
                 }
                 is Error -> {

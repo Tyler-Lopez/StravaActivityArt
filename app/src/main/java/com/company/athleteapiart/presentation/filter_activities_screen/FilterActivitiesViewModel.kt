@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.util.AthleteActivities
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -11,9 +12,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilterActivitiesViewModel @Inject constructor(
-  //  private val repository: ActivityRepository
+    activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
 
+    /*
     var isLoading = mutableStateOf(false)
     var checkboxes = mutableStateMapOf<String, Boolean>()
     var minDistanceSlider = mutableStateOf(0f)
@@ -38,7 +40,7 @@ class FilterActivitiesViewModel @Inject constructor(
         viewModelScope.launch {
             val activities = AthleteActivities.activities
             for (activity in activities.value) {
-             //   months.add(activity.start_date_local.monthFromIso8601()) // TODO
+                //   months.add(activity.start_date_local.monthFromIso8601()) // TODO
                 activityTypes.add(activity.type)
                 if (minimumDistance > activity.distance) minimumDistance = activity
                     .distance
@@ -65,5 +67,7 @@ class FilterActivitiesViewModel @Inject constructor(
     fun setMinDistanceSlider(distance: Float) {
         minDistanceSlider.value = distance
     }
+
+     */
 
 }

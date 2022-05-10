@@ -5,4 +5,6 @@ object Constants {
     const val BASE_URL = "https://www.strava.com/"
     const val FIRST_YEAR = 2008
     const val IMAGE_DIRECTORY = "ActivitiesArt"
+
+    const val NAV_YEAR_DELIMITER = '&'
 }

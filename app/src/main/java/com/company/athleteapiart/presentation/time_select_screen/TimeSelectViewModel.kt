@@ -11,6 +11,7 @@ import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.Resource.*
+import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -33,10 +34,20 @@ class TimeSelectViewModel @Inject constructor(
 
     // State - observed in the view
     val timeSelectScreenState = mutableStateOf(TimeSelectScreenState.LAUNCH)
-    val loadingMessage: String
-        get() = if (timeSelectScreenState.value == TimeSelectScreenState.LOADING) "Loading..." else "Finished Loading"
+    val errorMessage = mutableStateOf("")
+    val showButton = timeSelectScreenState.value != LOADING && loadedActivities.isEmpty()
+    val message: String
+        get() = when (timeSelectScreenState.value) {
+            LOADING -> "Loading..."
+            ERROR -> "Error occurred"
+            else -> ""
+        }
     val selectedActivitiesCount: Int
         get() = loadedActivities.sumOf { if (it.third) it.second else 0 }
+    val selectedYearsNavArg: String
+        get() = buildString {
+            loadedActivities.forEach { if (it.third) append(it.first).append(Constants.NAV_YEAR_DELIMITER) }
+        }
 
 
     // Invoked publicly from Screen in LAUNCH state
@@ -97,10 +108,13 @@ class TimeSelectViewModel @Inject constructor(
                             year,
                             if (currentYear != year) 11 else currentMonth - 1
                         )
-                        if (data.isNotEmpty())
+                        if (data.isNotEmpty()) {
+                            println("DATA WAS NOT EMPTY FOR YEAR $year")
                             loadedActivities.add(Triple(year, data.size, false))
+                        } else println("DATA WAS EMPTY FOR YEAR $year")
                     }
                     is Error -> {
+                        println("HERE ERROR OCCURRED ${response.message}")
                         break
                     }
                 }

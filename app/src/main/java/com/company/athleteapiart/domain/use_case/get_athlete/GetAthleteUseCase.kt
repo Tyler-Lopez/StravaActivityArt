@@ -34,7 +34,7 @@ class GetAthleteUseCase @Inject constructor(
                 println("whoops expired")
                 getAthleteFromAuthorizationCode(code = code)
             }
-                // There is a previous non-expired entry, return the oAuth2Entity
+            // There is a previous non-expired entry, return the oAuth2Entity
             else -> {
                 println("Here, there is a ROOM entry")
                 Resource.Success(athleteEntity)

@@ -10,11 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
 import com.company.athleteapiart.util.Constants
 
@@ -40,182 +40,81 @@ fun TimeSelectScreen(
     val activities = viewModel.loadedActivities
     val context = LocalContext.current
 
-    when (screenState) {
-        LAUNCH -> SideEffect {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                accessToken = accessToken
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Select which years you would like to visualize from - you will be able to filter further at a later step",
+            textAlign = TextAlign.Center
+        )
+
+        LazyColumn {
+            items(viewModel.loadedActivities.size) { i ->
+
+                val year = activities[i]
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Checkbox(checked = year.third, onCheckedChange = {
+                        activities[i] = Triple(
+                            year.first, year.second, !year.third
+                        )
+                    })
+                    // YEAR
+                    Text(
+                        text = "${year.first}",
+                        fontSize = 28.sp
+                    )
+                    // ACTIVITY COUNT IN YEAR
+                    Text(text = "${year.second}")
+                }
+            }
         }
-        LOADING, STANDBY -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Select which years you would like to visualize from - you will be able to filter further at a later step",
-                    textAlign = TextAlign.Center
+
+        when (screenState) {
+            LAUNCH -> SideEffect {
+                viewModel.loadActivities(
+                    context = context,
+                    athleteId = athleteId,
+                    accessToken = accessToken
                 )
-
-                LazyColumn {
-                    items(viewModel.loadedActivities.size) { i ->
-
-                        val year = activities[i]
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Checkbox(checked = year.third, onCheckedChange = {
-                                activities[i] = Triple(
-                                    year.first, year.second, !year.third
-                                )
-                            })
-                            // YEAR
-                            Text(
-                                text = "${year.first}",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.SemiBold
+            }
+            LOADING, STANDBY, ERROR -> {
+                // Either displays LOADING, or "" for FINISHED LOADING or an ERROR
+                Text(viewModel.message)
+                // Show selected activities if not empty
+                if (activities.isNotEmpty()) {
+                    Text("${viewModel.selectedActivitiesCount} Total Activities Selected")
+                    // Button will only be shown if we can continue or try again
+                    Button(onClick = {
+                        navController.navigate(
+                            Screen.FilterActivities.withArgs(
+                                athleteId.toString(),
+                                accessToken,
+                                viewModel.selectedYearsNavArg
                             )
-                            // ACTIVITY COUNT IN YEAR
-                            Text(text = "${year.second}")
-                        }
+                        )
+                    }) {
+                        Text("Continue")
                     }
                 }
-                // Either displays LOADING, or FINISHED LOADING or an ERROR (todo)
-                Text(viewModel.loadingMessage)
-                Text("${viewModel.selectedActivitiesCount} Total Activities Selected")
-                // Should error if activities selected is empty
-                Button(onClick = {}) {
-                    Text("Continue")
+                // If there is an error, allow user to try to load activities again
+                if (screenState == ERROR) {
+                    Button(onClick = {
+                        viewModel.loadActivities(
+                            context = context,
+                            athleteId = athleteId,
+                            accessToken = accessToken
+                        )
+                    }) {
+                        Text("ERROR")
+                    }
                 }
             }
         }
     }
-/*
-    val activities = viewModel.activities
-    val endReached by remember { viewModel.endReached }
-    val loadError by remember { viewModel.loadError }
-    val isLoading by remember { viewModel.isLoading }
-
-    val spacingMd = MaterialTheme.spacing.md
-    val spacingXxs = MaterialTheme.spacing.xxs
-
-    Scaffold(
-        topBar = {
-            ComposableTopBar(null,
-                rightContent = {
-                    ComposableSubtext(
-                        text = "Home",
-                        color = Color.White
-                    )
-                })
-        },
-        content = {
-            when {
-                // If the user just selected a YEAR
-                // Get activities from Strava API
-                isLoading || endReached -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colors.primary
-                        )
-                        Row(
-                            modifier = Modifier
-                                .padding(vertical = 10.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.Bottom,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            ComposableHeader(
-                                text = "Loading",
-                                isBold = true
-                            )
-                        }
-                    }
-                    // If data has been successfully received
-                    if (endReached) {
-                        if (viewModel.activities.size <= 0) {
-                            navController.navigate("${Screen.ErrorNoActivities}") {
-                                popUpTo(Screen.TimeSelect.route) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                        else {
-                            navController.navigate("${Screen.FilterActivities}") {
-                                popUpTo(Screen.TimeSelect.route) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-                }
-                // If error occurred when fetching data
-                loadError != "" -> {
-
-                }
-                // Otherwise, present options to user
-                else -> {
-                    ComposableScreenWrapper {
-                        ComposableParagraph(
-                            text = "Which year would you like to visualize" +
-                                    " activities from?",
-                            modifier = Modifier.padding(MaterialTheme.spacing.md)
-                        )
-                        ComposableShadowBox {
-                            // Determine size of each button from width
-                            val maxWidth = this.maxWidth
-                            val yearsPerRow = if (maxWidth >= 600.dp) 3 else if (maxWidth >= 414.dp) 2 else 1
-                            println(maxWidth.toString() + " MAX WIDTH")
-                            val buttonSize = (maxWidth - spacingMd * yearsPerRow) / yearsPerRow
-
-                            FlowRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = spacingMd, end = if (yearsPerRow <= 1) spacingMd else 0.dp)
-                            ) {
-                                var yearIncrement = 1;
-                                for (year in TimeUtils.yearsAvailable().reversed()) {
-                                    Button(
-                                        onClick = {
-                                            AthleteActivities.formatting.value.rightString = "$year"
-                                            viewModel.loadActivitiesByYear(year)
-                                        },
-                                        modifier = Modifier
-                                            .width(buttonSize)
-                                            .padding(
-                                                end = if (yearIncrement % yearsPerRow == 0) 0.dp else spacingMd,
-                                                top = spacingMd
-                                            ),
-                                        colors = ButtonDefaults.buttonColors(backgroundColor = StravaOrange)
-                                    ) {
-                                        Text(
-                                            text = "$year",
-                                            fontFamily = Lato,
-                                            fontSize = 30.sp,
-                                            letterSpacing = 4.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = White
-                                        )
-                                    }
-                                    yearIncrement++
-                                }
-                                Spacer(modifier=Modifier.height(spacingMd).fillMaxWidth())
-                            }
-                        }
-                    }
-                }
-            }
-        })
-
- */
 }

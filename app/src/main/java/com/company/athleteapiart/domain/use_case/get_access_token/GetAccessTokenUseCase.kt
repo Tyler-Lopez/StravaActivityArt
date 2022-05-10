@@ -24,11 +24,13 @@ class GetAccessTokenUseCase @Inject constructor(
             .oAuth2Dao
             .getOauth2()
 
+        println("OAUTH2ENTITY IS ${oAuth2Entity}")
         return when {
             // There is no previous entry in the ROOM database
             oAuth2Entity == null -> Resource.Error("User has never authenticated with Strava before.")
             // There is a previous, expired entry
             accessTokenIsExpired(oAuth2Entity.receivedOn) -> {
+
                 // Attempt to refresh the access token
                 val response =
                     getAccessTokenFromRefreshToken(
