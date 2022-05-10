@@ -1,11 +1,13 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
+import com.company.athleteapiart.util.Constants
 
 
 @Composable
@@ -31,7 +33,10 @@ fun TimeSelectScreen(
             Text("Loading")
         }
         STANDBY -> {
-            Text("In standby, loaded ${viewModel.loadedActivities.value?.size} activities")
+            Column {
+                for (year in Constants.FIRST_YEAR..2022)
+                    Text("In standby, loaded ${viewModel.getYearlyActivitiesCount(year)} activities for year $year")
+            }
         }
     }
 /*
