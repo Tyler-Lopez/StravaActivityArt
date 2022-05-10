@@ -29,9 +29,10 @@ class TimeSelectViewModel @Inject constructor(
     // State - observed in the view
     val timeSelectScreenState = mutableStateOf(TimeSelectScreenState.LAUNCH)
 
-    // TEMP TO DEBUG
-    val loadedActivities = mutableStateOf<List<ActivityEntity>?>(null)
+    // In this screen we will store how many activities this user has for each year
+    val loadedActivities = mutableStateOf<Map<Int, Int>?>(null)
 
+    // Invoked publicly from Screen in LAUNCH state
     fun loadActivities(
         context: Context,
         athleteId: Long,
@@ -41,14 +42,18 @@ class TimeSelectViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            val athlete = athleteUseCases.getAthleteUseCase.getAthlete(context, athleteId, accessToken).data!!
-            val yearsMonthsCached: MutableMap<Int, Int> = mutableMapOf()
-            yearsMonthsCached.putAll(athlete.yearMonthsCached)
+            val athlete =
+                athleteUseCases.getAthleteUseCase.getAthlete(context, athleteId, accessToken).data!!
+
+
+            val year = 2018
 
             // Determine if current year and get current month
             val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+            val lastCachedMonth = athlete.lastCachedMonth(year)
 
-            val year = 2018
+            // Get activities from either ROOM and/or the Strava API
             val response = getActivitiesUseCase
                 .getActivitiesByYear(
                     context = context,
@@ -61,35 +66,24 @@ class TimeSelectViewModel @Inject constructor(
                     year = year
                 )
 
-            val data = response.data
-
-            if (currentYear != year)
-                yearsMonthsCached[year] = 11
-
-            insertActivitiesUseCase.insertActivities(
-                context = context,
-                activities = response.data?.toTypedArray() ?: arrayOf()
-            )
-            println("Here $yearsMonthsCached")
-            println("Here ${yearsMonthsCached[2018]}")
-            setAthleteUseCases.setAthlete(
-                context = context,
-                athleteEntity = AthleteEntity(
-                    athleteId = athlete.athleteId,
-                    userName = athlete.userName,
-                    receivedOn = athlete.receivedOn,
-                    profilePictureMedium = athlete.profilePictureMedium,
-                    profilePictureLarge =  athlete.profilePictureLarge,
-                    firstName = athlete.firstName,
-                    lastName = athlete.lastName,
-                    yearMonthsCached = yearsMonthsCached
-                )
-            )
-
-
-
             when (response) {
                 is Success -> {
+                    val data = response.data
+                    // Determine if we need to cacheActivities, and if so, perform cache
+                    // If NOT the current year and lastCachedMonth of that year != 11, cache
+                    // If current year, always cache whole year but set lastCachedMonth to currentMonth - 1
+                    //      - This means all future calls will always check API for most recent month.
+                    if ((currentYear == year) || (currentYear != year && lastCachedMonth != 11))
+                        cacheActivities(
+                            context = context,
+                            oldAthleteEntity = athlete,
+                            activities = data.toTypedArray(),
+                            year = year,
+                            monthsCached =
+                            if (currentYear != year) 11
+                            // If it is the current year, lastCachedMonth == lastMonth
+                            else currentMonth - 1
+                        )
 
                 }
                 is Error -> {
@@ -97,93 +91,30 @@ class TimeSelectViewModel @Inject constructor(
                 }
             }
 
-
-            loadedActivities.value = response.data
             println(response.message + " is response")
-
-
             timeSelectScreenState.value = TimeSelectScreenState.STANDBY
+
         }
     }
-    /*
-    var loadError = mutableStateOf("")
-    var isLoading = mutableStateOf(false)
-    var endReached = mutableStateOf(false)
-    var activities = mutableStateListOf<Activity>()
 
-    fun loadActivitiesByYear(year: Int) {
-        // Ensure we don't constantly invoke this
-        // May be a better way to do this?
-        // Overly cautious to not recursively invoke api right now
-        if (isLoading.value || endReached.value) return
-        isLoading.value = true
-
-
-        viewModelScope.launch {
-            AthleteActivities.currYear.value = year
-            val after = (GregorianCalendar(year, 0, 1).timeInMillis / 1000).toInt()
-            val beforeDate = GregorianCalendar(year + 1, 0, 1)
-            beforeDate.add(GregorianCalendar.DAY_OF_MONTH, -1)
-            val before = (beforeDate.timeInMillis / 1000).toInt()
-
-            AthleteActivities.activities.value.clear()
-            getActivities(
-                page = 1,
-                before = before,
-                after = after
+    // Update ROOM of ActivityDatabase and AthleteDatabase to cache and reflect cache
+    private suspend fun cacheActivities(
+        context: Context,
+        activities: Array<ActivityEntity>,
+        oldAthleteEntity: AthleteEntity,
+        year: Int,
+        monthsCached: Int
+    ) {
+        insertActivitiesUseCase.insertActivities(
+            context = context,
+            activities = activities
+        )
+        setAthleteUseCases.setAthlete(
+            context = context,
+            athleteEntity = oldAthleteEntity.plusYearsMonthCached(
+                year = year,
+                monthsCached = monthsCached
             )
-        }
+        )
     }
-
-    private fun getActivities(page: Int, before: Int, after: Int) {
-/*
-  viewModelScope.launch {
-
-       when (val result = repository
-           .getActivities(
-               page = page,
-               perPage = 100,
-               before = before,
-               after = after
-           )
-       ) {
-           is Resource.Success -> {
-               if (result.data.size < 100) {
-                   for (activity in result.data) {
-                       if (activity.map.summary_polyline != "null" && activity.map.summary_polyline != null)
-                           activities.add(activity)
-                   }
-                   AthleteActivities.activities.value = activities
-                   endReached.value = true
-                   isLoading.value = false
-               } else {
-                   for (activity in result.data) {
-                       if (activity.map.summary_polyline != "null" && activity.map.summary_polyline != null)
-                           activities.add(activity)
-                   }
-                  // activities.addAll(result.data)
-                   getActivities(page + 1, before, after)
-               }
-           }
-           is Resource.Error -> {
-               if (result.message.contains("timeout", true)) {
-                   println("timed out trying again")
-                   getActivities(page, before, after)
-               } else if (result.message.contains("Unable to resolve host")) {
-                   println("unable to resolve host trying again")
-                   getActivities(page, before, after)
-               } else {
-                   //   getActivities(page, before, after)
-                   println("error here")
-                   loadError.value = result.message
-                   isLoading.value = false
-                   endReached.value = true
-               }
-           }
-       }
-        */
-
-
-}
-     */
 }

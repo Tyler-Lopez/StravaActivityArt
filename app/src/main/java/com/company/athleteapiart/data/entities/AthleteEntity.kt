@@ -15,11 +15,24 @@ data class AthleteEntity(
     // This is to tell us what we have and have not yet mapped to Room
     val yearMonthsCached: Map<Int, Int>
 ) {
-    // Invoked privately
-    fun lastCachedMonth(year: Int): Int {
-        println("Here attempting to get $year from $yearMonthsCached")
-        for (year in yearMonthsCached.keys)
-            println("year contained in here is $year")
-        return yearMonthsCached.getOrDefault(year, -1)
+
+    fun lastCachedMonth(year: Int): Int = yearMonthsCached.getOrDefault(year, -1)
+
+    fun plusYearsMonthCached(year: Int, monthsCached: Int): AthleteEntity {
+
+        val yearsMonthsCached: MutableMap<Int, Int> = mutableMapOf()
+        yearsMonthsCached.putAll(this.yearMonthsCached)
+        yearsMonthsCached[year] = monthsCached
+        return AthleteEntity(
+            athleteId = athleteId,
+            userName = userName,
+            receivedOn = receivedOn,
+            profilePictureMedium = profilePictureMedium,
+            profilePictureLarge = profilePictureLarge,
+            firstName = firstName,
+            lastName = lastName,
+            yearMonthsCached = yearsMonthsCached
+        )
+
     }
 }
