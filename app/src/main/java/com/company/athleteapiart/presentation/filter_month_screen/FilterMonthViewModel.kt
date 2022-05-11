@@ -28,8 +28,8 @@ class FilterMonthViewModel @Inject constructor(
     val filterMonthScreenState = mutableStateOf(LAUNCH)
 
     // Data - referenced in view
-    // (YEAR, MONTH) to (NO. ACTIVITIES, SELECTED)
-    val yearMonthsData = mutableMapOf<Pair<Int, Int>, Pair<Int, Boolean>>()
+    // (YEAR, MONTH) to (NO. ACTIVITIES)
+    private val yearMonthsData = mutableMapOf<Pair<Int, Int>, Int>()
 
     fun loadActivities(
         context: Context,
@@ -57,8 +57,7 @@ class FilterMonthViewModel @Inject constructor(
                 for (activity in yearlyActivities) {
                     // Populate yearsMonthData accordingly
                     val key = Pair(activity.activityYear, activity.activityMonth)
-                    yearMonthsData[key] =
-                        Pair((yearMonthsData[key]?.first ?: 0) + 1, true)
+                    yearMonthsData[key] = (yearMonthsData[key] ?: 0) + 1
                 }
             }
 
@@ -66,36 +65,20 @@ class FilterMonthViewModel @Inject constructor(
         }
     }
 
-    // Invoked in View to help build ScrollBar with Canvas
-    fun shouldShowScroll(maxValue: Int) = maxValue != 0
-    fun scrollWidth(tableWidth: Float) = tableWidth * 0.03f
-    fun scrollPosition(
-        tableWidth: Float,
-        canvasHeight: Float,
-        value: Int,
-        maxValue: Int
-    ) = Offset(
-        x = tableWidth - scrollWidth(tableWidth),
-        y = 0f + ((value.toFloat() / maxValue.toFloat()) * (canvasHeight - scrollSize(
-            canvasHeight = canvasHeight,
-            scrollWidth = scrollWidth(tableWidth),
-            maxValue = maxValue
-        ).height))
-    )
-
-    fun scrollBackgroundPosition(tableWidth: Float) = Offset(
-        x = tableWidth - scrollWidth(tableWidth),
-        y = 0f
-    )
-
-    fun scrollBackgroundSize(canvasHeight: Float, scrollWidth: Float) = Size(
-        width = scrollWidth,
-        height = canvasHeight
-    )
-
-    fun scrollSize(canvasHeight: Float, scrollWidth: Float, maxValue: Int) = Size(
-        width = scrollWidth,
-        height = ((1f / maxValue) * 30f) * canvasHeight
-    )
+    // Invoked to get data in a form for the TableComposable
+    fun getColumns() = arrayOf("MONTH", "YEAR", "NO. ACTIVITIES")
+    fun getRows(): List<Map<String, Pair<String, Boolean>>> {
+        val rows = mutableListOf<Map<String, Pair<String, Boolean>>>()
+        for (datum in yearMonthsData) {
+            rows.add(
+                mapOf(
+                    "MONTH" to Pair("${datum.key.second}", true),
+                    "YEAR" to Pair("${datum.key.first}", true),
+                    "NO. ACTIVITIES" to Pair("${datum.value}", false)
+                )
+            )
+        }
+        return rows
+    }
 
 }
