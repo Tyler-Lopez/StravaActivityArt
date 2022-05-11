@@ -68,19 +68,34 @@ class FilterMonthViewModel @Inject constructor(
 
     // Invoked in View to help build ScrollBar with Canvas
     fun shouldShowScroll(maxValue: Int) = maxValue != 0
-    fun scrollWidth(colWidth: Float) = colWidth * 0.03f
+    fun scrollWidth(tableWidth: Float) = tableWidth * 0.03f
     fun scrollPosition(
-        colHeight: Float,
-        colWidth: Float,
+        tableWidth: Float,
+        canvasHeight: Float,
         value: Int,
         maxValue: Int
     ) = Offset(
-        x = colWidth - scrollWidth(colWidth),
-        y = 0f + ((value.toFloat() / maxValue.toFloat()) * colHeight)
+        x = tableWidth - scrollWidth(tableWidth),
+        y = 0f + ((value.toFloat() / maxValue.toFloat()) * (canvasHeight - scrollSize(
+            canvasHeight = canvasHeight,
+            scrollWidth = scrollWidth(tableWidth),
+            maxValue = maxValue
+        ).height))
     )
-    fun scrollSize(colHeight: Float, scrollWidth: Float, maxValue: Int) = Size(
+
+    fun scrollBackgroundPosition(tableWidth: Float) = Offset(
+        x = tableWidth - scrollWidth(tableWidth),
+        y = 0f
+    )
+
+    fun scrollBackgroundSize(canvasHeight: Float, scrollWidth: Float) = Size(
         width = scrollWidth,
-        height = ((1f / maxValue) * 30f) * colHeight
+        height = canvasHeight
+    )
+
+    fun scrollSize(canvasHeight: Float, scrollWidth: Float, maxValue: Int) = Size(
+        width = scrollWidth,
+        height = ((1f / maxValue) * 30f) * canvasHeight
     )
 
 }

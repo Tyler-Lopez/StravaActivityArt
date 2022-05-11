@@ -2,7 +2,6 @@ package com.company.athleteapiart.presentation.filter_month_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -15,10 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,8 +46,7 @@ fun FilterMonthScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
-        val maxHeight = this.maxHeight
+        val boxHeight = this.maxHeight
 
         when (screenState) {
             LAUNCH -> SideEffect {
@@ -84,119 +81,161 @@ fun FilterMonthScreen(
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    Column(
+                    BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxHeight * 0.5f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
+                            .height(boxHeight * 0.5f)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.LightGray)
-                                .padding(4.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.CheckBox,
-                                tint = Color.Gray,
-                                modifier = Modifier.weight(0.25f),
-                                contentDescription = ""
-                            )
-                            Text(
-                                text = "MONTH",
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.Center,
-                                color = Color.Gray
-                            )
-                            Text(
-                                text = "YEAR",
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.Center,
-                                color = Color.Gray
-                            )
-                            Text(
-                                text = "NO. ACTIVITIES",
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.Center,
-                                color = Color.Gray
-                            )
-                        }
+                        val maxWidth = this.maxWidth
+                        val tableWidth: Float = with(LocalDensity.current) { maxWidth.toPx() }
+
                         Column(
-                            modifier = Modifier
-                                .verticalScroll(scrollState)
-                                .drawBehind {
-                                    if (viewModel.shouldShowScroll(scrollMax)) {
-                                        val width = size.width
-                                        val height = size.height
-                                        val scrollWidth = viewModel.scrollWidth(width)
-
-                                        drawRect(
-                                            color = StravaOrange,
-                                            topLeft = viewModel.scrollPosition(
-                                                colHeight = height,
-                                                colWidth = width,
-                                                value = scrollValue,
-                                                maxValue = scrollMax
-                                            ),
-                                            size = viewModel.scrollSize(
-                                                colHeight = height,
-                                                scrollWidth = scrollWidth,
-                                                maxValue = scrollMax
-                                            )
-                                        )
-                                    }
-                                }
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            for (year in years)
-                                for (month in 1..12) {
-                                    yearMonthsData[Pair(year, month)]?.also {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Checkbox(
-                                                checked = it.second,
-                                                modifier = Modifier.weight(0.25f),
-                                                onCheckedChange = {
-                                                    //  activities[i] = Triple(
-                                                    //      year.first, year.second, !year.third
-                                                    //  )
-                                                })
-                                            // MONTH
-                                            Text(
-                                                text =
-                                                TimeUtils.monthIntToString(month).substring(0, 3)
-                                                    .uppercase(),
-                                                fontSize = 24.sp,
-                                                fontFamily = Lato,
-                                                fontWeight = FontWeight.Bold,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.weight(1f)
-                                            )
-                                            // YEAR
-                                            Text(
-                                                text = "$year",
-                                                fontSize = 24.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                fontFamily = Lato,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.weight(1f)
-                                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.LightGray)
+                                    .padding(4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckBox,
+                                    tint = Color.Gray,
+                                    modifier = Modifier.weight(0.25f),
+                                    contentDescription = ""
+                                )
+                                Text(
+                                    text = "MONTH",
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Center,
+                                    color = Color.Gray
+                                )
+                                Text(
+                                    text = "YEAR",
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Center,
+                                    color = Color.Gray
+                                )
+                                Text(
+                                    text = "NO. ACTIVITIES",
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Center,
+                                    color = Color.Gray
+                                )
+                                if (viewModel.shouldShowScroll(scrollMax))
+                                    Spacer(
+                                        modifier = Modifier.width(
+                                            viewModel.scrollWidth(
+                                                tableWidth
+                                            ).dp
+                                        )
+                                    )
 
-                                            // ACTIVITY COUNT IN YEAR-MONTH
-                                            Text(
-                                                text = "${it.first}",
-                                                fontSize = 24.sp,
-                                                fontFamily = Lato,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.weight(1f)
-                                            )
+                            }
+                            BoxWithConstraints(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .verticalScroll(scrollState)
+                                        .drawBehind {
+                                            val canvasWidth = this.size.width
+                                            val canvasHeight = this.size.height
+
+                                            if (viewModel.shouldShowScroll(scrollMax)) {
+                                                val scrollWidth =
+                                                    viewModel.scrollWidth(tableWidth)
+
+                                                drawRect(
+                                                    color = Color.LightGray,
+                                                    topLeft = viewModel.scrollBackgroundPosition(
+                                                        tableWidth
+                                                    ),
+                                                    size = viewModel.scrollBackgroundSize(
+                                                        canvasHeight = canvasHeight,
+                                                        scrollWidth = scrollWidth
+                                                    )
+                                                )
+                                                drawRect(
+                                                    color = StravaOrange,
+                                                    topLeft = viewModel.scrollPosition(
+                                                        tableWidth = canvasWidth,
+                                                        canvasHeight = canvasHeight,
+                                                        value = scrollValue,
+                                                        maxValue = scrollMax
+                                                    ),
+                                                    size = viewModel.scrollSize(
+                                                        scrollWidth = scrollWidth,
+                                                        maxValue = scrollMax,
+                                                        canvasHeight = canvasHeight
+                                                    )
+                                                )
+                                            }
                                         }
-                                    }
+                                ) {
+                                    for (year in years)
+                                        for (month in 1..12) {
+                                            yearMonthsData[Pair(year, month)]?.also {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Checkbox(
+                                                        checked = it.second,
+                                                        modifier = Modifier.weight(0.25f),
+                                                        onCheckedChange = {
+                                                            //  activities[i] = Triple(
+                                                            //      year.first, year.second, !year.third
+                                                            //  )
+                                                        })
+                                                    // MONTH
+                                                    Text(
+                                                        text =
+                                                        TimeUtils.monthIntToString(month)
+                                                            .substring(0, 3)
+                                                            .uppercase(),
+                                                        fontSize = 24.sp,
+                                                        fontFamily = Lato,
+                                                        fontWeight = FontWeight.Bold,
+                                                        textAlign = TextAlign.Center,
+                                                        modifier = Modifier.weight(1f)
+                                                    )
+                                                    // YEAR
+                                                    Text(
+                                                        text = "$year",
+                                                        fontSize = 24.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontFamily = Lato,
+                                                        textAlign = TextAlign.Center,
+                                                        modifier = Modifier.weight(1f)
+                                                    )
+
+                                                    // ACTIVITY COUNT IN YEAR-MONTH
+                                                    Text(
+                                                        text = "${it.first}",
+                                                        fontSize = 24.sp,
+                                                        fontFamily = Lato,
+                                                        textAlign = TextAlign.Center,
+                                                        modifier = Modifier.weight(1f)
+                                                    )
+                                                    if (viewModel.shouldShowScroll(scrollMax))
+                                                        Spacer(
+                                                            modifier = Modifier
+                                                                .width(
+                                                                    viewModel.scrollWidth(
+                                                                        tableWidth
+                                                                    ).dp
+                                                                )
+                                                        )
+                                                }
+                                            }
+                                        }
                                 }
+                            }
                         }
                     }
                     Button(
