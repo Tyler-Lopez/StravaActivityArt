@@ -11,10 +11,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -30,6 +27,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
+import com.company.athleteapiart.util.TimeUtils
 
 @Composable
 fun FilterMonthScreen(
@@ -41,6 +40,8 @@ fun FilterMonthScreen(
 
     val screenState by remember { viewModel.filterMonthScreenState }
     val scrollState = rememberScrollState()
+    val scrollValue by remember { derivedStateOf { scrollState.value } }
+    val scrollMax = scrollState.maxValue
     val context = LocalContext.current
 
     BoxWithConstraints(
@@ -86,19 +87,9 @@ fun FilterMonthScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxHeight * 0.5f)
-                            .verticalScroll(scrollState)
-                            .drawBehind {
-                                val width = size.width
-                                val height = size.height
-                                drawRect(
-                                    color = Color.LightGray,
-                                    topLeft = Offset(width - (width * 0.02f), 0f),
-                                    size = Size(width * 0.02f, height)
-                                )
-                            },
+                            .height(maxHeight * 0.5f),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.Top
                     ) {
                         Row(
                             modifier = Modifier
@@ -133,48 +124,80 @@ fun FilterMonthScreen(
                                 color = Color.Gray
                             )
                         }
-                        for (year in years)
-                            for (month in 1..12) {
-                                yearMonthsData[Pair(year, month)]?.also {
-                                    Row(modifier = Modifier.fillMaxWidth()) {
-                                        Checkbox(
-                                            checked = it.second,
-                                            modifier = Modifier.weight(0.25f),
-                                            onCheckedChange = {
-                                                //  activities[i] = Triple(
-                                                //      year.first, year.second, !year.third
-                                                //  )
-                                            })
-                                        // MONTH
-                                        Text(
-                                            text = "$month",
-                                            fontSize = 24.sp,
-                                            fontFamily = Lato,
-                                            fontWeight = FontWeight.Bold,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        // YEAR
-                                        Text(
-                                            text = "$year",
-                                            fontSize = 24.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = Lato,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.weight(1f)
-                                        )
+                        Column(
+                            modifier = Modifier
+                                .verticalScroll(scrollState)
+                                .drawBehind {
+                                    if (viewModel.shouldShowScroll(scrollMax)) {
+                                        val width = size.width
+                                        val height = size.height
+                                        val scrollWidth = viewModel.scrollWidth(width)
 
-                                        // ACTIVITY COUNT IN YEAR-MONTH
-                                        Text(
-                                            text = "${it.first}",
-                                            fontSize = 24.sp,
-                                            fontFamily = Lato,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.weight(1f)
+                                        drawRect(
+                                            color = StravaOrange,
+                                            topLeft = viewModel.scrollPosition(
+                                                colHeight = height,
+                                                colWidth = width,
+                                                value = scrollValue,
+                                                maxValue = scrollMax
+                                            ),
+                                            size = viewModel.scrollSize(
+                                                colHeight = height,
+                                                scrollWidth = scrollWidth,
+                                                maxValue = scrollMax
+                                            )
                                         )
                                     }
                                 }
-                            }
+                        ) {
+                            for (year in years)
+                                for (month in 1..12) {
+                                    yearMonthsData[Pair(year, month)]?.also {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Checkbox(
+                                                checked = it.second,
+                                                modifier = Modifier.weight(0.25f),
+                                                onCheckedChange = {
+                                                    //  activities[i] = Triple(
+                                                    //      year.first, year.second, !year.third
+                                                    //  )
+                                                })
+                                            // MONTH
+                                            Text(
+                                                text =
+                                                TimeUtils.monthIntToString(month).substring(0, 3)
+                                                    .uppercase(),
+                                                fontSize = 24.sp,
+                                                fontFamily = Lato,
+                                                fontWeight = FontWeight.Bold,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            // YEAR
+                                            Text(
+                                                text = "$year",
+                                                fontSize = 24.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = Lato,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.weight(1f)
+                                            )
+
+                                            // ACTIVITY COUNT IN YEAR-MONTH
+                                            Text(
+                                                text = "${it.first}",
+                                                fontSize = 24.sp,
+                                                fontFamily = Lato,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        }
+                                    }
+                                }
+                        }
                     }
                     Button(
                         onClick = {}, modifier = Modifier
@@ -182,6 +205,7 @@ fun FilterMonthScreen(
                     ) {
                         Text("Continue")
                     }
+                    Text("Scroll state max is ${scrollState.maxValue} value is $scrollValue")
                 }
             }
         }

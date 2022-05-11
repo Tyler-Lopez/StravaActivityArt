@@ -2,6 +2,8 @@ package com.company.athleteapiart.presentation.filter_month_screen
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.entities.ActivityEntity
@@ -62,8 +64,23 @@ class FilterMonthViewModel @Inject constructor(
 
             filterMonthScreenState.value = STANDBY
         }
-
     }
 
+    // Invoked in View to help build ScrollBar with Canvas
+    fun shouldShowScroll(maxValue: Int) = maxValue != 0
+    fun scrollWidth(colWidth: Float) = colWidth * 0.03f
+    fun scrollPosition(
+        colHeight: Float,
+        colWidth: Float,
+        value: Int,
+        maxValue: Int
+    ) = Offset(
+        x = colWidth - scrollWidth(colWidth),
+        y = 0f + ((value.toFloat() / maxValue.toFloat()) * colHeight)
+    )
+    fun scrollSize(colHeight: Float, scrollWidth: Float, maxValue: Int) = Size(
+        width = scrollWidth,
+        height = ((1f / maxValue) * 30f) * colHeight
+    )
 
 }
