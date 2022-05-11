@@ -17,6 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +47,9 @@ fun FilterMonthScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+
+        val maxHeight = this.maxHeight
+
         when (screenState) {
             LAUNCH -> SideEffect {
                 viewModel.loadActivities(
@@ -67,7 +73,6 @@ fun FilterMonthScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(0.2f)
                     ) {
                         Text(
                             text = "Which months would you like to include?",
@@ -81,8 +86,17 @@ fun FilterMonthScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(0.7f)
-                            .verticalScroll(scrollState),
+                            .height(maxHeight * 0.5f)
+                            .verticalScroll(scrollState)
+                            .drawBehind {
+                                val width = size.width
+                                val height = size.height
+                                drawRect(
+                                    color = Color.LightGray,
+                                    topLeft = Offset(width - (width * 0.02f), 0f),
+                                    size = Size(width * 0.02f, height)
+                                )
+                            },
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -165,7 +179,6 @@ fun FilterMonthScreen(
                     Button(
                         onClick = {}, modifier = Modifier
                             .fillMaxWidth()
-                            .weight(0.1f)
                     ) {
                         Text("Continue")
                     }
