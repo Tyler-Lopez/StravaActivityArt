@@ -107,7 +107,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
-                            route = Screen.FilterActivities.route + "/{athleteId}/{yearsRaw}",
+                            route = Screen.FilterMonth.route + "/{athleteId}/{yearsRaw}",
                             arguments = listOf(
                                 navArgument("athleteId") {
                                     type = NavType.LongType

@@ -12,6 +12,7 @@ import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.Resource.*
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
+import com.company.athleteapiart.util.HTTPFault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -30,7 +31,9 @@ class TimeSelectViewModel @Inject constructor(
     private val setAthleteUseCases = athleteUseCases.setAthleteUseCase
 
     // In this screen we will store how many activities this user has for each year
-    val loadedActivities = mutableStateListOf<Triple<Int, Int, Boolean>>()
+    private val loadedActivities = mutableStateListOf<Pair<Int, Int>>()
+    val activityCount: Int
+        get() = loadedActivities.size
 
     // State - observed in the view
     val timeSelectScreenState = mutableStateOf(LAUNCH)
@@ -39,12 +42,6 @@ class TimeSelectViewModel @Inject constructor(
             LOADING -> "Loading..."
             ERROR -> "Error occurred"
             else -> ""
-        }
-    val selectedActivitiesCount: Int
-        get() = loadedActivities.sumOf { if (it.third) it.second else 0 }
-    val selectedYearsNavArg: String
-        get() = buildString {
-            loadedActivities.forEach { if (it.third) append(it.first).append(Constants.NAV_YEAR_DELIMITER) }
         }
 
 
@@ -69,11 +66,13 @@ class TimeSelectViewModel @Inject constructor(
                     accessToken
                 ).data!!
 
-            for (year in currentYear downTo Constants.FIRST_YEAR) {
+            for (year in Constants.FIRST_YEAR..currentYear) {
 
                 // Get last cached month
                 val lastCachedMonth = athlete.lastCachedMonth(year)
-
+                println("HERE FOR $year last cached month was $lastCachedMonth")
+                println(athlete.yearMonthsCached)
+///*
                 // Get activities from either ROOM and/or the Strava API
                 val response = getActivitiesUseCase
                     .getActivitiesByYear(
@@ -108,18 +107,28 @@ class TimeSelectViewModel @Inject constructor(
                         )
                         if (data.isNotEmpty()) {
                             println("DATA WAS NOT EMPTY FOR YEAR $year")
-                            loadedActivities.add(Triple(year, data.size, false))
+                            loadedActivities.add(Pair(year, data.size))
                         } else println("DATA WAS EMPTY FOR YEAR $year")
                     }
                     is Error -> {
-                        println("HERE ERROR OCCURRED ${response.message}")
-                        break
-                    }
-                }
+                        when (response.fault) {
+                            HTTPFault.UNAUTHORIZED -> {
 
+                            }
+                            else -> {
+                                timeSelectScreenState.value = ERROR
+                                return@launch
+                            }
+                        }
+
+                    }
+
+
+                }
+                // */
 
             }
-            timeSelectScreenState.value = TimeSelectScreenState.STANDBY
+            timeSelectScreenState.value = STANDBY
         }
     }
 
@@ -145,4 +154,34 @@ class TimeSelectViewModel @Inject constructor(
             )
         )
     }
+
+    // Invoked to get data in a form for the TableComposable
+    fun getColumns() = arrayOf("YEAR", "NO. ACTIVITIES")
+    fun getRows(): List<Map<String, Pair<String, Boolean>>> {
+        val rows = mutableListOf<Map<String, Pair<String, Boolean>>>()
+        for (datum in loadedActivities) {
+            rows.add(
+                mapOf(
+                    "YEAR" to Pair("${datum.first}", true),
+                    "NO. ACTIVITIES" to Pair("${datum.second}", false)
+                )
+            )
+        }
+        return rows
+    }
+
+    fun selectedActivitiesCount(list: List<Boolean>): Int =
+        list.mapIndexed { index, selected ->
+            if (selected) loadedActivities[index].second
+            else 0
+        }.sum()
+
+    fun selectedYearsNavArgs(list: List<Boolean>): String =
+        buildString {
+            loadedActivities.forEachIndexed { index, pair ->
+                if (list[index])
+                    append(pair.first).append(Constants.NAV_YEAR_DELIMITER)
+            }
+        }
+
 }

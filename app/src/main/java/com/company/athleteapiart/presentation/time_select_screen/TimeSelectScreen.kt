@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
+import com.company.athleteapiart.presentation.common.Table
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
 import com.company.athleteapiart.util.Constants
@@ -46,13 +47,15 @@ fun TimeSelectScreen(
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
     val screenState by remember { viewModel.timeSelectScreenState }
-    val activities = viewModel.loadedActivities
     val context = LocalContext.current
+
+    val selectedList = remember { mutableStateListOf<Boolean>() }
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        val boxHeight = this.maxHeight
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -69,73 +72,13 @@ fun TimeSelectScreen(
                 modifier = Modifier.padding(8.dp)
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .padding(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CheckBox,
-                    tint = Color.Gray,
-                    modifier = Modifier.weight(0.25f),
-                    contentDescription = ""
-                )
-                Text(
-                    text = "YEAR",
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray
-                )
-                Text(
-                    text = "NO. ACTIVITIES",
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray
-                )
-            }
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                items(viewModel.loadedActivities.size) { i ->
-                    val year = activities[i]
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Checkbox(
-                            checked = year.third,
-                            modifier = Modifier.weight(0.25f),
-                            onCheckedChange = {
-                                activities[i] = Triple(
-                                    year.first, year.second, !year.third
-                                )
-                            })
-                        // YEAR
-                        Text(
-                            text = "${year.first}",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = Lato,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                        // ACTIVITY COUNT IN YEAR
-                        Text(
-                            text = "${year.second}",
-                            fontSize = 24.sp,
-                            fontFamily = Lato,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
+            Table.TableComposable(
+                modifier = Modifier.fillMaxWidth().height(boxHeight * 0.5f),
+                columns = viewModel.getColumns(),
+                rows = viewModel.getRows(),
+                onSelectIndex = { selectedList[it] = !selectedList[it] }
+            )
+
 
             when (screenState) {
                 LAUNCH -> SideEffect {
@@ -149,14 +92,17 @@ fun TimeSelectScreen(
                     // Either displays LOADING, or "" for FINISHED LOADING or an ERROR
                     Text(viewModel.message)
                     // Show selected activities if not empty
-                    if (activities.isNotEmpty()) {
+                    if (viewModel.activityCount > 0) {
+                        for (i in 0 until viewModel.activityCount)
+                            selectedList.add(false)
+
                         // Button will only be shown if we can continue or try again
                         Button(
                             onClick = {
                                 navController.navigate(
-                                    Screen.FilterActivities.withArgs(
+                                    Screen.FilterMonth.withArgs(
                                         athleteId.toString(),
-                                        viewModel.selectedYearsNavArg
+                                        viewModel.selectedYearsNavArgs(list = selectedList)
                                     )
                                 )
                             },
@@ -174,7 +120,7 @@ fun TimeSelectScreen(
                             }
                         }
                         Text(
-                            text = "${viewModel.selectedActivitiesCount} selected activities",
+                            text = "${viewModel.selectedActivitiesCount(list = selectedList)} selected activities",
                             fontFamily = Lato,
                             color = Color.Gray,
                             modifier = Modifier.padding(8.dp)

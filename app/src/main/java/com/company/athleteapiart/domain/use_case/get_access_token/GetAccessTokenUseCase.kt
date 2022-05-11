@@ -5,6 +5,7 @@ import com.company.athleteapiart.data.database.OAuth2Database
 import com.company.athleteapiart.data.entities.OAuth2Entity
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Bearer
+import com.company.athleteapiart.util.HTTPFault
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.clientSecret
 import java.util.*
@@ -27,7 +28,7 @@ class GetAccessTokenUseCase @Inject constructor(
         println("OAUTH2ENTITY IS ${oAuth2Entity}")
         return when {
             // There is no previous entry in the ROOM database
-            oAuth2Entity == null -> Resource.Error("User has never authenticated with Strava before.")
+            oAuth2Entity == null -> Resource.Error(HTTPFault.UNAUTHORIZED)
             // There is a previous, expired entry
             accessTokenIsExpired(oAuth2Entity.receivedOn) -> {
                 // Attempt to refresh the access token
@@ -49,12 +50,11 @@ class GetAccessTokenUseCase @Inject constructor(
                             refreshToken = data.refresh_token
                         )
                         Resource.Success(
-                            data = receivedOAuth,
-                            message = "REFRESH"
+                            data = receivedOAuth
                         )
                     }
                     // Was not able to successfully refresh the token
-                    else -> Resource.Error("An error occurred attempting to refresh the token")
+                    else -> Resource.Error(HTTPFault.UNKNOWN)
                 }
             }
             // There is a previous non-expired entry, return the oAuth2Entity
@@ -73,7 +73,8 @@ class GetAccessTokenUseCase @Inject constructor(
                 grantType = "authorization_code"
             )
         } catch (e: Exception) {
-            return Resource.Error("An error occurred retrieving access token. ${e.message}")
+            println("An error has occurred - ${e.message}")
+            return Resource.Error(HTTPFault.getEnum(e.message))
         }
         return Resource.Success(
             OAuth2Entity(
@@ -99,7 +100,8 @@ class GetAccessTokenUseCase @Inject constructor(
                 refreshToken = code
             )
         } catch (e: Exception) {
-            return Resource.Error("An error occurred retrieving access token from refresh. ${e.message}")
+            println("ERROR OCCURRED GETTING REFRESH TOKEN")
+            return Resource.Error(HTTPFault.getEnum(e.message))
         }
 
         return Resource.Success(response)

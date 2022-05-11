@@ -4,6 +4,7 @@ import android.content.Context
 import com.company.athleteapiart.data.database.AthleteDatabase
 import com.company.athleteapiart.data.entities.AthleteEntity
 import com.company.athleteapiart.data.remote.AthleteApi
+import com.company.athleteapiart.util.HTTPFault
 import com.company.athleteapiart.util.Resource
 import java.util.*
 import javax.inject.Inject
@@ -31,8 +32,8 @@ class GetAthleteUseCase @Inject constructor(
             // There is a previous, expired entry
             isDateExpired(athleteEntity.receivedOn, 3) -> {
                 // TODO add refresh
-                println("whoops expired")
-                getAthleteFromAuthorizationCode(code = code)
+                println("Entity cached is expired")
+                getAthleteFromAuthorizationCode(code = code, athleteEntity.yearMonthsCached)
             }
             // There is a previous non-expired entry, return the oAuth2Entity
             else -> {
@@ -46,14 +47,15 @@ class GetAthleteUseCase @Inject constructor(
 
     // Invoked privately to specifically
     private suspend fun getAthleteFromAuthorizationCode(
-        code: String
+        code: String,
+        previousCacheData: Map<Int, Int>? = null
     ): Resource<AthleteEntity> {
         val data = try {
             println("here success")
             api.getAuthenticatedAthlete(authHeader = "Bearer $code")
         } catch (e: Exception) {
-            println("Here failure ${e.message}")
-            return Resource.Error("An error occurred retrieving authenticated athlete. ${e.message}")
+            println("An error has occurred - ${e.message}")
+            return Resource.Error(HTTPFault.getEnum(e.message))
         }
 
         return Resource.Success(
@@ -65,7 +67,7 @@ class GetAthleteUseCase @Inject constructor(
                 profilePictureMedium = data.profile_medium,
                 profilePictureLarge = data.profile,
                 lastName = data.lastname,
-                yearMonthsCached = mapOf<Int, Int>()
+                yearMonthsCached = previousCacheData ?: mapOf()
             )
         )
     }

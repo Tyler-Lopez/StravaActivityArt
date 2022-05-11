@@ -6,6 +6,7 @@ import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.data.entities.AthleteEntity
 import com.company.athleteapiart.data.remote.AthleteApi
 import com.company.athleteapiart.data.remote.responses.Activities
+import com.company.athleteapiart.util.HTTPFault
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.TimeUtils
 import kotlinx.coroutines.Deferred
@@ -105,7 +106,8 @@ class GetActivitiesUseCase @Inject constructor(
                     yearlyActivities.addAll(activities)
                 } while (activitiesResponse.isNotEmpty())
             } catch (e: Exception) {
-                return Resource.Error("An error occurred when contacting the API ${e.message}")
+                println("An error has occurred - ${e.message}")
+                return Resource.Error(HTTPFault.getEnum(e.message))
             }
         // Return all activities we've retrieved and await all of the deferred results from ROOM
         return Resource.Success(data = yearlyActivities)
