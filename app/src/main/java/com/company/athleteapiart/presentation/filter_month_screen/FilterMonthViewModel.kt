@@ -20,24 +20,35 @@ class FilterMonthViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
+    // Data
+    private val yearMonthsData = mutableMapOf<Pair<Int, Int>, Int>()
+
     fun loadActivities(
         context: Context,
         athleteId: Long,
         years: Array<Int>
     ) {
-        val unsortedActivities = mutableListOf<Deferred<ActivityEntity>>()
+        val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
         viewModelScope.launch {
             for (year in years) {
-                val activity = async {
+                val yearActivities = async {
                     getActivitiesUseCase.getActivitiesByYearFromCache(
                         context = context,
                         athleteId = athleteId,
                         year = year
                     )
                 }
+                unsortedActivities.add(yearActivities)
             }
-            unsortedActivities.awaitAll()
+            for (yearlyActivities in unsortedActivities.awaitAll()) {
+                for (activity in yearlyActivities) {
+                    val key = Pair(activity.activityYear, activity.activityMonth)
+                    yearMonthsData[key] =
+                        yearMonthsData.getOrDefault(key, 0) + 1
+                }
+            }
         }
+
     }
 
 
