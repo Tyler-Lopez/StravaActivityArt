@@ -27,7 +27,7 @@ class FilterMonthViewModel @Inject constructor(
 
     // Data - referenced in view
     // (YEAR, MONTH) to (NO. ACTIVITIES, SELECTED)
-    private val yearMonthsData = mutableMapOf<Pair<Int, Int>, Pair<Int, Boolean>>()
+    val yearMonthsData = mutableMapOf<Pair<Int, Int>, Pair<Int, Boolean>>()
 
     fun loadActivities(
         context: Context,
