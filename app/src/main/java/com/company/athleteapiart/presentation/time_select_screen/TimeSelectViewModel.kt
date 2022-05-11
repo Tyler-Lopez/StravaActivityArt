@@ -33,9 +33,7 @@ class TimeSelectViewModel @Inject constructor(
     val loadedActivities = mutableStateListOf<Triple<Int, Int, Boolean>>()
 
     // State - observed in the view
-    val timeSelectScreenState = mutableStateOf(TimeSelectScreenState.LAUNCH)
-    val errorMessage = mutableStateOf("")
-    val showButton = timeSelectScreenState.value != LOADING && loadedActivities.isEmpty()
+    val timeSelectScreenState = mutableStateOf(LAUNCH)
     val message: String
         get() = when (timeSelectScreenState.value) {
             LOADING -> "Loading..."
@@ -56,7 +54,7 @@ class TimeSelectViewModel @Inject constructor(
         athleteId: Long,
         accessToken: String
     ) {
-        timeSelectScreenState.value = TimeSelectScreenState.LOADING
+        timeSelectScreenState.value = LOADING
 
         viewModelScope.launch {
 

@@ -30,7 +30,6 @@ class GetAccessTokenUseCase @Inject constructor(
             oAuth2Entity == null -> Resource.Error("User has never authenticated with Strava before.")
             // There is a previous, expired entry
             accessTokenIsExpired(oAuth2Entity.receivedOn) -> {
-
                 // Attempt to refresh the access token
                 val response =
                     getAccessTokenFromRefreshToken(

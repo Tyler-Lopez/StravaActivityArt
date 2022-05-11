@@ -15,6 +15,7 @@ import com.company.athleteapiart.presentation.about_screen.AboutScreen
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
 import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
+import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreen
 import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
 import com.company.athleteapiart.presentation.format_screen.FormatScreenThree
 import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
@@ -106,14 +107,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
-                            route = Screen.FilterActivities.route + "/{athleteId}/{accessToken}/{yearsRaw}",
+                            route = Screen.FilterActivities.route + "/{athleteId}/{yearsRaw}",
                             arguments = listOf(
                                 navArgument("athleteId") {
                                     type = NavType.LongType
-                                    nullable = false
-                                },
-                                navArgument("accessToken") {
-                                    type = NavType.StringType
                                     nullable = false
                                 },
                                 navArgument("yearsRaw") {
@@ -127,9 +124,8 @@ class MainActivity : ComponentActivity() {
                                 .filter { it.isNotEmpty() }
                                 .map { it.toInt() }
                                 .toTypedArray()
-                            FilterActivitiesScreen(
+                            FilterMonthScreen(
                                 athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
                                 years = years,
                                 navController = navController
                             )

@@ -18,8 +18,19 @@ import javax.inject.Inject
 class GetActivitiesUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
+    suspend fun getActivitiesByYearFromCache(
+        context: Context,
+        athleteId: Long,
+        year: Int
+    ): List<ActivityEntity> = ActivityDatabase
+        .getInstance(context.applicationContext)
+        .activityDao
+        .getActivitiesByYear(
+            athleteId = athleteId,
+            year = year
+        )
 
-    // This is invoked to get all activities from ROOM for a given a year
+    // This is invoked to get all activities from ROOM AND API for a given a year
     suspend fun getActivitiesByYear(
         context: Context,
         athleteEntity: AthleteEntity,
