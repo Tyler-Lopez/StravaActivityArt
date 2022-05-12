@@ -32,6 +32,8 @@ class TimeSelectViewModel @Inject constructor(
 
     // In this screen we will store how many activities this user has for each year
     private val loadedActivities = mutableStateListOf<Pair<Int, Int>>()
+    private val selectedActivities = mutableStateListOf<Boolean>()
+
     val activityCount: Int
         get() = loadedActivities.size
 
@@ -108,6 +110,7 @@ class TimeSelectViewModel @Inject constructor(
                         if (data.isNotEmpty()) {
                             println("DATA WAS NOT EMPTY FOR YEAR $year")
                             loadedActivities.add(Pair(year, data.size))
+                            selectedActivities.add(false)
                         } else println("DATA WAS EMPTY FOR YEAR $year")
                     }
                     is Error -> {
@@ -170,16 +173,20 @@ class TimeSelectViewModel @Inject constructor(
         return rows
     }
 
-    fun selectedActivitiesCount(list: List<Boolean>): Int =
-        list.mapIndexed { index, selected ->
-            if (selected) loadedActivities[index].second
-            else 0
-        }.sum()
+    val selectedActivitiesCount = mutableStateOf(0)
 
-    fun selectedYearsNavArgs(list: List<Boolean>): String =
+    fun updateSelectedActivities(index: Int) {
+        viewModelScope.launch {
+            selectedActivities[index] = !selectedActivities[index]
+            val value = loadedActivities[index].second
+            selectedActivitiesCount.value = selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
+        }
+    }
+
+    fun selectedYearsNavArgs(): String =
         buildString {
             loadedActivities.forEachIndexed { index, pair ->
-                if (list[index])
+                if (selectedActivities[index])
                     append(pair.first).append(Constants.NAV_YEAR_DELIMITER)
             }
         }

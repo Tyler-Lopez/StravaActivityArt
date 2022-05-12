@@ -1,16 +1,8 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
-import android.graphics.Paint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +18,6 @@ import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.Table
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
-import com.company.athleteapiart.util.Constants
 
 /*
 
@@ -46,21 +37,23 @@ fun TimeSelectScreen(
     navController: NavHostController,
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
+
     val screenState by remember { viewModel.timeSelectScreenState }
     val context = LocalContext.current
+    val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
 
-    val selectedList = remember { mutableStateListOf<Boolean>() }
-
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(64.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val boxHeight = this.maxHeight
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(360.dp),
-            verticalArrangement = Arrangement.Center,
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.2f)
+            .padding(8.dp),
+            verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -68,64 +61,72 @@ fun TimeSelectScreen(
                 fontSize = 32.sp,
                 fontWeight = FontWeight.SemiBold,
                 fontFamily = Lato,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp)
+                textAlign = TextAlign.Center
             )
+        }
+        Table.TableComposable(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.6f)
+                .padding(8.dp),
+            columns = viewModel.getColumns(),
+            rows = viewModel.getRows(),
+            onSelectIndex = {
+                viewModel.updateSelectedActivities(it)
+            }
+        )
 
-            Table.TableComposable(
-                modifier = Modifier.fillMaxWidth().height(boxHeight * 0.5f),
-                columns = viewModel.getColumns(),
-                rows = viewModel.getRows(),
-                onSelectIndex = { selectedList[it] = !selectedList[it] }
-            )
 
+        when (screenState) {
+            LAUNCH -> SideEffect {
+                viewModel.loadActivities(
+                    context = context,
+                    athleteId = athleteId,
+                    accessToken = accessToken
+                )
+            }
+            LOADING, STANDBY, ERROR -> {
 
-            when (screenState) {
-                LAUNCH -> SideEffect {
-                    viewModel.loadActivities(
-                        context = context,
-                        athleteId = athleteId,
-                        accessToken = accessToken
-                    )
-                }
-                LOADING, STANDBY, ERROR -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.2f)
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     // Either displays LOADING, or "" for FINISHED LOADING or an ERROR
                     Text(viewModel.message)
-                    // Show selected activities if not empty
-                    if (viewModel.activityCount > 0) {
-                        for (i in 0 until viewModel.activityCount)
-                            selectedList.add(false)
-
-                        // Button will only be shown if we can continue or try again
-                        Button(
-                            onClick = {
-                                navController.navigate(
-                                    Screen.FilterMonth.withArgs(
-                                        athleteId.toString(),
-                                        viewModel.selectedYearsNavArgs(list = selectedList)
-                                    )
+                    // Button will only be shown if we can continue or try again
+                    Button(
+                        onClick = {
+                            navController.navigate(
+                                Screen.FilterMonth.withArgs(
+                                    athleteId.toString(),
+                                    viewModel.selectedYearsNavArgs()
                                 )
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = "Continue",
-                                    fontFamily = Lato,
-                                    fontSize = 28.sp,
-                                )
-                            }
+                            Text(
+                                text = "Continue",
+                                fontFamily = Lato,
+                                fontSize = 28.sp,
+                            )
                         }
-                        Text(
-                            text = "${viewModel.selectedActivitiesCount(list = selectedList)} selected activities",
-                            fontFamily = Lato,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(8.dp)
-                        )
                     }
+                    Text(
+                        text = "$selectedActivitiesCount SELECTED ACTIVITIES",
+                        fontFamily = Lato,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(8.dp)
+                    )
+
                     // If there is an error, allow user to try to load activities again
                     if (screenState == ERROR) {
                         Button(onClick = {

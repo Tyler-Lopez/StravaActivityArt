@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.filter_month_screen
 
 import android.content.Context
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
+import com.company.athleteapiart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -29,7 +31,8 @@ class FilterMonthViewModel @Inject constructor(
 
     // Data - referenced in view
     // (YEAR, MONTH) to (NO. ACTIVITIES)
-    private val yearMonthsData = mutableMapOf<Pair<Int, Int>, Int>()
+    private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
+    private val selectedActivities = mutableStateListOf<Boolean>()
 
     fun loadActivities(
         context: Context,
@@ -41,6 +44,8 @@ class FilterMonthViewModel @Inject constructor(
         val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
 
         viewModelScope.launch {
+            val yearMonthsDataMap = mutableMapOf<Pair<Int, Int>, Int>()
+
             for (year in years) {
                 val yearActivities = async {
                     getActivitiesUseCase.getActivitiesByYearFromCache(
@@ -57,10 +62,24 @@ class FilterMonthViewModel @Inject constructor(
                 for (activity in yearlyActivities) {
                     // Populate yearsMonthData accordingly
                     val key = Pair(activity.activityYear, activity.activityMonth)
-                    yearMonthsData[key] = (yearMonthsData[key] ?: 0) + 1
+                    yearMonthsDataMap[key] = (yearMonthsDataMap[key] ?: 0) + 1
                 }
             }
-
+            for (year in years) {
+                for (month in 1..12) {
+                    if (yearMonthsDataMap.containsKey(Pair(year, month))) {
+                        yearMonthsData.add(
+                            Triple(
+                                year,
+                                month,
+                                yearMonthsDataMap[Pair(year, month)]!!
+                            )
+                        )
+                        selectedActivities.add(true)
+                        recalculateSelectedActivities()
+                    }
+                }
+            }
             filterMonthScreenState.value = STANDBY
         }
     }
@@ -72,13 +91,35 @@ class FilterMonthViewModel @Inject constructor(
         for (datum in yearMonthsData) {
             rows.add(
                 mapOf(
-                    "MONTH" to Pair("${datum.key.second}", true),
-                    "YEAR" to Pair("${datum.key.first}", true),
-                    "NO. ACTIVITIES" to Pair("${datum.value}", false)
+                    "MONTH" to Pair(
+                        TimeUtils.monthIntToString(datum.second).substring(0, 3).uppercase(), true
+                    ),
+                    "YEAR" to Pair("${datum.first}", true),
+                    "NO. ACTIVITIES" to Pair("${datum.third}", false)
                 )
             )
         }
         return rows
+    }
+
+    val selectedActivitiesCount = mutableStateOf(0)
+
+    fun updateSelectedActivities(index: Int) {
+        viewModelScope.launch {
+            selectedActivities[index] = !selectedActivities[index]
+            val value = yearMonthsData[index].third
+            selectedActivitiesCount.value =
+                selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
+        }
+    }
+
+    private fun recalculateSelectedActivities() {
+        var sum = 0
+        for (index in 0..selectedActivities.lastIndex) {
+            val value = yearMonthsData[index].third
+            sum = selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
+        }
+        selectedActivitiesCount.value = sum
     }
 
 }
