@@ -12,13 +12,13 @@ interface ActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllActivities(vararg activityEntity: ActivityEntity)
 
-    @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.athleteId = :athleteId")
+    @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
     suspend fun getActivitiesByYear(
         athleteId: Long,
         year: Int
     ): List<ActivityEntity>
 
-    @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.activityMonth = :month AND activityEntity.athleteId = :athleteId")
+    @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.activityMonth = :month AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
     suspend fun getActivitiesByMonthYear(
         athleteId: Long,
         month: Int,
@@ -30,7 +30,8 @@ interface ActivityDao {
                 "FROM activityentity " +
                 "WHERE activityEntity.activityYear = :year " +
                 "AND activityEntity.activityMonth <= :month " +
-                "AND activityEntity.athleteId = :athleteId"
+                "AND activityEntity.athleteId = :athleteId " +
+                "AND activityEntity.summaryPolyline IS NOT NULL"
     )
     suspend fun getActivitiesByYearUpToMonth(
         athleteId: Long,

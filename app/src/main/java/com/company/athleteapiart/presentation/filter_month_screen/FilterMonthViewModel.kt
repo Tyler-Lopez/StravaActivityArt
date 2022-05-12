@@ -33,6 +33,10 @@ class FilterMonthViewModel @Inject constructor(
     // (YEAR, MONTH) to (NO. ACTIVITIES)
     private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
     private val selectedActivities = mutableStateListOf<Boolean>()
+    val activityTypes = mutableSetOf<String>()
+
+    val mustFilterActivityType: Boolean
+        get() = activityTypes.size > 1
 
     fun loadActivities(
         context: Context,
@@ -60,6 +64,8 @@ class FilterMonthViewModel @Inject constructor(
             for (yearlyActivities in unsortedActivities.awaitAll()) {
                 // Iterate through all activities of a given year
                 for (activity in yearlyActivities) {
+                    // Record all activity types
+                    activityTypes.add(activity.activityType)
                     // Populate yearsMonthData accordingly
                     val key = Pair(activity.activityYear, activity.activityMonth)
                     yearMonthsDataMap[key] = (yearMonthsDataMap[key] ?: 0) + 1

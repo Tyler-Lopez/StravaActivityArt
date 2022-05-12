@@ -87,7 +87,9 @@ fun FilterMonthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
-                        onClick = {}, modifier = Modifier
+                        onClick = {
+                                  println("activity types are ${viewModel.activityTypes} verdict is ${viewModel.mustFilterActivityType}")
+                        }, modifier = Modifier
                             .fillMaxWidth()
                     ) {
                         Text("Continue")
