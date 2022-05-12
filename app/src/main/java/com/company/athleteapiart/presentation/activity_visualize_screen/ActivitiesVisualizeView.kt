@@ -27,7 +27,7 @@ import com.google.maps.android.PolyUtil
 // https://proandroiddev.com/create-bitmaps-from-jetpack-composables-bdb2c95db51
 // https://foso.github.io/Jetpack-Compose-Playground/viewinterop/androidview/
 class ActivitiesVisualizeView(
-    var ctx: Context,
+    ctx: Context,
     var activities: List<Activity>,
     onBitmapCreated: (Bitmap) -> Unit
 ) : LinearLayoutCompat(ctx) {

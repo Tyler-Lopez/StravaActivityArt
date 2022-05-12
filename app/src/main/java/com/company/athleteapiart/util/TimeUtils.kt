@@ -1,6 +1,5 @@
 package com.company.athleteapiart.util
 
-import android.annotation.SuppressLint
 import com.company.athleteapiart.util.Constants.FIRST_YEAR
 import java.time.Instant
 import java.time.LocalDateTime

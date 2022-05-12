@@ -12,12 +12,6 @@ sealed class Screen(
     object FilterGear : Screen("FilterGear")
     object FilterDistance : Screen("FilterDistance")
 
-    object FilterActivities : Screen("FilterActivities")
-    object FormatActivitiesOne : Screen("FormatActivitiesOne")
-    object FormatActivitiesTwo : Screen("FormatActivitiesTwo")
-    object FormatActivitiesThree : Screen("FormatActivitiesThree")
-    object FormatActivitiesFour : Screen("FormatActivitiesFour")
-    object ErrorNoActivities : Screen("ErrorNoActivities")
     object VisualizeActivities : Screen("VisualizeActivities")
     object SaveImage : Screen("SaveImage")
 

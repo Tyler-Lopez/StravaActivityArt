@@ -10,15 +10,10 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.company.athleteapiart.presentation.about_screen.AboutScreen
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
-import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
 import com.company.athleteapiart.presentation.filter_distance_screen.FilterDistanceScreen
 import com.company.athleteapiart.presentation.filter_gear_screen.FilterGearScreen
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreen
 import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreen
-import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
-import com.company.athleteapiart.presentation.format_screen.FormatScreenThree
-import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
-import com.company.athleteapiart.presentation.format_screen.FormatScreenFour
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
@@ -210,26 +205,11 @@ class MainActivity : ComponentActivity() {
                             gears = gears
                         )
                     }
-                    composable(Screen.FormatActivitiesOne.route) {
-                        FormatScreenOne(navController = navController)
-                    }
-                    composable(Screen.FormatActivitiesTwo.route) {
-                        FormatScreenTwo(navController = navController)
-                    }
-                    composable(Screen.FormatActivitiesThree.route) {
-                        FormatScreenThree(navController = navController)
-                    }
-                    composable(Screen.FormatActivitiesFour.route) {
-                        FormatScreenFour(navController = navController)
-                    }
                     composable(Screen.VisualizeActivities.route) {
                         ActivitiesScreen(navController = navController)
                     }
                     composable(Screen.SaveImage.route) {
                         SaveImageScreen(navController = navController)
-                    }
-                    composable(Screen.ErrorNoActivities.route) {
-                        ErrorNoActivitiesScreen(navController = navController)
                     }
                 }
             }
