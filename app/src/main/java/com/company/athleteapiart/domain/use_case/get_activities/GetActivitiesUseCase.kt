@@ -31,6 +31,20 @@ class GetActivitiesUseCase @Inject constructor(
             year = year
         )
 
+    suspend fun getActivitiesByYearMonthFromCache(
+        context: Context,
+        athleteId: Long,
+        year: Int,
+        month: Int
+    ): List<ActivityEntity> = ActivityDatabase
+        .getInstance(context.applicationContext)
+        .activityDao
+        .getActivitiesByYearMonth(
+            athleteId = athleteId,
+            year = year,
+            month = month
+        )
+
     // This is invoked to get all activities from ROOM AND API for a given a year
     suspend fun getActivitiesByYear(
         context: Context,

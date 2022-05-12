@@ -34,7 +34,8 @@ class Table {
             columns: Array<String>, // YEAR, MONTH, ACTIVITY COUNT
             rows: List<Map<String, Pair<String, Boolean>>>, // YEAR to 2002, TRUE (true == bold)
             onSelectIndex: (Int) -> Unit,
-            defaultSelected: Boolean = false
+            defaultSelected: Boolean = false,
+            savedState: List<Boolean>? = null
         ) {
 
             val scrollState = rememberScrollState()
@@ -44,7 +45,7 @@ class Table {
             val selectedList = remember { mutableStateListOf<Boolean>() }
 
             for (i in 0..rows.lastIndex)
-                selectedList.add(defaultSelected)
+                selectedList.add(if (savedState != null && savedState.isNotEmpty()) savedState[i] else defaultSelected)
 
             BoxWithConstraints(modifier = modifier) {
 

@@ -19,7 +19,7 @@ interface ActivityDao {
     ): List<ActivityEntity>
 
     @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.activityMonth = :month AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
-    suspend fun getActivitiesByMonthYear(
+    suspend fun getActivitiesByYearMonth(
         athleteId: Long,
         month: Int,
         year: Int

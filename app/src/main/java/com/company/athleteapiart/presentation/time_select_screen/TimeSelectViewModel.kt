@@ -32,7 +32,7 @@ class TimeSelectViewModel @Inject constructor(
 
     // In this screen we will store how many activities this user has for each year
     private val loadedActivities = mutableStateListOf<Pair<Int, Int>>()
-    private val selectedActivities = mutableStateListOf<Boolean>()
+    val selectedActivities = mutableStateListOf<Boolean>()
 
     val activityCount: Int
         get() = loadedActivities.size

@@ -33,7 +33,7 @@ class FilterMonthViewModel @Inject constructor(
     // Data - referenced in view
     // (YEAR, MONTH) to (NO. ACTIVITIES)
     private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
-    private val selectedActivities = mutableStateListOf<Boolean>()
+    val selectedActivities = mutableStateListOf<Boolean>()
     private val activityTypes = mutableSetOf<String>()
     val selectedMonthYearsNavArgs: String
         get() = buildString {

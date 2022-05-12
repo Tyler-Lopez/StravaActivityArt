@@ -77,7 +77,8 @@ fun FilterMonthScreen(
                     onSelectIndex = {
                         viewModel.updateSelectedActivities(it)
                     },
-                    defaultSelected = true
+                    defaultSelected = true,
+                    savedState = viewModel.selectedActivities
                 )
                 Column(
                     modifier = Modifier

@@ -73,7 +73,8 @@ fun TimeSelectScreen(
             rows = viewModel.getRows(),
             onSelectIndex = {
                 viewModel.updateSelectedActivities(it)
-            }
+            },
+            savedState = viewModel.selectedActivities
         )
 
 
