@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.Table
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
@@ -88,7 +89,15 @@ fun FilterMonthScreen(
                 ) {
                     Button(
                         onClick = {
-                                  println("activity types are ${viewModel.activityTypes} verdict is ${viewModel.mustFilterActivityType}")
+                            if (viewModel.mustFilterActivityType) {
+                                println("HERE ${viewModel.selectedMonthYearsNavArgs}")
+                                navController.navigate(
+                                    Screen.FilterType.withArgs(
+                                        athleteId.toString(),
+                                        viewModel.selectedMonthYearsNavArgs
+                                    )
+                                )
+                            }
                         }, modifier = Modifier
                             .fillMaxWidth()
                     ) {

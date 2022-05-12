@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
+import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
@@ -33,8 +34,14 @@ class FilterMonthViewModel @Inject constructor(
     // (YEAR, MONTH) to (NO. ACTIVITIES)
     private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
     private val selectedActivities = mutableStateListOf<Boolean>()
-    val activityTypes = mutableSetOf<String>()
-
+    private val activityTypes = mutableSetOf<String>()
+    val selectedMonthYearsNavArgs: String
+        get() = buildString {
+            yearMonthsData.forEachIndexed { index, triple ->
+                if (selectedActivities[index])
+                    append(triple.first).append(triple.second).append(Constants.NAV_YEAR_DELIMITER)
+            }
+        }
     val mustFilterActivityType: Boolean
         get() = activityTypes.size > 1
 

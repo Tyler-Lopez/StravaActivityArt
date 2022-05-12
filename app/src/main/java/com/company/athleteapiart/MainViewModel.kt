@@ -1,18 +1,20 @@
 package com.company.athleteapiart
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.company.athleteapiart.util.OAuth2Legacy
+import com.company.athleteapiart.util.Constants
 
-class MainViewModel(uri: Uri? = null) : ViewModel() {
+class MainViewModel() : ViewModel() {
 
-    init {
-        // If received, parse out authorizationCode (distinct from access token)
-        if (uri != null) {
-            OAuth2Legacy.authorizationCode = uri
-                .toString()
-                .substring(43)
-                .substringBefore('&')
-        }
-    }
+    fun parseYearsFromNav(raw: String?) = (raw ?: "").split(Constants.NAV_YEAR_DELIMITER)
+        .filter { it.isNotEmpty() }
+        .map { it.toInt() }
+        .toTypedArray()
+
+    fun parseYearMonthsFromNav(raw: String?) = (raw ?: "").split(Constants.NAV_YEAR_DELIMITER)
+        .filter { it.isNotEmpty() }
+        .map {
+            val year = it.substring(0, 4).toInt()
+            val month = it.substring(4).toInt()
+            Pair(year, month)
+        }.toTypedArray()
 }

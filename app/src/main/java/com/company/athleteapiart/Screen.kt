@@ -8,6 +8,7 @@ sealed class Screen(
     object Welcome : Screen("Welcome")
     object About : Screen("About")
     object FilterMonth : Screen("FilterMonth")
+    object FilterType : Screen("FilterType")
 
     object FilterActivities : Screen("FilterActivities")
     object FormatActivitiesOne : Screen("FormatActivitiesOne")

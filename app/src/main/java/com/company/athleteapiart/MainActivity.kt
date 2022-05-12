@@ -16,6 +16,7 @@ import com.company.athleteapiart.presentation.activity_visualize_screen.Activiti
 import com.company.athleteapiart.presentation.error_noactivities_screen.ErrorNoActivitiesScreen
 import com.company.athleteapiart.presentation.filter_activities_screen.FilterActivitiesScreen
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreen
+import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreen
 import com.company.athleteapiart.presentation.format_screen.FormatScreenOne
 import com.company.athleteapiart.presentation.format_screen.FormatScreenThree
 import com.company.athleteapiart.presentation.format_screen.FormatScreenTwo
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        val viewModel = MainViewModel()
         // Don't love the way of doing this
         // The reason for this is to only fetch from URI on activity creation and never after
         // So we use it once, then set it null
@@ -119,14 +121,34 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { entry ->
-                            val years = (entry.arguments?.getString("yearsRaw") ?: "")
-                                .split(Constants.NAV_YEAR_DELIMITER)
-                                .filter { it.isNotEmpty() }
-                                .map { it.toInt() }
-                                .toTypedArray()
+                            val years = viewModel
+                                .parseYearsFromNav(entry.arguments?.getString("yearsRaw"))
+
                             FilterMonthScreen(
                                 athleteId = entry.arguments?.getLong("athleteId") ?: -1,
                                 years = years,
+                                navController = navController
+                            )
+                        }
+                        composable(
+                            route = Screen.FilterType.route + "/{athleteId}/{yearMonths}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("yearMonths") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) { entry ->
+                            val yearMonths = viewModel
+                                .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
+
+                            FilterTypeScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                yearMonths = yearMonths,
                                 navController = navController
                             )
                         }
