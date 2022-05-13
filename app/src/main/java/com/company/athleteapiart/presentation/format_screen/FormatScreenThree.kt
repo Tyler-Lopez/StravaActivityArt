@@ -114,11 +114,11 @@ fun FormatScreenThree(
                 onClick = {
                     AthleteActivities.formatting.value.activityColor =
                         Color(actRed, actGreen, actBlue)
-                    navController.navigate(
-                        if (conditionallyFormat)
-                            "${Screen.FormatActivitiesFour}"
-                        else "${Screen.VisualizeActivities}"
-                    )
+                  //  navController.navigate(
+                     //   if (conditionallyFormat)
+                       //     "${Screen.FormatActivitiesFour}"
+                      //  else "${Screen.VisualizeActivities}"
+                   // )
                 }
             )
         })

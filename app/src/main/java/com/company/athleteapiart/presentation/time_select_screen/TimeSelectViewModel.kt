@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.time_select_screen
 
 import android.content.Context
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -30,51 +31,56 @@ class TimeSelectViewModel @Inject constructor(
     private val getAthleteUseCase = athleteUseCases.getAthleteUseCase
     private val setAthleteUseCases = athleteUseCases.setAthleteUseCase
 
-    // In this screen we will store how many activities this user has for each year
-    private val loadedActivities = mutableStateListOf<Pair<Int, Int>>()
-    val selectedActivities = mutableStateListOf<Boolean>()
+    // Which activities are selected
+    private val _selectedActivities = mutableStateListOf<Boolean>()
+    private val _selectedActivitiesCount = mutableStateOf(0)
+    val selectedActivities: List<Boolean> = _selectedActivities
+    val selectedActivitiesCount: State<Int> = _selectedActivitiesCount
 
-    val activityCount: Int
-        get() = loadedActivities.size
+    // Rows & Columns
+    private val _rows = mutableListOf<Map<String, String>>()
+    private val columnYear = "YEAR"
+    private val columnNoActivities = "NO. ACTIVITIES"
+    val rows: List<Map<String, String>> = _rows
+    val columns = arrayOf(Pair(columnYear, true), Pair(columnNoActivities, false))
 
-    // State - observed in the view
-    val timeSelectScreenState = mutableStateOf(LAUNCH)
-    val message: String
-        get() = when (timeSelectScreenState.value) {
-            LOADING -> "Loading..."
-            ERROR -> "Error occurred"
-            else -> ""
-        }
+    // Screen State
+    private val _timeSelectScreenState = mutableStateOf(LAUNCH)
+    val timeSelectScreenState: State<TimeSelectScreenState> = _timeSelectScreenState
 
+    // Constants
+    private val defaultSelected = false
 
-    // Invoked publicly from Screen in LAUNCH state
+    // Invoked upon LAUNCH
     fun loadActivities(
         context: Context,
         athleteId: Long,
         accessToken: String
     ) {
-        timeSelectScreenState.value = LOADING
+        // Set state to loading
+        _timeSelectScreenState.value = LOADING
 
         viewModelScope.launch {
+
+            // Clear loaded activities - probably would be improved if we just
+            // added some logic to keep old data but specifically not repeat it
+            _rows.clear()
 
             // Determine if current year and get current month
             val currentYear = Calendar.getInstance().get(Calendar.YEAR)
             val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
 
-            var athlete =
-                getAthleteUseCase.getAthlete(
-                    context,
-                    athleteId,
-                    accessToken
-                ).data!!
+            // Get athlete - important for knowing IF activities have been cached
+            var athlete = getAthleteUseCase.getAthlete(
+                context,
+                athleteId,
+                accessToken
+            ).data!!
 
+            // Iterate through all years
             for (year in Constants.FIRST_YEAR..currentYear) {
-
-                // Get last cached month
+                // Get last cached month of this year
                 val lastCachedMonth = athlete.lastCachedMonth(year)
-                println("HERE FOR $year last cached month was $lastCachedMonth")
-                println(athlete.yearMonthsCached)
-///*
                 // Get activities from either ROOM and/or the Strava API
                 val response = getActivitiesUseCase
                     .getActivitiesByYear(
@@ -107,35 +113,36 @@ class TimeSelectViewModel @Inject constructor(
                             year,
                             if (currentYear != year) 11 else currentMonth - 1
                         )
+                        // The athlete has recorded some activities for this year
                         if (data.isNotEmpty()) {
-                            println("DATA WAS NOT EMPTY FOR YEAR $year")
-                            loadedActivities.add(Pair(year, data.size))
-                            selectedActivities.add(false)
-                        } else println("DATA WAS EMPTY FOR YEAR $year")
+                            _selectedActivities.add(defaultSelected)
+                            _rows.add(
+                                mapOf(
+                                    columnYear to "$year",
+                                    columnNoActivities to "${data.size}"
+                                )
+                            )
+                        }
                     }
                     is Error -> {
+                        // TODO
+                        // Provide better information to view upon Error
                         when (response.fault) {
                             HTTPFault.UNAUTHORIZED -> {
 
                             }
                             else -> {
-                                timeSelectScreenState.value = ERROR
-                                return@launch
+
                             }
+
                         }
-
+                        _timeSelectScreenState.value = ERROR
                     }
-
-
                 }
-                // */
-
             }
-            timeSelectScreenState.value = STANDBY
+            _timeSelectScreenState.value = STANDBY
         }
     }
-
-    //   fun getYearlyActivitiesCount(year: Int) = loadedActivities.getOrDefault(year, 0)
 
     // Update ROOM of ActivityDatabase and AthleteDatabase to cache and reflect cache
     private suspend fun cacheActivities(
@@ -158,36 +165,21 @@ class TimeSelectViewModel @Inject constructor(
         )
     }
 
-    // Invoked to get data in a form for the TableComposable
-    fun getColumns() = arrayOf("YEAR", "NO. ACTIVITIES")
-    fun getRows(): List<Map<String, Pair<String, Boolean>>> {
-        val rows = mutableListOf<Map<String, Pair<String, Boolean>>>()
-        for (datum in loadedActivities) {
-            rows.add(
-                mapOf(
-                    "YEAR" to Pair("${datum.first}", true),
-                    "NO. ACTIVITIES" to Pair("${datum.second}", false)
-                )
-            )
-        }
-        return rows
-    }
-
-    val selectedActivitiesCount = mutableStateOf(0)
-
+    // Invoked in view to say that the user has selected this index
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
-            selectedActivities[index] = !selectedActivities[index]
-            val value = loadedActivities[index].second
-            selectedActivitiesCount.value = selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
+            _selectedActivities[index] = !selectedActivities[index]
+            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            _selectedActivitiesCount.value =
+                _selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
         }
     }
 
     fun selectedYearsNavArgs(): String =
         buildString {
-            loadedActivities.forEachIndexed { index, pair ->
+            _rows.forEachIndexed { index, pair ->
                 if (selectedActivities[index])
-                    append(pair.first).append(Constants.NAV_YEAR_DELIMITER)
+                    append(pair[columnYear]).append(Constants.NAV_YEAR_DELIMITER)
             }
         }
 

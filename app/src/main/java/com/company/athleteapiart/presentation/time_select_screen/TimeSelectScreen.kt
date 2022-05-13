@@ -69,12 +69,12 @@ fun TimeSelectScreen(
                 .fillMaxWidth()
                 .weight(0.6f)
                 .padding(8.dp),
-            columns = viewModel.getColumns(),
-            rows = viewModel.getRows(),
+            columns = viewModel.columns,
+            rows = viewModel.rows,
             onSelectIndex = {
                 viewModel.updateSelectedActivities(it)
             },
-            savedState = viewModel.selectedActivities
+            selectionList = viewModel.selectedActivities
         )
 
 
@@ -96,8 +96,6 @@ fun TimeSelectScreen(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Either displays LOADING, or "" for FINISHED LOADING or an ERROR
-                    Text(viewModel.message)
                     // Button will only be shown if we can continue or try again
                     Button(
                         onClick = {

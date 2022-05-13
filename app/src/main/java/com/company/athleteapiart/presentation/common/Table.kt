@@ -31,21 +31,19 @@ class Table {
         @Composable
         fun TableComposable(
             modifier: Modifier,
-            columns: Array<String>, // YEAR, MONTH, ACTIVITY COUNT
-            rows: List<Map<String, Pair<String, Boolean>>>, // YEAR to 2002, TRUE (true == bold)
-            onSelectIndex: (Int) -> Unit,
-            defaultSelected: Boolean = false,
-            savedState: List<Boolean>? = null
+            columns: Array<Pair<String, Boolean>>, // (YEAR, TRUE), (MONTH, TRUE), (ACTIVITY COUNT, FALSE)
+            rows: List<Map<String, String>>, // YEAR to 2002
+            selectionList: List<Boolean>,
+            onSelectIndex: (Int) -> Unit
         ) {
-
             val scrollState = rememberScrollState()
             val scrollValue by remember { derivedStateOf { scrollState.value } }
             val scrollMax = scrollState.maxValue
 
-            val selectedList = remember { mutableStateListOf<Boolean>() }
+            //   val selectedList = remember { mutableStateListOf<Boolean>() }
 
-            for (i in 0..rows.lastIndex)
-                selectedList.add(if (savedState != null && savedState.isNotEmpty()) savedState[i] else defaultSelected)
+            //    for (i in 0..rows.lastIndex)
+            //        selectedList.add(if (savedState != null && savedState.isNotEmpty()) savedState[i] else defaultSelected)
 
             BoxWithConstraints(modifier = modifier) {
 
@@ -73,7 +71,7 @@ class Table {
                         )
                         for (column in columns)
                             Text(
-                                text = column.uppercase(),
+                                text = column.first.uppercase(),
                                 modifier = Modifier.weight(1f),
                                 textAlign = TextAlign.Center,
                                 color = Color.Gray
@@ -132,19 +130,19 @@ class Table {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Checkbox(
-                                        checked = selectedList[i],
+                                        checked = selectionList[i],
                                         modifier = Modifier.weight(0.25f),
                                         onCheckedChange = {
-                                            selectedList[i] = it
+                                            //  selectedList[i] = it
                                             onSelectIndex(i)
                                         })
                                     for (column in columns) {
-                                        val field = rows[i][column]
+                                        val field = rows[i][column.first]
                                         Text(
-                                            text = field?.first ?: "ERR",
+                                            text = field ?: "ERR",
                                             fontSize = 24.sp,
                                             fontFamily = Lato,
-                                            fontWeight = if (field?.second == true)
+                                            fontWeight = if (column.second)
                                                 FontWeight.Bold else FontWeight.Normal,
                                             textAlign = TextAlign.Center,
                                             modifier = Modifier.weight(1f)

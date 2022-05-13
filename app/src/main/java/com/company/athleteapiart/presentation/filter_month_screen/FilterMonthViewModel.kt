@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.filter_month_screen
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
@@ -28,13 +29,14 @@ class FilterMonthViewModel @Inject constructor(
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
     // State - observed in the view
+    val selectedActivities = mutableStateListOf<Boolean>()
+    val selectedActivitiesCount = mutableStateOf(0)
     val filterMonthScreenState = mutableStateOf(LAUNCH)
 
     // Data - referenced in view
     // (YEAR, MONTH) to (NO. ACTIVITIES)
     private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
-    val selectedActivities = mutableStateListOf<Boolean>()
-    private val activityTypes = mutableSetOf<String>()
+    private val gearIds = mutableSetOf<String?>()
     val selectedMonthYearsNavArgs: String
         get() = buildString {
             yearMonthsData.forEachIndexed { index, triple ->
@@ -42,8 +44,28 @@ class FilterMonthViewModel @Inject constructor(
                     append(triple.first).append(triple.second).append(Constants.NAV_YEAR_DELIMITER)
             }
         }
-    val mustFilterActivityType: Boolean
-        get() = activityTypes.size > 1
+
+    private val activityTypes = mutableMapOf<Pair<Int, Int>, MutableSet<String>>()
+    // Todo replace this to be private and add a public function to return navargs including route
+    // Todo try to put the calculation not in the view thread, probably by making a mutable boolean
+    // and updating that boolean everytime you click
+    fun mustFilterActivityType(): Boolean {
+        val selectedActivityTypes = mutableSetOf<String>()
+        selectedActivities.forEachIndexed { index, selected ->
+            if (selected) {
+                val selectedYearMonth = yearMonthsData[index]
+                selectedActivityTypes.addAll(
+                    activityTypes[Pair(
+                        selectedYearMonth.first,
+                        selectedYearMonth.second
+                    )]!!
+                )
+                if (selectedActivityTypes.size > 1)
+                    return true
+            }
+        }
+        return false
+    }
 
     fun loadActivities(
         context: Context,
@@ -71,10 +93,17 @@ class FilterMonthViewModel @Inject constructor(
             for (yearlyActivities in unsortedActivities.awaitAll()) {
                 // Iterate through all activities of a given year
                 for (activity in yearlyActivities) {
-                    // Record all activity types
-                    activityTypes.add(activity.activityType)
-                    // Populate yearsMonthData accordingly
                     val key = Pair(activity.activityYear, activity.activityMonth)
+                    // Record all activity types and gear types
+                    if (activityTypes.containsKey(key))
+                        activityTypes[key]!!.add(activity.activityType)
+                    else
+                        activityTypes[key] =
+                            mutableSetOf(activity.activityType)
+                    if (!gearIds.contains(activity.gearId))
+                        println("New gear ID ${activity.gearId}")
+                    gearIds.add(activity.gearId)
+                    // Populate yearsMonthData accordingly
                     yearMonthsDataMap[key] = (yearMonthsDataMap[key] ?: 0) + 1
                 }
             }
@@ -115,7 +144,6 @@ class FilterMonthViewModel @Inject constructor(
         return rows
     }
 
-    val selectedActivitiesCount = mutableStateOf(0)
 
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {

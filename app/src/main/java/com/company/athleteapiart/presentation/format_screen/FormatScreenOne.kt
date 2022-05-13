@@ -92,7 +92,7 @@ fun FormatScreenOne(
                 text = "Continue",
                 onClick = {
                     AthleteActivities.formatting.value.backgroundColor = Color(bgRed, bgGreen, bgBlue)
-                    navController.navigate("${Screen.FormatActivitiesTwo}")
+            //        navController.navigate("${Screen.FormatActivitiesTwo}")
                 }
             )
         })

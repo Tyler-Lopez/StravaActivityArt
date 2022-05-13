@@ -110,7 +110,7 @@ fun FormatScreenTwo(
                         viewModel
                             .useConditionalFormatting
                             .value
-                    navController.navigate("${Screen.FormatActivitiesThree}")
+           //         navController.navigate("${Screen.FormatActivitiesThree}")
                 }
             )
         })

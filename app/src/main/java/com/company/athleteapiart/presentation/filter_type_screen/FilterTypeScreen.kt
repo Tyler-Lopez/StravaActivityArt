@@ -71,6 +71,7 @@ fun FilterTypeScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
+                /*
                 Table.TableComposable(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -83,6 +84,8 @@ fun FilterTypeScreen(
                     defaultSelected = true,
                     savedState = viewModel.selectedTypes
                 )
+
+                 */
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
