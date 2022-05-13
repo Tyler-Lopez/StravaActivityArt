@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.entities.ActivityEntity
-import com.company.athleteapiart.data.entities.AthleteEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.util.Constants
@@ -15,9 +14,6 @@ import com.company.athleteapiart.util.Resource.*
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
 import com.company.athleteapiart.util.HTTPFault
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -74,13 +70,15 @@ class TimeSelectViewModel @Inject constructor(
             val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
 
             // Get athlete - important for knowing IF activities have been cached
-            var athlete = getAthleteUseCase.getAthlete(
+            val athlete = getAthleteUseCase.getAthlete(
                 context,
                 athleteId,
                 accessToken
             ).data!!
 
+            // Keep record of any changes to cache history
             val newCaches = mutableMapOf<Int, Int>()
+
             launch {
                 // Iterate through all years
                 for (year in 2021..currentYear) {
@@ -146,28 +144,18 @@ class TimeSelectViewModel @Inject constructor(
                     }
                 }
             }.invokeOnCompletion {
-                viewModelScope.launch {
-                    // Todo boy this is a mess, clean this up later - the point is just to update cache with newCaches
-                    println("now trying to set")
-                    println(athlete.yearMonthsCached)
-                    println("now trying to set")
-                    println(athlete.yearMonthsCached)
-                    val newMap = mutableMapOf<Int, Int>()
-                    athlete.yearMonthsCached.forEach {
-                        newMap.put(it.key, it.value)
-                    }
-                    newCaches.forEach { i, i2 ->
-                        newMap.put(i, i2)
-                    }
+                // Upon completion of iterating through all years (data retrieve & cache)
+                // Update the cache memory in ROOM associated with athlete
+                launch {
                     setAthleteUseCases.setAthlete(
                         context = context,
-                        athleteEntity = athlete.withNewCache(newMap)
+                        athleteEntity = athlete.withNewCaches(newCaches)
                     )
-                    println("finished setting")
                 }
             }
         }
     }
+
 
     // Update ROOM of ActivityDatabase and AthleteDatabase to cache and reflect cache
     private suspend fun cacheActivities(

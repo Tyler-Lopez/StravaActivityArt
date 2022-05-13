@@ -35,7 +35,7 @@ data class AthleteEntity(
         )
 
     }
-    fun withNewCache(cache: Map<Int, Int>): AthleteEntity = AthleteEntity(
+    fun withNewCaches(cache: Map<Int, Int>): AthleteEntity = AthleteEntity(
             athleteId = athleteId,
             userName = userName,
             receivedOn = receivedOn,
@@ -43,7 +43,7 @@ data class AthleteEntity(
             profilePictureLarge = profilePictureLarge,
             firstName = firstName,
             lastName = lastName,
-            yearMonthsCached = cache
+            yearMonthsCached = yearMonthsCached.plus(cache)
         )
 
 }
