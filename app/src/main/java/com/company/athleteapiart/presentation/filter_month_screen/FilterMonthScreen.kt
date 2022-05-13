@@ -68,21 +68,20 @@ fun FilterMonthScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
-                /*
+
                 Table.TableComposable(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f),
-                    columns = viewModel.getColumns(),
-                    rows = viewModel.getRows(),
+                    columns = viewModel.columns,
+                    rows = viewModel.rows,
                     onSelectIndex = {
                         viewModel.updateSelectedActivities(it)
                     },
-                    defaultSelected = true,
-                    savedState = viewModel.selectedActivities
+                    selectionList = viewModel.selectedActivities
                 )
 
-                 */
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -93,7 +92,7 @@ fun FilterMonthScreen(
                 ) {
                     Button(
                         onClick = {
-                            if (viewModel.mustFilterActivityType()) {
+                         //   if (viewModel.mustFilterActivityType()) {
                                 println("HERE ${viewModel.selectedMonthYearsNavArgs}")
                                 navController.navigate(
                                     Screen.FilterType.withArgs(
@@ -101,7 +100,7 @@ fun FilterMonthScreen(
                                         viewModel.selectedMonthYearsNavArgs
                                     )
                                 )
-                            }
+                          //  }
                         }, modifier = Modifier
                             .fillMaxWidth()
                     ) {

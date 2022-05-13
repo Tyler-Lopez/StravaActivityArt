@@ -56,7 +56,6 @@ class GetActivitiesUseCase @Inject constructor(
         // First, determine the last cached month of this year
         // This is so we can know which months we need to use API to retrieve
         // Equal to -1 if never cached, 11 if completely cached
-        println("here, year is $year")
         val lastCachedMonth = athleteEntity.lastCachedMonth(year = year)
 
         val yearlyActivities = mutableListOf<ActivityEntity>()
@@ -76,10 +75,11 @@ class GetActivitiesUseCase @Inject constructor(
             ((GregorianCalendar(year + 1, 0, 0)
                 .timeInMillis) / 1000).toInt()
         val getAfter: Int =
-            ((GregorianCalendar(year, lastCachedMonth + 1, 0)
+            ((GregorianCalendar(year, lastCachedMonth + 1, 0, 23, 59, 59)
                 .timeInMillis) / 1000).toInt()
+        println("get before is $getBefore get after is $getAfter")
 
-        if (lastCachedMonth != 11)
+        if (lastCachedMonth != 12)
             try {
                 println("last cached month is $lastCachedMonth")
                 println("Here, last cached month not equal to 11")

@@ -2,6 +2,7 @@ package com.company.athleteapiart.presentation.filter_month_screen
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
@@ -29,54 +30,49 @@ class FilterMonthViewModel @Inject constructor(
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
     // State - observed in the view
-    val selectedActivities = mutableStateListOf<Boolean>()
-    val selectedActivitiesCount = mutableStateOf(0)
-    val filterMonthScreenState = mutableStateOf(LAUNCH)
+    private val _filterMonthScreenState = mutableStateOf(LAUNCH)
+    val filterMonthScreenState: State<FilterMonthScreenState> = _filterMonthScreenState
+
+    // Which activities are selected
+    private val _selectedActivities = mutableStateListOf<Boolean>()
+    private val _selectedActivitiesCount = mutableStateOf(0)
+    val selectedActivities: List<Boolean> = _selectedActivities
+    val selectedActivitiesCount: State<Int> = _selectedActivitiesCount
+
+    // Rows & Columns
+    private val _rows = mutableListOf<Map<String, String>>()
+    private val columnMonth = "MONTH"
+    private val columnYear = "YEAR"
+    private val columnNoActivities = "NO. ACTIVITIES"
+    val rows: List<Map<String, String>> = _rows
+    val columns =
+        arrayOf(Pair(columnMonth, true), Pair(columnYear, true), Pair(columnNoActivities, false))
+
+    // Constants
+    private val defaultSelected = true
 
     // Data - referenced in view
     // (YEAR, MONTH) to (NO. ACTIVITIES)
-    private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
-    private val gearIds = mutableSetOf<String?>()
+    //   private val yearMonthsData = mutableStateListOf<Triple<Int, Int, Int>>()
+    //   private val gearIds = mutableSetOf<String?>()
     val selectedMonthYearsNavArgs: String
         get() = buildString {
-            yearMonthsData.forEachIndexed { index, triple ->
+            _rows.forEachIndexed { index, row ->
                 if (selectedActivities[index])
-                    append(triple.first).append(triple.second).append(Constants.NAV_YEAR_DELIMITER)
+                    append(row[columnMonth]).append(row[columnYear])
+                        .append(Constants.NAV_YEAR_DELIMITER)
             }
         }
-
-    private val activityTypes = mutableMapOf<Pair<Int, Int>, MutableSet<String>>()
-    // Todo replace this to be private and add a public function to return navargs including route
-    // Todo try to put the calculation not in the view thread, probably by making a mutable boolean
-    // and updating that boolean everytime you click
-    fun mustFilterActivityType(): Boolean {
-        val selectedActivityTypes = mutableSetOf<String>()
-        selectedActivities.forEachIndexed { index, selected ->
-            if (selected) {
-                val selectedYearMonth = yearMonthsData[index]
-                selectedActivityTypes.addAll(
-                    activityTypes[Pair(
-                        selectedYearMonth.first,
-                        selectedYearMonth.second
-                    )]!!
-                )
-                if (selectedActivityTypes.size > 1)
-                    return true
-            }
-        }
-        return false
-    }
 
     fun loadActivities(
         context: Context,
         athleteId: Long,
         years: Array<Int>
     ) {
-        filterMonthScreenState.value = LOADING
-
-        val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
+        _filterMonthScreenState.value = LOADING
 
         viewModelScope.launch {
+            val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
             val yearMonthsDataMap = mutableMapOf<Pair<Int, Int>, Int>()
 
             for (year in years) {
@@ -93,16 +89,8 @@ class FilterMonthViewModel @Inject constructor(
             for (yearlyActivities in unsortedActivities.awaitAll()) {
                 // Iterate through all activities of a given year
                 for (activity in yearlyActivities) {
+                    println("here month is ${activity.activityMonth}")
                     val key = Pair(activity.activityYear, activity.activityMonth)
-                    // Record all activity types and gear types
-                    if (activityTypes.containsKey(key))
-                        activityTypes[key]!!.add(activity.activityType)
-                    else
-                        activityTypes[key] =
-                            mutableSetOf(activity.activityType)
-                    if (!gearIds.contains(activity.gearId))
-                        println("New gear ID ${activity.gearId}")
-                    gearIds.add(activity.gearId)
                     // Populate yearsMonthData accordingly
                     yearMonthsDataMap[key] = (yearMonthsDataMap[key] ?: 0) + 1
                 }
@@ -110,57 +98,38 @@ class FilterMonthViewModel @Inject constructor(
             for (year in years) {
                 for (month in 1..12) {
                     if (yearMonthsDataMap.containsKey(Pair(year, month))) {
-                        yearMonthsData.add(
-                            Triple(
-                                year,
-                                month,
-                                yearMonthsDataMap[Pair(year, month)]!!
+                        _selectedActivities.add(defaultSelected)
+                        _rows.add(
+                            mapOf(
+                                columnMonth to "$month",
+                                columnYear to "$year",
+                                columnNoActivities to "${yearMonthsDataMap[Pair(year, month)]}"
                             )
                         )
-                        selectedActivities.add(true)
                         recalculateSelectedActivities()
                     }
                 }
             }
-            filterMonthScreenState.value = STANDBY
+            _filterMonthScreenState.value = STANDBY
         }
     }
-
-    // Invoked to get data in a form for the TableComposable
-    fun getColumns() = arrayOf("MONTH", "YEAR", "NO. ACTIVITIES")
-    fun getRows(): List<Map<String, Pair<String, Boolean>>> {
-        val rows = mutableListOf<Map<String, Pair<String, Boolean>>>()
-        for (datum in yearMonthsData) {
-            rows.add(
-                mapOf(
-                    "MONTH" to Pair(
-                        TimeUtils.monthIntToString(datum.second).substring(0, 3).uppercase(), true
-                    ),
-                    "YEAR" to Pair("${datum.first}", true),
-                    "NO. ACTIVITIES" to Pair("${datum.third}", false)
-                )
-            )
-        }
-        return rows
-    }
-
 
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
-            selectedActivities[index] = !selectedActivities[index]
-            val value = yearMonthsData[index].third
-            selectedActivitiesCount.value =
-                selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
+            _selectedActivities[index] = !selectedActivities[index]
+            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            _selectedActivitiesCount.value =
+                _selectedActivitiesCount.value + (value * if (_selectedActivities[index]) 1 else -1)
         }
     }
 
     private fun recalculateSelectedActivities() {
         var sum = 0
         for (index in 0..selectedActivities.lastIndex) {
-            val value = yearMonthsData[index].third
+            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
             sum = selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
         }
-        selectedActivitiesCount.value = sum
+        _selectedActivitiesCount.value = sum
     }
 
 }

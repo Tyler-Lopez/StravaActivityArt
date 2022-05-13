@@ -12,7 +12,11 @@ interface ActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllActivities(vararg activityEntity: ActivityEntity)
 
-    @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
+    @Query("SELECT * " +
+            "FROM activityentity " +
+            "WHERE activityEntity.activityYear = :year " +
+            "AND activityEntity.athleteId = :athleteId " +
+            "AND activityEntity.summaryPolyline IS NOT NULL")
     suspend fun getActivitiesByYear(
         athleteId: Long,
         year: Int
