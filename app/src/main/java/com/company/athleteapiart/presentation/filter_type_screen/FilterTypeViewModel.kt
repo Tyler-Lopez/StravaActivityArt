@@ -120,15 +120,21 @@ class FilterTypeViewModel @Inject constructor(
     fun getNavScreen(): Screen {
         // Filter only those activities which have types which are selected
         val filteredActivities = flatMappedActivities.filter { activity ->
-            rows.map { it[columnType] }.contains(activity.activityType)
+            _rows.filterIndexed { index, _ ->
+                _selectedTypes[index]
+            }.map { it[columnType] }.contains(activity.activityType)
         }
-        filterByGear = filteredActivities.groupingBy { it.gearId }.eachCount().size > 1
-        filterByDistance =
-            filteredActivities.groupingBy { it.activityDistance }.eachCount().size > 1
 
+        // Within those activities, determine if we need to ask user to filter by gear or distance
         return when {
-            filterByGear -> Screen.FilterGear
-            filterByDistance -> Screen.FilterDistance
+            // Filter by Gear
+            filteredActivities.groupingBy { it.gearId }.eachCount().size > 1 ->
+                Screen.FilterGear
+            // Filter by Distance
+            filteredActivities.groupingBy { it.activityDistance }
+                .eachCount().size > 1 ->
+                Screen.FilterDistance
+            // Else, proceed to visualize / format
             else -> Screen.FilterDistance // TODO probably have this direct to the format or visualize screen
         }
     }
