@@ -114,25 +114,29 @@ class TimeSelectViewModel @Inject constructor(
                             println("After Response, size is: ${response.data?.size}")
                             when (response) {
                                 is Success -> {
-                                    yearlyActivities.addAll(response.data)
-                                    _selectedActivities.add(defaultSelected)
-                                    _rows.add(
-                                        mapOf(
-                                            columnYear to "$year",
-                                            columnNoActivities to "${yearlyActivities.filter {
-                                                it.activityYear == year && it.summaryPolyline != null
-                                            }.size}"
+                                    if (response.data.size > 0) {
+                                        yearlyActivities.addAll(response.data)
+                                        _selectedActivities.add(defaultSelected)
+                                        _rows.add(
+                                            mapOf(
+                                                columnYear to "$year",
+                                                columnNoActivities to "${
+                                                    yearlyActivities.filter {
+                                                        it.activityYear == year && it.summaryPolyline != null
+                                                    }.size
+                                                }"
+                                            )
                                         )
-                                    )
-                                    cacheActivities(
-                                        context = context,
-                                        activities = yearlyActivities.toTypedArray()
-                                    )
-                                    println("Here, year is $year, current month is $currentMonth")
-                                    if (currentYear != year)
-                                        year to 12
-                                    else
-                                        year to currentMonth
+                                        cacheActivities(
+                                            context = context,
+                                            activities = yearlyActivities.toTypedArray()
+                                        )
+                                        println("Here, year is $year, current month is $currentMonth")
+                                        if (currentYear != year)
+                                            year to 12
+                                        else
+                                            year to currentMonth
+                                    } else year to -1
                                 }
                                 is Error -> {
                                     year to -1
