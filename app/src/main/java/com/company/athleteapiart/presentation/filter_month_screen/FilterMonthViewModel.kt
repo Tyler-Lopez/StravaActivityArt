@@ -64,6 +64,7 @@ class FilterMonthViewModel @Inject constructor(
             }
         }
 
+
     fun loadActivities(
         context: Context,
         athleteId: Long,

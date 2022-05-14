@@ -12,8 +12,10 @@ import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.Resource.*
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
-import com.company.athleteapiart.util.HTTPFault
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -65,7 +67,7 @@ class TimeSelectViewModel @Inject constructor(
             // added some logic to keep old data but specifically not repeat it
             _rows.clear()
 
-            // Determine if current year and get current month
+            // Determine current year and current month
             val currentYear = Calendar.getInstance().get(Calendar.YEAR)
             val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
 
@@ -77,85 +79,90 @@ class TimeSelectViewModel @Inject constructor(
             ).data!!
 
             // Keep record of any changes to cache history
-            val newCaches = mutableMapOf<Int, Int>()
-
+            // val newCaches = mutableMapOf<Int, Int>()
             launch {
                 // Iterate through all years
+                val caches = mutableSetOf<Deferred<Pair<Int, Int>>>()
                 for (year in 2021..currentYear) {
-                    launch {
+                    val cache = async {
                         // Get last cached month of this year
                         val lastCachedMonth = athlete.lastCachedMonth(year)
-                        // Get activities from either ROOM and/or the Strava API
-                        val response = getActivitiesUseCase
-                            .getActivitiesByYear(
-                                context = context,
-                                athleteEntity = athlete,
-                                accessToken = accessToken,
-                                year = year
-                            )
+                        val yearlyActivities = mutableListOf<ActivityEntity>()
 
-                        when (response) {
-                            is Success -> {
-                                val data = response.data
-                                // Determine if we need to cacheActivities, and if so, perform cache
-                                // If NOT the current year and lastCachedMonth of that year != 11, cache
-                                // If current year, always cache whole year but set lastCachedMonth to currentMonth - 1
-                                //      - This means all future calls will always check API for most recent month.
 
-                                if ((currentYear == year || (currentYear != year && lastCachedMonth != 12))) {
-                                    newCaches[year] = if (currentYear != year)
-                                        12
-                                    else currentMonth
-
-                                    cacheActivities(
-                                        context = context,
-                                        activities = data.toTypedArray()
-                                    )
-                                }
-
-                                println("data is $data")
-                                // The athlete has recorded some activities for this year
-                                if (data.isNotEmpty()) {
-                                    println(data[data.lastIndex].activityMonth)
+                        // Add any cached activities
+                        yearlyActivities.addAll(
+                            getActivitiesUseCase
+                                .getActivitiesByYearFromRoom(
+                                    context = context,
+                                    athleteId = athleteId,
+                                    year = year,
+                                    lastCachedMonth =
+                                    // We currently NEVER pull from cached data into current month on current year
+                                    lastCachedMonth - if (lastCachedMonth != 12) 1 else 0
+                                )
+                        )
+                        println("Year: $year, LCM: $lastCachedMonth, Size: ${yearlyActivities.size}")
+                        // Invoke API as needed
+                        if (lastCachedMonth != 12) {
+                            val response = getActivitiesUseCase
+                                .getActivitiesAfterMonthInYearFromApi(
+                                    accessToken = accessToken,
+                                    year = year,
+                                    afterMonth = lastCachedMonth - 1
+                                )
+                            println("After Response, size is: ${response.data?.size}")
+                            when (response) {
+                                is Success -> {
+                                    yearlyActivities.addAll(response.data)
                                     _selectedActivities.add(defaultSelected)
                                     _rows.add(
                                         mapOf(
                                             columnYear to "$year",
-                                            columnNoActivities to "${data.size}"
+                                            columnNoActivities to "${yearlyActivities.filter {
+                                                it.activityYear == year && it.summaryPolyline != null
+                                            }.size}"
                                         )
                                     )
+                                    cacheActivities(
+                                        context = context,
+                                        activities = yearlyActivities.toTypedArray()
+                                    )
+                                    println("Here, year is $year, current month is $currentMonth")
+                                    if (currentYear != year)
+                                        year to 12
+                                    else
+                                        year to currentMonth
                                 }
-                            }
-                            is Error -> {
-                                // TODO
-                                // Provide better information to view upon Error
-                                when (response.fault) {
-                                    HTTPFault.UNAUTHORIZED -> {
-
-                                    }
-                                    else -> {
-
-                                    }
-
+                                is Error -> {
+                                    year to -1
                                 }
-                                _timeSelectScreenState.value = ERROR
                             }
                         }
+                        else {
+                            _selectedActivities.add(defaultSelected)
+                            _rows.add(
+                                mapOf(
+                                    columnYear to "$year",
+                                    columnNoActivities to "${yearlyActivities.filter {
+                                        it.activityYear == year && it.summaryPolyline != null
+                                    }.size}"
+                                )
+                            )
+                            year to -1
+                        }
                     }
+                    caches.add(cache)
                 }
-            }.invokeOnCompletion {
-                // Upon completion of iterating through all years (data retrieve & cache)
-                // Update the cache memory in ROOM associated with athlete
-                launch {
-                    setAthleteUseCases.setAthlete(
-                        context = context,
-                        athleteEntity = athlete.withNewCaches(newCaches)
-                    )
+                setAthleteUseCases.setAthlete(
+                    context = context,
+                    athleteEntity = athlete.withNewCaches(caches.awaitAll().toMap().filter { it.value > 0 })
+                ).also {
+                    _timeSelectScreenState.value = STANDBY
                 }
             }
         }
     }
-
 
     // Update ROOM of ActivityDatabase and AthleteDatabase to cache and reflect cache
     private suspend fun cacheActivities(
