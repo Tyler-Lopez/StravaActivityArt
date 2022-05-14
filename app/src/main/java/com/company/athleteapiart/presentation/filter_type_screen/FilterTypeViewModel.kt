@@ -15,6 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @HiltViewModel
 class FilterTypeViewModel @Inject constructor(
@@ -45,16 +46,36 @@ class FilterTypeViewModel @Inject constructor(
     // Constants
     private val defaultSelected = true
 
-    /*
-    val selectedMonthYearsNavArgs: String
-        get() = buildString {
-            activityTypes.keys.forEachIndexed { index, type ->
-                if (selectedTypes[index])
-                    append(type).append(Constants.NAV_YEAR_DELIMITER)
-            }
-        }
+    // Keep track of what has occurred
+    private var filterByGear = false
+    private var filterByDistance = false
+    private lateinit var flatMappedActivities: List<ActivityEntity>
 
-     */
+    fun getNavArgs(): String {
+        // Filter only those activities which have types which are selected
+        val filteredActivities = flatMappedActivities.filter { activity ->
+            rows.map { it[columnType] }.contains(activity.activityType)
+        }
+        filterByGear = filteredActivities.groupingBy { it.gearId }.eachCount().size > 1
+        filterByDistance =
+            filteredActivities.groupingBy { it.activityDistance }.eachCount().size > 1
+        
+        return when {
+            filterByGear -> ""
+            filterByDistance -> ""
+            else -> ""
+        }
+    }
+
+    // val selectedMonthYearsNavArgs: String
+    ///   get() = buildString {
+    //     activityTypes.keys.forEachIndexed { index, type ->
+    //          if (selectedTypes[index])
+    //               append(type).append(Constants.NAV_YEAR_DELIMITER)
+    //        }
+    //     }
+    // Determine navigation arguments
+
 
     fun loadActivities(
         context: Context,
@@ -70,7 +91,7 @@ class FilterTypeViewModel @Inject constructor(
             val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
 
             for (yearMonth in yearMonths) {
-                unsortedActivities.add( async {
+                unsortedActivities.add(async {
                     getActivitiesUseCase.getActivitiesByYearMonthFromCache(
                         context = context,
                         athleteId = athleteId,
@@ -82,11 +103,13 @@ class FilterTypeViewModel @Inject constructor(
 
             // Flat map all monthly activities within unsorted activities to distinct types
             // Then group into a map like { Walk = 100 } and add to rows
-            unsortedActivities.awaitAll().flatMap { monthlyActivities ->
+            flatMappedActivities = unsortedActivities.awaitAll().flatMap { monthlyActivities ->
                 monthlyActivities.map { activityEntity ->
-                    activityEntity.activityType
+                    activityEntity
                 }
-            }.groupingBy { it }.eachCount().forEach {
+            }
+            // Sum activity types
+            flatMappedActivities.groupingBy { it.activityType }.eachCount().forEach {
                 _selectedTypes.add(defaultSelected)
                 _rows.add(
                     mapOf(
@@ -96,7 +119,6 @@ class FilterTypeViewModel @Inject constructor(
                 )
                 recalculateSelected()
             }
-
             _filterTypeScreenState.value = FilterTypeScreenState.STANDBY
         }
     }
@@ -110,6 +132,7 @@ class FilterTypeViewModel @Inject constructor(
                 _selectedTypesCount.value + (value * if (selectedTypes[index]) 1 else -1)
         }
     }
+
     private fun recalculateSelected() {
         var sum = 0
         for (index in 0..selectedTypes.lastIndex) {

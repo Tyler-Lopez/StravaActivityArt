@@ -114,7 +114,10 @@ class TimeSelectViewModel @Inject constructor(
                             println("After Response, size is: ${response.data?.size}")
                             when (response) {
                                 is Success -> {
-                                    if (response.data.size > 0) {
+                                    // This is messy for now but need to check to ensure no valid activities
+                                    if (response.data.any {
+                                            it.activityYear == year && it.summaryPolyline != null
+                                        }) {
                                         yearlyActivities.addAll(response.data)
                                         _selectedActivities.add(defaultSelected)
                                         _rows.add(
@@ -142,15 +145,16 @@ class TimeSelectViewModel @Inject constructor(
                                     year to -1
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             _selectedActivities.add(defaultSelected)
                             _rows.add(
                                 mapOf(
                                     columnYear to "$year",
-                                    columnNoActivities to "${yearlyActivities.filter {
-                                        it.activityYear == year && it.summaryPolyline != null
-                                    }.size}"
+                                    columnNoActivities to "${
+                                        yearlyActivities.filter {
+                                            it.activityYear == year && it.summaryPolyline != null
+                                        }.size
+                                    }"
                                 )
                             )
                             year to -1
@@ -160,7 +164,8 @@ class TimeSelectViewModel @Inject constructor(
                 }
                 setAthleteUseCases.setAthlete(
                     context = context,
-                    athleteEntity = athlete.withNewCaches(caches.awaitAll().toMap().filter { it.value > 0 })
+                    athleteEntity = athlete.withNewCaches(
+                        caches.awaitAll().toMap().filter { it.value > 0 })
                 ).also {
                     _timeSelectScreenState.value = STANDBY
                 }

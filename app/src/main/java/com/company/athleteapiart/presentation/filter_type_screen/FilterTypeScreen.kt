@@ -92,6 +92,7 @@ fun FilterTypeScreen(
                 ) {
                     Button(
                         onClick = {
+                            viewModel.getNavArgs()
                         }, modifier = Modifier
                             .fillMaxWidth()
                     ) {
