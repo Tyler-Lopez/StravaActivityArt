@@ -59,7 +59,7 @@ class FilterMonthViewModel @Inject constructor(
         get() = buildString {
             _rows.forEachIndexed { index, row ->
                 if (selectedActivities[index])
-                    append(row[columnMonth]).append(row[columnYear])
+                        append(row[columnYear]).append(row[columnMonth])
                         .append(Constants.NAV_YEAR_DELIMITER)
             }
         }

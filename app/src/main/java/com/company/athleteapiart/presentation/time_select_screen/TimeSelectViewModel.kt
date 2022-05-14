@@ -83,7 +83,7 @@ class TimeSelectViewModel @Inject constructor(
             launch {
                 // Iterate through all years
                 val caches = mutableSetOf<Deferred<Pair<Int, Int>>>()
-                for (year in 2021..currentYear) {
+                for (year in Constants.FIRST_YEAR..currentYear) {
                     val cache = async {
                         // Get last cached month of this year
                         val lastCachedMonth = athlete.lastCachedMonth(year)

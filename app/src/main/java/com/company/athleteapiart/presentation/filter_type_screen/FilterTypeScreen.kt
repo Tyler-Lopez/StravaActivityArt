@@ -32,8 +32,8 @@ fun FilterTypeScreen(
 
     val screenState by remember { viewModel.filterTypeScreenState }
     val context = LocalContext.current
+    val selectedTypesCount by remember { viewModel.selectedTypesCount }
 
-    // val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
 
     Column(
         modifier = Modifier
@@ -50,10 +50,7 @@ fun FilterTypeScreen(
                     yearMonths = yearMonths
                 )
             }
-            LOADING -> {
-                Text("Loading")
-            }
-            STANDBY -> {
+            LOADING, STANDBY -> {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -71,21 +68,20 @@ fun FilterTypeScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
-                /*
+
                 Table.TableComposable(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f),
-                    columns = viewModel.getColumns(),
-                    rows = viewModel.getRows(),
+                    columns = viewModel.columns,
+                    rows = viewModel.rows,
                     onSelectIndex = {
-                        //      viewModel.updateSelectedActivities(it)
+                        viewModel.updateSelectedActivities(it)
                     },
-                    defaultSelected = true,
-                    savedState = viewModel.selectedTypes
+                    selectionList = viewModel.selectedTypes
                 )
 
-                 */
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,8 +98,7 @@ fun FilterTypeScreen(
                         Text("Continue")
                     }
                     Text(
-                        text =// "$selectedActivitiesCount SELECTED ACTIVITIES",
-                        "",
+                        text = "$selectedTypesCount SELECTED ACTIVITIES",
                         fontFamily = Lato,
                         color = Color.Gray,
                         modifier = Modifier.padding(8.dp)

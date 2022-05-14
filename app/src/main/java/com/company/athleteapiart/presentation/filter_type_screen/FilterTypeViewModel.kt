@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.filter_type_screen
 
 import android.content.Context
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -24,13 +25,27 @@ class FilterTypeViewModel @Inject constructor(
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
     // State - observed in the view
-    val filterTypeScreenState = mutableStateOf(FilterTypeScreenState.LAUNCH)
+    private val _filterTypeScreenState = mutableStateOf(FilterTypeScreenState.LAUNCH)
+    val filterTypeScreenState: State<FilterTypeScreenState> = _filterTypeScreenState
 
-    // Data - referenced in view
-    // (YEAR, MONTH) to (NO. ACTIVITIES)
-    private val activityTypes = mutableMapOf<String, Int>()
-    val selectedTypes = mutableStateListOf<Boolean>()
+    // Which activities are selected
+    private val _selectedTypes = mutableStateListOf<Boolean>()
+    private val _selectedTypesCount = mutableStateOf(0)
+    val selectedTypes: List<Boolean> = _selectedTypes
+    val selectedTypesCount: State<Int> = _selectedTypesCount
 
+
+    // Rows & Columns
+    private val _rows = mutableStateListOf<Map<String, String>>()
+    private val columnType = "TYPE"
+    private val columnNoActivities = "NO. ACTIVITIES"
+    val rows: List<Map<String, String>> = _rows
+    val columns = arrayOf(Pair(columnType, true), Pair(columnNoActivities, false))
+
+    // Constants
+    private val defaultSelected = true
+
+    /*
     val selectedMonthYearsNavArgs: String
         get() = buildString {
             activityTypes.keys.forEachIndexed { index, type ->
@@ -39,52 +54,68 @@ class FilterTypeViewModel @Inject constructor(
             }
         }
 
+     */
+
     fun loadActivities(
         context: Context,
         athleteId: Long,
         yearMonths: Array<Pair<Int, Int>>
     ) {
-        filterTypeScreenState.value = FilterTypeScreenState.LOADING
-
-        val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
+        // Set state to loading
+        _filterTypeScreenState.value = FilterTypeScreenState.LOADING
 
         viewModelScope.launch {
+
+            // Make async calls to each month that we should load then await
+            val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
+
             for (yearMonth in yearMonths) {
-                val monthActivities = async {
+                unsortedActivities.add( async {
                     getActivitiesUseCase.getActivitiesByYearMonthFromCache(
                         context = context,
                         athleteId = athleteId,
                         year = yearMonth.first,
                         month = yearMonth.second
                     )
-                }
-                unsortedActivities.add(monthActivities)
+                })
             }
-            // Iterate through all awaited yearly activities
-            for (monthActivities in unsortedActivities.awaitAll()) {
-                // Iterate through all activities of a given year
-                for (activity in monthActivities) {
-                    // Record all activity types
-                    activityTypes[activity.activityType] =
-                        (activityTypes[activity.activityType] ?: 0) + 1
+
+            // Flat map all monthly activities within unsorted activities to distinct types
+            // Then group into a map like { Walk = 100 } and add to rows
+            unsortedActivities.awaitAll().flatMap { monthlyActivities ->
+                monthlyActivities.map { activityEntity ->
+                    activityEntity.activityType
                 }
+            }.groupingBy { it }.eachCount().forEach {
+                _selectedTypes.add(defaultSelected)
+                _rows.add(
+                    mapOf(
+                        columnType to it.key,
+                        columnNoActivities to "${it.value}"
+                    )
+                )
+                recalculateSelected()
             }
-            filterTypeScreenState.value = FilterTypeScreenState.STANDBY
+
+            _filterTypeScreenState.value = FilterTypeScreenState.STANDBY
         }
     }
 
-    // Invoked to get data in a form for the TableComposable
-    fun getColumns() = arrayOf("TYPE", "NO. ACTIVITIES")
-    fun getRows(): List<Map<String, Pair<String, Boolean>>> {
-        val rows = mutableListOf<Map<String, Pair<String, Boolean>>>()
-        for (datum in activityTypes) {
-            rows.add(
-                mapOf(
-                    "TYPE" to Pair(datum.key, true),
-                    "NO. ACTIVITIES" to Pair("${datum.value}", false)
-                )
-            )
+    // Invoked in view to say that the user has selected this index
+    fun updateSelectedActivities(index: Int) {
+        viewModelScope.launch {
+            _selectedTypes[index] = !selectedTypes[index]
+            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            _selectedTypesCount.value =
+                _selectedTypesCount.value + (value * if (selectedTypes[index]) 1 else -1)
         }
-        return rows
+    }
+    private fun recalculateSelected() {
+        var sum = 0
+        for (index in 0..selectedTypes.lastIndex) {
+            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            sum = selectedTypesCount.value + (value * if (selectedTypes[index]) 1 else -1)
+        }
+        _selectedTypesCount.value = sum
     }
 }
