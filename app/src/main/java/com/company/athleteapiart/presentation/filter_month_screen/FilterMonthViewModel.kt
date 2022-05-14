@@ -1,19 +1,16 @@
 package com.company.athleteapiart.presentation.filter_month_screen
 
 import android.content.Context
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
 import com.company.athleteapiart.util.Constants
-import com.company.athleteapiart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -60,7 +57,7 @@ class FilterMonthViewModel @Inject constructor(
             _rows.forEachIndexed { index, row ->
                 if (selectedActivities[index])
                         append(row[columnYear]).append(row[columnMonth])
-                        .append(Constants.NAV_YEAR_DELIMITER)
+                        .append(Constants.NAV_DELIMITER)
             }
         }
 

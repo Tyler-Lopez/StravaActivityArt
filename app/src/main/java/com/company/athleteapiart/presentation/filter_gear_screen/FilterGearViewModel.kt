@@ -15,7 +15,5 @@ class FilterGearViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
     private val getAthleteUseCase = athleteUseCases.getAthleteUseCase
-    private val setAthleteUseCases = athleteUseCases.setAthleteUseCase
-
 
 }

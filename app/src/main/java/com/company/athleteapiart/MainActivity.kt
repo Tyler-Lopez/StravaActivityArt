@@ -142,7 +142,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
-                        route = Screen.FilterGear.route + "/{athleteId}/{yearMonths}/{types}",
+                        route = Screen.FilterGear.route + "/{athleteId}/yearMonths={yearMonths}?types={types}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
@@ -154,14 +154,18 @@ class MainActivity : ComponentActivity() {
                             },
                             navArgument("types") {
                                 type = NavType.StringType
-                                nullable = true // If null, there is only 1 type - do not filter
+                                nullable =
+                                    true // NULLABLE, if null there is only 1 type - do not filter
                             }
                         )
                     ) { entry ->
                         val yearMonths = viewModel
                             .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
-
-                        val activityTypes = null // TODO
+                        val activityTypesArg = entry.arguments?.getString("types")
+                        val activityTypes =
+                            if (activityTypesArg != null)
+                                viewModel.parseTypesFromNav(activityTypesArg)
+                            else null
 
                         FilterGearScreen(
                             athleteId = entry.arguments?.getLong("athleteId") ?: -1,
@@ -171,7 +175,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
-                        route = Screen.FilterDistance.route + "/{athleteId}/{yearMonths}/{types}/{gears}",
+                        route = Screen.FilterDistance.route + "/{athleteId}/{yearMonths}?types={types}&gears={gears}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
@@ -183,11 +187,11 @@ class MainActivity : ComponentActivity() {
                             },
                             navArgument("types") {
                                 type = NavType.StringType
-                                nullable = true // If null, there is only 1 type - do not filter
+                                nullable = true // NULLABLE, if null there is only 1 type - do not filter
                             },
                             navArgument("gears") {
                                 type = NavType.StringType
-                                nullable = true // If null, there is only 1 type - do not filter
+                                nullable = true // NULLABLE, if null there is only 1 gear - do not filter
                             }
                         )
                     ) { entry ->

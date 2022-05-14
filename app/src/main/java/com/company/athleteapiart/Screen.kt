@@ -15,11 +15,17 @@ sealed class Screen(
     object VisualizeActivities : Screen("VisualizeActivities")
     object SaveImage : Screen("SaveImage")
 
-    fun withArgs(vararg args: String): String {
+    fun withArgs(vararg args: String, optionalArgs: Array<Pair<String, String>>? = null): String {
         return buildString {
             append(route)
             args.forEach { arg ->
                 append("/$arg")
+            }
+            optionalArgs?.forEachIndexed { index, pair ->
+                append(if (index == 0) '?' else '&')
+                    .append(pair.first)
+                    .append('=')
+                    .append(pair.second)
             }
         }
     }

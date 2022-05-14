@@ -198,7 +198,7 @@ class TimeSelectViewModel @Inject constructor(
         buildString {
             _rows.forEachIndexed { index, pair ->
                 if (selectedActivities[index])
-                    append(pair[columnYear]).append(Constants.NAV_YEAR_DELIMITER)
+                    append(pair[columnYear]).append(Constants.NAV_DELIMITER)
             }
         }
 

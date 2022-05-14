@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.util.Constants
@@ -15,7 +16,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 @HiltViewModel
 class FilterTypeViewModel @Inject constructor(
@@ -50,32 +50,6 @@ class FilterTypeViewModel @Inject constructor(
     private var filterByGear = false
     private var filterByDistance = false
     private lateinit var flatMappedActivities: List<ActivityEntity>
-
-    fun getNavArgs(): String {
-        // Filter only those activities which have types which are selected
-        val filteredActivities = flatMappedActivities.filter { activity ->
-            rows.map { it[columnType] }.contains(activity.activityType)
-        }
-        filterByGear = filteredActivities.groupingBy { it.gearId }.eachCount().size > 1
-        filterByDistance =
-            filteredActivities.groupingBy { it.activityDistance }.eachCount().size > 1
-        
-        return when {
-            filterByGear -> ""
-            filterByDistance -> ""
-            else -> ""
-        }
-    }
-
-    // val selectedMonthYearsNavArgs: String
-    ///   get() = buildString {
-    //     activityTypes.keys.forEachIndexed { index, type ->
-    //          if (selectedTypes[index])
-    //               append(type).append(Constants.NAV_YEAR_DELIMITER)
-    //        }
-    //     }
-    // Determine navigation arguments
-
 
     fun loadActivities(
         context: Context,
@@ -126,19 +100,51 @@ class FilterTypeViewModel @Inject constructor(
     // Invoked in view to say that the user has selected this index
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
-            _selectedTypes[index] = !selectedTypes[index]
+            _selectedTypes[index] = !_selectedTypes[index]
             val value = _rows[index][columnNoActivities]?.toInt() ?: 0
             _selectedTypesCount.value =
-                _selectedTypesCount.value + (value * if (selectedTypes[index]) 1 else -1)
+                _selectedTypesCount.value + (value * if (_selectedTypes[index]) 1 else -1)
         }
     }
 
     private fun recalculateSelected() {
         var sum = 0
-        for (index in 0..selectedTypes.lastIndex) {
+        for (index in 0.._selectedTypes.lastIndex) {
             val value = _rows[index][columnNoActivities]?.toInt() ?: 0
-            sum = selectedTypesCount.value + (value * if (selectedTypes[index]) 1 else -1)
+            sum = _selectedTypesCount.value + (value * if (_selectedTypes[index]) 1 else -1)
         }
         _selectedTypesCount.value = sum
+    }
+
+    // For purposes of navigation to next screen
+    fun getNavScreen(): Screen {
+        // Filter only those activities which have types which are selected
+        val filteredActivities = flatMappedActivities.filter { activity ->
+            rows.map { it[columnType] }.contains(activity.activityType)
+        }
+        filterByGear = filteredActivities.groupingBy { it.gearId }.eachCount().size > 1
+        filterByDistance =
+            filteredActivities.groupingBy { it.activityDistance }.eachCount().size > 1
+
+        return when {
+            filterByGear -> Screen.FilterGear
+            filterByDistance -> Screen.FilterDistance
+            else -> Screen.FilterDistance // TODO probably have this direct to the format or visualize screen
+        }
+    }
+
+    fun yearMonthsToNavArg(yearMonths: Array<Pair<Int, Int>>) = buildString {
+        println("here $yearMonths yearmonthss")
+        yearMonths.forEach {
+            append(it.first).append(it.second)
+                .append(Constants.NAV_DELIMITER)
+        }
+    }
+
+    fun selectedTypesToNavArg() = buildString {
+        _rows.forEachIndexed { index, map ->
+            if (_selectedTypes[index])
+                append(map[columnType]).append(Constants.NAV_DELIMITER)
+        }
     }
 }

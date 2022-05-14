@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_gear_screen
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -13,4 +14,5 @@ fun FilterGearScreen(
     activityTypes: Array<String>? = null, // If null then do not filter by activityTypes
     viewModel: FilterGearViewModel = hiltViewModel()
 ) {
+    Text("here + ${activityTypes?.joinToString { "$it " }}")
 }

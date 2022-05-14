@@ -6,5 +6,5 @@ object Constants {
     const val FIRST_YEAR = 2008
     const val IMAGE_DIRECTORY = "ActivitiesArt"
 
-    const val NAV_YEAR_DELIMITER = '&'
+    const val NAV_DELIMITER = '~'
 }

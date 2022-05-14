@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_distance_screen
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -14,4 +15,5 @@ fun FilterDistanceScreen(
     gears: Array<String>? = null,
     viewModel: FilterDistanceViewModel = hiltViewModel()
 ) {
+    Text("Here at distance screen")
 }

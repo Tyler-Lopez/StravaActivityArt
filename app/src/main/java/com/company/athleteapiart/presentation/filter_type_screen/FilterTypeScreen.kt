@@ -92,7 +92,14 @@ fun FilterTypeScreen(
                 ) {
                     Button(
                         onClick = {
-                            viewModel.getNavArgs()
+                            navController.navigate(
+                                route = viewModel.getNavScreen().withArgs(
+                                    athleteId.toString(), viewModel.yearMonthsToNavArg(yearMonths),
+                                    optionalArgs = arrayOf(
+                                        "types" to viewModel.selectedTypesToNavArg()
+                                    )
+                                )
+                            )
                         }, modifier = Modifier
                             .fillMaxWidth()
                     ) {

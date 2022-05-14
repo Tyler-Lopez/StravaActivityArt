@@ -26,7 +26,7 @@ class TimeUtils {
             )
         }
 
-        fun monthIntToString(int: Int) = when(int) {
+        fun monthIntToString(int: Int) = when (int) {
             1 -> "January"
             2 -> "February"
             3 -> "March"
@@ -60,6 +60,8 @@ class TimeUtils {
             val now = (GregorianCalendar().timeInMillis / 1000).toInt()
             return (now - time >= 20000)
         }
+
+
     }
 }
 
