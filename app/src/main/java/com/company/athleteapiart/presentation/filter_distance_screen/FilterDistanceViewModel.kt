@@ -2,6 +2,7 @@ package com.company.athleteapiart.presentation.filter_distance_screen
 
 import android.content.Context
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,17 +30,16 @@ class FilterDistanceViewModel @Inject constructor(
     private val _screenState = mutableStateOf(LAUNCH)
     val screenState: State<ScreenState> = _screenState
 
-    // Which activities are selected
-    // TODO
-
-    // Constants
-    private val defaultSelected = true
-
     // Distance minimums and maximums
-    private var _distanceMinimum = mutableStateOf(Double.MAX_VALUE)
-    private var _distanceMaximum = mutableStateOf(Double.MIN_VALUE)
-    val distanceMinimum: State<Double> = _distanceMinimum
-    val distanceMaximum: State<Double> = _distanceMaximum
+    private val _distanceRange = mutableStateOf(Float.MIN_VALUE..Float.MAX_VALUE)
+    private val _selectedRange = mutableStateOf(Float.MIN_VALUE..Float.MAX_VALUE)
+    val distanceRange: State<ClosedFloatingPointRange<Float>> = _distanceRange
+    val selectedRange: State<ClosedFloatingPointRange<Float>> = _selectedRange
+
+    // Activities simplified down to their distance
+    private val activityDistances = mutableStateListOf<Float>()
+    private val _selectedCount = mutableStateOf(0)
+    val selectedCount: State<Int> = _selectedCount
 
     fun loadActivities(
         context: Context,
@@ -52,7 +52,6 @@ class FilterDistanceViewModel @Inject constructor(
         _screenState.value = LOADING
 
         viewModelScope.launch {
-
             // Make async calls to each month that we should load then await
             val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
 
@@ -74,13 +73,25 @@ class FilterDistanceViewModel @Inject constructor(
                     activityTypes?.contains(it.activityType) ?: true &&
                             gears?.contains(it.gearId) ?: true
                 }.forEach { activity ->
-                    val distance = activity.activityDistance.meterToMiles()
-                    _distanceMinimum.value =
-                        minOf(distance, _distanceMinimum.value)
-                    _distanceMaximum.value =
-                        maxOf(distance, _distanceMaximum.value)
+                    val distance = activity.activityDistance.meterToMiles().toFloat()
+                    activityDistances.add(distance)
                 }
+            _distanceRange.value =
+                (activityDistances.minOrNull() ?: 0f)..(activityDistances.maxOrNull() ?: 0f)
+            _selectedRange.value = _distanceRange.value
+            recalculateSelected()
             _screenState.value = STANDBY
         }
+    }
+
+    fun onSelectedChange(selectedRange: ClosedFloatingPointRange<Float>) {
+        _selectedRange.value = selectedRange
+        recalculateSelected()
+    }
+
+    private fun recalculateSelected() {
+        _selectedCount.value = activityDistances.filter {
+            it in _selectedRange.value
+        }.size
     }
 }

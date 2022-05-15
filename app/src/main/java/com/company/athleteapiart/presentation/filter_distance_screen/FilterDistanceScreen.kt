@@ -2,11 +2,10 @@ package com.company.athleteapiart.presentation.filter_distance_screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.RangeSlider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,11 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.athleteapiart.presentation.common.Table
-import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeViewModel
 import com.company.athleteapiart.presentation.ui.theme.Lato
 import com.company.athleteapiart.util.ScreenState
 
+@ExperimentalMaterialApi
 @Composable
 fun FilterDistanceScreen(
     athleteId: Long,
@@ -34,8 +32,9 @@ fun FilterDistanceScreen(
     println("Loaded distance types are $activityTypes gears are ${gears?.joinToString { "$it " }}")
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
-    val distanceMinimum by remember { viewModel.distanceMinimum }
-    val distanceMaximum by remember { viewModel.distanceMaximum }
+    val range by remember { viewModel.distanceRange }
+    val selected by remember { viewModel.selectedRange }
+    val selectedCount by remember { viewModel.selectedCount }
 
 
     Column(
@@ -55,7 +54,10 @@ fun FilterDistanceScreen(
                     gears = gears
                 )
             }
-            ScreenState.LOADING, ScreenState.STANDBY -> {
+            ScreenState.LOADING -> {
+
+            }
+            ScreenState.STANDBY -> {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -65,7 +67,7 @@ fun FilterDistanceScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Which gears would you like to include?",
+                        text = "Which distances would you like to include?",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = Lato,
@@ -74,7 +76,14 @@ fun FilterDistanceScreen(
                     )
                 }
 
-                Text("Here $distanceMinimum min $distanceMaximum max")
+                Text(text = "${"%.1f".format(selected.start)} to ${"%.1f".format(selected.endInclusive)}", fontSize = 28.sp)
+                RangeSlider(
+                    values = selected,
+                    valueRange = range,
+                    onValueChange = {
+                        viewModel.onSelectedChange(it)
+                    })
+
 
 
                 Column(
@@ -94,7 +103,7 @@ fun FilterDistanceScreen(
                         Text("Continue")
                     }
                     Text(
-                        text = "SELECTED ACTIVITIES",
+                        text = "$selectedCount SELECTED ACTIVITIES",
                         fontFamily = Lato,
                         color = Color.Gray,
                         modifier = Modifier.padding(8.dp)
