@@ -60,8 +60,6 @@ class TimeUtils {
             val now = (GregorianCalendar().timeInMillis / 1000).toInt()
             return (now - time >= 20000)
         }
-
-
     }
 }
 

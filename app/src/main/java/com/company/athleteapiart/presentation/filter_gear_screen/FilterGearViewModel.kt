@@ -33,7 +33,6 @@ class FilterGearViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
     private val getAthleteUseCase = athleteUseCases.getAthleteUseCase
-    private val getGearsFromRoomUseCase = gearUseCase.getGearsFromRoomUseCase
     private val getGearFromApiUseCase = gearUseCase.getGearFromApiUseCase
     private val setAthleteUseCase = athleteUseCases.setAthleteUseCase
 
@@ -154,7 +153,6 @@ class FilterGearViewModel @Inject constructor(
                     recalculateSelected()
                 }
             }
-
             // Update caches
             athlete?.let {
                 setAthleteUseCase.setAthlete(
@@ -163,7 +161,6 @@ class FilterGearViewModel @Inject constructor(
                 )
             }
             _screenState.value = STANDBY
-
         }
     }
 

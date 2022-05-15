@@ -10,7 +10,6 @@ import com.company.athleteapiart.domain.use_case.get_access_token.GetAccessToken
 import com.company.athleteapiart.domain.use_case.get_activities.GetActivitiesUseCase
 import com.company.athleteapiart.domain.use_case.get_athlete.GetAthleteUseCase
 import com.company.athleteapiart.domain.use_case.get_gear.GetGearFromApiUseCase
-import com.company.athleteapiart.domain.use_case.get_gear.GetGearsFromRoomUseCase
 import com.company.athleteapiart.domain.use_case.insert_activities.InsertActivitiesUseCase
 import com.company.athleteapiart.domain.use_case.set_access_token.SetAccessTokenUseCase
 import com.company.athleteapiart.domain.use_case.set_athlete.SetAthleteUseCase
@@ -51,7 +50,6 @@ object AppModule {
     fun provideGearUseCases(
         api: AthleteApi
     ) = GearUseCases(
-        getGearsFromRoomUseCase = GetGearsFromRoomUseCase(),
         getGearFromApiUseCase = GetGearFromApiUseCase(api)
     )
 
