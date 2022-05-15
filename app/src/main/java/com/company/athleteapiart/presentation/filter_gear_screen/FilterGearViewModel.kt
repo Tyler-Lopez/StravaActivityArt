@@ -90,31 +90,27 @@ class FilterGearViewModel @Inject constructor(
             flatMappedActivities = unsortedActivities.awaitAll().flatMap { monthlyActivities ->
                 monthlyActivities.map { activityEntity ->
                     activityEntity
-                }.filter {
                     // Filter by activity type if activity type is non-null
-                    activityTypes?.contains(it.activityType) ?: true
-                }
+                }.filter { activityTypes?.contains(it.activityType) ?: true }
             }
 
-            // Get athlete and gears from cache
+            // Get athlete and gears from ROOM cache
             val athlete = getAthleteUseCase.getAthleteFromRoom(
                 context = context,
                 athleteId = athleteId
             )
             val gearsCached = athlete?.gears?.toMutableMap() ?: mutableMapOf()
 
-
             // Map gears to activity frequency
             val gearFrequencies = flatMappedActivities.groupingBy { it.gearId }.eachCount()
 
             // Keep track of any new gear caches
-            val newCachesDeferred = mutableSetOf<Deferred<Pair<String, String>?>>()
+            val newCachesDeferred = mutableListOf<Deferred<Pair<String, String>?>>()
 
             // Read necessary gearIds from API
             gearFrequencies.filter { !gearsCached.containsKey(it.key) }.forEach {
                 // Only execute the following on non-null keys
                 it.key?.let { gearId ->
-                    println("Debug: Invoked call to Gear API")
                     // Async load each new gear from API
                     val cache = async {
                         val response = getGearFromApiUseCase.getGearFromApi(
@@ -129,7 +125,7 @@ class FilterGearViewModel @Inject constructor(
                                 gearId to gearName
                             }
                             is Resource.Error -> {
-                                null
+                                null // Todo add some handling in view
                             }
                         }
                     }
@@ -139,27 +135,27 @@ class FilterGearViewModel @Inject constructor(
 
             val newCaches = newCachesDeferred.awaitAll().filterNotNull()
 
-            flatMappedActivities.groupingBy { it.gearId }.eachCount().forEach {
+            gearFrequencies.forEach {
                 launch {
-                    // If gearID is already cached or is null, do not fetch from API
-                    // Read result from API
                     _selected.add(defaultSelected)
                     _rows.add(
                         mapOf(
-                            columnGear to (gearsCached[it.key] ?: "Unspecified"),
+                            columnGear to (gearsCached[it.key] ?: "Unnamed"),
                             columnNoActivities to "${it.value}"
                         )
                     )
                     recalculateSelected()
                 }
             }
-            // Update caches
-            athlete?.let {
-                setAthleteUseCase.setAthlete(
-                    context = context,
-                    athleteEntity = athlete.withNewGearCaches(newCaches)
-                )
-            }
+
+            // Update Gear ID Correlations in ROOM if necessary
+            if (newCaches.isNotEmpty())
+                athlete?.let {
+                    setAthleteUseCase.setAthlete(
+                        context = context,
+                        athleteEntity = athlete.withNewGearCaches(newCaches)
+                    )
+                }
             _screenState.value = STANDBY
         }
     }
