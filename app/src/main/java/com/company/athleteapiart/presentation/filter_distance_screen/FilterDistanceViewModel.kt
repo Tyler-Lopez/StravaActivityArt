@@ -9,6 +9,7 @@ import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.util.ScreenState
 import com.company.athleteapiart.util.ScreenState.*
+import com.company.athleteapiart.util.meterToMiles
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -35,8 +36,8 @@ class FilterDistanceViewModel @Inject constructor(
     private val defaultSelected = true
 
     // Distance minimums and maximums
-    private var _distanceMinimum = mutableStateOf(0.0)
-    private var _distanceMaximum = mutableStateOf(0.0)
+    private var _distanceMinimum = mutableStateOf(Double.MAX_VALUE)
+    private var _distanceMaximum = mutableStateOf(Double.MIN_VALUE)
     val distanceMinimum: State<Double> = _distanceMinimum
     val distanceMaximum: State<Double> = _distanceMaximum
 
@@ -45,7 +46,7 @@ class FilterDistanceViewModel @Inject constructor(
         athleteId: Long,
         yearMonths: Array<Pair<Int, Int>>,
         activityTypes: Array<String>? = null,
-        gears: Array<String>? = null
+        gears: Array<String?>? = null
     ) {
         // Set state to loading
         _screenState.value = LOADING
@@ -73,12 +74,12 @@ class FilterDistanceViewModel @Inject constructor(
                     activityTypes?.contains(it.activityType) ?: true &&
                             gears?.contains(it.gearId) ?: true
                 }.forEach { activity ->
+                    val distance = activity.activityDistance.meterToMiles()
                     _distanceMinimum.value =
-                        minOf(activity.activityDistance, _distanceMinimum.value)
+                        minOf(distance, _distanceMinimum.value)
                     _distanceMaximum.value =
-                        maxOf(activity.activityDistance, _distanceMaximum.value)
+                        maxOf(distance, _distanceMaximum.value)
                 }
-
             _screenState.value = STANDBY
         }
     }

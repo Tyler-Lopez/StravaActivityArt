@@ -1,17 +1,20 @@
 package com.company.athleteapiart.presentation.filter_gear_screen
 
 import android.content.Context
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.domain.use_case.GearUseCases
 import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreenState
 import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState
+import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.ScreenState
 import com.company.athleteapiart.util.ScreenState.*
@@ -47,11 +50,14 @@ class FilterGearViewModel @Inject constructor(
     val selectedCount: State<Int> = _selectedCount
 
     // Rows & Columns
-    private val _rows = mutableStateListOf<Map<String, String>>()
+    private val _rows = mutableStateListOf<Map<String, String?>>()
     private val columnGear = "GEAR"
     private val columnNoActivities = "NO. ACTIVITIES"
-    val rows: List<Map<String, String>> = _rows
+    val rows: List<Map<String, String?>> = _rows
     val columns = arrayOf(Pair(columnGear, true), Pair(columnNoActivities, false))
+
+    // Correlate gearIds with gear names
+    private lateinit var gearsIdMap: MutableMap<String, String>
 
     // Constants
     private val defaultSelected = true
@@ -70,8 +76,6 @@ class FilterGearViewModel @Inject constructor(
         _screenState.value = LOADING
 
         viewModelScope.launch {
-
-
             // Make async calls to each month that we should load then await
             val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
 
@@ -86,6 +90,7 @@ class FilterGearViewModel @Inject constructor(
                 })
             }
 
+            println("here, activity types are $activityTypes")
             // Flat map all monthly activities within unsorted activities to distinct types
             flatMappedActivities = unsortedActivities.awaitAll().flatMap { monthlyActivities ->
                 monthlyActivities.map { activityEntity ->
@@ -99,7 +104,8 @@ class FilterGearViewModel @Inject constructor(
                 context = context,
                 athleteId = athleteId
             )
-            val gearsCached = athlete?.gears?.toMutableMap() ?: mutableMapOf()
+
+            gearsIdMap = athlete?.gears?.toMutableMap() ?: mutableMapOf()
 
             // Map gears to activity frequency
             val gearFrequencies = flatMappedActivities.groupingBy { it.gearId }.eachCount()
@@ -108,7 +114,7 @@ class FilterGearViewModel @Inject constructor(
             val newCachesDeferred = mutableListOf<Deferred<Pair<String, String>?>>()
 
             // Read necessary gearIds from API
-            gearFrequencies.filter { !gearsCached.containsKey(it.key) }.forEach {
+            gearFrequencies.filter { !gearsIdMap.containsKey(it.key) }.forEach {
                 // Only execute the following on non-null keys
                 it.key?.let { gearId ->
                     // Async load each new gear from API
@@ -121,7 +127,7 @@ class FilterGearViewModel @Inject constructor(
                             is Resource.Success -> {
                                 val data = response.data
                                 val gearName = "${data.brand_name} ${data.model_name}"
-                                gearsCached[gearId] = gearName
+                                gearsIdMap[gearId] = gearName
                                 gearId to gearName
                             }
                             is Resource.Error -> {
@@ -132,15 +138,15 @@ class FilterGearViewModel @Inject constructor(
                     newCachesDeferred.add(cache)
                 }
             }
-
             val newCaches = newCachesDeferred.awaitAll().filterNotNull()
 
+            // Iterate through Gear Frequency Map and populate rows
             gearFrequencies.forEach {
                 launch {
                     _selected.add(defaultSelected)
                     _rows.add(
                         mapOf(
-                            columnGear to (gearsCached[it.key] ?: "Unnamed"),
+                            columnGear to it.key,
                             columnNoActivities to "${it.value}"
                         )
                     )
@@ -179,4 +185,66 @@ class FilterGearViewModel @Inject constructor(
         _selectedCount.value = sum
     }
 
+
+    // For purposes of navigation to next screen
+    fun getNavScreen(
+        activityTypes: Array<String>? = null
+    ): Screen {
+        // Filter only those activities which have types and gears which are selected
+        val filteredActivities = flatMappedActivities.filter { activity ->
+
+            val selectedGears = _rows.filterIndexed { index, _ ->
+                _selected[index]
+            }.map { it[columnGear] }
+
+            activity.gearId?.let { selectedGears.contains(activity.activityType) } ?: true &&
+                    activityTypes?.contains(activity.activityType) ?: true
+
+        }
+
+        // Within those activities, determine if we need to ask user to filter by gear or distance
+        return when {
+            // Filter by Distance
+            filteredActivities.groupingBy { it.activityDistance }
+                .eachCount().size > 1 ->
+                Screen.FilterDistance
+            // Else, proceed to visualize / format
+            else -> Screen.FilterDistance // TODO probably have this direct to the format or visualize screen
+        }
+    }
+
+    fun yearMonthsToNavArg(yearMonths: Array<Pair<Int, Int>>) = buildString {
+        yearMonths.forEach {
+            append(it.first).append(it.second)
+                .append(Constants.NAV_DELIMITER)
+        }
+    }
+
+    fun selectedTypesToNavArg(activityTypes: Array<String>? = null) = buildString {
+        activityTypes?.forEach {
+            append(it).append(Constants.NAV_DELIMITER)
+        }
+    }
+
+    fun selectedGearsToNavArg() = buildString {
+        _rows.forEachIndexed { index, map ->
+            if (_selected[index])
+                append(map[columnGear]).append(Constants.NAV_DELIMITER)
+        }
+    }
+
+    // Function converts rows from "gear" to gearId to "gear" to gearName
+    fun convertRows() =
+        _rows.let { rows ->
+            val toReturn = mutableStateListOf<Map<String, String>>()
+            rows.forEach { row ->
+                toReturn.add(
+                    mapOf(
+                        columnGear to (gearsIdMap[row[columnGear]] ?: "Unknown"),
+                        columnNoActivities to row[columnNoActivities]!!
+                    )
+                )
+            }
+            toReturn
+        }
 }

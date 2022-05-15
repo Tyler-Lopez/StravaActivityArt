@@ -18,7 +18,7 @@ sealed class Screen(
     fun withArgs(vararg args: String, optionalArgs: Array<Pair<String, String>>? = null): String {
         return buildString {
             append(route)
-            args.forEach { arg ->
+            args.filter { it.isNotEmpty() }.forEach { arg ->
                 append("/$arg")
             }
             optionalArgs?.forEachIndexed { index, pair ->

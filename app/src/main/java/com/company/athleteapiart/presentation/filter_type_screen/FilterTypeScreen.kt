@@ -93,9 +93,12 @@ fun FilterTypeScreen(
                 ) {
                     Button(
                         onClick = {
+                            val nextScreen = viewModel.getNavScreen()
                             navController.navigate(
-                                route = viewModel.getNavScreen().withArgs(
-                                    athleteId.toString(), accessToken, viewModel.yearMonthsToNavArg(yearMonths),
+                                route = nextScreen.withArgs(
+                                    // TODO bug here, need to remove access token - probably try to remove all this and move to screen class
+                                    // todo making a temporary alteration here to allow for both to work but will not be good practice
+                                    athleteId.toString(),  if (nextScreen is Screen.FilterGear) accessToken else "", viewModel.yearMonthsToNavArg(yearMonths),
                                     optionalArgs = arrayOf(
                                         "types" to viewModel.selectedTypesToNavArg()
                                     )

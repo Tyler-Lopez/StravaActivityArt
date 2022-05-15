@@ -138,7 +138,6 @@ class FilterTypeViewModel @Inject constructor(
     }
 
     fun yearMonthsToNavArg(yearMonths: Array<Pair<Int, Int>>) = buildString {
-        println("here $yearMonths yearmonthss")
         yearMonths.forEach {
             append(it.first).append(it.second)
                 .append(Constants.NAV_DELIMITER)

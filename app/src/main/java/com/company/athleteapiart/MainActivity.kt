@@ -176,6 +176,7 @@ class MainActivity : ComponentActivity() {
                         val yearMonths = viewModel
                             .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
                         val activityTypesArg = entry.arguments?.getString("types")
+                        println("here activitytypes are $activityTypesArg in navigation")
                         val activityTypes =
                             if (activityTypesArg != null)
                                 viewModel.parseTypesFromNav(activityTypesArg)
@@ -190,14 +191,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
-                        route = Screen.FilterDistance.route + "/{athleteId}/{accessToken}/{yearMonths}?types={types}&gears={gears}",
+                        route = Screen.FilterDistance.route + "/{athleteId}/{yearMonths}?types={types}&gears={gears}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("accessToken") {
-                                type = NavType.StringType
                                 nullable = false
                             },
                             navArgument("yearMonths") {
@@ -217,8 +214,12 @@ class MainActivity : ComponentActivity() {
                         val yearMonths = viewModel
                             .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
 
-                        val activityTypes = null // TODO
-                        val gears = null // TODO
+                        val activityTypesArg = entry.arguments?.getString("types")
+                        val activityTypes =
+                            if (activityTypesArg != null)
+                                viewModel.parseTypesFromNav(activityTypesArg)
+                            else null
+                        val gears = viewModel.parseGearsFromNav(entry.arguments?.getString("gears"))
 
                         FilterDistanceScreen(
                             athleteId = entry.arguments?.getLong("athleteId") ?: -1,

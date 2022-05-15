@@ -28,9 +28,10 @@ fun FilterDistanceScreen(
     yearMonths: Array<Pair<Int, Int>>,
     navController: NavHostController,
     activityTypes: Array<String>? = null, // If null then do not filter by activityTypes
-    gears: Array<String>? = null,
+    gears: Array<String?>? = null, // If null do not filter, if string is null then that means null gearId is included
     viewModel: FilterDistanceViewModel = hiltViewModel()
 ) {
+    println("Loaded distance types are $activityTypes gears are ${gears?.joinToString { "$it " }}")
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
     val distanceMinimum by remember { viewModel.distanceMinimum }

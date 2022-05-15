@@ -23,4 +23,13 @@ class MainViewModel() : ViewModel() {
         .map {
             it
         }.toTypedArray()
+
+    fun parseGearsFromNav(raw: String?) =
+        raw?.split(Constants.NAV_DELIMITER)?.filter { it.isNotEmpty() }?.map { gearId ->
+            if (gearId == "null")
+                null
+            else gearId
+        }?.toTypedArray()
+
+
 }

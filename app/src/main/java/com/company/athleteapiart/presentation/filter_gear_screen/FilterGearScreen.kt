@@ -3,10 +3,7 @@ package com.company.athleteapiart.presentation.filter_gear_screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +46,8 @@ fun FilterGearScreen(
                     context = context,
                     athleteId = athleteId,
                     accessToken = accessToken,
-                    yearMonths = yearMonths
+                    yearMonths = yearMonths,
+                    activityTypes = activityTypes
                 )
             }
             LOADING, STANDBY -> {
@@ -71,12 +69,16 @@ fun FilterGearScreen(
                     )
                 }
 
+                // Anytime rows is mutated, invoke call to convert them from ID to name
+                var convertedRows = viewModel.convertRows()
+                LaunchedEffect(viewModel.rows) { convertedRows = viewModel.convertRows() }
+
                 Table.TableComposable(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f),
                     columns = viewModel.columns,
-                    rows = viewModel.rows,
+                    rows = convertedRows,
                     onSelectIndex = {
                         viewModel.updateSelectedActivities(it)
                     },
@@ -94,7 +96,15 @@ fun FilterGearScreen(
                 ) {
                     Button(
                         onClick = {
-
+                            navController.navigate(
+                                route = viewModel.getNavScreen().withArgs(
+                                    athleteId.toString(), viewModel.yearMonthsToNavArg(yearMonths),
+                                    optionalArgs = arrayOf(
+                                        "types" to viewModel.selectedTypesToNavArg(activityTypes),
+                                        "gears" to viewModel.selectedGearsToNavArg()
+                                    )
+                                )
+                            )
                         }, modifier = Modifier
                             .fillMaxWidth()
                     ) {
