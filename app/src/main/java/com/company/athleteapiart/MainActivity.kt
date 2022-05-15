@@ -98,10 +98,14 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
-                        route = Screen.FilterMonth.route + "/{athleteId}/{yearsRaw}",
+                        route = Screen.FilterMonth.route + "/{athleteId}/{accessToken}/{yearsRaw}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
+                                nullable = false
+                            },
+                            navArgument("accessToken") {
+                                type = NavType.StringType
                                 nullable = false
                             },
                             navArgument("yearsRaw") {
@@ -115,15 +119,20 @@ class MainActivity : ComponentActivity() {
 
                         FilterMonthScreen(
                             athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
                             years = years,
                             navController = navController
                         )
                     }
                     composable(
-                        route = Screen.FilterType.route + "/{athleteId}/{yearMonths}",
+                        route = Screen.FilterType.route + "/{athleteId}/{accessToken}/{yearMonths}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
+                                nullable = false
+                            },
+                            navArgument("accessToken") {
+                                type = NavType.StringType
                                 nullable = false
                             },
                             navArgument("yearMonths") {
@@ -137,15 +146,20 @@ class MainActivity : ComponentActivity() {
 
                         FilterTypeScreen(
                             athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
                             yearMonths = yearMonths,
                             navController = navController
                         )
                     }
                     composable(
-                        route = Screen.FilterGear.route + "/{athleteId}/{yearMonths}?types={types}",
+                        route = Screen.FilterGear.route + "/{athleteId}/{accessToken}/{yearMonths}?types={types}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
+                                nullable = false
+                            },
+                            navArgument("accessToken") {
+                                type = NavType.StringType
                                 nullable = false
                             },
                             navArgument("yearMonths") {
@@ -169,16 +183,21 @@ class MainActivity : ComponentActivity() {
 
                         FilterGearScreen(
                             athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
                             yearMonths = yearMonths,
                             navController = navController,
                             activityTypes = activityTypes
                         )
                     }
                     composable(
-                        route = Screen.FilterDistance.route + "/{athleteId}/{yearMonths}?types={types}&gears={gears}",
+                        route = Screen.FilterDistance.route + "/{athleteId}/{accessToken}/{yearMonths}?types={types}&gears={gears}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType
+                                nullable = false
+                            },
+                            navArgument("accessToken") {
+                                type = NavType.StringType
                                 nullable = false
                             },
                             navArgument("yearMonths") {

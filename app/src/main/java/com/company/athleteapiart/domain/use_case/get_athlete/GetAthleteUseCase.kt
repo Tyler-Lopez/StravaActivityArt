@@ -12,6 +12,15 @@ import javax.inject.Inject
 class GetAthleteUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
+    suspend fun getAthleteFromRoom(
+        context: Context,
+        athleteId: Long
+    ) = AthleteDatabase
+        .getInstance(context.applicationContext)
+        .athleteDao
+        .getAthleteById(athleteId = athleteId)
+
+
     suspend fun getAthlete(
         context: Context,
         athleteId: Long,
@@ -67,7 +76,8 @@ class GetAthleteUseCase @Inject constructor(
                 profilePictureMedium = data.profile_medium,
                 profilePictureLarge = data.profile,
                 lastName = data.lastname,
-                yearMonthsCached = previousCacheData ?: mapOf()
+                yearMonthsCached = previousCacheData ?: mapOf(),
+                gears = mapOf()
             )
         )
     }

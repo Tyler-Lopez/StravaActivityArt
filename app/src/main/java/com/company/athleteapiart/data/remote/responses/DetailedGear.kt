@@ -1,10 +1,12 @@
 package com.company.athleteapiart.data.remote.responses
 
-data class Gear(
+data class DetailedGear(
+    val brand_name: String,
+    val description: String,
     val distance: Int,
+    val frame_type: Int,
     val id: String,
-    val name: String,
-
+    val model_name: String,
     val primary: Boolean,
     val resource_state: Int
 )

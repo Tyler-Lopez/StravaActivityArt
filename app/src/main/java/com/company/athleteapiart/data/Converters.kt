@@ -19,6 +19,25 @@ class Converters {
     }
 
     @TypeConverter
+    fun fromGearsCached(gears: Map<String, String>): String {
+        return buildString {
+            gears.forEach {
+                append(it.key).append(GEAR_ID_DELIMITER).append(it.value).append(GEAR_DELIMITER)
+            }
+        }
+    }
+
+    @TypeConverter
+    fun toGearsCached(raw: String): Map<String, String> {
+        val toReturn = mutableMapOf<String, String>()
+        raw.split(GEAR_DELIMITER).filter { it.isNotEmpty() }.forEach {
+            val gearArr = it.split(GEAR_ID_DELIMITER)
+            toReturn[gearArr[0]] = gearArr[1]
+        }
+        return toReturn
+    }
+
+    @TypeConverter
     fun toYearsMonthCached(raw: String): Map<Int, Int> {
         println("HERE $raw")
         val yearsArr =
@@ -39,12 +58,13 @@ class Converters {
             toReturn[year.toInt()] = monthsRead
         }
         println("HERE WE ARE RETURNING ${toReturn.size} has that size $toReturn")
-       return toReturn
+        return toReturn
     }
 
     companion object {
         private const val YEAR_DELIMITER = ':'
         private const val MONTH_DELIMITER = '-'
-
+        private const val GEAR_ID_DELIMITER = '‽'
+        private const val GEAR_DELIMITER = '█'
     }
 }

@@ -25,6 +25,7 @@ import com.company.athleteapiart.presentation.ui.theme.Lato
 @Composable
 fun FilterTypeScreen(
     athleteId: Long,
+    accessToken: String,
     yearMonths: Array<Pair<Int, Int>>,
     navController: NavHostController,
     viewModel: FilterTypeViewModel = hiltViewModel()
@@ -94,7 +95,7 @@ fun FilterTypeScreen(
                         onClick = {
                             navController.navigate(
                                 route = viewModel.getNavScreen().withArgs(
-                                    athleteId.toString(), viewModel.yearMonthsToNavArg(yearMonths),
+                                    athleteId.toString(), accessToken, viewModel.yearMonthsToNavArg(yearMonths),
                                     optionalArgs = arrayOf(
                                         "types" to viewModel.selectedTypesToNavArg()
                                     )

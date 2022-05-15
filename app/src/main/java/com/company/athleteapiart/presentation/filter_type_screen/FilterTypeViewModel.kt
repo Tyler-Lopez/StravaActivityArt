@@ -47,8 +47,6 @@ class FilterTypeViewModel @Inject constructor(
     private val defaultSelected = true
 
     // Keep track of what has occurred
-    private var filterByGear = false
-    private var filterByDistance = false
     private lateinit var flatMappedActivities: List<ActivityEntity>
 
     fun loadActivities(

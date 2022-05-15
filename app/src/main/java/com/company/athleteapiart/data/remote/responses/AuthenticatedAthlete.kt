@@ -3,7 +3,7 @@ package com.company.athleteapiart.data.remote.responses
 data class AuthenticatedAthlete(
     val athlete_type: Int,
     val badge_type_id: Int,
-    val bikes: List<Bike>,
+    val bikes: List<Bike>?,
     val city: String,
     val clubs: List<Any>,
     val country: String,
@@ -24,7 +24,7 @@ data class AuthenticatedAthlete(
     val profile_medium: String,
     val resource_state: Int,
     val sex: String,
-    val shoes: List<Shoe>,
+    val shoes: List<Shoe>?,
     val state: String,
     val updated_at: String,
     val username: String,

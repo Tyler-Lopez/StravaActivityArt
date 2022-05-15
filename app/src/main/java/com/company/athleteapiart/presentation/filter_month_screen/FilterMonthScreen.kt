@@ -22,6 +22,7 @@ import com.company.athleteapiart.presentation.ui.theme.Lato
 @Composable
 fun FilterMonthScreen(
     athleteId: Long,
+    accessToken: String,
     years: Array<Int>,
     navController: NavHostController,
     viewModel: FilterMonthViewModel = hiltViewModel()
@@ -97,6 +98,7 @@ fun FilterMonthScreen(
                                 navController.navigate(
                                     Screen.FilterType.withArgs(
                                         athleteId.toString(),
+                                        accessToken,
                                         viewModel.selectedMonthYearsNavArgs
                                     )
                                 )

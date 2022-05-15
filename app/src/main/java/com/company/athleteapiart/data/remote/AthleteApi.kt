@@ -1,9 +1,6 @@
 package com.company.athleteapiart.data.remote
 
-import com.company.athleteapiart.data.remote.responses.Activities
-import com.company.athleteapiart.data.remote.responses.ActivityDetailed
-import com.company.athleteapiart.data.remote.responses.AuthenticatedAthlete
-import com.company.athleteapiart.data.remote.responses.Bearer
+import com.company.athleteapiart.data.remote.responses.*
 import retrofit2.http.*
 
 interface AthleteApi {
@@ -39,6 +36,11 @@ interface AthleteApi {
         @Header("Authorization") authHeader: String
     ): AuthenticatedAthlete
 
+    @GET("api/v3/gear/{id}?")
+    suspend fun getGearById(
+        @Path("id") id: String,
+        @Header("Authorization") authHeader: String
+    ): DetailedGear
 
     @GET("api/v3/activities/{id}?")
     suspend fun getActivityDetailed(

@@ -102,6 +102,7 @@ fun TimeSelectScreen(
                             navController.navigate(
                                 Screen.FilterMonth.withArgs(
                                     athleteId.toString(),
+                                    accessToken,
                                     viewModel.selectedYearsNavArgs()
                                 )
                             )
