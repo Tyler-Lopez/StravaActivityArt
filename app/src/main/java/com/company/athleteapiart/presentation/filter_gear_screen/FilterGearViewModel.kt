@@ -12,6 +12,7 @@ import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.domain.use_case.GearUseCases
 import com.company.athleteapiart.util.Constants
+import com.company.athleteapiart.util.NavigationUtils
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.ScreenState
 import com.company.athleteapiart.util.ScreenState.*
@@ -210,26 +211,6 @@ class FilterGearViewModel @Inject constructor(
         }
     }
 
-    fun yearMonthsToNavArg(yearMonths: Array<Pair<Int, Int>>) = buildString {
-        yearMonths.forEach {
-            append(it.first).append(it.second)
-                .append(Constants.NAV_DELIMITER)
-        }
-    }
-
-    fun selectedTypesToNavArg(activityTypes: Array<String>? = null) = buildString {
-        activityTypes?.forEach {
-            append(it).append(Constants.NAV_DELIMITER)
-        }
-    }
-
-    fun selectedGearsToNavArg() = buildString {
-        _rows.forEachIndexed { index, map ->
-            if (_selected[index])
-                append(map[columnGear]).append(Constants.NAV_DELIMITER)
-        }
-    }
-
     // Function converts rows from "gear" to gearId to "gear" to gearName
     fun convertRows() =
         _rows.let { rows ->
@@ -244,4 +225,12 @@ class FilterGearViewModel @Inject constructor(
             }
             toReturn
         }
+
+    // NAVIGATION ARGS
+    fun gearsNavArgs() = NavigationUtils.gearsNavArgs(
+        _rows.filterIndexed { index, _ -> _selected[index] }.map { it[columnGear] }.toTypedArray()
+    )
+    fun activityTypesNavArgs(types: Array<String>?) = NavigationUtils.activityTypesNavArgs(types)
+    fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
+        NavigationUtils.yearMonthsNavArgs(yearMonths)
 }

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
+import com.company.athleteapiart.util.Constants
+import com.company.athleteapiart.util.NavigationUtils
 import com.company.athleteapiart.util.ScreenState
 import com.company.athleteapiart.util.ScreenState.*
 import com.company.athleteapiart.util.meterToMiles
@@ -94,4 +96,12 @@ class FilterDistanceViewModel @Inject constructor(
             it in _selectedRange.value
         }.size
     }
+
+    // NAVIGATION ARGS
+    fun distancesNavArgs() = NavigationUtils.distanceNavArgs(_selectedRange.value)
+    fun activityTypesNavArgs(types: Array<String>?) = NavigationUtils.activityTypesNavArgs(types)
+    fun gearsNavArgs(gears: Array<String?>?) = NavigationUtils.gearsNavArgs(gears)
+    fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
+        NavigationUtils.yearMonthsNavArgs(yearMonths)
+
 }

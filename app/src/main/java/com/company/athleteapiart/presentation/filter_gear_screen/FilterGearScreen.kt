@@ -98,10 +98,10 @@ fun FilterGearScreen(
                         onClick = {
                             navController.navigate(
                                 route = viewModel.getNavScreen().withArgs(
-                                    athleteId.toString(), viewModel.yearMonthsToNavArg(yearMonths),
+                                    athleteId.toString(), viewModel.yearMonthsNavArgs(yearMonths),
                                     optionalArgs = arrayOf(
-                                        "types" to viewModel.selectedTypesToNavArg(activityTypes),
-                                        "gears" to viewModel.selectedGearsToNavArg()
+                                        "types" to viewModel.activityTypesNavArgs(activityTypes),
+                                        "gears" to viewModel.gearsNavArgs()
                                     )
                                 )
                             )
