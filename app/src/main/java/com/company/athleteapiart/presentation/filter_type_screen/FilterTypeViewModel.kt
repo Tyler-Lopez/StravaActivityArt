@@ -10,6 +10,7 @@ import com.company.athleteapiart.Screen
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.util.Constants
+import com.company.athleteapiart.util.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -137,17 +138,12 @@ class FilterTypeViewModel @Inject constructor(
         }
     }
 
-    fun yearMonthsToNavArg(yearMonths: Array<Pair<Int, Int>>) = buildString {
-        yearMonths.forEach {
-            append(it.first).append(it.second)
-                .append(Constants.NAV_DELIMITER)
-        }
-    }
-
-    fun selectedTypesToNavArg() = buildString {
-        _rows.forEachIndexed { index, map ->
-            if (_selectedTypes[index])
-                append(map[columnType]).append(Constants.NAV_DELIMITER)
-        }
-    }
+    // NAVIGATION ARGS
+    fun activityTypesNavArgs() = NavigationUtils.activityTypesNavArgs(
+        _rows.filterIndexed { index, _ -> _selectedTypes[index] }
+            .map { it[columnType]!! }
+            .toTypedArray()
+    )
+    fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
+        NavigationUtils.yearMonthsNavArgs(yearMonths)
 }

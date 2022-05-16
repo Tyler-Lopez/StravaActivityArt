@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
+import com.company.athleteapiart.presentation.common.ActivitiesCountComposable
 import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.common.Table
 import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreenState.*
@@ -123,12 +124,7 @@ fun TimeSelectScreen(
                             )
                         }
                     }
-                    Text(
-                        text = "$selectedActivitiesCount SELECTED ACTIVITIES",
-                        fontFamily = Lato,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(8.dp)
-                    )
+                    ActivitiesCountComposable(count = selectedActivitiesCount)
 
                     // If there is an error, allow user to try to load activities again
                     if (screenState == ERROR) {

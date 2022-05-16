@@ -31,7 +31,7 @@ fun FilterMonthScreen(
     val screenState by remember { viewModel.filterMonthScreenState }
     val context = LocalContext.current
 
-    val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
+    val selectedActivitiesCount by remember { viewModel.selectedCount }
 
     Column(
         modifier = Modifier
@@ -79,7 +79,7 @@ fun FilterMonthScreen(
                     onSelectIndex = {
                         viewModel.updateSelectedActivities(it)
                     },
-                    selectionList = viewModel.selectedActivities
+                    selectionList = viewModel.selected
                 )
 
 
@@ -93,16 +93,13 @@ fun FilterMonthScreen(
                 ) {
                     Button(
                         onClick = {
-                         //   if (viewModel.mustFilterActivityType()) {
-                                println("HERE ${viewModel.selectedMonthYearsNavArgs}")
                                 navController.navigate(
                                     Screen.FilterType.withArgs(
                                         athleteId.toString(),
                                         accessToken,
-                                        viewModel.selectedMonthYearsNavArgs
+                                        viewModel.yearMonthsNavArgs()
                                     )
                                 )
-                          //  }
                         }, modifier = Modifier
                             .fillMaxWidth()
                     ) {
