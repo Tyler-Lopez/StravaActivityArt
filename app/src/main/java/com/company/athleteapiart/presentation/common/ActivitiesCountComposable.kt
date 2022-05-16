@@ -27,12 +27,12 @@ fun ActivitiesCountComposable(
             fontFamily = Lato,
             fontWeight = FontWeight.Bold,
             color = StravaOrange,
-            fontSize = 24.sp
+            fontSize = 28.sp
         )
         Text(
-            text = "ACTIVITIES SELECTED",
+            text = "Activities Selected",
             fontFamily = Lato,
-            fontSize = 20.sp
+            fontSize = 24.sp
         )
     }
 }
