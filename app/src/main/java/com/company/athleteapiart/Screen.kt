@@ -3,10 +3,10 @@ package com.company.athleteapiart
 sealed class Screen(
     val route: String
 ) {
-    object TimeSelect : Screen("TimeSelect")
     object Login : Screen("Login")
     object Welcome : Screen("Welcome")
     object About : Screen("About")
+    object FilterYear : Screen("FilterYear")
     object FilterMonth : Screen("FilterMonth")
     object FilterType : Screen("FilterType")
     object FilterGear : Screen("FilterGear")

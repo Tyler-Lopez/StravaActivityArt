@@ -1,4 +1,4 @@
-package com.company.athleteapiart.presentation.time_select_screen
+package com.company.athleteapiart.presentation.filter_year_screen
 
 import android.content.Context
 import androidx.compose.runtime.State
@@ -11,7 +11,7 @@ import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.Resource.*
-import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
+import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreenState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

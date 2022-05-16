@@ -29,13 +29,12 @@ fun FilterDistanceScreen(
     gears: Array<String?>? = null, // If null do not filter, if string is null then that means null gearId is included
     viewModel: FilterDistanceViewModel = hiltViewModel()
 ) {
-    println("Loaded distance types are $activityTypes gears are ${gears?.joinToString { "$it " }}")
+
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
     val range by remember { viewModel.distanceRange }
     val selected by remember { viewModel.selectedRange }
     val selectedCount by remember { viewModel.selectedCount }
-
 
     Column(
         modifier = Modifier
@@ -76,7 +75,33 @@ fun FilterDistanceScreen(
                     )
                 }
 
-                Text(text = "${"%.1f".format(selected.start)} to ${"%.1f".format(selected.endInclusive)}", fontSize = 28.sp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "%.1f".format(selected.start),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Lato
+                    )
+                    Text(
+                        text = "to",
+                        fontSize = 24.sp,
+                        fontFamily = Lato
+                    )
+                    Text(
+                        text = "%.1f".format(selected.endInclusive),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Lato
+                    )
+                    Text(
+                        text = "miles",
+                        fontSize = 24.sp,
+                        fontFamily = Lato
+                    )
+                }
                 RangeSlider(
                     values = selected,
                     valueRange = range,

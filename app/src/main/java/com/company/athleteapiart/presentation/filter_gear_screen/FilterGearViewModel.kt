@@ -1,7 +1,6 @@
 package com.company.athleteapiart.presentation.filter_gear_screen
 
 import android.content.Context
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,8 +11,6 @@ import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.domain.use_case.GearUseCases
-import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreenState
-import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.ScreenState

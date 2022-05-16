@@ -1,4 +1,4 @@
-package com.company.athleteapiart.presentation.time_select_screen
+package com.company.athleteapiart.presentation.filter_year_screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -15,8 +15,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
+import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.common.Table
-import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreenState.*
+import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
 
 /*
@@ -96,6 +97,8 @@ fun TimeSelectScreen(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    if (screenState == LOADING)
+                        LoadingComposable()
                     // Button will only be shown if we can continue or try again
                     Button(
                         onClick = {

@@ -17,7 +17,7 @@ import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScr
 import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
-import com.company.athleteapiart.presentation.time_select_screen.TimeSelectScreen
+import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreen
 import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                     // Simple screen showing information about application
                     composable(route = Screen.About.route) { AboutScreen() }
                     composable(
-                        route = Screen.TimeSelect.route + "/{athleteId}/{accessToken}",
+                        route = Screen.FilterYear.route + "/{athleteId}/{accessToken}",
                         arguments = listOf(
                             navArgument("athleteId") {
                                 type = NavType.LongType

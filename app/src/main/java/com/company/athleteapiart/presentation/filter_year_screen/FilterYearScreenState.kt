@@ -1,4 +1,4 @@
-package com.company.athleteapiart.presentation.time_select_screen
+package com.company.athleteapiart.presentation.filter_year_screen
 
 enum class TimeSelectScreenState {
     LAUNCH,
