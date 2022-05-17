@@ -33,7 +33,10 @@ fun FilterMonthScreen(
                 years = years
             )
         }
-        LOADING, STANDBY -> {
+        LOADING -> {
+
+        }
+        STANDBY -> {
             BoxWithConstraints(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

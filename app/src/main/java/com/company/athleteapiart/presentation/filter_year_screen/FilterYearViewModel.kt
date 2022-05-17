@@ -139,7 +139,7 @@ class TimeSelectViewModel @Inject constructor(
                                             year to 12
                                         else
                                             year to currentMonth
-                                    } else year to -1
+                                    } else year to 12 // This was changed from -1... we were calling for every single year and shouldn't have been
                                 }
                                 is Error -> {
                                     year to -1

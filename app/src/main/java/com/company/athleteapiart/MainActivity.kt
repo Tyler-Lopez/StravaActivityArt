@@ -5,7 +5,9 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.tween
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -44,7 +46,12 @@ class MainActivity : ComponentActivity() {
             AthleteApiArtTheme {
 
                 val navController = rememberAnimatedNavController()
-                AnimatedNavHost(navController, startDestination = Screen.Login.route) {
+                AnimatedNavHost(
+                    navController = navController,
+                    startDestination = Screen.Login.route,
+                    enterTransition = { slideIntoContainer(animationSpec = tween(1500), towards = AnimatedContentScope.SlideDirection.Left) }, // 1
+                    exitTransition = { slideOutOfContainer(animationSpec = tween(1500), towards = AnimatedContentScope.SlideDirection.Right) } // 2
+                ) {
                     // Authenticating the user with Strava and retrieving access token
                     composable(Screen.Login.route) {
                         LoginScreen(
