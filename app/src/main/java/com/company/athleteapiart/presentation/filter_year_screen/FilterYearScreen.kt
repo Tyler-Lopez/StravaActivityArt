@@ -21,7 +21,7 @@ import com.company.athleteapiart.presentation.ui.theme.Lato
 
 /*
 
- TimeSelectScreen
+ FilterYearScreen
 
  This screen takes the athleteId and accessToken to load all activities from the API into ROOM
  Upon loading all activities, the user may choose which years they would like to take into the next
@@ -31,7 +31,7 @@ import com.company.athleteapiart.presentation.ui.theme.Lato
  */
 
 @Composable
-fun TimeSelectScreen(
+fun FilterYearScreen(
     athleteId: Long,
     accessToken: String,
     navController: NavHostController,
