@@ -51,7 +51,6 @@ class Table {
                 val tableWidth: Float = with(LocalDensity.current) { maxWidth.toPx() }
 
                 Column(
-                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 ) {
@@ -73,6 +72,7 @@ class Table {
                             Text(
                                 text = column.first.uppercase(),
                                 modifier = Modifier.weight(1f),
+                                fontSize = 22.sp,
                                 textAlign = TextAlign.Center,
                                 color = Color.Gray
                             )

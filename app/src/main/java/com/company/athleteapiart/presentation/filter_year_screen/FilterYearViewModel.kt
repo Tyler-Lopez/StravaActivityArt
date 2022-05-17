@@ -41,7 +41,7 @@ class TimeSelectViewModel @Inject constructor(
     // Rows & Columns
     private val _rows = mutableStateListOf<Map<String, String>>()
     private val columnYear = "YEAR"
-    private val columnNoActivities = "NO. ACTIVITIES"
+    private val columnNoActivities = "#"
     val rows: List<Map<String, String>> = _rows
     val columns = arrayOf(Pair(columnYear, true), Pair(columnNoActivities, false))
 

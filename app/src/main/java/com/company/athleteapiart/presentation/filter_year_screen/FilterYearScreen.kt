@@ -15,9 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
-import com.company.athleteapiart.presentation.common.ActivitiesCountComposable
-import com.company.athleteapiart.presentation.common.LoadingComposable
-import com.company.athleteapiart.presentation.common.Table
+import com.company.athleteapiart.presentation.common.*
 import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
 
@@ -44,87 +42,53 @@ fun TimeSelectScreen(
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(64.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .weight(0.2f)
-            .padding(8.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Which years would you like to visualize?",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = Lato,
-                textAlign = TextAlign.Center
+    when (screenState) {
+        LAUNCH -> SideEffect {
+            viewModel.loadActivities(
+                context = context,
+                athleteId = athleteId,
+                accessToken = accessToken
             )
         }
-        Table.TableComposable(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.6f)
-                .padding(8.dp),
-            columns = viewModel.columns,
-            rows = viewModel.rows,
-            onSelectIndex = {
-                viewModel.updateSelectedActivities(it)
-            },
-            selectionList = viewModel.selectedActivities
-        )
+        LOADING, STANDBY, ERROR -> {
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
 
-
-        when (screenState) {
-            LAUNCH -> SideEffect {
-                viewModel.loadActivities(
-                    context = context,
-                    athleteId = athleteId,
-                    accessToken = accessToken
-                )
-            }
-            LOADING, STANDBY, ERROR -> {
+                val maxHeight = this.maxHeight
+                val maxWidth = this.maxWidth
 
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.2f)
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    HeaderWithEmphasisComposable(emphasized = "years")
+                    Table.TableComposable(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(0.dp, maxHeight * 0.6f),
+                        columns = viewModel.columns,
+                        rows = viewModel.rows,
+                        onSelectIndex = {
+                            viewModel.updateSelectedActivities(it)
+                        },
+                        selectionList = viewModel.selectedActivities
+                    )
+
                     if (screenState == LOADING)
                         LoadingComposable()
-                    // Button will only be shown if we can continue or try again
-                    Button(
-                        onClick = {
-                            navController.navigate(
-                                Screen.FilterMonth.withArgs(
-                                    athleteId.toString(),
-                                    accessToken,
-                                    viewModel.selectedYearsNavArgs()
-                                )
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Continue",
-                                fontFamily = Lato,
-                                fontSize = 28.sp,
-                            )
-                        }
-                    }
                     ActivitiesCountComposable(count = selectedActivitiesCount)
+                    ButtonWithCountComposable(activitiesEmpty = selectedActivitiesCount == 0) {
+                        navController.navigate(
+                            Screen.FilterMonth.withArgs(
+                                athleteId.toString(),
+                                accessToken,
+                                viewModel.selectedYearsNavArgs()
+                            )
+                        )
+                    }
 
                     // If there is an error, allow user to try to load activities again
                     if (screenState == ERROR) {

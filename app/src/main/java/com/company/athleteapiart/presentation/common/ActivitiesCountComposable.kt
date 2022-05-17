@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.common
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,22 +18,29 @@ fun ActivitiesCountComposable(
     count: Int,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Column(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "%,d".format(count),
-            fontFamily = Lato,
-            fontWeight = FontWeight.Bold,
-            color = StravaOrange,
-            fontSize = 28.sp
-        )
-        Text(
-            text = "Activities Selected",
-            fontFamily = Lato,
-            fontSize = 24.sp
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "%,d".format(count),
+                fontFamily = Lato,
+                fontWeight = FontWeight.Bold,
+                color = StravaOrange,
+                fontSize = 28.sp
+            )
+            Text(
+                text = "Activities Selected",
+                fontFamily = Lato,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
     }
 }
