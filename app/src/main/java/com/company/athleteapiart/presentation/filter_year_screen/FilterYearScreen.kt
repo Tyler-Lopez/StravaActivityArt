@@ -6,18 +6,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.*
 import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreenState.*
-import com.company.athleteapiart.presentation.ui.theme.Lato
 
 /*
 

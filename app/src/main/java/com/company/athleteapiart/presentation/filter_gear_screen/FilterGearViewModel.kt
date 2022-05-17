@@ -11,7 +11,6 @@ import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.domain.use_case.AthleteUseCases
 import com.company.athleteapiart.domain.use_case.GearUseCases
-import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.NavigationUtils
 import com.company.athleteapiart.util.Resource
 import com.company.athleteapiart.util.ScreenState
