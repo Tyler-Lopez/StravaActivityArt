@@ -79,6 +79,7 @@ fun FilterYearScreen(
 
                     if (screenState == LOADING)
                         LoadingComposable()
+
                     ActivitiesCountComposable(count = selectedActivitiesCount)
                     ButtonWithCountComposable(activitiesEmpty = selectedActivitiesCount == 0) {
                         navController.navigate(
