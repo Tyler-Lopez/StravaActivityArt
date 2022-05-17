@@ -53,18 +53,22 @@ fun WelcomeScreen(
                 accessToken = accessToken
             )
         }
-        LOADING -> Text("Loading")
+        LOADING -> {
+            //   Text("Loading")
+        }
         STANDBY -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
+
+                val maxHeight = this.maxHeight
+                val maxWidth = this.maxWidth
+
                 Column(
-                    modifier = Modifier.width(360.dp),
+                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
@@ -74,63 +78,56 @@ fun WelcomeScreen(
                             .clip(CircleShape)
                             .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
                     )
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
 
+                    Text(
+                        text = "Welcome to Activity Art",
+                        fontSize = 20.sp,
+                        fontFamily = Lato,
+                        fontStyle = FontStyle.Italic
+                    )
+                    Text(
+                        text = viewModel.athleteName.uppercase(),
+                        fontFamily = Lato,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                    // Navigate user to screen where they may select which years of activities to visualize
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            navController.navigate(
+                                Screen.FilterYear.withArgs(
+                                    athleteId.toString(),
+                                    accessToken
+                                )
+                            )
+                        }) {
                         Text(
-                            text = "Welcome to Activity Art",
-                            fontSize = 20.sp,
+                            text = "Make Activity Art",
                             fontFamily = Lato,
-                            fontStyle = FontStyle.Italic
-                        )
-                        Text(
-                            text = viewModel.athleteName.uppercase(),
-                            fontFamily = Lato,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
                         )
                     }
-                    Column {
-
-                        // Navigate user to screen where they may select which years of activities to visualize
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                navController.navigate(
-                                    Screen.FilterYear.withArgs(
-                                        athleteId.toString(),
-                                        accessToken
-                                    )
-                                )
-                            }) {
-                            Text(
-                                text = "Make Activity Art",
-                                fontFamily = Lato,
-                                fontSize = 24.sp
-                            )
-                        }
-                        // Navigates user to a simple screen showing information about app & author
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { navController.navigate(route = Screen.About.route) }) {
-                            Text(
-                                text = "About",
-                                fontFamily = Lato,
-                                fontSize = 24.sp
-                            )
-                        }
-                        // De-authenticates the user and clears OAuth2 database entry
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { viewModel.logout(context = context) }) {
-                            Text(
-                                text = "Logout",
-                                fontFamily = Lato,
-                                fontSize = 24.sp
-                            )
-                        }
+                    // Navigates user to a simple screen showing information about app & author
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { navController.navigate(route = Screen.About.route) }) {
+                        Text(
+                            text = "About",
+                            fontFamily = Lato,
+                            fontSize = 24.sp
+                        )
+                    }
+                    // De-authenticates the user and clears OAuth2 database entry
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { viewModel.logout(context = context) }) {
+                        Text(
+                            text = "Logout",
+                            fontFamily = Lato,
+                            fontSize = 24.sp
+                        )
                     }
                 }
             }

@@ -53,20 +53,7 @@ fun ButtonWithCountComposable(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Button(
-            onClick = { if (!activitiesEmpty) onClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .alpha(if (activitiesEmpty) 0.5f else 1f)
-        ) {
-            Text(
-                text = "Continue",
-                fontFamily = Lato,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
+        ButtonComposable(text = "Continue", enabled = !activitiesEmpty) { onClick() }
     }
 
 }
