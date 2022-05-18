@@ -49,7 +49,7 @@ class FilterGearViewModel @Inject constructor(
     // Rows & Columns
     private val _rows = mutableStateListOf<Map<String, String?>>()
     private val columnGear = "GEAR"
-    private val columnNoActivities = "NO. ACTIVITIES"
+    private val columnNoActivities = "#"
     val rows: List<Map<String, String?>> = _rows
     val columns = arrayOf(Pair(columnGear, true), Pair(columnNoActivities, false))
 

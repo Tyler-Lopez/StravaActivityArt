@@ -74,7 +74,8 @@ class Table {
                                 modifier = Modifier.weight(1f),
                                 fontSize = 22.sp,
                                 textAlign = TextAlign.Center,
-                                color = Color.Gray
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Bold
                             )
                         // If we should show scrollbar, add a spacer for it of size of scrollbar
                         if (shouldShowScroll(scrollMax))

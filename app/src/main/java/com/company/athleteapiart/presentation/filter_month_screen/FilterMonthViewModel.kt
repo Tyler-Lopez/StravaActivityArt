@@ -40,7 +40,7 @@ class FilterMonthViewModel @Inject constructor(
     private val _rows = mutableListOf<Map<String, String>>()
     private val columnMonth = "MONTH"
     private val columnYear = "YEAR"
-    private val columnNoActivities = "NO. ACTIVITIES"
+    private val columnNoActivities = "#"
     val rows: List<Map<String, String>> = _rows
     val columns =
         arrayOf(Pair(columnMonth, true), Pair(columnYear, true), Pair(columnNoActivities, false))
