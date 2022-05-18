@@ -1,13 +1,14 @@
 package com.company.athleteapiart.presentation.filter_distance_screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.unit.Dp
@@ -21,38 +22,43 @@ fun DistanceGraphComposable(
     distancesHeightMap: Map<Int, Float>,
     maxHeight: Dp
 ) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .heightIn(156.dp, maxHeight * 0.75f)
+                .drawBehind {
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(156.dp, maxHeight * 0.75f)
-            .drawBehind {
+                    val size = this.size
 
-                val size = this.size
+                    val barWidth = size.width / (distanceRange.last - distanceRange.first)
 
-                val barWidth = size.width / (distanceRange.last - distanceRange.first)
+                    var i = 0f
 
-                var i = 0f
+                    for (mile in distanceRange) {
 
-                for (mile in distanceRange) {
+                        val barHeight =
+                            size.height * (distancesHeightMap[mile] ?: 0f)
 
-                    val barHeight =
-                        size.height * (distancesHeightMap[mile] ?: 0f)
-
-                    val offset = Offset(
-                        x = (barWidth * i) - (barWidth / 2f),
-                        y = size.height - barHeight
-                    )
-
-                    drawRect(
-                        color = if (mile in selectedMiles) StravaOrange else Gray,
-                        topLeft = offset,
-                        size = Size(
-                            barWidth,
-                            barHeight
+                        val offset = Offset(
+                            x = (barWidth * i) - (barWidth / 2f),
+                            y = size.height - barHeight
                         )
-                    )
-                    i++
-                }
-            })
+
+                        drawRect(
+                            color = if (mile in selectedMiles) StravaOrange else Gray,
+                            topLeft = offset,
+                            size = Size(
+                                barWidth,
+                                barHeight
+                            )
+                        )
+                        i++
+                    }
+                })
+        Box(modifier = Modifier.fillMaxWidth().height(5.dp).background(Color.Gray))
+    }
 }
