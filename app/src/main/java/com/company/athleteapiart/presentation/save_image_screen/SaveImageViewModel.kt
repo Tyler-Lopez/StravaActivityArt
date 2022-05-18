@@ -23,10 +23,11 @@ class SaveImageViewModel @Inject constructor(
     var imageSavedAt = mutableStateOf("")
 
     fun startSave(context: Context) {
-        /*
+
         isLoading.value = true
         viewModelScope.launch {
             delay(2000)
+            /*
             saveImage(
                 bitmap = activitiesVisualizeCanvas(
                     maxWidth = 3420,
@@ -36,10 +37,12 @@ class SaveImageViewModel @Inject constructor(
                 context = context,
                 folderName = Constants.IMAGE_DIRECTORY
             )
+
+             */
             isLoading.value = false
             endReached.value = true
         }
 
-         */
+
     }
 }

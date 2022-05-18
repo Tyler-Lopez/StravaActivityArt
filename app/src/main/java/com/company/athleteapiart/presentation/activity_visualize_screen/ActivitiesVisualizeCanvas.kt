@@ -18,7 +18,7 @@ fun activitiesVisualizeCanvas(
 
     val format = AthleteActivities.formatting
     val conditions = format.value.conditions
-    val background = format.value.backgroundColor
+ //   val background = format.value.backgroundColor
     val actColor = format.value.activityColor
 
     // Create a bitmap which is a scaled representation of a 3420x4320 image
@@ -38,6 +38,7 @@ fun activitiesVisualizeCanvas(
     // Create canvas to draw on
     val canvas = Canvas(bitmap)
     // Draw canvas background
+    /*
     val backgroundColor = Paint()
     backgroundColor.color = Color
         .rgb(background.red, background.green, background.blue)
@@ -51,12 +52,18 @@ fun activitiesVisualizeCanvas(
         backgroundColor
     )
 
+     */
 
-    val x = maxWidth.times(0.8f)
-    val y = maxHeight.times(if (true) 0.75f else 0.8f)
 
-    val marginX = (maxWidth.times(0.2f)).div(2f)
-    val marginY = (maxHeight.times(0.2f)).div(2f)
+    val x = maxWidth.toFloat()
+    val y = maxHeight.toFloat()
+    val marginX = 0f
+    val marginY = 0f
+   // val x = maxWidth.times(0.8f)
+  //  val y = maxHeight.times(if (true) 0.75f else 0.8f)
+
+ //   val marginX = (maxWidth.times(0.2f)).div(2f)
+  //  val marginY = (maxHeight.times(0.2f)).div(2f)
 
     // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
     val ratio = x / y
@@ -201,6 +208,8 @@ fun activitiesVisualizeCanvas(
         canvas.drawPath(path, pointsPaint)
     }
 
+    /*
+
     // Place NAME in left side of screen
     val textSize = min(x, y) * 0.05f
     val textPaint = Paint()
@@ -229,6 +238,8 @@ fun activitiesVisualizeCanvas(
         maxHeight.times(0.97f) - marginY + textSize,
         textPaint
     )
+
+     */
 
     return bitmap
 }
