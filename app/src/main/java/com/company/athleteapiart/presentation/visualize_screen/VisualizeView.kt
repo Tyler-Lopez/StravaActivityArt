@@ -8,6 +8,7 @@ import android.view.ViewTreeObserver
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.ComposeView
 import com.company.athleteapiart.util.GraphicUtils
 
@@ -15,13 +16,13 @@ import com.company.athleteapiart.util.GraphicUtils
 @SuppressLint("ViewConstructor")
 class VisualizeView(
     ctx: Context,
+    height: Int,
+    width: Int,
     onBitmapCreated: (Bitmap) -> Unit,
     content: @Composable () -> Unit
 ): LinearLayoutCompat(ctx) {
 
     init {
-        val width = 600
-        val height = 670
 
         val view = ComposeView(ctx)
         view.visibility = View.GONE

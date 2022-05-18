@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.visualize_screen
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,14 @@ class VisualizeScreenViewModel @Inject constructor(
     // Activities
     private val _activities = mutableStateListOf<ActivityEntity>()
     val activities: List<ActivityEntity> = _activities
+
+    // Bitmap
+    private val _bitmap = mutableStateOf<Bitmap?>(null)
+    val bitmap: State<Bitmap?> = _bitmap
+
+    fun updateBitmap(bitmap: Bitmap) {
+        _bitmap.value = bitmap
+    }
 
     fun loadActivities(
         context: Context,
