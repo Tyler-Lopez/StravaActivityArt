@@ -104,6 +104,7 @@ class TimeSelectViewModel @Inject constructor(
                         )
                         println("Year: $year, LCM: $lastCachedMonth, Size: ${yearlyActivities.size}")
                         // Invoke API as needed
+                        // If lastCachedMonth != 12, we must cache
                         if (lastCachedMonth != 12) {
                             val response = getActivitiesUseCase
                                 .getActivitiesAfterMonthInYearFromApi(
@@ -145,18 +146,23 @@ class TimeSelectViewModel @Inject constructor(
                                     year to -1
                                 }
                             }
+                            // Otherwise if it is already cached
                         } else {
-                            _selectedActivities.add(defaultSelected)
-                            _rows.add(
-                                mapOf(
-                                    columnYear to "$year",
-                                    columnNoActivities to "${
-                                        yearlyActivities.filter {
-                                            it.activityYear == year && it.summaryPolyline != null
-                                        }.size
-                                    }"
+                            if (yearlyActivities.isNotEmpty()) {
+                                _selectedActivities.add(defaultSelected)
+                                _rows.add(
+                                    mapOf(
+                                        columnYear to "$year",
+                                        columnNoActivities to "${
+                                            yearlyActivities.filter {
+                                                it.activityYear == year && it.summaryPolyline != null
+                                            }.size
+                                        }"
+                                    )
                                 )
-                            )
+                            }
+                            // Return value of -1 so that it is filtered in the next logic check
+                            // This is not very great and messy so must refactor
                             year to -1
                         }
                     }

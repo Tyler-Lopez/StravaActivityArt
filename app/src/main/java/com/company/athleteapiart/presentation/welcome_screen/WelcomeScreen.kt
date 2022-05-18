@@ -5,20 +5,25 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.Screen
+import com.company.athleteapiart.presentation.common.ButtonComposable
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreenState.*
 import com.company.athleteapiart.presentation.ui.theme.Lato
 import com.company.athleteapiart.presentation.ui.theme.StravaOrange
@@ -66,68 +71,66 @@ fun WelcomeScreen(
                 val maxWidth = this.maxWidth
 
                 Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
+                    modifier = Modifier.widthIn(240.dp, maxWidth * 0.75f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(128.dp)
+                            .size(156.dp)
                             .clip(CircleShape)
                             .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
                     )
-
                     Text(
                         text = "Welcome to Activity Art",
-                        fontSize = 20.sp,
+                        fontSize = 24.sp,
                         fontFamily = Lato,
-                        fontStyle = FontStyle.Italic
+                        color = Color.DarkGray,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
                     )
-                    Text(
-                        text = viewModel.athleteName.uppercase(),
-                        fontFamily = Lato,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColor = Color.LightGray,
+                    ) {
+                        Text(
+                            text = viewModel.athleteName.uppercase(),
+                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            fontFamily = Lato,
+                            color = Color.DarkGray,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Black,
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
                     // Navigate user to screen where they may select which years of activities to visualize
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            navController.navigate(
-                                Screen.FilterYear.withArgs(
-                                    athleteId.toString(),
-                                    accessToken
-                                )
+                    ButtonComposable(
+                        text = "Make Art",
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        navController.navigate(
+                            Screen.FilterYear.withArgs(
+                                athleteId.toString(),
+                                accessToken
                             )
-                        }) {
-                        Text(
-                            text = "Make Activity Art",
-                            fontFamily = Lato,
-                            fontSize = 24.sp
                         )
                     }
                     // Navigates user to a simple screen showing information about app & author
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { navController.navigate(route = Screen.About.route) }) {
-                        Text(
-                            text = "About",
-                            fontFamily = Lato,
-                            fontSize = 24.sp
-                        )
+                    ButtonComposable(
+                        text = "About",
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        navController.navigate(route = Screen.About.route)
                     }
                     // De-authenticates the user and clears OAuth2 database entry
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { viewModel.logout(context = context) }) {
-                        Text(
-                            text = "Logout",
-                            fontFamily = Lato,
-                            fontSize = 24.sp
-                        )
+                    ButtonComposable(
+                        text = "Logout",
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        viewModel.logout(context = context)
                     }
                 }
             }

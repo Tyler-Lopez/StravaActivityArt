@@ -18,9 +18,9 @@ fun ButtonComposable(
     onClick: () -> Unit,
 ) {
     Button(
-        onClick = { if (!enabled) onClick() },
+        onClick = { if (enabled) onClick() },
         modifier = modifier
-            .alpha(if (enabled) 0.5f else 1f)
+            .alpha(if (!enabled) 0.5f else 1f)
     ) {
         Text(
             text = text,

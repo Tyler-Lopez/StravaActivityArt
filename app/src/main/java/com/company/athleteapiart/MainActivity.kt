@@ -6,9 +6,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.company.athleteapiart.presentation.about_screen.AboutScreen
@@ -44,205 +47,216 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AthleteApiArtTheme {
-
-                val navController = rememberAnimatedNavController()
-                AnimatedNavHost(
-                    navController = navController,
-                    startDestination = Screen.Login.route,
-                    enterTransition = { slideIntoContainer(animationSpec = tween(1500), towards = AnimatedContentScope.SlideDirection.Left) }, // 1
-                    exitTransition = { slideOutOfContainer(animationSpec = tween(1500), towards = AnimatedContentScope.SlideDirection.Right) } // 2
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Authenticating the user with Strava and retrieving access token
-                    composable(Screen.Login.route) {
-                        LoginScreen(
-                            // Use URI then set null
-                            uri = receivedFromUri.also { receivedFromUri = null },
-                            navController = navController,
-                            onLoginIntent = {
-                                // Send us to the screen to connect with Strava and
-                                // prevent going back to this activity after
-                                finish()
-                                startActivity(it)
-                            }
-                        )
-                    }
-                    composable(
-                        route = Screen.Welcome.route + "/{athleteId}/{accessToken}",
-                        arguments = listOf(
-                            navArgument("athleteId") {
-                                type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("accessToken") {
-                                type = NavType.StringType
-                                nullable = false
-                            }
-                        )
-                    ) { entry ->
-                        WelcomeScreen(
-                            athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
-                            navController = navController
-                        )
-                    }
-                    // Simple screen showing information about application
-                    composable(route = Screen.About.route) { AboutScreen() }
-                    composable(
-                        route = Screen.FilterYear.route + "/{athleteId}/{accessToken}",
-                        arguments = listOf(
-                            navArgument("athleteId") {
-                                type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("accessToken") {
-                                type = NavType.StringType
-                                nullable = false
-                            }
-                        )
-                    ) { entry ->
-                        FilterYearScreen(
-                            athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
-                            navController = navController
-                        )
-                    }
-                    composable(
-                        route = Screen.FilterMonth.route + "/{athleteId}/{accessToken}/{yearsRaw}",
-                        arguments = listOf(
-                            navArgument("athleteId") {
-                                type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("accessToken") {
-                                type = NavType.StringType
-                                nullable = false
-                            },
-                            navArgument("yearsRaw") {
-                                type = NavType.StringType
-                                nullable = false
-                            }
-                        )
-                    ) { entry ->
-                        val years = viewModel
-                            .parseYearsFromNav(entry.arguments?.getString("yearsRaw"))
 
-                        FilterMonthScreen(
-                            athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
-                            years = years,
-                            navController = navController
-                        )
-                    }
-                    composable(
-                        route = Screen.FilterType.route + "/{athleteId}/{accessToken}/{yearMonths}",
-                        arguments = listOf(
-                            navArgument("athleteId") {
-                                type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("accessToken") {
-                                type = NavType.StringType
-                                nullable = false
-                            },
-                            navArgument("yearMonths") {
-                                type = NavType.StringType
-                                nullable = false
-                            }
-                        )
-                    ) { entry ->
-                        val yearMonths = viewModel
-                            .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
+                    val navController = rememberAnimatedNavController()
+                    AnimatedNavHost(
+                        navController = navController,
+                        startDestination = Screen.Login.route,
+                        enterTransition = { fadeIn() },
+                        exitTransition = { fadeOut() },
+                        popEnterTransition = { fadeIn() },
+                        popExitTransition = { fadeOut() }
+                    ) {
+                        // Authenticating the user with Strava and retrieving access token
+                        composable(Screen.Login.route) {
+                            LoginScreen(
+                                // Use URI then set null
+                                uri = receivedFromUri.also { receivedFromUri = null },
+                                navController = navController,
+                                onLoginIntent = {
+                                    // Send us to the screen to connect with Strava and
+                                    // prevent going back to this activity after
+                                    finish()
+                                    startActivity(it)
+                                }
+                            )
+                        }
+                        composable(
+                            route = Screen.Welcome.route + "/{athleteId}/{accessToken}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) { entry ->
+                            WelcomeScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                navController = navController
+                            )
+                        }
+                        // Simple screen showing information about application
+                        composable(route = Screen.About.route) { AboutScreen() }
+                        composable(
+                            route = Screen.FilterYear.route + "/{athleteId}/{accessToken}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) { entry ->
+                            FilterYearScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                navController = navController
+                            )
+                        }
+                        composable(
+                            route = Screen.FilterMonth.route + "/{athleteId}/{accessToken}/{yearsRaw}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("yearsRaw") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) { entry ->
+                            val years = viewModel
+                                .parseYearsFromNav(entry.arguments?.getString("yearsRaw"))
 
-                        FilterTypeScreen(
-                            athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
-                            yearMonths = yearMonths,
-                            navController = navController
-                        )
-                    }
-                    composable(
-                        route = Screen.FilterGear.route + "/{athleteId}/{accessToken}/{yearMonths}?types={types}",
-                        arguments = listOf(
-                            navArgument("athleteId") {
-                                type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("accessToken") {
-                                type = NavType.StringType
-                                nullable = false
-                            },
-                            navArgument("yearMonths") {
-                                type = NavType.StringType
-                                nullable = false
-                            },
-                            navArgument("types") {
-                                type = NavType.StringType
-                                nullable =
-                                    true // NULLABLE, if null there is only 1 type - do not filter
-                            }
-                        )
-                    ) { entry ->
-                        val yearMonths = viewModel
-                            .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
-                        val activityTypesArg = entry.arguments?.getString("types")
-                        println("here activitytypes are $activityTypesArg in navigation")
-                        val activityTypes =
-                            if (activityTypesArg != null)
-                                viewModel.parseTypesFromNav(activityTypesArg)
-                            else null
+                            FilterMonthScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                years = years,
+                                navController = navController
+                            )
+                        }
+                        composable(
+                            route = Screen.FilterType.route + "/{athleteId}/{accessToken}/{yearMonths}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("yearMonths") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) { entry ->
+                            val yearMonths = viewModel
+                                .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
 
-                        FilterGearScreen(
-                            athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                            accessToken = entry.arguments?.getString("accessToken") ?: "null",
-                            yearMonths = yearMonths,
-                            navController = navController,
-                            activityTypes = activityTypes
-                        )
-                    }
-                    composable(
-                        route = Screen.FilterDistance.route + "/{athleteId}/{yearMonths}?types={types}&gears={gears}",
-                        arguments = listOf(
-                            navArgument("athleteId") {
-                                type = NavType.LongType
-                                nullable = false
-                            },
-                            navArgument("yearMonths") {
-                                type = NavType.StringType
-                                nullable = false
-                            },
-                            navArgument("types") {
-                                type = NavType.StringType
-                                nullable = true // NULLABLE, if null there is only 1 type - do not filter
-                            },
-                            navArgument("gears") {
-                                type = NavType.StringType
-                                nullable = true // NULLABLE, if null there is only 1 gear - do not filter
-                            }
-                        )
-                    ) { entry ->
-                        val yearMonths = viewModel
-                            .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
+                            FilterTypeScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                yearMonths = yearMonths,
+                                navController = navController
+                            )
+                        }
+                        composable(
+                            route = Screen.FilterGear.route + "/{athleteId}/{accessToken}/{yearMonths}?types={types}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("accessToken") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("yearMonths") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("types") {
+                                    type = NavType.StringType
+                                    nullable =
+                                        true // NULLABLE, if null there is only 1 type - do not filter
+                                }
+                            )
+                        ) { entry ->
+                            val yearMonths = viewModel
+                                .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
+                            val activityTypesArg = entry.arguments?.getString("types")
+                            println("here activitytypes are $activityTypesArg in navigation")
+                            val activityTypes =
+                                if (activityTypesArg != null)
+                                    viewModel.parseTypesFromNav(activityTypesArg)
+                                else null
 
-                        val activityTypesArg = entry.arguments?.getString("types")
-                        val activityTypes =
-                            if (activityTypesArg != null)
-                                viewModel.parseTypesFromNav(activityTypesArg)
-                            else null
-                        val gears = viewModel.parseGearsFromNav(entry.arguments?.getString("gears"))
+                            FilterGearScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                accessToken = entry.arguments?.getString("accessToken") ?: "null",
+                                yearMonths = yearMonths,
+                                navController = navController,
+                                activityTypes = activityTypes
+                            )
+                        }
+                        composable(
+                            route = Screen.FilterDistance.route + "/{athleteId}/{yearMonths}?types={types}&gears={gears}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("yearMonths") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("types") {
+                                    type = NavType.StringType
+                                    nullable =
+                                        true // NULLABLE, if null there is only 1 type - do not filter
+                                },
+                                navArgument("gears") {
+                                    type = NavType.StringType
+                                    nullable =
+                                        true // NULLABLE, if null there is only 1 gear - do not filter
+                                }
+                            )
+                        ) { entry ->
+                            val yearMonths = viewModel
+                                .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
 
-                        FilterDistanceScreen(
-                            athleteId = entry.arguments?.getLong("athleteId") ?: -1,
-                            yearMonths = yearMonths,
-                            navController = navController,
-                            activityTypes = activityTypes,
-                            gears = gears
-                        )
-                    }
-                    composable(Screen.VisualizeActivities.route) {
-                        ActivitiesScreen(navController = navController)
-                    }
-                    composable(Screen.SaveImage.route) {
-                        SaveImageScreen(navController = navController)
+                            val activityTypesArg = entry.arguments?.getString("types")
+                            val activityTypes =
+                                if (activityTypesArg != null)
+                                    viewModel.parseTypesFromNav(activityTypesArg)
+                                else null
+                            val gears =
+                                viewModel.parseGearsFromNav(entry.arguments?.getString("gears"))
+
+                            FilterDistanceScreen(
+                                athleteId = entry.arguments?.getLong("athleteId") ?: -1,
+                                yearMonths = yearMonths,
+                                navController = navController,
+                                activityTypes = activityTypes,
+                                gears = gears
+                            )
+                        }
+                        composable(Screen.VisualizeActivities.route) {
+                            ActivitiesScreen(navController = navController)
+                        }
+                        composable(Screen.SaveImage.route) {
+                            SaveImageScreen(navController = navController)
+                        }
                     }
                 }
             }
