@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.ActivitiesCountComposable
 import com.company.athleteapiart.presentation.common.ButtonWithCountComposable
 import com.company.athleteapiart.presentation.common.HeaderWithEmphasisComposable
@@ -117,7 +118,17 @@ fun FilterDistanceScreen(
                     }
                     ActivitiesCountComposable(count = selectedCount)
                     ButtonWithCountComposable(activitiesEmpty = selectedCount == 0) {
-
+                        navController.navigate(
+                            route = Screen.VisualizeActivities.withArgs(
+                                athleteId.toString(),
+                                viewModel.yearMonthsNavArgs(yearMonths),
+                                optionalArgs = arrayOf(
+                                    "types" to viewModel.activityTypesNavArgs(activityTypes),
+                                    "gears" to viewModel.gearsNavArgs(gears),
+                                    "distances" to viewModel.distancesNavArgs()
+                                )
+                            )
+                        )
                     }
                 }
             }

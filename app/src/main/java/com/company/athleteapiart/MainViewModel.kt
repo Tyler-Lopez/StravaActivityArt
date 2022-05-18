@@ -18,11 +18,13 @@ class MainViewModel() : ViewModel() {
             Pair(year, month)
         }.toTypedArray()
 
-    fun parseTypesFromNav(raw: String) = (raw).split(Constants.NAV_DELIMITER)
-        .filter { it.isNotEmpty() }
-        .map {
-            it
-        }.toTypedArray()
+    fun parseTypesFromNav(raw: String?) = raw?.let { str ->
+        str.split(Constants.NAV_DELIMITER)
+            .filter { it.isNotEmpty() }
+            .map {
+                it
+            }.toTypedArray()
+    }
 
     fun parseGearsFromNav(raw: String?) =
         raw?.split(Constants.NAV_DELIMITER)?.filter { it.isNotEmpty() }?.map { gearId ->
@@ -31,5 +33,10 @@ class MainViewModel() : ViewModel() {
             else gearId
         }?.toTypedArray()
 
-
+    fun parseDistancesFromNav(raw: String?): ClosedFloatingPointRange<Float>? {
+        val arr = raw?.split(Constants.NAV_DELIMITER)?.filter { it.isNotEmpty() }
+        return arr?.let {
+            it[0].toFloat()..it[1].toFloat()
+        }
+    }
 }

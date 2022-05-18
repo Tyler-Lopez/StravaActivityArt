@@ -2,8 +2,8 @@ package com.company.athleteapiart.presentation.activity_visualize_screen
 
 import android.content.Context
 import android.graphics.*
+import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.model.DistanceRule
-import com.company.athleteapiart.data.remote.responses.Activity
 import com.company.athleteapiart.util.AthleteActivities
 import com.company.athleteapiart.util.meterToMiles
 import com.google.android.gms.maps.model.LatLng
@@ -13,7 +13,7 @@ import kotlin.math.*
 fun activitiesVisualizeCanvas(
     maxWidth: Int,
     context: Context,
-    activities: List<Activity>
+    activities: List<ActivityEntity>
 ): Bitmap {
 
     val format = AthleteActivities.formatting
@@ -105,8 +105,8 @@ fun activitiesVisualizeCanvas(
     var totalDistance = 0.0
 
     for (activity in activities) {
-        totalDistance += activity.distance
-        val summaryPolyline = activity.map.summary_polyline
+        totalDistance += activity.activityDistance
+        val summaryPolyline = activity.summaryPolyline
         //if (activity.type != "Run") continue
         //  if (summaryPolyline == "null" || summaryPolyline == null) continue
 
@@ -171,7 +171,7 @@ fun activitiesVisualizeCanvas(
 
         val pointsPaint = Paint()
 
-        val distance = activity.distance.meterToMiles()
+        val distance = activity.activityDistance.meterToMiles()
 
         pointsPaint.color = Color.rgb(actColor.red, actColor.green, actColor.blue)
 

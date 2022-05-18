@@ -34,6 +34,7 @@ fun ActivitiesScreen(
     navController: NavHostController,
     viewModel: ActivitiesVisualizeViewModel = hiltViewModel()
 ) {
+    /*
     var activities = viewModel.activities
     val endReached by remember { viewModel.endReached }
     val loadError by remember { viewModel.loadError }
@@ -156,6 +157,8 @@ fun ActivitiesScreen(
             )
         }
     )
+
+     */
 }
 
 

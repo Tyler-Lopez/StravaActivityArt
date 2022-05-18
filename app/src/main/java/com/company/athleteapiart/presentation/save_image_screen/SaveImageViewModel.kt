@@ -23,6 +23,7 @@ class SaveImageViewModel @Inject constructor(
     var imageSavedAt = mutableStateOf("")
 
     fun startSave(context: Context) {
+        /*
         isLoading.value = true
         viewModelScope.launch {
             delay(2000)
@@ -38,5 +39,7 @@ class SaveImageViewModel @Inject constructor(
             isLoading.value = false
             endReached.value = true
         }
+
+         */
     }
 }

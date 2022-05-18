@@ -24,6 +24,7 @@ import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.filter_year_screen.FilterYearScreen
 import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreen
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -232,16 +233,18 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { entry ->
-                            val yearMonths = viewModel
-                                .parseYearMonthsFromNav(entry.arguments?.getString("yearMonths"))
 
-                            val activityTypesArg = entry.arguments?.getString("types")
-                            val activityTypes =
-                                if (activityTypesArg != null)
-                                    viewModel.parseTypesFromNav(activityTypesArg)
-                                else null
-                            val gears =
-                                viewModel.parseGearsFromNav(entry.arguments?.getString("gears"))
+                            val args = entry.arguments!!
+
+                            val yearMonths = args.getString("yearMonths").let {
+                                viewModel.parseYearMonthsFromNav(it)
+                            }
+                            val gears = args.getString("gears").let {
+                                viewModel.parseGearsFromNav(it)
+                            }
+                            val activityTypes = entry.arguments?.getString("types").let {
+                                viewModel.parseTypesFromNav(it)
+                            }
 
                             FilterDistanceScreen(
                                 athleteId = entry.arguments?.getLong("athleteId") ?: -1,
@@ -251,9 +254,60 @@ class MainActivity : ComponentActivity() {
                                 gears = gears
                             )
                         }
-                        composable(Screen.VisualizeActivities.route) {
-                            ActivitiesScreen(navController = navController)
+                        composable(
+                            route = Screen.VisualizeActivities.route
+                                    + "/{athleteId}/{yearMonths}?types={types}&gears={gears}&distances={distances}",
+                            arguments = listOf(
+                                navArgument("athleteId") {
+                                    type = NavType.LongType
+                                    nullable = false
+                                },
+                                navArgument("yearMonths") {
+                                    type = NavType.StringType
+                                    nullable = false
+                                },
+                                navArgument("types") {
+                                    type = NavType.StringType
+                                    nullable =
+                                        true // NULLABLE, if null there is only 1 type - do not filter
+                                },
+                                navArgument("gears") {
+                                    type = NavType.StringType
+                                    nullable =
+                                        true // NULLABLE, if null there is only 1 gear - do not filter
+                                },
+                                navArgument("distances") {
+                                    type = NavType.StringType
+                                    nullable =
+                                        true // NULLABLE, if null there is only 1 gear - do not filter
+                                }
+                            )
+                        ) { entry ->
+                            val args = entry.arguments!!
+
+                            val yearMonths = args.getString("yearMonths").let {
+                                viewModel.parseYearMonthsFromNav(it)
+                            }
+                            val gears = args.getString("gears").let {
+                                viewModel.parseGearsFromNav(it)
+                            }
+                            val activityTypes = entry.arguments?.getString("types").let {
+                                viewModel.parseTypesFromNav(it)
+                            }
+                            val distances = entry.arguments?.getString("distances").let {
+                                viewModel.parseDistancesFromNav(it)
+                            }
+
+                            VisualizeScreen(
+                                navController = navController,
+                                athleteId = args.getLong("athleteId"),
+                                yearMonths = yearMonths,
+                                activityTypes = activityTypes,
+                                gears = gears,
+                                distances = distances
+                            )
                         }
+
                         composable(Screen.SaveImage.route) {
                             SaveImageScreen(navController = navController)
                         }
