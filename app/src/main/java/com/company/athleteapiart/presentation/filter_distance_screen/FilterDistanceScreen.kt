@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_distance_screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
@@ -7,6 +8,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -17,7 +22,9 @@ import com.company.athleteapiart.presentation.common.ActivitiesCountComposable
 import com.company.athleteapiart.presentation.common.ButtonWithCountComposable
 import com.company.athleteapiart.presentation.common.HeaderWithEmphasisComposable
 import com.company.athleteapiart.presentation.ui.theme.Lato
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 import com.company.athleteapiart.util.ScreenState
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
@@ -35,6 +42,10 @@ fun FilterDistanceScreen(
     val range by remember { viewModel.distanceRange }
     val selected by remember { viewModel.selectedRange }
     val selectedCount by remember { viewModel.selectedCount }
+
+    val distanceRangeInt by remember { viewModel.distanceRangeInt }
+    val distancesHeightMap by remember { viewModel.distancesHeightMap }
+    val selectedMiles by remember { viewModel.selectedMiles }
 
     when (screenState) {
         ScreenState.LAUNCH -> SideEffect {
@@ -54,7 +65,8 @@ fun FilterDistanceScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-
+                LaunchedEffect(Unit) {
+                }
                 val maxHeight = this.maxHeight
                 val maxWidth = this.maxWidth
 
@@ -64,6 +76,18 @@ fun FilterDistanceScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "distances")
+                    DistanceGraphComposable(
+                        distanceRange = distanceRangeInt ?: 0..0,
+                        distancesHeightMap = distancesHeightMap ?: mapOf(),
+                        maxHeight = maxHeight,
+                        selectedMiles = selectedMiles ?: 0..0
+                    )
+                    RangeSlider(
+                        values = selected,
+                        valueRange = range,
+                        onValueChange = {
+                            viewModel.onSelectedChange(it)
+                        })
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -91,12 +115,6 @@ fun FilterDistanceScreen(
                             fontFamily = Lato
                         )
                     }
-                    RangeSlider(
-                        values = selected,
-                        valueRange = range,
-                        onValueChange = {
-                            viewModel.onSelectedChange(it)
-                        })
                     ActivitiesCountComposable(count = selectedCount)
                     ButtonWithCountComposable(activitiesEmpty = selectedCount == 0) {
 
