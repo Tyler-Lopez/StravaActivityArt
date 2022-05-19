@@ -38,6 +38,7 @@ class VisualizeScreenViewModel @Inject constructor(
     val bitmap: State<Bitmap?> = _bitmap
 
     fun updateBitmap(bitmap: Bitmap) {
+        _screenState.value = STANDBY
         _bitmap.value = bitmap
     }
 

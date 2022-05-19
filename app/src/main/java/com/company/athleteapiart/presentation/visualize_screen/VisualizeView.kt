@@ -3,8 +3,10 @@ package com.company.athleteapiart.presentation.visualize_screen
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
@@ -22,24 +24,30 @@ class VisualizeView(
     content: @Composable () -> Unit
 ): LinearLayoutCompat(ctx) {
 
-    init {
 
+    init {
+        val viewCtx = this
+        println("here, init was invoked")
         val view = ComposeView(ctx)
         view.visibility = View.GONE
         view.layoutParams = LayoutParams(width, height)
         this.addView(view)
-
         view.setContent(content = content)
 
-        viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val graphicUtils = GraphicUtils()
-                val bitmap = graphicUtils.createBitmapFromView(view = view, width = width, height = height)
-                onBitmapCreated(bitmap)
-                viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-        })
-    }
+        viewTreeObserver.addOnDrawListener {
+            println("on draw")
+            /*
+            val graphicUtils = GraphicUtils()
+            val bitmap = graphicUtils.createBitmapFromView(
+                view = view,
+                width = width,
+                height = height,
+            )
+
+             */
+           // onBitmapCreated(bitmap)
+         //   viewCtx.removeAllViews()
+        }
+     }
 
 }

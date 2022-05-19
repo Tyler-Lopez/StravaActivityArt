@@ -3,16 +3,18 @@ package com.company.athleteapiart.presentation.visualize_screen
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.drawToBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.activity_visualize_screen.ActivityImageHandler
@@ -34,17 +36,19 @@ fun VisualizeScreen(
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
     val bitmap by remember { viewModel.bitmap }
-
     when (screenState) {
         LAUNCH -> {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                yearMonths = yearMonths,
-                activityTypes = activityTypes,
-                gears = gears,
-                distances = distances
-            )
+            println("here in launch")
+            SideEffect {
+                viewModel.loadActivities(
+                    context = context,
+                    athleteId = athleteId,
+                    yearMonths = yearMonths,
+                    activityTypes = activityTypes,
+                    gears = gears,
+                    distances = distances
+                )
+            }
         }
         LOADING -> {
 
@@ -53,36 +57,40 @@ fun VisualizeScreen(
 
         }
         STANDBY -> {
+            println("Here in standby")
             BoxWithConstraints(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+                val maxWidth = this.maxWidth
 
-                AndroidView(
-                    factory = {
-                        // This view is set to View.GONE so this does not appear
-                        VisualizeView(
-                            ctx = it,
-                            height = 1080,
-                            width = 1920,
-                            // However, on bitmap created the viewModel updates bitmap
-                            onBitmapCreated = { bm ->
-                                viewModel.updateBitmap(bm)
-                            }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(StravaOrange)
-                            ) {}
-                        }
-                    }
+                Text(
+                    "Image and text below is a bitmap",
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
 
                 // This is where the bitmap (Composable --> Bitmap --> Composable)
                 // is presented to the user
-                VisualizeImageHandler(bitmap = bitmap)
+                val snapShot = CaptureBitmap {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(10.dp)
+                            .background(Color.LightGray)
+                    ) {
 
+                    }
+                    //.. wite composable you want to capture
+                    // it would be visible on view as well
+                }
+
+// Caution : needs to be done on click action
+// ui must be visible/laid out before calling this
+                val bitmap = snapShot.invoke()
+
+
+                //    CatImageHandler()
 
                 /* {
                 Column(

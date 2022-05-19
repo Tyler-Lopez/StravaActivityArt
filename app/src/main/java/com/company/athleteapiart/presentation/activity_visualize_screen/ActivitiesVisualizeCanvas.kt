@@ -18,7 +18,7 @@ fun activitiesVisualizeCanvas(
 
     val format = AthleteActivities.formatting
     val conditions = format.value.conditions
- //   val background = format.value.backgroundColor
+  //  val background = format.value.backgroundColor
     val actColor = format.value.activityColor
 
     // Create a bitmap which is a scaled representation of a 3420x4320 image

@@ -5,5 +5,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun VisualizeImageHandler(bitmap: Bitmap?) {
+    println("here bitmap is $bitmap")
     bitmap?.let { VisualizeImage(it) }
 }
