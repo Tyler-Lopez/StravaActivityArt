@@ -8,22 +8,20 @@ import com.google.maps.android.PolyUtil
 import kotlin.math.*
 
 fun visualizeBitmap(
-    deviceWidth: Int,
-    height: Float,
-    width: Float,
+    bitmapWidth: Int,
+    heightWidthRatio: Float,
     backgroundPaint: Paint,
     activityPaint: Paint,
     activities: List<ActivityEntity>
 ): Bitmap {
 
-    val ratioMultiplier = height / width
     // Determine height of image given width
-    val maxHeight = (deviceWidth * ratioMultiplier).toInt()
+    val bitmapHeight = (bitmapWidth * heightWidthRatio).toInt()
 
     // Create a bitmap which will be drawn on by canvas
     val bitmap = Bitmap.createBitmap(
-        deviceWidth,
-        maxHeight,
+        bitmapWidth,
+        bitmapHeight,
         Bitmap.Config.ARGB_8888
     )
 
@@ -33,13 +31,13 @@ fun visualizeBitmap(
 
 
     canvas.drawRect(
-        Rect(0, 0, deviceWidth, maxHeight),
+        Rect(0, 0, bitmapWidth, bitmapHeight),
         backgroundPaint
     )
 
 
-    val x = deviceWidth.toFloat()
-    val y = maxHeight.toFloat()
+    val x = bitmapWidth.toFloat()
+    val y = bitmapHeight.toFloat()
     val marginX = 0f
     val marginY = 0f
 
@@ -168,7 +166,7 @@ fun visualizeBitmap(
                 it.strokeCap = Paint.Cap.ROUND
                 it.style = Paint.Style.STROKE
                 it.strokeWidth =
-                    sqrt(deviceWidth.toDouble() * maxHeight.toDouble()).toFloat() * 0.0015f
+                    sqrt(bitmapWidth.toDouble() * bitmapHeight.toDouble()).toFloat() * 0.0015f
             })
     }
     return bitmap

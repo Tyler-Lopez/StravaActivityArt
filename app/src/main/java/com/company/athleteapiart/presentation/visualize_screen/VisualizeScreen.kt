@@ -28,10 +28,9 @@ fun VisualizeScreen(
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
-    val bitmap by remember { viewModel.bitmap }
+
     when (screenState) {
         LAUNCH -> {
-            println("here in launch")
             SideEffect {
                 viewModel.loadActivities(
                     context = context,
@@ -56,7 +55,7 @@ fun VisualizeScreen(
                     .background(Color.LightGray),
                 contentAlignment = Alignment.Center
             ) {
-                val maxWidth = this.maxWidth
+
                 val backgroundPaint = Paint().also {
                     it.color = android.graphics.Color.WHITE
                 }
@@ -66,9 +65,8 @@ fun VisualizeScreen(
                 Card(elevation = 4.dp) {
                     VisualizeImage(
                         bitmap = visualizeBitmap(
-                            deviceWidth = LocalDensity.current.run { maxWidth.roundToPx() },
-                            height = 1080f,
-                            width = 1920f,
+                            bitmapWidth = LocalDensity.current.run { maxWidth.roundToPx() },
+                            heightWidthRatio = 1920f / 1080f,
                             activities = viewModel.activities,
                             backgroundPaint = backgroundPaint,
                             activityPaint = activityPaint

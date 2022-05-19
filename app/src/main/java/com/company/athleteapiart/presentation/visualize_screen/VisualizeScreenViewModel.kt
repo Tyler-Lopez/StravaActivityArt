@@ -33,14 +33,6 @@ class VisualizeScreenViewModel @Inject constructor(
     private val _activities = mutableStateListOf<ActivityEntity>()
     val activities: List<ActivityEntity> = _activities
 
-    // Bitmap
-    private val _bitmap = mutableStateOf<Bitmap?>(null)
-    val bitmap: State<Bitmap?> = _bitmap
-
-    fun updateBitmap(bitmap: Bitmap) {
-        println("Here update bitmap invoked")
-        _bitmap.value = bitmap
-    }
 
     fun loadActivities(
         context: Context,
