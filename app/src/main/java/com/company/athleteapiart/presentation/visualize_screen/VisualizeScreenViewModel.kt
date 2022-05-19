@@ -38,7 +38,7 @@ class VisualizeScreenViewModel @Inject constructor(
     val bitmap: State<Bitmap?> = _bitmap
 
     fun updateBitmap(bitmap: Bitmap) {
-        _screenState.value = STANDBY
+        println("Here update bitmap invoked")
         _bitmap.value = bitmap
     }
 
@@ -78,5 +78,10 @@ class VisualizeScreenViewModel @Inject constructor(
 
             _screenState.value = STANDBY
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("On cleared invoked")
     }
 }

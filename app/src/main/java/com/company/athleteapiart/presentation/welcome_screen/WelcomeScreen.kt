@@ -100,7 +100,7 @@ fun WelcomeScreen(
                             modifier = Modifier.padding(16.dp).fillMaxWidth(),
                             fontFamily = Lato,
                             color = Color.DarkGray,
-                            fontSize = 32.sp,
+                            fontSize = 30.sp,
                             fontWeight = FontWeight.Black,
                             textAlign = TextAlign.Center
                         )

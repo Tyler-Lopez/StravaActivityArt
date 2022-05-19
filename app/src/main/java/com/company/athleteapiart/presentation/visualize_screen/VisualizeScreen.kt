@@ -1,25 +1,18 @@
 package com.company.athleteapiart.presentation.visualize_screen
 
-import android.graphics.Bitmap
+import android.graphics.Paint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import androidx.compose.material.Card
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.drawToBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.athleteapiart.presentation.activity_visualize_screen.ActivityImageHandler
-import com.company.athleteapiart.presentation.activity_visualize_screen.activitiesVisualizeCanvas
-import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
 
 @Composable
@@ -57,153 +50,32 @@ fun VisualizeScreen(
 
         }
         STANDBY -> {
-            println("Here in standby")
             BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.LightGray),
                 contentAlignment = Alignment.Center
             ) {
                 val maxWidth = this.maxWidth
-
-                Text(
-                    "Image and text below is a bitmap",
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(bottom = 20.dp)
-                )
-
-                // This is where the bitmap (Composable --> Bitmap --> Composable)
-                // is presented to the user
-                val snapShot = CaptureBitmap {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(10.dp)
-                            .background(Color.LightGray)
-                    ) {
-
-                    }
-                    //.. wite composable you want to capture
-                    // it would be visible on view as well
+                val backgroundPaint = Paint().also {
+                    it.color = android.graphics.Color.WHITE
                 }
-
-// Caution : needs to be done on click action
-// ui must be visible/laid out before calling this
-                val bitmap = snapShot.invoke()
-
-
-                //    CatImageHandler()
-
-                /* {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(StravaOrange)
-                ) {}
-            }
-
-                 */
-
-
-                /*
-                val maxHeight = this.maxHeight
-                val maxWidth = this.maxWidth
-
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    println(viewModel.activities.size.toString() + " is activities size")
-                    ActivityImageHandler(
-                        activitiesVisualizeCanvas(
-                            maxWidth = LocalDensity.current.run {
-                                maxWidth.toPx().toInt()
-                            },
-                            LocalContext.current,
-                            activities = viewModel.activities
+                val activityPaint = Paint().also {
+                    it.color = android.graphics.Color.parseColor("#fc4c02")
+                }
+                Card(elevation = 4.dp) {
+                    VisualizeImage(
+                        bitmap = visualizeBitmap(
+                            deviceWidth = LocalDensity.current.run { maxWidth.roundToPx() },
+                            height = 1080f,
+                            width = 1920f,
+                            activities = viewModel.activities,
+                            backgroundPaint = backgroundPaint,
+                            activityPaint = activityPaint
                         )
                     )
                 }
             }
-
-                 */
-            }
         }
-
-        /*
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-
-            ) {
-            if (isLoading) {
-                Text("Applying filters...")
-            } else {
-                val permissionState = rememberPermissionState(
-                    permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-
-                val lifecycleOwner = LocalLifecycleOwner.current
-
-                DisposableEffect(
-                    key1 = lifecycleOwner,
-                    effect = {
-                        val observer = LifecycleEventObserver { _, event ->
-                            if (event == Lifecycle.Event.ON_START) {
-                                permissionState.launchPermissionRequest()
-                            }
-                        }
-                        lifecycleOwner.lifecycle.addObserver(observer)
-
-                        onDispose {
-                            lifecycleOwner.lifecycle.removeObserver(observer)
-                        }
-                    }
-                )
-
-                when {
-                    permissionState.hasPermission -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = White),
-                            //.padding(bottom = 75.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            ComposableScreenWrapper(
-                                // Create room for large button
-                                //     modifier = Modifier.padding(bottom = 75.dp)
-                            ) {
-                                ComposableShadowBox {
-                                    Column {
-                                        BoxWithConstraints(
-                                            modifier = Modifier
-                                                .fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            val maxWidth = this.maxWidth
-                                            ActivityImageHandler(
-                                                activitiesVisualizeCanvas(
-                                                    maxWidth = LocalDensity.current.run {
-                                                        maxWidth.toPx().toInt()
-                                                    },
-                                                    LocalContext.current,
-                                                    activities = activities.value
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    permissionState.shouldShowRationale -> {
-                    }
-                    permissionState.isPermaDenied() -> {
-                    }
-                }
-
-            }
-
-         */
     }
 }

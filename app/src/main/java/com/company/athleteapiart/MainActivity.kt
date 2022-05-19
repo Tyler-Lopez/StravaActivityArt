@@ -15,13 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.company.athleteapiart.presentation.about_screen.AboutScreen
-import com.company.athleteapiart.presentation.activity_visualize_screen.ActivitiesScreen
 import com.company.athleteapiart.presentation.filter_distance_screen.FilterDistanceScreen
 import com.company.athleteapiart.presentation.filter_gear_screen.FilterGearScreen
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreen
 import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreen
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
-import com.company.athleteapiart.presentation.save_image_screen.SaveImageScreen
 import com.company.athleteapiart.presentation.filter_year_screen.FilterYearScreen
 import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreen
@@ -309,7 +307,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.SaveImage.route) {
-                            SaveImageScreen(navController = navController)
+                        //    SaveImageScreen(navController = navController)
                         }
                     }
                 }

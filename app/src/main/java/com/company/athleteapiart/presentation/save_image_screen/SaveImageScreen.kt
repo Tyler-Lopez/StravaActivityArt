@@ -19,6 +19,7 @@ import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 import com.company.athleteapiart.util.Constants
 
+/*
 @Composable
 fun SaveImageScreen(
     navController: NavHostController,
@@ -95,3 +96,5 @@ fun SaveImageScreen(
         }
     )
 }
+
+ */
