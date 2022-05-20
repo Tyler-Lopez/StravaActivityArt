@@ -109,22 +109,18 @@ class VisualizeScreenViewModel @Inject constructor(
             val theoCols = sqrt(n * widthHeightRatio)
             val theoRows = n / theoCols
 
-            // PART 2: Comp
+            // PART 2: Compute from ceiling of theoretical maximum rows (from height)
             var rowsHeight = ceil(theoRows) // 5.3 --> 6
             var colsHeight = ceil(n / rowsHeight) // 50 / 6 = 8.3 --> 9
-            while (rowsHeight * widthHeightRatio < colsHeight) {
-                rowsHeight++
-                colsHeight = ceil(n / rowsHeight)
-            }
+            while (rowsHeight * widthHeightRatio < colsHeight)
+                colsHeight = ceil(n / ++rowsHeight)
             val cellHeight = bitmapHeight / rowsHeight
 
-            // PART 3
+            // PART 3: Computer from ceiling of theoretical maximum columns (from width)
             var colsWidth = ceil(theoCols)
             var rowsWidth = ceil(n / colsWidth)
-            while (colsWidth < rowsWidth * widthHeightRatio) {
-                colsWidth++
-                rowsWidth = ceil(n / colsWidth)
-            }
+            while (colsWidth < rowsWidth * widthHeightRatio)
+                rowsWidth = ceil(n / ++colsWidth)
             val cellWidth = bitmapWidth / colsWidth
 
             var rowCount = 0f
@@ -142,20 +138,29 @@ class VisualizeScreenViewModel @Inject constructor(
             }
 
 
-
             val initialOffset = Offset(
                 x = (bitmapWidth - (activitySize * colCount)) / 2f,
                 y = (bitmapHeight - (activitySize * rowCount)) / 2f
             )
 
+            // This determines if we are on a "remainder row" i.e. 3rd row with 14 activities and 5 columns
+            // and sets centerOffset equal to the amount we would need to nudge all activities on that row
+            val lastRowOffset = ((colCount - ((rowCount * colCount) - n)).let { missingCells ->
+                (missingCells * activitySize) / 2f
+            })
+
             val activityPaths = _activities.mapIndexed { index, act ->
                 // Decode each Polyline into a List<LatLng>
                 PolyUtil.decode(act.summaryPolyline).let { latLngList ->
+
                     // Convert List<LatLng> to List<Pair<Float, Float>>
-                    val xOffset = initialOffset.x + ((index % colCount) * activitySize)
+                    val xOffset =
+                        initialOffset.x + ((index % colCount) * activitySize) +
+                                if (ceil((index + 1) / colCount) >= rowCount) lastRowOffset
+                                else 0f
                     val yOffset =
                         initialOffset.y + ((floor(index / colCount) % rowCount) * activitySize)
-
+                    
                     val left = latLngList.minOf { it.longitude }
                     val right = latLngList.maxOf { it.longitude }
                     val top = latLngList.maxOf { it.latitude }
@@ -167,11 +172,11 @@ class VisualizeScreenViewModel @Inject constructor(
                     latLngList.map { latLng ->
                         Pair(
                             first = (((latLng.longitude - ((
-                                left + right
-                                ) / 2f)) * multiplier) + xOffset + (activitySize / 2f)).toFloat(),
+                                    left + right
+                                    ) / 2f)) * multiplier) + xOffset + (activitySize / 2f)).toFloat(),
                             second = (((latLng.latitude - ((
-                                top + bottom
-                                ) / 2f)) * -1f * multiplier) + yOffset + (activitySize / 2f)).toFloat()
+                                    top + bottom
+                                    ) / 2f)) * -1f * multiplier) + yOffset + (activitySize / 2f)).toFloat()
                         )
                     }
 
