@@ -25,13 +25,7 @@ fun visualizeBitmapMaker(
             for (path in visualizeSpecification.activities) {
                 canvas.drawPath(
                     path,
-                    visualizeSpecification.activityPaint.also {
-                        it.isAntiAlias = true
-                        it.strokeCap = Paint.Cap.ROUND
-                        it.style = Paint.Style.STROKE
-                        it.strokeWidth = 10f
-                        //sqrt(visualizeSpecification.activityWidth) * 0.1f
-                    }
+                    visualizeSpecification.activityPaint
                 )
             }
 

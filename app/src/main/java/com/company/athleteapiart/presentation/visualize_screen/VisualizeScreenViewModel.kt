@@ -102,41 +102,55 @@ class VisualizeScreenViewModel @Inject constructor(
             // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
             // Number of activities that can fit in columns and rows
             // Size of activity is eq. to height / small
-            val activitySize = minOf(
+            val activitySize = maxOf(
                 // Height / # Rows from attempting to fill whole width
-                bitmapHeight / ceil(n / ceil(sqrt(n / heightWidthRatio)).toInt().toFloat()),
+                bitmapHeight / ceil(n / ceil(sqrt(n / heightWidthRatio))),
                 // Width / # Cols from attempting to fill whole height
-                bitmapWidth / ceil(n / ceil(sqrt(n * heightWidthRatio)).toInt().toFloat())
+                bitmapWidth / ceil(n / ceil(sqrt(n * heightWidthRatio)))
             )
 
+
             // Offsets the theoretical rectangle the activities occupy to be centered
+            val colCount = floor(bitmapWidth / activitySize)
+            val rowCount = floor(bitmapHeight / activitySize)
+
             val initialOffset = Offset(
-                x = bitmapWidth % activitySize,
-                y = bitmapHeight % activitySize
+                x = bitmapWidth - (activitySize * colCount),
+                y = bitmapHeight - (activitySize * rowCount)
+              //   x = bitmapWidth % activitySize,
+             //     y = bitmapHeight % activitySize
             ) / 2f
 
+            println(initialOffset)
 
             val activityPaths = _activities.mapIndexed { index, act ->
                 // Decode each Polyline into a List<LatLng>
                 PolyUtil.decode(act.summaryPolyline).let { latLngList ->
                     // Convert List<LatLng> to List<Pair<Float, Float>>
+
+
+                    //        println("Row is " + (index % colCount))
+                    //        println("Col is " + ((floor(index / colCount) % rowCount)))
+                    val xOffset = initialOffset.x + ((index % colCount) * activitySize)
+                    val yOffset =
+                        initialOffset.y + ((floor(index / colCount) % rowCount) * activitySize)
+
+                    val left = latLngList.minOf { it.longitude }
+                    val right = latLngList.maxOf { it.longitude }
+                    val top = latLngList.maxOf { it.latitude }
+                    val bottom = latLngList.minOf { it.latitude }
+
+                    val largestSide = maxOf(top - bottom, right - left)
+                    val multiplier = (activitySize * 0.8f) / largestSide
+
                     latLngList.map { latLng ->
-
-                        val colCount = floor(bitmapWidth / activitySize)
-                        val rowCount = floor(bitmapHeight / activitySize)
-
-                        val xOffset = initialOffset.x + ((index % colCount) * activitySize)
-                        val yOffset = initialOffset.y + ((index % rowCount) * activitySize)
-
                         Pair(
-                            first = (latLng.latitude -
-                                    ((latLngList.minOf { it.latitude } +
-                                            latLngList.maxOf { it.latitude }) / 2f) +
-                                    xOffset + (activitySize / 2f)).toFloat(),
-                            second = ((latLng.longitude -
-                                    ((latLngList.minOf { it.longitude } +
-                                            latLngList.maxOf { it.longitude }) / 2f) * -1f) +
-                                    yOffset + (activitySize / 2f)).toFloat()
+                            first = (((latLng.longitude - ((
+                                left + right
+                                ) / 2f)) * multiplier) + xOffset + (activitySize / 2f)).toFloat(),
+                            second = (((latLng.latitude - ((
+                                top + bottom
+                                ) / 2f)) * -1f * multiplier) + yOffset + (activitySize / 2f)).toFloat()
                         )
                     }
 
@@ -157,7 +171,12 @@ class VisualizeScreenViewModel @Inject constructor(
                 visualizationWidth = bitmapWidth,
                 visualizationHeight = bitmapHeight,
                 backgroundPaint = backgroundPaint,
-                activityPaint = activityPaint,
+                activityPaint = activityPaint.also {
+                    it.isAntiAlias = true
+                    it.strokeCap = Paint.Cap.ROUND
+                    it.style = Paint.Style.STROKE
+                    it.strokeWidth = sqrt(activitySize) * 0.1f
+                },
                 activities = activityPaths
             )
 

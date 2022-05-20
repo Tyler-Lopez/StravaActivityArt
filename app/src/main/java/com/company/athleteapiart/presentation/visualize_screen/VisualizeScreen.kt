@@ -51,7 +51,7 @@ fun VisualizeScreen(
             GET_SPECIFICATION -> {
                 println("get spec invoked")
                 val width = LocalDensity.current.run { maxWidth.roundToPx() }
-                val backgroundPaint = Paint().also { it.color = android.graphics.Color.WHITE }
+                val backgroundPaint = Paint().also { it.color = android.graphics.Color.CYAN }
                 val activityPaint =
                     Paint().also { it.color = android.graphics.Color.parseColor("#fc4c02") }
 
@@ -71,7 +71,7 @@ fun VisualizeScreen(
             STANDBY -> {
                 println("standby invoked")
                 val visSpec = viewModel.visualizationSpec!!
-                Card(elevation = 4.dp) {
+                Card(elevation = 4.dp, modifier = Modifier.padding(12.dp)) {
                     VisualizeImage(
                         bitmap = visualizeBitmapMaker(
                             visSpec

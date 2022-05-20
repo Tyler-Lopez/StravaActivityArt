@@ -96,7 +96,7 @@ class FilterMonthViewModel @Inject constructor(
     }
 
     fun updateSelectedActivities(index: Int) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             _selected[index] = !selected[index]
             val value = _rows[index][columnNoActivities]?.toInt() ?: 0
             _selectedCount.value =
@@ -105,7 +105,7 @@ class FilterMonthViewModel @Inject constructor(
     }
 
     private fun recalculateSelectedActivities() {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch{
             var sum = 0
             for (index in 0..selected.lastIndex) {
                 val value = _rows[index][columnNoActivities]?.toInt() ?: 0
