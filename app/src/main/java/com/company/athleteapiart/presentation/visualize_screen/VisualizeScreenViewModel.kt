@@ -145,9 +145,9 @@ class VisualizeScreenViewModel @Inject constructor(
 
             // This determines if we are on a "remainder row" i.e. 3rd row with 14 activities and 5 columns
             // and sets centerOffset equal to the amount we would need to nudge all activities on that row
-            val lastRowOffset = ((colCount - ((rowCount * colCount) - n)).let { missingCells ->
+            val lastRowOffset = ((rowCount * colCount) - n).let { missingCells ->
                 (missingCells * activitySize) / 2f
-            })
+            }
 
             val activityPaths = _activities.mapIndexed { index, act ->
                 // Decode each Polyline into a List<LatLng>
@@ -160,7 +160,7 @@ class VisualizeScreenViewModel @Inject constructor(
                                 else 0f
                     val yOffset =
                         initialOffset.y + ((floor(index / colCount) % rowCount) * activitySize)
-                    
+
                     val left = latLngList.minOf { it.longitude }
                     val right = latLngList.maxOf { it.longitude }
                     val top = latLngList.maxOf { it.latitude }
