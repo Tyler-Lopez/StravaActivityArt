@@ -4,6 +4,7 @@ import android.graphics.Paint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,33 +29,56 @@ fun VisualizeScreen(
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray),
+        contentAlignment = Alignment.Center
+    ) {
 
-    when (screenState) {
-        LAUNCH -> {
-            SideEffect {
-                viewModel.loadActivities(
-                    context = context,
-                    athleteId = athleteId,
-                    yearMonths = yearMonths,
-                    activityTypes = activityTypes,
-                    gears = gears,
-                    distances = distances
-                )
+        when (screenState) {
+            LAUNCH -> {
+                println("launch invoked")
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        yearMonths = yearMonths,
+                        activityTypes = activityTypes,
+                        gears = gears,
+                        distances = distances
+                    )
             }
-        }
-        LOADING -> {
+            GET_SPECIFICATION -> {
+                println("get spec invoked")
+                val width = LocalDensity.current.run { maxWidth.roundToPx() }
+                val backgroundPaint = Paint().also { it.color = android.graphics.Color.WHITE }
+                val activityPaint =
+                    Paint().also { it.color = android.graphics.Color.parseColor("#fc4c02") }
 
-        }
-        PERMISSION_ACCEPTED -> {
+                    viewModel.loadVisualizeSpecification(
+                        bitmapWidth = width,
+                        heightWidthRatio = 1920f / 1080f,
+                        backgroundPaint = backgroundPaint,
+                        activityPaint = activityPaint
+                    )
+            }
+            LOADING -> {
+                Text("Loading")
+            }
+            PERMISSION_ACCEPTED -> {
 
-        }
-        STANDBY -> {
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center
-            ) {
+            }
+            STANDBY -> {
+                println("standby invoked")
+                val visSpec = viewModel.visualizationSpec!!
+                Card(elevation = 4.dp) {
+                    VisualizeImage(
+                        bitmap = visualizeBitmapMaker(
+                            visSpec
+                        )
+                    )
+                }
+                /*
 
                 val backgroundPaint = Paint().also {
                     it.color = android.graphics.Color.WHITE
@@ -73,6 +97,8 @@ fun VisualizeScreen(
                         )
                     )
                 }
+
+                 */
             }
         }
     }

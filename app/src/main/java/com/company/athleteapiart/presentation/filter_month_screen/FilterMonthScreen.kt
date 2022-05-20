@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.filter_month_screen
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,26 +26,30 @@ fun FilterMonthScreen(
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedCount }
 
-    when (screenState) {
-        LAUNCH -> SideEffect {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                years = years
-            )
-        }
-        LOADING -> {
+    println("recomposed")
 
-        }
-        STANDBY -> {
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
 
-                val maxHeight = this.maxHeight
-                val maxWidth = this.maxWidth
-
+        val maxHeight = this.maxHeight
+        val maxWidth = this.maxWidth
+        when (screenState) {
+            LAUNCH -> {
+                SideEffect {
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        years = years
+                    )
+                }
+            }
+            LOADING -> {
+                Text("Loading")
+            }
+            STANDBY -> {
+                println("HERE IN STANDBY")
                 Column(
                     modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
                     horizontalAlignment = Alignment.CenterHorizontally,

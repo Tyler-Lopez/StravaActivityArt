@@ -12,10 +12,7 @@ import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScr
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,25 +53,24 @@ class FilterMonthViewModel @Inject constructor(
     ) {
         _filterMonthScreenState.value = LOADING
 
-        viewModelScope.launch {
-            val unsortedActivities = mutableListOf<Deferred<List<ActivityEntity>>>()
+        viewModelScope.launch(Dispatchers.Default) {
+            val unsortedActivities = mutableListOf<List<ActivityEntity>>()
             val yearMonthsDataMap = mutableMapOf<Pair<Int, Int>, Int>()
 
             for (year in years) {
-                val yearActivities = async {
+                val yearActivities =
                     getActivitiesUseCase.getActivitiesByYearFromCache(
                         context = context,
                         athleteId = athleteId,
                         year = year
                     )
-                }
+
                 unsortedActivities.add(yearActivities)
             }
             // Iterate through all awaited yearly activities
-            for (yearlyActivities in unsortedActivities.awaitAll()) {
+            for (yearlyActivities in unsortedActivities) {
                 // Iterate through all activities of a given year
                 for (activity in yearlyActivities) {
-                    println("here month is ${activity.activityMonth}")
                     val key = Pair(activity.activityYear, activity.activityMonth)
                     // Populate yearsMonthData accordingly
                     yearMonthsDataMap[key] = (yearMonthsDataMap[key] ?: 0) + 1
@@ -100,7 +96,7 @@ class FilterMonthViewModel @Inject constructor(
     }
 
     fun updateSelectedActivities(index: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _selected[index] = !selected[index]
             val value = _rows[index][columnNoActivities]?.toInt() ?: 0
             _selectedCount.value =
@@ -109,12 +105,14 @@ class FilterMonthViewModel @Inject constructor(
     }
 
     private fun recalculateSelectedActivities() {
-        var sum = 0
-        for (index in 0..selected.lastIndex) {
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
-            sum = selectedCount.value + (value * if (selected[index]) 1 else -1)
+        viewModelScope.launch(Dispatchers.Default) {
+            var sum = 0
+            for (index in 0..selected.lastIndex) {
+                val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+                sum = selectedCount.value + (value * if (selected[index]) 1 else -1)
+            }
+            _selectedCount.value = sum
         }
-        _selectedCount.value = sum
     }
 
     // NAVIGATION ARGS
