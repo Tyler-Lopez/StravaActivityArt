@@ -57,7 +57,7 @@ fun VisualizeScreen(
 
                     viewModel.loadVisualizeSpecification(
                         bitmapWidth = width,
-                        heightWidthRatio = 1920f / 1080f,
+                        widthHeightRatio = 1920f / 1080f,
                         backgroundPaint = backgroundPaint,
                         activityPaint = activityPaint
                     )

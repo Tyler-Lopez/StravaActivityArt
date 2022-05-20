@@ -84,53 +84,74 @@ class VisualizeScreenViewModel @Inject constructor(
     // Convert activities into VisualizeSpecification
     fun loadVisualizeSpecification(
         bitmapWidth: Int,
-        heightWidthRatio: Float,
+        widthHeightRatio: Float,
         backgroundPaint: Paint,
         activityPaint: Paint,
     ) {
-        println("load visualize specification invoked")
 
         _screenState.value = LOADING
 
         viewModelScope.launch(Dispatchers.Default) {
 
             // Determine height of image given width and ratio
-            val bitmapHeight = (bitmapWidth * heightWidthRatio).toInt()
+            val bitmapHeight = (bitmapWidth / widthHeightRatio).toInt()
 
             val n = activities.size
 
             // https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
-            // Number of activities that can fit in columns and rows
-            // Size of activity is eq. to height / small
-            val activitySize = maxOf(
-                // Height / # Rows from attempting to fill whole width
-                bitmapHeight / ceil(n / ceil(sqrt(n / heightWidthRatio))),
-                // Width / # Cols from attempting to fill whole height
-                bitmapWidth / ceil(n / ceil(sqrt(n * heightWidthRatio)))
-            )
+            // PART 1: Computing theoreticals
+            // E.g. 1920 / 1080 == 1.78
+            // 50 activities * 1.778 = 88.9
+            // Theoretical Columns = Sqrt() = 9.428
+            // Theoretical Rows = 50 activities / 9.428 = 5.3
+            // NOTE: An activity cannot be represented by .428 or .3
+            // Therefore, we need to figure out whether to have 6 rows or 10 columns...
+            val theoCols = sqrt(n * widthHeightRatio)
+            val theoRows = n / theoCols
+
+            // PART 2: Comp
+            var rowsHeight = ceil(theoRows) // 5.3 --> 6
+            var colsHeight = ceil(n / rowsHeight) // 50 / 6 = 8.3 --> 9
+            while (rowsHeight * widthHeightRatio < colsHeight) {
+                rowsHeight++
+                colsHeight = ceil(n / rowsHeight)
+            }
+            val cellHeight = bitmapHeight / rowsHeight
+
+            // PART 3
+            var colsWidth = ceil(theoCols)
+            var rowsWidth = ceil(n / colsWidth)
+            while (colsWidth < rowsWidth * widthHeightRatio) {
+                colsWidth++
+                rowsWidth = ceil(n / colsWidth)
+            }
+            val cellWidth = bitmapWidth / colsWidth
+
+            var rowCount = 0f
+            var colCount = 0f
+            var activitySize = 0f
+
+            if (cellWidth > cellHeight) {
+                rowCount = rowsWidth
+                colCount = colsWidth
+                activitySize = cellWidth
+            } else {
+                rowCount = rowsHeight
+                colCount = colsHeight
+                activitySize = cellHeight
+            }
 
 
-            // Offsets the theoretical rectangle the activities occupy to be centered
-            val colCount = floor(bitmapWidth / activitySize)
-            val rowCount = floor(bitmapHeight / activitySize)
 
             val initialOffset = Offset(
-                x = bitmapWidth - (activitySize * colCount),
-                y = bitmapHeight - (activitySize * rowCount)
-              //   x = bitmapWidth % activitySize,
-             //     y = bitmapHeight % activitySize
-            ) / 2f
-
-            println(initialOffset)
+                x = (bitmapWidth - (activitySize * colCount)) / 2f,
+                y = (bitmapHeight - (activitySize * rowCount)) / 2f
+            )
 
             val activityPaths = _activities.mapIndexed { index, act ->
                 // Decode each Polyline into a List<LatLng>
                 PolyUtil.decode(act.summaryPolyline).let { latLngList ->
                     // Convert List<LatLng> to List<Pair<Float, Float>>
-
-
-                    //        println("Row is " + (index % colCount))
-                    //        println("Col is " + ((floor(index / colCount) % rowCount)))
                     val xOffset = initialOffset.x + ((index % colCount) * activitySize)
                     val yOffset =
                         initialOffset.y + ((floor(index / colCount) % rowCount) * activitySize)
@@ -157,8 +178,8 @@ class VisualizeScreenViewModel @Inject constructor(
                     // Reduce List<LatLng> to Path
                 }.let { floatList ->
                     Path().also { path ->
-                        floatList.forEachIndexed { index, pair ->
-                            if (index == 0)
+                        floatList.forEachIndexed { fIndex, pair ->
+                            if (fIndex == 0)
                                 path.setLastPoint(pair.first, pair.second)
                             else
                                 path.lineTo(pair.first, pair.second)
