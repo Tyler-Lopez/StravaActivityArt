@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.welcome_screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -24,9 +25,8 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.ButtonComposable
+import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreenState.*
-import com.company.athleteapiart.presentation.ui.theme.Lato
-import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 
 
 /*
@@ -63,7 +63,9 @@ fun WelcomeScreen(
         }
         STANDBY -> {
             BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Icicle),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -83,24 +85,39 @@ fun WelcomeScreen(
                             .clip(CircleShape)
                             .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
                     )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                     Text(
-                        text = "Welcome to Activity Art",
-                        fontSize = 24.sp,
+                        text = "VERSION  0.1.0",
+                        fontSize = 14.sp,
                         fontFamily = Lato,
-                        color = Color.DarkGray,
-                        fontWeight = FontWeight.SemiBold,
+                        color = Gravel,
                         textAlign = TextAlign.Center
                     )
+                        Text(
+                            text = "Activity Art",
+                            fontSize = 24.sp,
+                            fontFamily = Lato,
+                            color = Asphalt,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+
+                    }
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = Color.LightGray,
+                        backgroundColor = Silver,
                     ) {
                         Text(
                             text = viewModel.athleteName.uppercase(),
-                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                            fontFamily = Lato,
-                            color = Color.DarkGray,
-                            fontSize = 30.sp,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            fontFamily = MaisonNeue,
+                            color = Coal,
+                            fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
                             textAlign = TextAlign.Center
                         )

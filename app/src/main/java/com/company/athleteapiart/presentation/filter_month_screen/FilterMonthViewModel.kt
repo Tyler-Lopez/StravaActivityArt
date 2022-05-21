@@ -105,14 +105,12 @@ class FilterMonthViewModel @Inject constructor(
     }
 
     private fun recalculateSelectedActivities() {
-        viewModelScope.launch{
             var sum = 0
             for (index in 0..selected.lastIndex) {
                 val value = _rows[index][columnNoActivities]?.toInt() ?: 0
                 sum = selectedCount.value + (value * if (selected[index]) 1 else -1)
             }
             _selectedCount.value = sum
-        }
     }
 
     // NAVIGATION ARGS

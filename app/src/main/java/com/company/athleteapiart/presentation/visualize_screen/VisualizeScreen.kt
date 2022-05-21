@@ -5,15 +5,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.company.athleteapiart.presentation.common.ButtonComposable
+import com.company.athleteapiart.presentation.common.HeaderComposable
+import com.company.athleteapiart.presentation.ui.theme.Asphalt
+import com.company.athleteapiart.presentation.ui.theme.Coal
+import com.company.athleteapiart.presentation.ui.theme.Icicle
+import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
 
 @Composable
@@ -32,35 +41,37 @@ fun VisualizeScreen(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray),
+            .background(Icicle),
         contentAlignment = Alignment.Center
     ) {
+
+        val maxWidth = this.maxWidth
+        val maxHeight = this.maxHeight
 
         when (screenState) {
             LAUNCH -> {
                 println("launch invoked")
-                    viewModel.loadActivities(
-                        context = context,
-                        athleteId = athleteId,
-                        yearMonths = yearMonths,
-                        activityTypes = activityTypes,
-                        gears = gears,
-                        distances = distances
-                    )
+                viewModel.loadActivities(
+                    context = context,
+                    athleteId = athleteId,
+                    yearMonths = yearMonths,
+                    activityTypes = activityTypes,
+                    gears = gears,
+                    distances = distances
+                )
             }
             GET_SPECIFICATION -> {
-                println("get spec invoked")
                 val width = LocalDensity.current.run { maxWidth.roundToPx() }
-                val backgroundPaint = Paint().also { it.color = android.graphics.Color.CYAN }
-                val activityPaint =
-                    Paint().also { it.color = android.graphics.Color.parseColor("#fc4c02") }
+                val backgroundPaint = Paint().also { it.color = Coal.toArgb() }
+                val activityPaint = Paint().also { it.color = StravaOrange.toArgb() }
 
-                    viewModel.loadVisualizeSpecification(
-                        bitmapWidth = width,
-                        widthHeightRatio = 1920f / 1080f,
-                        backgroundPaint = backgroundPaint,
-                        activityPaint = activityPaint
-                    )
+                viewModel.loadVisualizeSpecification(
+                    bitmapWidth = width,
+                    widthHeightRatio = 1080f / 1920f,
+                    marginFraction = 0.05f,
+                    backgroundPaint = backgroundPaint,
+                    activityPaint = activityPaint
+                )
             }
             LOADING -> {
                 Text("Loading")
@@ -69,15 +80,35 @@ fun VisualizeScreen(
 
             }
             STANDBY -> {
-                println("standby invoked")
-                val visSpec = viewModel.visualizationSpec!!
-                Card(elevation = 4.dp, modifier = Modifier.padding(12.dp)) {
-                    VisualizeImage(
-                        bitmap = visualizeBitmapMaker(
-                            visSpec
+
+                Column(
+                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Card(
+                        elevation = 4.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                            .heightIn(0.dp, maxHeight * 0.75f)
+                    ) {
+                        VisualizeImage(
+                            bitmap = visualizeBitmapMaker(
+                                viewModel.visualizationSpec!!
+                            )
                         )
-                    )
+                    }
+                    ButtonComposable(
+                        text = "Save Image",
+                        modifier = Modifier.fillMaxWidth(),
+                        icon = Icons.Default.Save
+                    ) {
+
+                    }
                 }
+
+
                 /*
 
                 val backgroundPaint = Paint().also {

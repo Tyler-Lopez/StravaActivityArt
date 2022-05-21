@@ -83,8 +83,9 @@ class VisualizeScreenViewModel @Inject constructor(
 
     // Convert activities into VisualizeSpecification
     fun loadVisualizeSpecification(
-        bitmapWidth: Int,
-        widthHeightRatio: Float,
+        bitmapWidth: Int, // e.g. 400
+        widthHeightRatio: Float, // e.g. 1920f / 1080f
+        marginFraction: Float, // e.g. .05 = 5% margin
         backgroundPaint: Paint,
         activityPaint: Paint,
     ) {
@@ -93,8 +94,12 @@ class VisualizeScreenViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Default) {
 
-            // Determine height of image given width and ratio
+            // Determine height of bitmap given width and ratio
             val bitmapHeight = (bitmapWidth / widthHeightRatio).toInt()
+
+            // Define how large the activities portion of bitmap should be
+            val activitiesWidth = bitmapWidth * (1f - (marginFraction * 2f))
+            val activitiesHeight = bitmapHeight * (1f - (marginFraction * 2f))
 
             val n = activities.size
 
@@ -114,14 +119,14 @@ class VisualizeScreenViewModel @Inject constructor(
             var colsHeight = ceil(n / rowsHeight) // 50 / 6 = 8.3 --> 9
             while (rowsHeight * widthHeightRatio < colsHeight)
                 colsHeight = ceil(n / ++rowsHeight)
-            val cellHeight = bitmapHeight / rowsHeight
+            val cellHeight = activitiesHeight / rowsHeight
 
             // PART 3: Computer from ceiling of theoretical maximum columns (from width)
             var colsWidth = ceil(theoCols)
             var rowsWidth = ceil(n / colsWidth)
             while (colsWidth < rowsWidth * widthHeightRatio)
                 rowsWidth = ceil(n / ++colsWidth)
-            val cellWidth = bitmapWidth / colsWidth
+            val cellWidth = activitiesWidth / colsWidth
 
             var rowCount = 0f
             var colCount = 0f
@@ -139,8 +144,8 @@ class VisualizeScreenViewModel @Inject constructor(
 
 
             val initialOffset = Offset(
-                x = (bitmapWidth - (activitySize * colCount)) / 2f,
-                y = (bitmapHeight - (activitySize * rowCount)) / 2f
+                x = (activitiesWidth - (activitySize * colCount)) / 2f,
+                y = (activitiesHeight - (activitySize * rowCount)) / 2f
             )
 
             // This determines if we are on a "remainder row" i.e. 3rd row with 14 activities and 5 columns
@@ -156,10 +161,12 @@ class VisualizeScreenViewModel @Inject constructor(
                     // Convert List<LatLng> to List<Pair<Float, Float>>
                     val xOffset =
                         initialOffset.x + ((index % colCount) * activitySize) +
+                                (bitmapWidth * marginFraction) +
                                 if (ceil((index + 1) / colCount) >= rowCount) lastRowOffset
                                 else 0f
                     val yOffset =
-                        initialOffset.y + ((floor(index / colCount) % rowCount) * activitySize)
+                        initialOffset.y + ((floor(index / colCount) % rowCount) * activitySize) +
+                                (bitmapHeight * marginFraction)
 
                     val left = latLngList.minOf { it.longitude }
                     val right = latLngList.maxOf { it.longitude }
@@ -201,7 +208,7 @@ class VisualizeScreenViewModel @Inject constructor(
                     it.isAntiAlias = true
                     it.strokeCap = Paint.Cap.ROUND
                     it.style = Paint.Style.STROKE
-                    it.strokeWidth = sqrt(activitySize) * 0.1f
+                    it.strokeWidth = sqrt(activitySize) * 0.25f
                 },
                 activities = activityPaths
             )

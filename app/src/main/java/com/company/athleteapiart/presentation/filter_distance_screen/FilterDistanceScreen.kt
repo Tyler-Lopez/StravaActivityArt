@@ -1,6 +1,7 @@
 package com.company.athleteapiart.presentation.filter_distance_screen
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
@@ -22,6 +23,7 @@ import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.ActivitiesCountComposable
 import com.company.athleteapiart.presentation.common.ButtonWithCountComposable
 import com.company.athleteapiart.presentation.common.HeaderWithEmphasisComposable
+import com.company.athleteapiart.presentation.ui.theme.Icicle
 import com.company.athleteapiart.presentation.ui.theme.Lato
 import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 import com.company.athleteapiart.util.ScreenState
@@ -63,11 +65,10 @@ fun FilterDistanceScreen(
         }
         ScreenState.STANDBY -> {
             BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(Icicle),
                 contentAlignment = Alignment.Center
             ) {
-                LaunchedEffect(Unit) {
-                }
+
                 val maxHeight = this.maxHeight
                 val maxWidth = this.maxWidth
 

@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_type_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -14,6 +15,7 @@ import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.*
 import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScreenState.*
+import com.company.athleteapiart.presentation.ui.theme.Icicle
 
 @Composable
 fun FilterTypeScreen(
@@ -39,7 +41,7 @@ fun FilterTypeScreen(
         }
         LOADING, STANDBY -> {
             BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(Icicle),
                 contentAlignment = Alignment.Center
             ) {
 

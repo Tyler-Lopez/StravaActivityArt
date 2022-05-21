@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_month_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -12,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.*
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
+import com.company.athleteapiart.presentation.ui.theme.Icicle
 
 @Composable
 fun FilterMonthScreen(
@@ -29,7 +31,7 @@ fun FilterMonthScreen(
     println("recomposed")
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(Icicle),
         contentAlignment = Alignment.Center
     ) {
 

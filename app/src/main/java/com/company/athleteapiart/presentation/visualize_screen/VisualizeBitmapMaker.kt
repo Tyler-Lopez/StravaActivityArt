@@ -14,8 +14,10 @@ fun visualizeBitmapMaker(
         visualizeSpecification.visualizationHeight,
         Bitmap.Config.ARGB_8888
     ).also { bitmap ->
-        Canvas(bitmap).also { canvas ->
 
+
+
+        Canvas(bitmap).also { canvas ->
             // Draw background
             canvas.drawRect(
                 Rect(0, 0, canvas.width, canvas.height),
@@ -30,4 +32,5 @@ fun visualizeBitmapMaker(
             }
 
         }
+
     }

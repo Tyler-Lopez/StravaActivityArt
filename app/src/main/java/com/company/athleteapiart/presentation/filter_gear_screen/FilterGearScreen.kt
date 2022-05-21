@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_gear_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -9,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.common.*
+import com.company.athleteapiart.presentation.ui.theme.Icicle
 import com.company.athleteapiart.util.ScreenState.*
 
 @Composable
@@ -38,7 +40,7 @@ fun FilterGearScreen(
         }
         LOADING, STANDBY -> {
             BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(Icicle),
                 contentAlignment = Alignment.Center
             ) {
 

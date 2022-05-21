@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.filter_year_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -13,6 +14,7 @@ import androidx.navigation.NavHostController
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.*
 import com.company.athleteapiart.presentation.filter_year_screen.TimeSelectScreenState.*
+import com.company.athleteapiart.presentation.ui.theme.Icicle
 
 /*
 
@@ -47,7 +49,9 @@ fun FilterYearScreen(
         }
         LOADING, STANDBY, ERROR -> {
             BoxWithConstraints(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Icicle),
                 contentAlignment = Alignment.Center
             ) {
 
