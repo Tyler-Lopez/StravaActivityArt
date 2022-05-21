@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Checkbox
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -23,9 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.ui.theme.Lato
 import com.company.athleteapiart.presentation.ui.theme.StravaOrange
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class Table {
-
     companion object {
 
         @Composable
@@ -36,14 +39,13 @@ class Table {
             selectionList: List<Boolean>,
             onSelectIndex: (Int) -> Unit
         ) {
+            // Create ScrollState
             val scrollState = rememberScrollState()
+            val scope = rememberCoroutineScope()
+
+
+            val scrollMax by remember { derivedStateOf { scrollState.maxValue } }
             val scrollValue by remember { derivedStateOf { scrollState.value } }
-            val scrollMax = scrollState.maxValue
-
-            //   val selectedList = remember { mutableStateListOf<Boolean>() }
-
-            //    for (i in 0..rows.lastIndex)
-            //        selectedList.add(if (savedState != null && savedState.isNotEmpty()) savedState[i] else defaultSelected)
 
             BoxWithConstraints(modifier = modifier) {
 
@@ -94,8 +96,12 @@ class Table {
                                     val canvasWidth = this.size.width
                                     val canvasHeight = this.size.height
 
+                                    // Compute async off of UI thread
+
                                     if (shouldShowScroll(maxValue = scrollMax)) {
+
                                         val scrollWidth = scrollWidth(tableWidth = tableWidth)
+
 
                                         drawRect(
                                             color = Color.LightGray,
@@ -109,12 +115,13 @@ class Table {
                                         )
                                         drawRect(
                                             color = StravaOrange,
-                                            topLeft = scrollPosition(
-                                                tableWidth = canvasWidth,
-                                                canvasHeight = canvasHeight,
-                                                value = scrollValue,
-                                                maxValue = scrollMax
-                                            ),
+                                            topLeft = scrollPosition ?: Offset(0f, 0f),
+                                            //   topLeft = scrollPosition(
+                                            //      tableWidth = canvasWidth,
+                                            //     canvasHeight = canvasHeight,
+                                            //    value = scrollValue,
+                                            //     maxValue = scrollMax
+                                            //  ),
                                             size = scrollSize(
                                                 scrollWidth = scrollWidth,
                                                 maxValue = scrollMax,

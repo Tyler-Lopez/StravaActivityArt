@@ -38,6 +38,7 @@ fun FilterYearScreen(
     val screenState by remember { viewModel.timeSelectScreenState }
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
+    val coroutineScope  = rememberCoroutineScope()
 
     when (screenState) {
         LAUNCH -> SideEffect {
@@ -73,7 +74,8 @@ fun FilterYearScreen(
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
-                        selectionList = viewModel.selectedActivities
+                        selectionList = viewModel.selectedActivities,
+                        coroutineScope = coroutineScope
                     )
 
                     if (screenState == LOADING)

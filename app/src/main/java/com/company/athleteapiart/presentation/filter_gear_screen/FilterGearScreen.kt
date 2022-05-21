@@ -26,7 +26,7 @@ fun FilterGearScreen(
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
     val selectedCount by remember { viewModel.selectedCount }
-
+    val coroutineScope  = rememberCoroutineScope()
 
     when (screenState) {
         LAUNCH -> SideEffect {
@@ -66,7 +66,8 @@ fun FilterGearScreen(
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
-                        selectionList = viewModel.selected
+                        selectionList = viewModel.selected,
+                        coroutineScope = coroutineScope
                     )
 
                     if (screenState == LOADING)

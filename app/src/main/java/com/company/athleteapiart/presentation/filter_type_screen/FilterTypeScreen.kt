@@ -2,10 +2,7 @@ package com.company.athleteapiart.presentation.filter_type_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +26,7 @@ fun FilterTypeScreen(
     val screenState by remember { viewModel.filterTypeScreenState }
     val context = LocalContext.current
     val selectedTypesCount by remember { viewModel.selectedTypesCount }
-
+    val coroutineScope  = rememberCoroutineScope()
 
     when (screenState) {
         LAUNCH -> SideEffect {
@@ -64,7 +61,8 @@ fun FilterTypeScreen(
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
-                        selectionList = viewModel.selectedTypes
+                        selectionList = viewModel.selectedTypes,
+                        coroutineScope = coroutineScope
                     )
 
 

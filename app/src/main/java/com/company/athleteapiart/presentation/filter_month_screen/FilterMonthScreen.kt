@@ -27,14 +27,16 @@ fun FilterMonthScreen(
     val screenState by remember { viewModel.filterMonthScreenState }
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedCount }
+    val coroutineScope = rememberCoroutineScope()
 
     println("recomposed")
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize().background(Icicle),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Icicle),
         contentAlignment = Alignment.Center
     ) {
-
         val maxHeight = this.maxHeight
         val maxWidth = this.maxWidth
         when (screenState) {
@@ -68,7 +70,8 @@ fun FilterMonthScreen(
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
-                        selectionList = viewModel.selected
+                        selectionList = viewModel.selected,
+                        coroutineScope = coroutineScope
                     )
                     if (screenState == LOADING)
                         LoadingComposable()
