@@ -39,11 +39,11 @@ class TimeSelectViewModel @Inject constructor(
     val selectedActivitiesCount: State<Int> = _selectedActivitiesCount
 
     // Rows & Columns
-    private val _rows = mutableStateListOf<Map<String, String>>()
+    private val _rows = mutableStateListOf<List<String>>()
     private val columnYear = "YEAR"
     private val columnNoActivities = "#"
-    val rows: List<Map<String, String>> = _rows
-    val columns = arrayOf(Pair(columnYear, true), Pair(columnNoActivities, false))
+    val rows: List<List<String>> = _rows
+    val columns = arrayOf(columnYear, columnNoActivities)
 
     // Screen State
     private val _timeSelectScreenState = mutableStateOf(LAUNCH)
@@ -122,9 +122,9 @@ class TimeSelectViewModel @Inject constructor(
                                         yearlyActivities.addAll(response.data)
                                         _selectedActivities.add(defaultSelected)
                                         _rows.add(
-                                            mapOf(
-                                                columnYear to "$year",
-                                                columnNoActivities to "${
+                                            listOf(
+                                                "$year",
+                                                "${
                                                     yearlyActivities.filter {
                                                         it.activityYear == year && it.summaryPolyline != null
                                                     }.size
@@ -151,9 +151,9 @@ class TimeSelectViewModel @Inject constructor(
                             if (yearlyActivities.isNotEmpty()) {
                                 _selectedActivities.add(defaultSelected)
                                 _rows.add(
-                                    mapOf(
-                                        columnYear to "$year",
-                                        columnNoActivities to "${
+                                    listOf(
+                                        "$year",
+                                        "${
                                             yearlyActivities.filter {
                                                 it.activityYear == year && it.summaryPolyline != null
                                             }.size
@@ -194,7 +194,7 @@ class TimeSelectViewModel @Inject constructor(
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
             _selectedActivities[index] = !selectedActivities[index]
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            val value = _rows[index][1].toInt() ?: 0
             _selectedActivitiesCount.value =
                 _selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
         }
@@ -202,9 +202,9 @@ class TimeSelectViewModel @Inject constructor(
 
     fun selectedYearsNavArgs(): String =
         buildString {
-            _rows.forEachIndexed { index, pair ->
+            _rows.forEachIndexed { index, fields ->
                 if (selectedActivities[index])
-                    append(pair[columnYear]).append(Constants.NAV_DELIMITER)
+                    append(fields[0]).append(Constants.NAV_DELIMITER)
             }
         }
 

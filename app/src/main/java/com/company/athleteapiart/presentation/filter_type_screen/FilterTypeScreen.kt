@@ -52,6 +52,7 @@ fun FilterTypeScreen(
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "activity types")
 
+                    /*
                     Table.TableComposable(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -64,6 +65,8 @@ fun FilterTypeScreen(
                         selectionList = viewModel.selectedTypes,
                         coroutineScope = coroutineScope
                     )
+
+                     */
 
 
                     if (screenState == LOADING)

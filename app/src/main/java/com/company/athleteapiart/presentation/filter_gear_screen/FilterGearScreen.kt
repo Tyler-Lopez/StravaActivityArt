@@ -57,6 +57,7 @@ fun FilterGearScreen(
                     // Anytime rows is mutated, invoke call to convert them from ID to name
                     var convertedRows = viewModel.convertRows()
                     LaunchedEffect(viewModel.rows) { convertedRows = viewModel.convertRows() }
+                    /*
                     Table.TableComposable(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -69,6 +70,8 @@ fun FilterGearScreen(
                         selectionList = viewModel.selected,
                         coroutineScope = coroutineScope
                     )
+
+                     */
 
                     if (screenState == LOADING)
                         LoadingComposable()

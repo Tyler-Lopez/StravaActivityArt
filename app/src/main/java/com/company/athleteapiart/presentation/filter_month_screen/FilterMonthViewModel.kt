@@ -34,13 +34,13 @@ class FilterMonthViewModel @Inject constructor(
     val selectedCount: State<Int> = _selectedCount
 
     // Rows & Columns
-    private val _rows = mutableListOf<Map<String, String>>()
+    private val _rows = mutableListOf<List<String>>()
     private val columnMonth = "MONTH"
     private val columnYear = "YEAR"
     private val columnNoActivities = "#"
-    val rows: List<Map<String, String>> = _rows
+    val rows: List<List<String>> = _rows
     val columns =
-        arrayOf(Pair(columnMonth, true), Pair(columnYear, true), Pair(columnNoActivities, false))
+        arrayOf(columnMonth, columnYear, columnNoActivities)
 
     // Constants
     private val defaultSelected = true
@@ -54,6 +54,7 @@ class FilterMonthViewModel @Inject constructor(
         _filterMonthScreenState.value = LOADING
 
         viewModelScope.launch(Dispatchers.Default) {
+            println("Here years are ${years.joinToString { "$it " }}")
             val unsortedActivities = mutableListOf<List<ActivityEntity>>()
             val yearMonthsDataMap = mutableMapOf<Pair<Int, Int>, Int>()
 
@@ -81,10 +82,10 @@ class FilterMonthViewModel @Inject constructor(
                     if (yearMonthsDataMap.containsKey(Pair(year, month))) {
                         _selected.add(defaultSelected)
                         _rows.add(
-                            mapOf(
-                                columnMonth to "$month",
-                                columnYear to "$year",
-                                columnNoActivities to "${yearMonthsDataMap[Pair(year, month)]}"
+                            listOf(
+                                "$month",
+                                "$year",
+                                "${yearMonthsDataMap[Pair(year, month)]}"
                             )
                         )
                         recalculateSelectedActivities()
@@ -98,24 +99,24 @@ class FilterMonthViewModel @Inject constructor(
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
             _selected[index] = !selected[index]
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            val value = _rows[index][2].toInt() ?: 0
             _selectedCount.value =
                 _selectedCount.value + (value * if (_selected[index]) 1 else -1)
         }
     }
 
     private fun recalculateSelectedActivities() {
-            var sum = 0
-            for (index in 0..selected.lastIndex) {
-                val value = _rows[index][columnNoActivities]?.toInt() ?: 0
-                sum = selectedCount.value + (value * if (selected[index]) 1 else -1)
-            }
-            _selectedCount.value = sum
+        var sum = 0
+        for (index in 0..selected.lastIndex) {
+            val value = _rows[index][2].toInt() ?: 0
+            sum = selectedCount.value + (value * if (selected[index]) 1 else -1)
+        }
+        _selectedCount.value = sum
     }
 
     // NAVIGATION ARGS
     fun yearMonthsNavArgs() =
         NavigationUtils.yearMonthsNavArgs(_rows.filterIndexed { index, _ -> _selected[index] }
-            .map { (it[columnYear]?.toInt() ?: 0) to (it[columnMonth]?.toInt() ?: 0) }
+            .map { (it[1].toInt() ?: 0) to (it[0].toInt() ?: 0) }
             .toTypedArray())
 }

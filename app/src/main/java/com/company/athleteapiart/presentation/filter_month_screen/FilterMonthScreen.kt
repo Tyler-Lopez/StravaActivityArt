@@ -61,18 +61,20 @@ fun FilterMonthScreen(
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "months")
 
+
                     Table.TableComposable(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(0.dp, maxHeight * 0.6f),
-                        columns = viewModel.columns,
+                        columns = viewModel.columns.toList(),
                         rows = viewModel.rows,
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
-                        selectionList = viewModel.selected,
-                        coroutineScope = coroutineScope
+                        selectionList = viewModel.selected
                     )
+
+
                     if (screenState == LOADING)
                         LoadingComposable()
 

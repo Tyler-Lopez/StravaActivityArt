@@ -1,20 +1,37 @@
 package com.company.athleteapiart.presentation.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Checkbox
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.company.athleteapiart.presentation.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class Table {
 
     companion object {
 
         // Constant representing scrollbar width
-        const val SCROLLBAR_WIDTH = 5f
+        private val SCROLLBAR_WIDTH = 8.dp
 
         @Composable
         fun TableComposable(
@@ -24,234 +41,194 @@ class Table {
             selectionList: List<Boolean>,
             onSelectIndex: (Int) -> Unit
         ) {
-            // Create ScrollState
-            val scrollState = rememberScrollState()
+            // Create ScrollState and scope
+            val listState = rememberLazyListState()
+            val scope = rememberCoroutineScope()
 
-            val scrollPosition = remember { mutableStateOf<Offset?>(null) }
-            val scrollValue = derivedStateOf { scrollState.value }
+            // We want to recompose on every scroll value change
+            val scrollbarWidth = LocalDensity.current.run { SCROLLBAR_WIDTH.toPx() }
+
 
             BoxWithConstraints(modifier = modifier) {
 
-                val tableWidth = LocalDensity.current.run { maxWidth.toPx() }
+                // Make these and all other possibly computations that are constant by remember...
                 val tableHeight = LocalDensity.current.run { maxHeight.toPx() }
+                val tableWidth = LocalDensity.current.run { maxWidth.toPx() }
 
-                // On any mutation of scroll value, invoke this to reposition scroll
-                LaunchedEffect(key1 = scrollValue) {
-                    scrollPosition.value = scrollPosition(
-                        tableWidth = tableWidth,
-                        canvasHeight = tableHeight,
-                        value = scrollValue.value,
-                        scrollState.maxValue
-                    )
+                val scrollPosition = remember {
+                    mutableStateOf(Offset.Zero)
                 }
 
-                Row() {
-                    if (scrollPosition != null) {
-                        Spacer()
-                    }
-                    Column() {
-                        TableHeader(
-                            columns = columns,
-                            scrollEnabled = scrollPosition.value == null
-                        )
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .verticalScroll(scrollState)
-                        ) {
-                            rows.forEachIndexed { index, row ->
-                                ScrollableRow(
-                                    enabled = selectionList[index],
+                // On any mutation of scroll value, invoke this to reposition scroll
 
-                                    values = row
+                // Row comprised of rows :: scrollbar
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    // Rows
+                    Column(
+                        modifier = Modifier.width((tableWidth - scrollbarWidth).dp)
+                    ) {
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            state = listState
+                        ) {
+                            item() {
+                                TableHeader(
+                                    columns = columns
                                 )
+                            }
+                            items(count = rows.size) { index ->
+                                TableRow(
+                                    enabled = selectionList[index],
+                                    fields = rows[index],
+                                    onChecked = {
+                                        onSelectIndex(index)
+                                    })
+
                             }
                         }
                     }
+
+                    val scrollbarSize = remember { mutableStateOf(Size.Zero) }
+                    /*
+                    LaunchedEffect(key1 = listState.firstVisibleItemIndex) {
+                        println("Launched effect invoked on ${listState.firstVisibleItemIndex}")
+                        println("""
+                            ${listState.layoutInfo.totalItemsCount} total items
+                            ${listState.layoutInfo.viewportEndOffset} end offset
+                            ${listState.layoutInfo.viewportStartOffset} start offset
+                            ${listState.firstVisibleItemScrollOffset} first visibe item scroll ofset
+                            ${listState.interactionSource}
+                        """.trimIndent())
+                    }
+
+                     */
+                    /*
+                    LaunchedEffect(key1 = listState., key2 = (scrollState.value / 10)) {
+                        println("Launched effect invoked")
+                        scope.launch(Dispatchers.Default) {
+                            scrollbarSize.value = scrollSize(
+                                canvasHeight = tableHeight,
+                                scrollWidth = scrollbarWidth,
+                                maxValue = scrollState.maxValue
+                            )
+                            scrollPosition.value = scrollPosition(
+                                tableWidth = scrollbarWidth,
+                                canvasHeight = tableHeight,
+                                scrollbarWidth = scrollbarWidth,
+                                value = scrollState.value,
+                                maxValue = scrollState.maxValue
+                            )
+                        }
+                    }
+
+                     */
+                    println("Here, scroll position is $scrollPosition")
+                    println("Scroll bar size is $scrollbarSize")
+              //      println("max value is ${scrollState.maxValue}")
+                    println("canvas height is $tableHeight")
+
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(SCROLLBAR_WIDTH)
+                            .background(Silver)
+                            .drawBehind {
+                                drawRect(
+                                    color = Pumpkin,
+                                    topLeft = scrollPosition.value,
+                                    size = scrollbarSize.value,
+                                )
+                            }
+                    )
+                    // }
                 }
             }
         }
 
         @Composable
         private fun TableHeader(
-            columns: List<String>,
-            scrollEnabled: Boolean = false,
+            columns: List<String>
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp) // If hard coded may have solution to scroll size
+                    .background(Silver)
+                    .padding(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CheckBox,
+                    tint = Asphalt,
+                    modifier = Modifier.weight(0.25f),
+                    contentDescription = ""
+                )
+                for (column in columns)
+                    Text(
+                        text = column.uppercase(),
+                        modifier = Modifier.weight(1f),
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        color = Coal,
+                        fontWeight = FontWeight.Bold
+                    )
+            }
+        }
 
+        @Composable
+        private fun TableRow(
+            enabled: Boolean,
+            fields: List<String>,
+            onChecked: () -> Unit
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = enabled,
+                    modifier = Modifier.weight(0.25f),
+                    onCheckedChange = {
+                        onChecked()
+                    })
+                for (field in fields) {
+                    Text(
+                        text = field,
+                        fontSize = 24.sp,
+                        fontFamily = Lato,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
 
 
         // Invoked in Composable to help build ScrollBar with Canvas
-        private fun shouldShowScroll(maxValue: Int) = maxValue != 0
         private fun scrollPosition(
             tableWidth: Float,
             canvasHeight: Float,
+            scrollbarWidth: Float,
             value: Int,
             maxValue: Int
         ) = Offset(
-            x = tableWidth - scrollWidth(tableWidth),
+            x = -scrollbarWidth,
             y = 0f + ((value.toFloat() / maxValue.toFloat()) * (canvasHeight - scrollSize(
                 canvasHeight = canvasHeight,
-                scrollWidth = scrollWidth(tableWidth),
+                scrollWidth = scrollbarWidth,
                 maxValue = maxValue
             ).height))
         )
 
-        private fun scrollBackgroundPosition(tableWidth: Float) = Offset(
-            x = tableWidth - scrollWidth(tableWidth),
-            y = 0f
-        )
-
-        private fun scrollBackgroundSize(canvasHeight: Float, scrollWidth: Float) = Size(
-            width = scrollWidth,
-            height = canvasHeight
-        )
 
         private fun scrollSize(canvasHeight: Float, scrollWidth: Float, maxValue: Int) = Size(
             width = scrollWidth,
-            height = ((1f / maxValue) * 30f) * canvasHeight
+            height = ((1f / maxValue) * 120f) * canvasHeight
         )
 
     }
 }
-
-
-/*
-
-  @Composable
-  fun TableComposable(
-      modifier: Modifier,
-      columns: Array<Pair<String, Boolean>>, // (YEAR, TRUE), (MONTH, TRUE), (ACTIVITY COUNT, FALSE)
-      rows: List<Map<String, String>>, // YEAR to 2002
-      tableSpecification: TableSpecification,
-      selectionList: List<Boolean>,
-      onSelectIndex: (Int) -> Unit
-  ) {
-      // Create ScrollState
-      val scrollState = rememberScrollState()
-      val scope = rememberCoroutineScope()
-
-      val scrollMax = scrollState.maxValue
-
-      val scrollValue by remember { derivedStateOf { scrollState.value } }
-
-      // On any mutation of scroll value, invoke this to reposition scroll
-      LaunchedEffect(key1 = scrollValue) {
-
-      }
-      Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Top
-      ) {
-          Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .background(Color.LightGray)
-                  .padding(4.dp),
-              verticalAlignment = Alignment.CenterVertically,
-              horizontalArrangement = Arrangement.SpaceBetween
-          ) {
-              Icon(
-                  imageVector = Icons.Default.CheckBox,
-                  tint = Color.Gray,
-                  modifier = Modifier.weight(0.25f),
-                  contentDescription = ""
-              )
-              for (column in columns)
-                  Text(
-                      text = column.first.uppercase(),
-                      modifier = Modifier.weight(1f),
-                      fontSize = 22.sp,
-                      textAlign = TextAlign.Center,
-                      color = Color.Gray,
-                      fontWeight = FontWeight.Bold
-                  )
-              // If we should show scrollbar, add a spacer for it of size of scrollbar
-              if (shouldShowScroll(scrollMax))
-                  Spacer(
-                      modifier = Modifier.width(scrollWidth(tableWidth).dp)
-                  )
-          }
-          BoxWithConstraints(
-              modifier = Modifier
-                  .fillMaxWidth()
-          ) {
-              Column(
-                  modifier = Modifier
-                      .verticalScroll(scrollState)
-                      .drawBehind {
-                          val canvasWidth = this.size.width
-                          val canvasHeight = this.size.height
-
-                          // Compute async off of UI thread
-
-                          if (shouldShowScroll(maxValue = scrollMax)) {
-
-                              val scrollWidth = scrollWidth(tableWidth = tableWidth)
-
-                              drawRect(
-                                  color = Color.LightGray,
-                                  topLeft = scrollBackgroundPosition(
-                                      tableWidth = tableWidth
-                                  ),
-                                  size = scrollBackgroundSize(
-                                      canvasHeight = canvasHeight,
-                                      scrollWidth = scrollWidth
-                                  )
-                              )
-                              drawRect(
-                                  color = StravaOrange,
-                                  topLeft = scrollPosition ?: Offset(0f, 0f),
-                                  //   topLeft = scrollPosition(
-                                  //      tableWidth = canvasWidth,
-                                  //     canvasHeight = canvasHeight,
-                                  //    value = scrollValue,
-                                  //     maxValue = scrollMax
-                                  //  ),
-                                  size = scrollSize(
-                                      scrollWidth = scrollWidth,
-                                      maxValue = scrollMax,
-                                      canvasHeight = canvasHeight
-                                  )
-                              )
-                          }
-                      }
-              ) {
-
-                  for (i in 0..rows.lastIndex) {
-                      Row(
-                          modifier = Modifier.fillMaxWidth(),
-                          verticalAlignment = Alignment.CenterVertically
-                      ) {
-                          Checkbox(
-                              checked = selectionList[i],
-                              modifier = Modifier.weight(0.25f),
-                              onCheckedChange = {
-                                  //  selectedList[i] = it
-                                  onSelectIndex(i)
-                              })
-                          for (column in columns) {
-                              val field = rows[i][column.first]
-                              Text(
-                                  text = field ?: "ERR",
-                                  fontSize = 24.sp,
-                                  fontFamily = Lato,
-                                  fontWeight = if (column.second)
-                                      FontWeight.Bold else FontWeight.Normal,
-                                  textAlign = TextAlign.Center,
-                                  modifier = Modifier.weight(1f)
-                              )
-                          }
-                          if (shouldShowScroll(scrollMax))
-                              Spacer(
-                                  modifier = Modifier
-                                      .width(scrollWidth(tableWidth).dp)
-                              )
-                      }
-                  }
-              }
-          }
-      }
-  }
-
- */
