@@ -1,5 +1,6 @@
 package com.company.athleteapiart.presentation.common
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
@@ -32,8 +34,8 @@ class Table {
     companion object {
 
         // Constant representing scrollbar width
-        private val SCROLLBAR_WIDTH = 8.dp
-        private val ROW_HEIGHT = 75.dp
+        private val SCROLLBAR_WIDTH = 4.dp
+        private val ROW_HEIGHT = 50.dp
 
         @Composable
         fun TableComposable(
@@ -48,18 +50,13 @@ class Table {
             val scope = rememberCoroutineScope()
 
             // We want to recompose on every scroll value change
-            val scrollbarWidth = LocalDensity.current.run { SCROLLBAR_WIDTH.toPx() }
-            val rowHeightFloat = LocalDensity.current.run { ROW_HEIGHT.toPx() }
-
+            val scrollbarWidth = LocalDensity.current.run { SCROLLBAR_WIDTH.roundToPx() }.toFloat()
+            val rowHeightFloat = LocalDensity.current.run { ROW_HEIGHT.roundToPx() }.toFloat()
+            val scrollOffsetFl = LocalDensity.current.run {  }
 
             BoxWithConstraints(modifier = modifier) {
 
                 val scrollPosition = remember { mutableStateOf(Offset.Zero) }
-                val scrollbarSize = remember {
-                    mutableStateOf(
-                        Size.Zero
-                    )
-                }
 
                 // On any mutation of scroll value, invoke this to reposition scroll
 
@@ -68,18 +65,23 @@ class Table {
                     // Rows
                     Column {
                         TableHeader(columns = columns)
-                        BoxWithConstraints(modifier = Modifier
-                            .fillMaxWidth()
-                            .drawBehind {
-                                drawRect(
-                                    color = Pumpkin,
-                                    topLeft = scrollPosition.value,
-                                    size = scrollbarSize.value,
-                                )
-                            }) {
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            val boxHeight = maxHeight
+                            val rowsHeight = LocalDensity.current.run { maxHeight.roundToPx() }.toFloat()
+                            val rowsWidth = LocalDensity.current.run { maxWidth.roundToPx() }.toFloat()
+                            val rowsSzFl = remember { rows.size.toFloat() }
 
-                            val rowsHeight = LocalDensity.current.run { maxHeight.toPx() }
-                            val rowsWidth = LocalDensity.current.run { maxWidth.toPx() }
+                            val scrollbarSize = remember {
+                                mutableStateOf(
+                                    Size(
+                                        width = scrollbarWidth.toFloat(),
+                                        height = (rowsHeight / (rowsSzFl * rowHeightFloat)) * rowsHeight
+                                    )
+                                )
+                            }
 
                             LazyColumn(
                                 modifier = Modifier
@@ -98,26 +100,27 @@ class Table {
                                 }
                             }
 
-                            LaunchedEffect(key1 = listState.firstVisibleItemIndex) {
-                                scope.launch(Dispatchers.Default) {
-                                    println("KEY 1 IS ${listState.firstVisibleItemIndex} KEY 2 IS ${listState.layoutInfo.viewportStartOffset}")
-                                    println("Launched effect invoked on ${listState.firstVisibleItemIndex}")
-                                    println("Visible items size is ${listState.layoutInfo.visibleItemsInfo.size}")
-                                    println("visible items lastindex is ${listState.layoutInfo.visibleItemsInfo.lastIndex}")
-                                    val visibleItemsSize =
-                                        listState.layoutInfo.visibleItemsInfo.size.toDouble()
-                                    val size = rows.size.toFloat()
+                            Canvas(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(boxHeight)
+                            ) {
+                                drawRect(
+                                    color = Silver,
+                                    topLeft = scrollPosition.value,
+                                    size = scrollbarSize.value,
+                                )
+                            }
 
-                                    scrollbarSize.value = Size(
-                                        width = scrollbarWidth,
-                                        // (x / y) * (50 * x)
-                                        height = listState.layoutInfo.viewportEndOffset
-                                                / ((size * rowHeightFloat)) * (rowsHeight)
-                                    )
+                            LaunchedEffect(
+                                key1 = listState.firstVisibleItemScrollOffset
+                            ) {
+                                scope.launch(Dispatchers.Default) {
                                     scrollPosition.value = Offset(
                                         x = rowsWidth - scrollbarWidth,
                                         // 300 - 0 = 300
-                                        y = (listState.layoutInfo.viewportEndOffset * ((listState.firstVisibleItemIndex.toFloat() + 1) / (size))) - rowHeightFloat
+                                        y = (((listState.firstVisibleItemIndex * rowHeightFloat) +
+                                                listState.firstVisibleItemScrollOffset) / (rowsSzFl * rowHeightFloat)) * rowsHeight
                                     )
                                 }
                             }
@@ -143,7 +146,11 @@ class Table {
                 Icon(
                     imageVector = Icons.Default.CheckBox,
                     tint = Asphalt,
-                    modifier = Modifier.weight(0.25f),
+                    modifier = Modifier
+                        .size(
+                            ROW_HEIGHT * 0.6f
+                        )
+                        .weight(0.25f),
                     contentDescription = ""
                 )
                 for (column in columns)
@@ -172,7 +179,9 @@ class Table {
             ) {
                 Checkbox(
                     checked = enabled,
-                    modifier = Modifier.weight(0.25f),
+                    modifier = Modifier
+                        .scale(1.25f)
+                        .weight(0.25f),
                     onCheckedChange = {
                         onChecked()
                     })
