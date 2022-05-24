@@ -228,7 +228,10 @@ class FilterGearViewModel @Inject constructor(
 
     // NAVIGATION ARGS
     fun gearsNavArgs() = NavigationUtils.gearsNavArgs(
-        _rows.filterIndexed { index, _ -> _selected[index] }.map { it[0].first }.toTypedArray()
+        _rows.filterIndexed { index, _ -> _selected[index] }.map {
+            if (it[0].first == "Unknown") "null" else it[0].first
+        }.toTypedArray()
+
     )
     fun activityTypesNavArgs(types: Array<String>?) = NavigationUtils.activityTypesNavArgs(types)
     fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
