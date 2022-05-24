@@ -10,21 +10,27 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.common.ButtonComposable
-import com.company.athleteapiart.presentation.common.HeaderComposable
-import com.company.athleteapiart.presentation.ui.theme.Asphalt
-import com.company.athleteapiart.presentation.ui.theme.Coal
-import com.company.athleteapiart.presentation.ui.theme.Icicle
-import com.company.athleteapiart.presentation.ui.theme.StravaOrange
+import com.company.athleteapiart.presentation.common.LoadingComposable
+import com.company.athleteapiart.presentation.common.WarningComposable
+import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
+import com.company.athleteapiart.util.isPermaDenied
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VisualizeScreen(
     athleteId: Long,
@@ -62,24 +68,42 @@ fun VisualizeScreen(
             }
             GET_SPECIFICATION -> {
                 val width = LocalDensity.current.run { maxWidth.roundToPx() }
-                val backgroundPaint = Paint().also { it.color = Coal.toArgb() }
-                val activityPaint = Paint().also { it.color = StravaOrange.toArgb() }
+
 
                 viewModel.loadVisualizeSpecification(
                     bitmapWidth = width,
                     widthHeightRatio = 1080f / 1920f,
-                    marginFraction = 0.05f,
-                    backgroundPaint = backgroundPaint,
-                    activityPaint = activityPaint
+                    marginFraction = 0.05f
                 )
             }
             LOADING -> {
-                Text("Loading")
+                LoadingComposable()
             }
-            PERMISSION_ACCEPTED -> {
+            STANDBY, SAVING -> {
 
-            }
-            STANDBY -> {
+                val permState = rememberPermissionState(permission = viewModel.permission)
+                val hasPermission = remember { derivedStateOf { permState.hasPermission } }
+
+                val lifecycleOwner = LocalLifecycleOwner.current
+
+                // For side effects that need to be cleaned up after keys change
+                // or the composable leaves the composition
+                // If keys change, composable disposes current effect and resets by calling again
+                DisposableEffect(
+                    key1 = lifecycleOwner,
+                    effect = {
+                        val observer = LifecycleEventObserver { _, event ->
+                            if (event == Lifecycle.Event.ON_START) {
+                                permState.launchPermissionRequest()
+                            }
+                        }
+                        lifecycleOwner.lifecycle.addObserver(observer)
+
+                        onDispose {
+                            lifecycleOwner.lifecycle.removeObserver(observer)
+                        }
+                    }
+                )
 
                 Column(
                     modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
@@ -99,37 +123,26 @@ fun VisualizeScreen(
                             )
                         )
                     }
-                    ButtonComposable(
-                        text = "Save Image",
-                        modifier = Modifier.fillMaxWidth(),
-                        icon = Icons.Default.Save
-                    ) {
-
+                    if (hasPermission.value)
+                        ButtonComposable(
+                            text = if (screenState == SAVING) "Saving Image" else "Save Image",
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = screenState != SAVING,
+                            icon = Icons.Default.Save
+                        ) {
+                            viewModel.startSave(context)
+                        }
+                    else {
+                        if (permState.shouldShowRationale)
+                            WarningComposable()
+                        ButtonComposable(
+                            text = "Grant Save Permission",
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            permState.launchPermissionRequest()
+                        }
                     }
                 }
-
-
-                /*
-
-                val backgroundPaint = Paint().also {
-                    it.color = android.graphics.Color.WHITE
-                }
-                val activityPaint = Paint().also {
-                    it.color = android.graphics.Color.parseColor("#fc4c02")
-                }
-                Card(elevation = 4.dp) {
-                    VisualizeImage(
-                        bitmap = visualizeBitmap(
-                            bitmapWidth = LocalDensity.current.run { maxWidth.roundToPx() },
-                            heightWidthRatio = 1920f / 1080f,
-                            activities = viewModel.activities,
-                            backgroundPaint = backgroundPaint,
-                            activityPaint = activityPaint
-                        )
-                    )
-                }
-
-                 */
             }
         }
     }
