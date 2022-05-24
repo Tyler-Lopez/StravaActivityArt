@@ -82,10 +82,11 @@ class GetAthleteUseCase @Inject constructor(
         )
     }
 
+    // TODO come back to this
     private fun isDateExpired(
         lastDateUnixSeconds: Int,
         daysToExpiration: Int
-    ) =
-        ((GregorianCalendar().timeInMillis / 1000) - lastDateUnixSeconds) > (86400 * daysToExpiration)
+    ) = true
+       // ((GregorianCalendar().timeInMillis / 1000) - lastDateUnixSeconds) > (86400 * daysToExpiration)
 
 }

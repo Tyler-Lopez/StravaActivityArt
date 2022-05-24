@@ -43,6 +43,8 @@ class Table {
             selectionList: List<Boolean>,
             onSelectIndex: (Int) -> Unit
         ) {
+            println("rows are $rows")
+            println("row size is ${rows.size}")
             // Create ScrollState and scope
             val state = rememberLazyListState()
             val scope = rememberCoroutineScope()
@@ -61,35 +63,37 @@ class Table {
                                 .fillMaxWidth()
                                 .background(White)
                         ) {
+                            println("Display scrollbar value is true")
+
+
                             val boxHeight = maxHeight
                             val rowsHeight =
                                 LocalDensity.current.run { maxHeight.roundToPx() }.toFloat()
                             val rowsWidth =
                                 LocalDensity.current.run { maxWidth.roundToPx() }.toFloat()
                             val rowsSzFl = remember { rows.size.toFloat() }
-                            val displayScrollbar = remember {
-                                derivedStateOf {
-                                    state.layoutInfo.visibleItemsInfo.size != rows.size
-                                }
+                            val displayScrollbar = remember { mutableStateOf(false)
                             }
 
                             val scrollPosition = remember {
                                 mutableStateOf(
-                                    Offset(
-                                        x = rowsWidth - SCROLLBAR_WIDTH - BORDER_WIDTH,
-                                        y = 0f
-                                    )
+                                    Offset.Zero
+                          //          Offset(
+                         //               x = rowsWidth - SCROLLBAR_WIDTH - BORDER_WIDTH,
+                        //                y = 0f
+                       //             )
                                 )
                             }
                             val scrollbarSize = remember {
                                 mutableStateOf(
-                                    Size(
-                                        width = SCROLLBAR_WIDTH,
-                                        height = (rowsHeight / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
-                                    )
+                                    Size.Zero
+                              //      Size(
+                              //          width = SCROLLBAR_WIDTH,
+                              //          height = (rowsHeight / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
+                              //      )
                                 )
                             }
-
+/*
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth(),
@@ -105,6 +109,7 @@ class Table {
                                         })
                                 }
                             }
+
 
                             if (displayScrollbar.value)
                                 Canvas(
@@ -125,7 +130,11 @@ class Table {
                                 key3 = state.layoutInfo.visibleItemsInfo.lastIndex
                             ) {
                                 scope.launch(Dispatchers.Default) {
-
+                                    println("""
+                                        key 1 ${state.firstVisibleItemScrollOffset}
+                                        key 2 ${state.firstVisibleItemIndex}
+                                        key 3 ${state.layoutInfo.visibleItemsInfo.lastIndex}
+                                    """.trimIndent())
                                     val first = state.firstVisibleItemIndex.toFloat()
                                     val offset = state.firstVisibleItemScrollOffset.toFloat()
 
@@ -136,6 +145,8 @@ class Table {
                                     )
                                 }
                             }
+
+                             */
                         }
                     }
                 }

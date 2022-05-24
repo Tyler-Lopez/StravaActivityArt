@@ -55,23 +55,23 @@ fun FilterGearScreen(
                     HeaderWithEmphasisComposable(emphasized = "gears")
 
                     // Anytime rows is mutated, invoke call to convert them from ID to name
+                    // TODO, this is not great
+                    // improve, reduce amount of recomposition conversion
                     var convertedRows = viewModel.convertRows()
                     LaunchedEffect(viewModel.rows) { convertedRows = viewModel.convertRows() }
-                    /*
+
                     Table.TableComposable(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(0.dp, maxHeight * 0.6f),
-                        columns = viewModel.columns,
-                        rows = convertedRows,
+                        columns = viewModel.columns.toList(),
+                        rows = viewModel.convertRows(),
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
                         selectionList = viewModel.selected,
-                        coroutineScope = coroutineScope
                     )
 
-                     */
 
                     if (screenState == LOADING)
                         LoadingComposable()

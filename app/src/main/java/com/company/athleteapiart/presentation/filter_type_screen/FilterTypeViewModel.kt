@@ -38,11 +38,11 @@ class FilterTypeViewModel @Inject constructor(
 
 
     // Rows & Columns
-    private val _rows = mutableStateListOf<Map<String, String>>()
+    private val _rows = mutableStateListOf<List<Pair<String, Boolean>>>()
     private val columnType = "TYPE"
     private val columnNoActivities = "#"
-    val rows: List<Map<String, String>> = _rows
-    val columns = arrayOf(Pair(columnType, true), Pair(columnNoActivities, false))
+    val rows: List<List<Pair<String, Boolean>>> = _rows
+    val columns = arrayOf(columnType, columnNoActivities)
 
     // Constants
     private val defaultSelected = true
@@ -85,9 +85,9 @@ class FilterTypeViewModel @Inject constructor(
             flatMappedActivities.groupingBy { it.activityType }.eachCount().forEach {
                 _selectedTypes.add(defaultSelected)
                 _rows.add(
-                    mapOf(
-                        columnType to it.key,
-                        columnNoActivities to "${it.value}"
+                    listOf(
+                        it.key to true,
+                        "${it.value}" to false
                     )
                 )
                 recalculateSelected()
@@ -100,7 +100,7 @@ class FilterTypeViewModel @Inject constructor(
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
             _selectedTypes[index] = !_selectedTypes[index]
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            val value = _rows[index][1].first.toInt()
             _selectedTypesCount.value =
                 _selectedTypesCount.value + (value * if (_selectedTypes[index]) 1 else -1)
         }
@@ -109,7 +109,7 @@ class FilterTypeViewModel @Inject constructor(
     private fun recalculateSelected() {
         var sum = 0
         for (index in 0.._selectedTypes.lastIndex) {
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            val value = _rows[index][1].first.toInt()
             sum = _selectedTypesCount.value + (value * if (_selectedTypes[index]) 1 else -1)
         }
         _selectedTypesCount.value = sum
@@ -121,7 +121,7 @@ class FilterTypeViewModel @Inject constructor(
         val filteredActivities = flatMappedActivities.filter { activity ->
             _rows.filterIndexed { index, _ ->
                 _selectedTypes[index]
-            }.map { it[columnType] }.contains(activity.activityType)
+            }.map { it[0].first }.contains(activity.activityType)
         }
 
         // Within those activities, determine if we need to ask user to filter by gear or distance
@@ -141,7 +141,7 @@ class FilterTypeViewModel @Inject constructor(
     // NAVIGATION ARGS
     fun activityTypesNavArgs() = NavigationUtils.activityTypesNavArgs(
         _rows.filterIndexed { index, _ -> _selectedTypes[index] }
-            .map { it[columnType]!! }
+            .map { it[0].first }
             .toTypedArray()
     )
     fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =

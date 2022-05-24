@@ -47,11 +47,11 @@ class FilterGearViewModel @Inject constructor(
     val selectedCount: State<Int> = _selectedCount
 
     // Rows & Columns
-    private val _rows = mutableStateListOf<Map<String, String?>>()
+    private val _rows = mutableStateListOf<List<Pair<String, Boolean>>>()
     private val columnGear = "GEAR"
     private val columnNoActivities = "#"
-    val rows: List<Map<String, String?>> = _rows
-    val columns = arrayOf(Pair(columnGear, true), Pair(columnNoActivities, false))
+    val rows: List<List<Pair<String, Boolean>>> = _rows
+    val columns = arrayOf(columnGear, columnNoActivities)
 
     // Correlate gearIds with gear names
     private lateinit var gearsIdMap: MutableMap<String, String>
@@ -139,12 +139,13 @@ class FilterGearViewModel @Inject constructor(
 
             // Iterate through Gear Frequency Map and populate rows
             gearFrequencies.forEach {
+                println("here in gear frequencies")
                 launch {
                     _selected.add(defaultSelected)
                     _rows.add(
-                        mapOf(
-                            columnGear to it.key,
-                            columnNoActivities to "${it.value}"
+                        listOf(
+                            (it.key ?: "Unknown") to true,
+                            "${it.value}" to false
                         )
                     )
                     recalculateSelected()
@@ -167,7 +168,7 @@ class FilterGearViewModel @Inject constructor(
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
             _selected[index] = !_selected[index]
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            val value = _rows[index][1].first.toInt()
             _selectedCount.value =
                 _selectedCount.value + (value * if (_selected[index]) 1 else -1)
         }
@@ -176,7 +177,7 @@ class FilterGearViewModel @Inject constructor(
     private fun recalculateSelected() {
         var sum = 0
         for (index in 0.._selected.lastIndex) {
-            val value = _rows[index][columnNoActivities]?.toInt() ?: 0
+            val value = _rows[index][1].first.toInt()
             sum = _selectedCount.value + (value * if (_selected[index]) 1 else -1)
         }
         _selectedCount.value = sum
@@ -192,7 +193,7 @@ class FilterGearViewModel @Inject constructor(
 
             val selectedGears = _rows.filterIndexed { index, _ ->
                 _selected[index]
-            }.map { it[columnGear] }
+            }.map { it[0].first }
 
             activity.gearId?.let { selectedGears.contains(activity.activityType) } ?: true &&
                     activityTypes?.contains(activity.activityType) ?: true
@@ -213,12 +214,12 @@ class FilterGearViewModel @Inject constructor(
     // Function converts rows from "gear" to gearId to "gear" to gearName
     fun convertRows() =
         _rows.let { rows ->
-            val toReturn = mutableStateListOf<Map<String, String>>()
+            val toReturn = mutableStateListOf<List<Pair<String, Boolean>>>()
             rows.forEach { row ->
                 toReturn.add(
-                    mapOf(
-                        columnGear to (gearsIdMap[row[columnGear]] ?: "Unknown"),
-                        columnNoActivities to row[columnNoActivities]!!
+                    listOf(
+                        (gearsIdMap[row[0].first] ?: "Unknown") to true,
+                        row[1].first to false
                     )
                 )
             }
@@ -227,7 +228,7 @@ class FilterGearViewModel @Inject constructor(
 
     // NAVIGATION ARGS
     fun gearsNavArgs() = NavigationUtils.gearsNavArgs(
-        _rows.filterIndexed { index, _ -> _selected[index] }.map { it[columnGear] }.toTypedArray()
+        _rows.filterIndexed { index, _ -> _selected[index] }.map { it[0].first }.toTypedArray()
     )
     fun activityTypesNavArgs(types: Array<String>?) = NavigationUtils.activityTypesNavArgs(types)
     fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
