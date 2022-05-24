@@ -31,7 +31,7 @@ class Table {
     companion object {
 
         // Constant representing scrollbar width
-        private const val SCROLLBAR_WIDTH = 6f
+        private const val SCROLLBAR_WIDTH = 8f
         private const val ROW_HEIGHT = 65f
         private const val BORDER_WIDTH = 0f
 
@@ -51,9 +51,10 @@ class Table {
 
             BoxWithConstraints(modifier = modifier) {
                 // Row comprised of rows :: scrollbar
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .border(with(LocalDensity.current) { BORDER_WIDTH.toDp() }, Silver)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(with(LocalDensity.current) { BORDER_WIDTH.toDp() }, Silver)
                 ) {
                     // Rows
                     Column {
@@ -65,51 +66,54 @@ class Table {
                         ) {
                             println("Display scrollbar value is true")
 
-
                             val boxHeight = maxHeight
                             val rowsHeight =
                                 LocalDensity.current.run { maxHeight.roundToPx() }.toFloat()
                             val rowsWidth =
                                 LocalDensity.current.run { maxWidth.roundToPx() }.toFloat()
                             val rowsSzFl = remember { rows.size.toFloat() }
-                            val displayScrollbar = remember { mutableStateOf(false)
+                            val displayScrollbar = remember {
+                                derivedStateOf { state.layoutInfo.totalItemsCount != state.layoutInfo.visibleItemsInfo.size }
                             }
 
+                            val first = remember { derivedStateOf { state.firstVisibleItemIndex.toFloat() } }
+                            val offset = remember { derivedStateOf { state.firstVisibleItemScrollOffset.toFloat() } }
+
                             val scrollPosition = remember {
-                                mutableStateOf(
-                                    Offset.Zero
-                          //          Offset(
-                         //               x = rowsWidth - SCROLLBAR_WIDTH - BORDER_WIDTH,
-                        //                y = 0f
-                       //             )
-                                )
+                                derivedStateOf {
+                                    Offset(
+                                        x = rowsWidth - SCROLLBAR_WIDTH - BORDER_WIDTH,
+                                        y = (((first.value * ROW_HEIGHT) + offset.value) / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
+                                    )
+                                }
                             }
+
+
                             val scrollbarSize = remember {
                                 mutableStateOf(
-                                    Size.Zero
-                              //      Size(
-                              //          width = SCROLLBAR_WIDTH,
-                              //          height = (rowsHeight / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
-                              //      )
+                                    Size(
+                                        width = SCROLLBAR_WIDTH,
+                                        height = (rowsHeight / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
+                                    )
                                 )
                             }
-/*
+
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                state = state,
-                                contentPadding = PaddingValues(0.dp)
+                                state = state
                             ) {
                                 items(count = rows.size) { index ->
+
                                     TableRow(
                                         enabled = selectionList[index],
                                         fields = rows[index],
                                         onChecked = {
                                             onSelectIndex(index)
                                         })
+
                                 }
                             }
-
 
                             if (displayScrollbar.value)
                                 Canvas(
@@ -123,35 +127,12 @@ class Table {
                                         size = scrollbarSize.value,
                                     )
                                 }
-
-                            LaunchedEffect(
-                                key1 = state.firstVisibleItemScrollOffset,
-                                key2 = state.firstVisibleItemIndex,
-                                key3 = state.layoutInfo.visibleItemsInfo.lastIndex
-                            ) {
-                                scope.launch(Dispatchers.Default) {
-                                    println("""
-                                        key 1 ${state.firstVisibleItemScrollOffset}
-                                        key 2 ${state.firstVisibleItemIndex}
-                                        key 3 ${state.layoutInfo.visibleItemsInfo.lastIndex}
-                                    """.trimIndent())
-                                    val first = state.firstVisibleItemIndex.toFloat()
-                                    val offset = state.firstVisibleItemScrollOffset.toFloat()
-
-                                    scrollPosition.value = Offset(
-                                        x = scrollPosition.value.x,
-                                        // 300 - 0 = 300
-                                        y = (((first * ROW_HEIGHT) + offset) / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
-                                    )
-                                }
-                            }
-
-                             */
                         }
                     }
                 }
             }
         }
+
 
         @Composable
         private fun TableHeader(

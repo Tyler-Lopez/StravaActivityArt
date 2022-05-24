@@ -64,13 +64,14 @@ fun FilterYearScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    println("Here in ${viewModel.rows}")
                     HeaderWithEmphasisComposable(emphasized = "years")
                     Table.TableComposable(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(0.dp, maxHeight * 0.6f),
                         columns = viewModel.columns.toList(),
-                        rows = viewModel.rows,
+                        rows = viewModel.rows.toList(),
                         onSelectIndex = {
                             viewModel.updateSelectedActivities(it)
                         },
