@@ -89,16 +89,16 @@ fun WelcomeScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                    Text(
-                        text = "VERSION  0.1.0",
-                        fontSize = 14.sp,
-                        fontFamily = Lato,
-                        color = Gravel,
-                        textAlign = TextAlign.Center
-                    )
+                        Text(
+                            text = "ALPHA 0.1.0",
+                            fontSize = 16.sp,
+                            fontFamily = Lato,
+                            color = Gravel,
+                            textAlign = TextAlign.Center
+                        )
                         Text(
                             text = "Activity Art",
-                            fontSize = 24.sp,
+                            fontSize = 26.sp,
                             fontFamily = Lato,
                             color = Asphalt,
                             fontWeight = FontWeight.Bold,

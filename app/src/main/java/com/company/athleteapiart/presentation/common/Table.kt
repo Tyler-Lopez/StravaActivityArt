@@ -107,7 +107,7 @@ class Table {
                                         .height(boxHeight)
                                 ) {
                                     drawRect(
-                                        color = Rust,
+                                        color = Asphalt,
                                         topLeft = scrollPosition.value,
                                         size = scrollbarSize.value,
                                     )
@@ -152,7 +152,7 @@ class Table {
             ) {
                 Icon(
                     imageVector = Icons.Default.CheckBox,
-                    tint = Asphalt,
+                    tint = Coal,
                     modifier = Modifier
                         .weight(0.25f),
                     contentDescription = ""
