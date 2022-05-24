@@ -11,6 +11,7 @@ import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.presentation.filter_month_screen.FilterMonthScreenState.*
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.NavigationUtils
+import com.company.athleteapiart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -83,7 +84,7 @@ class FilterMonthViewModel @Inject constructor(
                         _selected.add(defaultSelected)
                         _rows.add(
                             listOf(
-                                "$month",
+                                TimeUtils.monthIntToString(month),
                                 "$year",
                                 "${yearMonthsDataMap[Pair(year, month)]}"
                             )
@@ -117,6 +118,6 @@ class FilterMonthViewModel @Inject constructor(
     // NAVIGATION ARGS
     fun yearMonthsNavArgs() =
         NavigationUtils.yearMonthsNavArgs(_rows.filterIndexed { index, _ -> _selected[index] }
-            .map { (it[1].toInt() ?: 0) to (it[0].toInt() ?: 0) }
+            .map { (it[1].toInt()) to (TimeUtils.monthStringToInt(it[0])) }
             .toTypedArray())
 }

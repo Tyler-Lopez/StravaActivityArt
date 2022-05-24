@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.ui.theme.Lato
+import com.company.athleteapiart.presentation.ui.theme.MaisonNeue
 import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 
 @Composable
@@ -26,6 +27,7 @@ fun HeaderWithEmphasisComposable(
     val spanStyles = listOf(
         AnnotatedString.Range(
             SpanStyle(
+                fontFamily = MaisonNeue,
                 fontWeight = FontWeight.Bold,
                 color = StravaOrange
             ),

@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.ui.theme.Lato
+import com.company.athleteapiart.presentation.ui.theme.MaisonNeue
 import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 
 @Composable
@@ -29,7 +30,7 @@ fun ActivitiesCountComposable(
         ) {
             Text(
                 text = "%,d".format(count),
-                fontFamily = Lato,
+                fontFamily = MaisonNeue,
                 fontWeight = FontWeight.Bold,
                 color = StravaOrange,
                 fontSize = 28.sp

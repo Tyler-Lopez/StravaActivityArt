@@ -2,6 +2,7 @@ package com.company.athleteapiart.presentation.common
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,8 +31,9 @@ class Table {
     companion object {
 
         // Constant representing scrollbar width
-        private val SCROLLBAR_WIDTH = 6f
-        private val ROW_HEIGHT = 65f
+        private const val SCROLLBAR_WIDTH = 6f
+        private const val ROW_HEIGHT = 65f
+        private const val BORDER_WIDTH = 0f
 
         @Composable
         fun TableComposable(
@@ -47,13 +49,17 @@ class Table {
 
             BoxWithConstraints(modifier = modifier) {
                 // Row comprised of rows :: scrollbar
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .border(with(LocalDensity.current) { BORDER_WIDTH.toDp() }, Silver)
+                ) {
                     // Rows
                     Column {
                         TableHeader(columns = columns)
                         BoxWithConstraints(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .background(White)
                         ) {
                             val boxHeight = maxHeight
                             val rowsHeight =
@@ -70,7 +76,7 @@ class Table {
                             val scrollPosition = remember {
                                 mutableStateOf(
                                     Offset(
-                                        x = rowsWidth - SCROLLBAR_WIDTH,
+                                        x = rowsWidth - SCROLLBAR_WIDTH - BORDER_WIDTH,
                                         y = 0f
                                     )
                                 )
@@ -121,11 +127,10 @@ class Table {
                                 scope.launch(Dispatchers.Default) {
 
                                     val first = state.firstVisibleItemIndex.toFloat()
-                                    val last = state.layoutInfo.visibleItemsInfo.lastIndex.toFloat()
                                     val offset = state.firstVisibleItemScrollOffset.toFloat()
 
                                     scrollPosition.value = Offset(
-                                        x = rowsWidth - SCROLLBAR_WIDTH,
+                                        x = scrollPosition.value.x,
                                         // 300 - 0 = 300
                                         y = (((first * ROW_HEIGHT) + offset) / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
                                     )
