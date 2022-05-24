@@ -39,10 +39,10 @@ class TimeSelectViewModel @Inject constructor(
     val selectedActivitiesCount: State<Int> = _selectedActivitiesCount
 
     // Rows & Columns
-    private val _rows = mutableStateListOf<List<String>>()
+    private val _rows = mutableStateListOf<List<Pair<String, Boolean>>>()
     private val columnYear = "YEAR"
     private val columnNoActivities = "#"
-    val rows: List<List<String>> = _rows
+    val rows: List<List<Pair<String, Boolean>>> = _rows
     val columns = arrayOf(columnYear, columnNoActivities)
 
     // Screen State
@@ -123,12 +123,12 @@ class TimeSelectViewModel @Inject constructor(
                                         _selectedActivities.add(defaultSelected)
                                         _rows.add(
                                             listOf(
-                                                "$year",
+                                                "$year" to true,
                                                 "${
                                                     yearlyActivities.filter {
                                                         it.activityYear == year && it.summaryPolyline != null
                                                     }.size
-                                                }"
+                                                }" to false
                                             )
                                         )
                                         cacheActivities(
@@ -152,12 +152,12 @@ class TimeSelectViewModel @Inject constructor(
                                 _selectedActivities.add(defaultSelected)
                                 _rows.add(
                                     listOf(
-                                        "$year",
+                                        "$year" to true,
                                         "${
                                             yearlyActivities.filter {
                                                 it.activityYear == year && it.summaryPolyline != null
                                             }.size
-                                        }"
+                                        }" to false
                                     )
                                 )
                             }
@@ -194,7 +194,7 @@ class TimeSelectViewModel @Inject constructor(
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
             _selectedActivities[index] = !selectedActivities[index]
-            val value = _rows[index][1].toInt() ?: 0
+            val value = _rows[index][1].first.toInt()
             _selectedActivitiesCount.value =
                 _selectedActivitiesCount.value + (value * if (selectedActivities[index]) 1 else -1)
         }
@@ -204,7 +204,7 @@ class TimeSelectViewModel @Inject constructor(
         buildString {
             _rows.forEachIndexed { index, fields ->
                 if (selectedActivities[index])
-                    append(fields[0]).append(Constants.NAV_DELIMITER)
+                    append(fields[0].first).append(Constants.NAV_DELIMITER)
             }
         }
 

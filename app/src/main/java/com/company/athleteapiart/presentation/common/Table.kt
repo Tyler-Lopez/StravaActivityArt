@@ -39,7 +39,7 @@ class Table {
         fun TableComposable(
             modifier: Modifier,
             columns: List<String>,
-            rows: List<List<String>>,
+            rows: List<List<Pair<String, Boolean>>>,
             selectionList: List<Boolean>,
             onSelectIndex: (Int) -> Unit
         ) {
@@ -177,7 +177,7 @@ class Table {
         @Composable
         private fun TableRow(
             enabled: Boolean,
-            fields: List<String>,
+            fields: List<Pair<String, Boolean>>,
             onChecked: () -> Unit
         ) {
             Row(
@@ -194,10 +194,10 @@ class Table {
                     })
                 for (field in fields) {
                     Text(
-                        text = field,
+                        text = field.first,
                         fontSize = 24.sp,
                         fontFamily = Lato,
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = if (field.second) FontWeight.Bold else FontWeight.Normal,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.weight(1f)
                     )

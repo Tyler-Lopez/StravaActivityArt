@@ -35,11 +35,11 @@ class FilterMonthViewModel @Inject constructor(
     val selectedCount: State<Int> = _selectedCount
 
     // Rows & Columns
-    private val _rows = mutableListOf<List<String>>()
+    private val _rows = mutableListOf<List<Pair<String, Boolean>>>()
     private val columnMonth = "MONTH"
     private val columnYear = "YEAR"
     private val columnNoActivities = "#"
-    val rows: List<List<String>> = _rows
+    val rows: List<List<Pair<String, Boolean>>> = _rows
     val columns =
         arrayOf(columnMonth, columnYear, columnNoActivities)
 
@@ -84,9 +84,9 @@ class FilterMonthViewModel @Inject constructor(
                         _selected.add(defaultSelected)
                         _rows.add(
                             listOf(
-                                TimeUtils.monthIntToString(month),
-                                "$year",
-                                "${yearMonthsDataMap[Pair(year, month)]}"
+                                TimeUtils.monthIntToString(month) to true,
+                                "$year" to true,
+                                "${yearMonthsDataMap[Pair(year, month)]}" to false
                             )
                         )
                         recalculateSelectedActivities()
@@ -100,7 +100,7 @@ class FilterMonthViewModel @Inject constructor(
     fun updateSelectedActivities(index: Int) {
         viewModelScope.launch {
             _selected[index] = !selected[index]
-            val value = _rows[index][2].toInt() ?: 0
+            val value = _rows[index][2].first.toInt() ?: 0
             _selectedCount.value =
                 _selectedCount.value + (value * if (_selected[index]) 1 else -1)
         }
@@ -109,7 +109,7 @@ class FilterMonthViewModel @Inject constructor(
     private fun recalculateSelectedActivities() {
         var sum = 0
         for (index in 0..selected.lastIndex) {
-            val value = _rows[index][2].toInt() ?: 0
+            val value = _rows[index][2].first.toInt() ?: 0
             sum = selectedCount.value + (value * if (selected[index]) 1 else -1)
         }
         _selectedCount.value = sum
@@ -118,6 +118,6 @@ class FilterMonthViewModel @Inject constructor(
     // NAVIGATION ARGS
     fun yearMonthsNavArgs() =
         NavigationUtils.yearMonthsNavArgs(_rows.filterIndexed { index, _ -> _selected[index] }
-            .map { (it[1].toInt()) to (TimeUtils.monthStringToInt(it[0])) }
+            .map { (it[1].first.toInt()) to (TimeUtils.monthStringToInt(it[0].first)) }
             .toTypedArray())
 }
