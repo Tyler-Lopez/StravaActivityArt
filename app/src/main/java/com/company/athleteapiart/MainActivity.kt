@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import com.company.athleteapiart.presentation.filter_type_screen.FilterTypeScree
 import com.company.athleteapiart.presentation.login_screen.LoginScreen
 import com.company.athleteapiart.presentation.filter_year_screen.FilterYearScreen
 import com.company.athleteapiart.presentation.ui.theme.AthleteApiArtTheme
+import com.company.athleteapiart.presentation.ui.theme.Icicle
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreen
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AthleteApiArtTheme {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().background(Icicle),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -15,7 +13,6 @@ import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -27,15 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.pow
 
 class Table {
 
     companion object {
 
         // Constant representing scrollbar width
-        private val SCROLLBAR_WIDTH = 4.dp
-        private val ROW_HEIGHT = 50.dp
+        private val SCROLLBAR_WIDTH = 6f
+        private val ROW_HEIGHT = 65f
 
         @Composable
         fun TableComposable(
@@ -46,20 +42,10 @@ class Table {
             onSelectIndex: (Int) -> Unit
         ) {
             // Create ScrollState and scope
-            val listState = rememberLazyListState()
+            val state = rememberLazyListState()
             val scope = rememberCoroutineScope()
 
-            // We want to recompose on every scroll value change
-            val scrollbarWidth = LocalDensity.current.run { SCROLLBAR_WIDTH.roundToPx() }.toFloat()
-            val rowHeightFloat = LocalDensity.current.run { ROW_HEIGHT.roundToPx() }.toFloat()
-            val scrollOffsetFl = LocalDensity.current.run {  }
-
             BoxWithConstraints(modifier = modifier) {
-
-                val scrollPosition = remember { mutableStateOf(Offset.Zero) }
-
-                // On any mutation of scroll value, invoke this to reposition scroll
-
                 // Row comprised of rows :: scrollbar
                 Row(modifier = Modifier.fillMaxWidth()) {
                     // Rows
@@ -70,15 +56,30 @@ class Table {
                                 .fillMaxWidth()
                         ) {
                             val boxHeight = maxHeight
-                            val rowsHeight = LocalDensity.current.run { maxHeight.roundToPx() }.toFloat()
-                            val rowsWidth = LocalDensity.current.run { maxWidth.roundToPx() }.toFloat()
+                            val rowsHeight =
+                                LocalDensity.current.run { maxHeight.roundToPx() }.toFloat()
+                            val rowsWidth =
+                                LocalDensity.current.run { maxWidth.roundToPx() }.toFloat()
                             val rowsSzFl = remember { rows.size.toFloat() }
+                            val displayScrollbar = remember {
+                                derivedStateOf {
+                                    state.layoutInfo.visibleItemsInfo.size != rows.size
+                                }
+                            }
 
+                            val scrollPosition = remember {
+                                mutableStateOf(
+                                    Offset(
+                                        x = rowsWidth - SCROLLBAR_WIDTH,
+                                        y = 0f
+                                    )
+                                )
+                            }
                             val scrollbarSize = remember {
                                 mutableStateOf(
                                     Size(
-                                        width = scrollbarWidth.toFloat(),
-                                        height = (rowsHeight / (rowsSzFl * rowHeightFloat)) * rowsHeight
+                                        width = SCROLLBAR_WIDTH,
+                                        height = (rowsHeight / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
                                     )
                                 )
                             }
@@ -86,7 +87,7 @@ class Table {
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                state = listState,
+                                state = state,
                                 contentPadding = PaddingValues(0.dp)
                             ) {
                                 items(count = rows.size) { index ->
@@ -96,31 +97,37 @@ class Table {
                                         onChecked = {
                                             onSelectIndex(index)
                                         })
-
                                 }
                             }
 
-                            Canvas(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(boxHeight)
-                            ) {
-                                drawRect(
-                                    color = Silver,
-                                    topLeft = scrollPosition.value,
-                                    size = scrollbarSize.value,
-                                )
-                            }
+                            if (displayScrollbar.value)
+                                Canvas(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(boxHeight)
+                                ) {
+                                    drawRect(
+                                        color = Rust,
+                                        topLeft = scrollPosition.value,
+                                        size = scrollbarSize.value,
+                                    )
+                                }
 
                             LaunchedEffect(
-                                key1 = listState.firstVisibleItemScrollOffset
+                                key1 = state.firstVisibleItemScrollOffset,
+                                key2 = state.firstVisibleItemIndex,
+                                key3 = state.layoutInfo.visibleItemsInfo.lastIndex
                             ) {
                                 scope.launch(Dispatchers.Default) {
+
+                                    val first = state.firstVisibleItemIndex.toFloat()
+                                    val last = state.layoutInfo.visibleItemsInfo.lastIndex.toFloat()
+                                    val offset = state.firstVisibleItemScrollOffset.toFloat()
+
                                     scrollPosition.value = Offset(
-                                        x = rowsWidth - scrollbarWidth,
+                                        x = rowsWidth - SCROLLBAR_WIDTH,
                                         // 300 - 0 = 300
-                                        y = (((listState.firstVisibleItemIndex * rowHeightFloat) +
-                                                listState.firstVisibleItemScrollOffset) / (rowsSzFl * rowHeightFloat)) * rowsHeight
+                                        y = (((first * ROW_HEIGHT) + offset) / (rowsSzFl * ROW_HEIGHT)) * rowsHeight
                                     )
                                 }
                             }
@@ -137,7 +144,7 @@ class Table {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ROW_HEIGHT) // If hard coded may have solution to scroll size
+                    .height(with(LocalDensity.current) { ROW_HEIGHT.toDp() }) // If hard coded may have solution to scroll size
                     .background(Silver)
                     .padding(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -147,9 +154,6 @@ class Table {
                     imageVector = Icons.Default.CheckBox,
                     tint = Asphalt,
                     modifier = Modifier
-                        .size(
-                            ROW_HEIGHT * 0.6f
-                        )
                         .weight(0.25f),
                     contentDescription = ""
                 )
@@ -173,14 +177,12 @@ class Table {
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ROW_HEIGHT),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
                     checked = enabled,
                     modifier = Modifier
-                        .scale(1.25f)
                         .weight(0.25f),
                     onCheckedChange = {
                         onChecked()
