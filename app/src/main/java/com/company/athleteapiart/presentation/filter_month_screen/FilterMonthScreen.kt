@@ -51,7 +51,7 @@ fun FilterMonthScreen(
                 }
             }
             LOADING -> {
-                Text("Loading")
+                LoadingComposable()
             }
             STANDBY -> {
                 println("HERE IN STANDBY")
