@@ -92,7 +92,7 @@ fun WelcomeScreen(
                     ) {
                         Text(
                             text = "ALPHA 0.1.0",
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontFamily = Lato,
                             color = Gravel,
                             textAlign = TextAlign.Center

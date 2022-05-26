@@ -1,9 +1,11 @@
 package com.company.athleteapiart.presentation.visualize_screen
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
@@ -12,7 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -41,6 +46,7 @@ fun VisualizeScreen(
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
+    val imageSize by remember { viewModel.imageSize }
 
     val bitmap = remember { viewModel.bitmapState }
 
@@ -56,7 +62,6 @@ fun VisualizeScreen(
 
         when (screenState) {
             LAUNCH -> {
-                println("launch invoked")
                 viewModel.loadActivities(
                     context = context,
                     athleteId = athleteId,
@@ -105,13 +110,20 @@ fun VisualizeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
+                    Text(
+                        text = "${imageSize.first.toInt()} x ${imageSize.second.toInt()}",
+                        fontSize = 26.sp,
+                        fontFamily = Lato,
+                        color = Asphalt,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
                     Card(
                         elevation = 4.dp,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(0.dp, maxHeight * 0.75f)
                     ) {
-                        println("recomposed here")
                         bitmap.value?.let { VisualizeImage(bitmap = it) }
                     }
 
@@ -133,9 +145,6 @@ fun VisualizeScreen(
                         ) {
                             permState.launchPermissionRequest()
                         }
-                    }
-                    ButtonComposable(text = "Change activity color") {
-                        viewModel.setActivityPaintColor(Color.argb(1f, Random.nextFloat(), Random.nextFloat(), Random.nextFloat()))
                     }
                 }
             }

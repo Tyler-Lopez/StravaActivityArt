@@ -44,52 +44,49 @@ class VisualizeScreenViewModel @Inject constructor(
     val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
     // Size of file
-    private val _imageSize = mutableStateOf(Pair(1920f, 1080f))
+    private val _imageSize = mutableStateOf(Pair(3840f, 2160f))
     val imageSize: State<Pair<Float, Float>> = _imageSize
 
     // Paints
     private val backgroundPaint = Paint().also { it.color = Coal.toArgb() }
-
-    // MUST SET SIZE OF THIS IN VIS_SPEC
-    private val _activityPaintColor = mutableStateOf(StravaOrange.toArgb())
-    val activityPaintColor: State<Int> = _activityPaintColor
-    private fun activityPaint(pixels: Float) = Paint().also {
-        it.color = _activityPaintColor.value
+    private val activityPaint = Paint().also {
+        it.color = StravaOrange.toArgb()
         it.isAntiAlias = true
         it.strokeCap = Paint.Cap.ROUND
         it.style = Paint.Style.STROKE
-        it.strokeWidth = sqrt(pixels) * 0.0015f
-    }
-
-    fun setActivityPaintColor(color: Int) {
-        _activityPaintColor.value = color
-        _visualizationSpecification.value =
-            _visualizationSpecification.value?.let {
-                VisualizeSpecification(
-                    it.visualizationWidth,
-                    it.visualizationHeight,
-                    it.backgroundPaint,
-                    it.activityPaint.also { paint -> paint.color = color },
-                    it.activities
-                )
-            }
-        updateBitmapState()
     }
 
 
     // Margin size
     private val marginFraction = 0.05f // 5% margin
 
-    // Visualization Specification
-    private val _visualizationSpecification = mutableStateOf<VisualizeSpecification?>(null)
-    val visualizationSpecification: State<VisualizeSpecification?> = _visualizationSpecification
-
-    // Bitmap State
+    // Bitmap State - referenced in view to create image composable
     private val _bitmapState = mutableStateOf<Bitmap?>(null)
     val bitmapState: State<Bitmap?> = _bitmapState
-    private fun updateBitmapState() {
-        _bitmapState.value = _visualizationSpecification.value?.let { visualizeBitmapMaker(it) }
+
+    // The following variables pertain specifically to the image composable
+    private var visWidth: Int = 0
+    private var visHeight: Int = 0
+    private var activityPaths: List<Path> = listOf()
+
+    // Updates the bitmap state specifically which is used in the Image composable
+    private fun updateBitmapState(
+        visWidth: Int,
+        visHeight: Int
+    ) {
+        _bitmapState.value = visualizeBitmapMaker(
+            VisualizeSpecification(
+                visualizationWidth = visWidth,
+                visualizationHeight = visHeight,
+                backgroundPaint = backgroundPaint,
+                activityPaint = activityPaint.also {
+                    it.strokeWidth = sqrt(visWidth * visHeight.toFloat()) * 0.0015f
+                },
+                activities = activityPaths
+            )
+        )
     }
+
 
     // Load activities from ROOM
     fun loadActivities(
@@ -139,14 +136,11 @@ class VisualizeScreenViewModel @Inject constructor(
             val composableHeight =
                 (composableWidth / (_imageSize.value.toList().reduce { x, y -> x / y })).toInt()
 
-            _visualizationSpecification.value = VisualizeSpecification(
-                composableWidth,
-                composableHeight,
-                backgroundPaint,
-                activityPaint(composableWidth * composableHeight.toFloat()),
-                computeActivityPaths(composableWidth)
-            )
-            updateBitmapState() // TODO don't love this
+            visWidth = composableWidth
+            visHeight = composableHeight
+            activityPaths = computeActivityPaths(composableWidth)
+            updateBitmapState(composableWidth, composableHeight)
+
             _screenState.value = STANDBY
         }
     }
@@ -162,7 +156,10 @@ class VisualizeScreenViewModel @Inject constructor(
                         _imageSize.value.first.toInt(),
                         _imageSize.value.second.toInt(),
                         backgroundPaint,
-                        activityPaint(_imageSize.value.toList().reduce { x, y -> x * y }),
+                        activityPaint.also {
+                            it.strokeWidth =
+                                sqrt((_imageSize.value.toList().reduce { x, y -> x * y })) * 0.0015f
+                        },
                         computeActivityPaths(_imageSize.value.first.toInt())
                     )
                 ),

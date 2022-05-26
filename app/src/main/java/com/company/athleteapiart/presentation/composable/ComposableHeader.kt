@@ -7,6 +7,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.company.athleteapiart.presentation.ui.theme.Asphalt
+import com.company.athleteapiart.presentation.ui.theme.Coal
 import com.company.athleteapiart.presentation.ui.theme.MaisonNeue
 import com.company.athleteapiart.presentation.ui.theme.WarmGrey50
 
@@ -14,18 +16,17 @@ import com.company.athleteapiart.presentation.ui.theme.WarmGrey50
 fun ComposableHeader(
     text: String,
     isBold: Boolean = false,
-    color: Color = WarmGrey50,
+    color: Color = Asphalt,
     center: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
         textAlign = if (center) TextAlign.Center else TextAlign.Start,
-        fontSize = 35.sp,
+        fontSize = 36.sp,
         fontFamily = MaisonNeue,
-        letterSpacing = 1.sp,
         color = color,
-        fontWeight = if (isBold) FontWeight.SemiBold else FontWeight.Normal,
+        fontWeight = FontWeight.Black,
         modifier = modifier
     )
 }
