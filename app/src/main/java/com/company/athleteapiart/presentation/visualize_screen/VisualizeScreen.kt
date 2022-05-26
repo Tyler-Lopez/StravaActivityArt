@@ -25,6 +25,7 @@ import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlin.random.Random
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -41,7 +42,7 @@ fun VisualizeScreen(
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
 
-    val visualizationSpecification = remember { viewModel.visualizationSpecification }
+    val bitmap = remember { viewModel.bitmapState }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -111,10 +112,9 @@ fun VisualizeScreen(
                             .heightIn(0.dp, maxHeight * 0.75f)
                     ) {
                         println("recomposed here")
-                        visualizationSpecification.value?.let {
-                            VisualizeImage(bitmap = visualizeBitmapMaker(it))
-                        }
+                        bitmap.value?.let { VisualizeImage(bitmap = it) }
                     }
+
                     if (hasPermission.value)
                         ButtonComposable(
                             text = if (screenState == SAVING) "Saving Image" else "Save Image",
@@ -135,7 +135,7 @@ fun VisualizeScreen(
                         }
                     }
                     ButtonComposable(text = "Change activity color") {
-                        viewModel.setActivityPaintColor(Color.CYAN)
+                        viewModel.setActivityPaintColor(Color.argb(1f, Random.nextFloat(), Random.nextFloat(), Random.nextFloat()))
                     }
                 }
             }

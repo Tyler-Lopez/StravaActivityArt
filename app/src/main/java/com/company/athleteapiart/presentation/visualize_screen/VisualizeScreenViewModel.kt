@@ -2,6 +2,7 @@ package com.company.athleteapiart.presentation.visualize_screen
 
 import android.Manifest
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Path
 import androidx.compose.runtime.*
@@ -72,6 +73,7 @@ class VisualizeScreenViewModel @Inject constructor(
                     it.activities
                 )
             }
+        updateBitmapState()
     }
 
 
@@ -81,6 +83,13 @@ class VisualizeScreenViewModel @Inject constructor(
     // Visualization Specification
     private val _visualizationSpecification = mutableStateOf<VisualizeSpecification?>(null)
     val visualizationSpecification: State<VisualizeSpecification?> = _visualizationSpecification
+
+    // Bitmap State
+    private val _bitmapState = mutableStateOf<Bitmap?>(null)
+    val bitmapState: State<Bitmap?> = _bitmapState
+    private fun updateBitmapState() {
+        _bitmapState.value = _visualizationSpecification.value?.let { visualizeBitmapMaker(it) }
+    }
 
     // Load activities from ROOM
     fun loadActivities(
@@ -137,6 +146,7 @@ class VisualizeScreenViewModel @Inject constructor(
                 activityPaint(composableWidth * composableHeight.toFloat()),
                 computeActivityPaths(composableWidth)
             )
+            updateBitmapState() // TODO don't love this
             _screenState.value = STANDBY
         }
     }
