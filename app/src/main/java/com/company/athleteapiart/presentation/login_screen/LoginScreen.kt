@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,9 +20,12 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.R
@@ -30,7 +34,7 @@ import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.composable.ComposableHeader
 import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
-import com.company.athleteapiart.presentation.ui.theme.Icicle
+import com.company.athleteapiart.presentation.ui.theme.*
 
 
 /*
@@ -79,7 +83,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .widthIn(360.dp, maxWidth * 0.8f),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (screenState) {
@@ -106,15 +110,24 @@ fun LoginScreen(
                         painterResource(id = R.drawable.ic_paint_brush_svgrepo_com),
                         "",
                         modifier = Modifier
-                            .size(300.dp)
-                            .padding(MaterialTheme.spacing.md)
+                            .size(256.dp)
                     )
-                    ComposableHeader(
-                        text = "ACTIVITY ART",
-                        isBold = true,
-                        center = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "ALPHA 0.1.0",
+                            fontSize = 18.sp,
+                            fontFamily = Lato,
+                            color = Gravel,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "Activity Art",
+                            fontSize = 32.sp,
+                            fontFamily = MaisonNeue,
+                            color = Asphalt,
+                            fontWeight = FontWeight.Black,
+                        )
+                    }
                     Image(
                         painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
                         contentDescription = "Connect with Strava",
