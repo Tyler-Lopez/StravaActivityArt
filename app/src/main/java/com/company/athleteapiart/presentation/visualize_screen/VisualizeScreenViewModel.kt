@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Path
-import android.provider.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.toArgb
@@ -17,17 +16,12 @@ import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenSt
 import com.company.athleteapiart.util.Constants
 import com.company.athleteapiart.util.meterToMiles
 import com.company.athleteapiart.util.saveImage
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @HiltViewModel
@@ -45,16 +39,48 @@ class VisualizeScreenViewModel @Inject constructor(
     private val _activities = mutableStateListOf<ActivityEntity>()
     val activities: List<ActivityEntity> = _activities
 
-    // Visualization Specification
-    var visualizationSpec: VisualizeSpecification? = null
-        private set
-
     // Permissions
     val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
+    // Size of file
+    private val _imageSize = mutableStateOf(Pair(1920f, 1080f))
+    val imageSize: State<Pair<Float, Float>> = _imageSize
+
     // Paints
     private val backgroundPaint = Paint().also { it.color = Coal.toArgb() }
-    private val activityPaint = Paint().also { it.color = StravaOrange.toArgb() }
+
+    // MUST SET SIZE OF THIS IN VIS_SPEC
+    private val _activityPaintColor = mutableStateOf(StravaOrange.toArgb())
+    val activityPaintColor: State<Int> = _activityPaintColor
+    private fun activityPaint(pixels: Float) = Paint().also {
+        it.color = _activityPaintColor.value
+        it.isAntiAlias = true
+        it.strokeCap = Paint.Cap.ROUND
+        it.style = Paint.Style.STROKE
+        it.strokeWidth = sqrt(pixels) * 0.0015f
+    }
+
+    fun setActivityPaintColor(color: Int) {
+        _activityPaintColor.value = color
+        _visualizationSpecification.value =
+            _visualizationSpecification.value?.let {
+                VisualizeSpecification(
+                    it.visualizationWidth,
+                    it.visualizationHeight,
+                    it.backgroundPaint,
+                    it.activityPaint.also { paint -> paint.color = color },
+                    it.activities
+                )
+            }
+    }
+
+
+    // Margin size
+    private val marginFraction = 0.05f // 5% margin
+
+    // Visualization Specification
+    private val _visualizationSpecification = mutableStateOf<VisualizeSpecification?>(null)
+    val visualizationSpecification: State<VisualizeSpecification?> = _visualizationSpecification
 
     // Load activities from ROOM
     fun loadActivities(
@@ -96,42 +122,38 @@ class VisualizeScreenViewModel @Inject constructor(
 
     // Convert activities into VisualizeSpecification
     fun loadVisualizeSpecification(
-        bitmapWidth: Int, // e.g. 400
-        widthHeightRatio: Float, // e.g. 1920f / 1080f
-        marginFraction: Float // e.g. .05 = 5% margin
+        composableWidth: Int, // e.g. 400
     ) {
-
         _screenState.value = LOADING
 
         viewModelScope.launch(Dispatchers.Default) {
+            val composableHeight =
+                (composableWidth / (_imageSize.value.toList().reduce { x, y -> x / y })).toInt()
 
-            visualizationSpec = computeVisualizeSpecification(
-                bitmapWidth,
-                widthHeightRatio,
-                marginFraction,
+            _visualizationSpecification.value = VisualizeSpecification(
+                composableWidth,
+                composableHeight,
                 backgroundPaint,
-                activityPaint
+                activityPaint(composableWidth * composableHeight.toFloat()),
+                computeActivityPaths(composableWidth)
             )
-
             _screenState.value = STANDBY
         }
     }
 
-    fun startSave(
-        context: Context
-    ) {
+    fun startSave(context: Context) {
 
         _screenState.value = SAVING
 
         viewModelScope.launch(Dispatchers.Default) {
             saveImage(
                 bitmap = visualizeBitmapMaker(
-                    computeVisualizeSpecification(
-                        1920,
-                        1920f / 1080f,
-                        0.05f,
+                    VisualizeSpecification(
+                        _imageSize.value.first.toInt(),
+                        _imageSize.value.second.toInt(),
                         backgroundPaint,
-                        activityPaint
+                        activityPaint(_imageSize.value.toList().reduce { x, y -> x * y }),
+                        computeActivityPaths(_imageSize.value.first.toInt())
                     )
                 ),
                 context = context,
@@ -141,13 +163,10 @@ class VisualizeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun computeVisualizeSpecification(
-        bitmapWidth: Int, // e.g. 400
-        widthHeightRatio: Float, // e.g. 1920f / 1080f
-        marginFraction: Float, // e.g. .05 = 5% margin
-        backgroundPaint: Paint,
-        activityPaint: Paint
-    ): VisualizeSpecification {
+    private fun computeActivityPaths(
+        bitmapWidth: Int, // e.g. 4g00
+    ): List<Path> {
+        val widthHeightRatio = _imageSize.value.first / _imageSize.value.second
         // Determine height of bitmap given width and ratio
         val bitmapHeight = (bitmapWidth / widthHeightRatio).toInt()
 
@@ -182,9 +201,9 @@ class VisualizeScreenViewModel @Inject constructor(
             rowsWidth = ceil(n / ++colsWidth)
         val cellWidth = activitiesWidth / colsWidth
 
-        var rowCount = 0f
-        var colCount = 0f
-        var activitySize = 0f
+        val rowCount: Float
+        val colCount: Float
+        val activitySize: Float
 
         if (cellWidth > cellHeight) {
             rowCount = rowsWidth
@@ -208,7 +227,7 @@ class VisualizeScreenViewModel @Inject constructor(
             (missingCells * activitySize) / 2f
         }
 
-        val activityPaths = _activities.mapIndexed { index, act ->
+        return _activities.mapIndexed { index, act ->
             // Decode each Polyline into a List<LatLng>
             PolyUtil.decode(act.summaryPolyline).let { latLngList ->
 
@@ -253,20 +272,5 @@ class VisualizeScreenViewModel @Inject constructor(
                 }
             }
         }
-
-        return VisualizeSpecification(
-            visualizationWidth = bitmapWidth,
-            visualizationHeight = bitmapHeight,
-            backgroundPaint = backgroundPaint,
-            activityPaint = activityPaint.also {
-                it.isAntiAlias = true
-                it.strokeCap = Paint.Cap.ROUND
-                it.style = Paint.Style.STROKE
-                it.strokeWidth = sqrt(activitySize) * 0.25f
-            },
-            activities = activityPaths
-        )
     }
-
-
 }

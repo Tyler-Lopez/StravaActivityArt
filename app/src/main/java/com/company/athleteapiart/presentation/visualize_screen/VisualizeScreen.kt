@@ -1,32 +1,28 @@
 package com.company.athleteapiart.presentation.visualize_screen
 
-import android.graphics.Paint
+import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import com.company.athleteapiart.presentation.common.ButtonComposable
+import com.company.athleteapiart.presentation.common.HeaderWithEmphasisComposable
 import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.common.WarningComposable
 import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
-import com.company.athleteapiart.util.isPermaDenied
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -44,6 +40,9 @@ fun VisualizeScreen(
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
+
+    val visualizationSpecification = remember { viewModel.visualizationSpecification }
+
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -68,13 +67,7 @@ fun VisualizeScreen(
             }
             GET_SPECIFICATION -> {
                 val width = LocalDensity.current.run { maxWidth.roundToPx() }
-
-
-                viewModel.loadVisualizeSpecification(
-                    bitmapWidth = width,
-                    widthHeightRatio = 1080f / 1920f,
-                    marginFraction = 0.05f
-                )
+                viewModel.loadVisualizeSpecification(composableWidth = width)
             }
             LOADING -> {
                 LoadingComposable()
@@ -110,18 +103,17 @@ fun VisualizeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
                     Card(
                         elevation = 4.dp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp)
                             .heightIn(0.dp, maxHeight * 0.75f)
                     ) {
-                        VisualizeImage(
-                            bitmap = visualizeBitmapMaker(
-                                viewModel.visualizationSpec!!
-                            )
-                        )
+                        println("recomposed here")
+                        visualizationSpecification.value?.let {
+                            VisualizeImage(bitmap = visualizeBitmapMaker(it))
+                        }
                     }
                     if (hasPermission.value)
                         ButtonComposable(
@@ -141,6 +133,9 @@ fun VisualizeScreen(
                         ) {
                             permState.launchPermissionRequest()
                         }
+                    }
+                    ButtonComposable(text = "Change activity color") {
+                        viewModel.setActivityPaintColor(Color.CYAN)
                     }
                 }
             }

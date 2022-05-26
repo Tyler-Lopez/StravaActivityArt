@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.ButtonComposable
+import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreenState.*
 
@@ -49,25 +50,25 @@ fun WelcomeScreen(
     val screenState by remember { viewModel.screenState }
 
     val context = LocalContext.current
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Icicle),
+        contentAlignment = Alignment.Center
+    ) {
 
-    when (screenState) {
-        LAUNCH -> SideEffect {
-            viewModel.getAthlete(
-                context = context,
-                athleteId = athleteId,
-                accessToken = accessToken
-            )
-        }
-        LOADING -> {
-            //   Text("Loading")
-        }
-        STANDBY -> {
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Icicle),
-                contentAlignment = Alignment.Center
-            ) {
+        when (screenState) {
+            LAUNCH -> SideEffect {
+                viewModel.getAthlete(
+                    context = context,
+                    athleteId = athleteId,
+                    accessToken = accessToken
+                )
+            }
+            LOADING -> {
+                LoadingComposable()
+            }
+            STANDBY -> {
 
                 val maxHeight = this.maxHeight
                 val maxWidth = this.maxWidth
@@ -151,16 +152,14 @@ fun WelcomeScreen(
                     }
                 }
             }
-        }
-        LOGOUT ->
-            LaunchedEffect(Unit) {
-                navController.navigate(route = Screen.Login.route) {
-                    popUpTo(route = Screen.Welcome.route + "/{athleteId}/{accessToken}") {
-                        inclusive = true
+            LOGOUT ->
+                LaunchedEffect(Unit) {
+                    navController.navigate(route = Screen.Login.route) {
+                        popUpTo(route = Screen.Welcome.route + "/{athleteId}/{accessToken}") {
+                            inclusive = true
+                        }
                     }
                 }
-            }
-
+        }
     }
-
 }

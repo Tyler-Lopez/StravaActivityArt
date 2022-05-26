@@ -1,11 +1,8 @@
 package com.company.athleteapiart.presentation.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,9 +16,10 @@ import com.company.athleteapiart.presentation.ui.theme.StravaOrange
 @Composable
 fun HeaderWithEmphasisComposable(
     emphasized: String,
+    string: String = "Which %s would you like to include?",
     textAlign: TextAlign = TextAlign.Center
 ) {
-    val headerText = "Which %s would you like to include?".format(emphasized)
+    val headerText = string.format(emphasized)
     val start = headerText.indexOf(emphasized)
 
     val spanStyles = listOf(

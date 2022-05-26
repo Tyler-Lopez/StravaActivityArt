@@ -5,9 +5,9 @@ import android.graphics.Path
 import com.google.android.gms.maps.model.LatLng
 
 data class VisualizeSpecification(
-    val visualizationWidth: Int,
-    val visualizationHeight: Int,
-    val backgroundPaint: Paint,
-    val activityPaint: Paint,
-    val activities: List<Path>
+    var visualizationWidth: Int,
+    var visualizationHeight: Int,
+    var backgroundPaint: Paint,
+    var activityPaint: Paint,
+    var activities: List<Path>
 )
