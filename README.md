@@ -1,4 +1,6 @@
 # Strava Print Visualizer
+Latest Release: Alpha 0.1.0
+
 An Android application which will leverage Strava API to generate aesthetic visualizations of athelete's workouts.
 
 This will be a significant learning experience to understand working with API in Android.
