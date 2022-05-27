@@ -1,4 +1,4 @@
-# Strava Print Visualizer
+# Strava Activity Art
 **Latest Release** <br>
 *Alpha 0.1.0*
 
