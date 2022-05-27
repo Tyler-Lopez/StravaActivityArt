@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
@@ -23,8 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.ui.theme.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class Table {
 
@@ -43,11 +40,8 @@ class Table {
             selectionList: List<Boolean>,
             onSelectIndex: (Int) -> Unit
         ) {
-            println("rows are $rows")
-            println("row size is ${rows.size}")
             // Create ScrollState and scope
             val state = rememberLazyListState()
-            val scope = rememberCoroutineScope()
 
             BoxWithConstraints(modifier = modifier) {
                 // Row comprised of rows :: scrollbar
@@ -64,7 +58,6 @@ class Table {
                                 .fillMaxWidth()
                                 .background(White)
                         ) {
-                            println("Display scrollbar value is true")
 
                             val boxHeight = maxHeight
                             val rowsHeight =

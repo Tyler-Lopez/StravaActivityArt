@@ -6,24 +6,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,10 +22,10 @@ import androidx.navigation.NavHostController
 import com.company.athleteapiart.R
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.LoadingComposable
-import com.company.athleteapiart.presentation.composable.ComposableHeader
-import com.company.athleteapiart.presentation.ui.spacing
 import com.company.athleteapiart.presentation.login_screen.LoginScreenState.*
+import com.company.athleteapiart.presentation.ui.shapes.ClippedImageShape
 import com.company.athleteapiart.presentation.ui.theme.*
+import com.company.athleteapiart.util.Constants
 
 
 /*
@@ -47,21 +38,6 @@ import com.company.athleteapiart.presentation.ui.theme.*
  https://developers.strava.com/guidelines/
 
  */
-
-object HalfSizeShape : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline = Outline.Rectangle(
-        Rect(
-            left = size.width * .045f,
-            right = size.width - (size.width * .040f),
-            top = size.height * .070f,
-            bottom = size.height - (size.height * .075f)
-        )
-    )
-}
 
 @Composable
 fun LoginScreen(
@@ -105,7 +81,6 @@ fun LoginScreen(
                 }
                 // Wait for user to press Login
                 STANDBY -> {
-
                     Image(
                         painterResource(id = R.drawable.ic_paint_brush_svgrepo_com),
                         "",
@@ -114,14 +89,14 @@ fun LoginScreen(
                     )
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "ALPHA 0.1.0",
+                            text = "${Constants.STAGE.uppercase()} " + Constants.VERSION,
                             fontSize = 18.sp,
                             fontFamily = Lato,
                             color = Gravel,
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "Activity Art",
+                            text = Constants.APP_NAME,
                             fontSize = 32.sp,
                             fontFamily = MaisonNeue,
                             color = Asphalt,
@@ -133,11 +108,8 @@ fun LoginScreen(
                         contentDescription = "Connect with Strava",
                         modifier = Modifier
                             .width(300.dp)
-                            .clip(HalfSizeShape)
-                            .clickable {
-                                println("Here intent is ${viewModel.loginIntent}")
-                                onLoginIntent(viewModel.loginIntent)
-                            }
+                            .clip(ClippedImageShape)
+                            .clickable { onLoginIntent(viewModel.loginIntent) }
                     )
                 }
                 // User has been successfully authorized

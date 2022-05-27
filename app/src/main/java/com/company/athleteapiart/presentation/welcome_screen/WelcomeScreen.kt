@@ -5,19 +5,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +25,7 @@ import com.company.athleteapiart.presentation.common.ButtonComposable
 import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreenState.*
+import com.company.athleteapiart.util.Constants
 
 
 /*
@@ -70,7 +68,6 @@ fun WelcomeScreen(
             }
             STANDBY -> {
 
-                val maxHeight = this.maxHeight
                 val maxWidth = this.maxWidth
 
                 Column(
@@ -91,14 +88,14 @@ fun WelcomeScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "ALPHA 0.1.0",
+                            text = "${Constants.STAGE.uppercase()} " + Constants.VERSION,
                             fontSize = 18.sp,
                             fontFamily = Lato,
                             color = Gravel,
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "Activity Art",
+                            text = Constants.APP_NAME,
                             fontSize = 26.sp,
                             fontFamily = Lato,
                             color = Asphalt,

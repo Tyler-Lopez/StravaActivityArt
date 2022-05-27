@@ -3,7 +3,7 @@ package com.company.athleteapiart
 import androidx.lifecycle.ViewModel
 import com.company.athleteapiart.util.Constants
 
-class MainViewModel() : ViewModel() {
+class MainViewModel : ViewModel() {
 
     fun parseYearsFromNav(raw: String?) = (raw ?: "").split(Constants.NAV_DELIMITER)
         .filter { it.isNotEmpty() }
@@ -18,13 +18,10 @@ class MainViewModel() : ViewModel() {
             Pair(year, month)
         }.toTypedArray()
 
-    fun parseTypesFromNav(raw: String?) = raw?.let { str ->
-        str.split(Constants.NAV_DELIMITER)
-            .filter { it.isNotEmpty() }
-            .map {
-                it
-            }.toTypedArray()
-    }
+    fun parseTypesFromNav(raw: String?) =
+        raw?.split(Constants.NAV_DELIMITER)?.filter { it.isNotEmpty() }?.map {
+            it
+        }?.toTypedArray()
 
     fun parseGearsFromNav(raw: String?) =
         raw?.split(Constants.NAV_DELIMITER)?.filter { it.isNotEmpty() }?.map { gearId ->

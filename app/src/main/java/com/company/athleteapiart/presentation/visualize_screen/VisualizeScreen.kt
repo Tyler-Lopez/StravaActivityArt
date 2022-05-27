@@ -1,7 +1,5 @@
 package com.company.athleteapiart.presentation.visualize_screen
 
-import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -30,7 +28,6 @@ import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlin.random.Random
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

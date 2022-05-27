@@ -2,7 +2,6 @@ package com.company.athleteapiart.presentation.visualize_screen
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.google.android.gms.maps.model.LatLng
 
 data class VisualizeSpecification(
     var visualizationWidth: Int,

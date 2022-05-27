@@ -3,7 +3,6 @@ package com.company.athleteapiart.presentation.login_screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +30,6 @@ class LoginScreenViewModel @Inject constructor(
     // Use cases
     private val getAccessTokenUseCase = authenticationUseCases.getAccessTokenUseCase
     private val setAccessTokenUseCase = authenticationUseCases.setAccessTokenUseCase
-    private val clearAccessTokenUseCase = authenticationUseCases.clearAccessTokenUseCase
 
     // State - observed in the view
     val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
