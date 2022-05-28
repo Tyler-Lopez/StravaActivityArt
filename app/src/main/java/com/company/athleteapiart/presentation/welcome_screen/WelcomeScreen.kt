@@ -77,9 +77,10 @@ fun WelcomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+
                     /*
                     // TODO This exists to test dropdown, will remove when
-                         styling of dropdown composable is complete
+                    // styling of dropdown composable is complete
                     DropdownComposable(
                         menuItems = listOf("test", "test1", "test2"),
                         onItemSelected = { },
@@ -87,6 +88,8 @@ fun WelcomeScreen(
                     )
 
                      */
+
+
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
                         contentDescription = null,
