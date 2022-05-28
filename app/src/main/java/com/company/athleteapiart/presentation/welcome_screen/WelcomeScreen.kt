@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.MenuDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.Screen
 import com.company.athleteapiart.presentation.common.ButtonComposable
+import com.company.athleteapiart.presentation.common.DropdownComposable
 import com.company.athleteapiart.presentation.common.LoadingComposable
 import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.welcome_screen.WelcomeScreenState.*
@@ -75,6 +77,16 @@ fun WelcomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    /*
+                    // TODO This exists to test dropdown, will remove when
+                         styling of dropdown composable is complete
+                    DropdownComposable(
+                        menuItems = listOf("test", "test1", "test2"),
+                        onItemSelected = { },
+                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                    )
+
+                     */
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
                         contentDescription = null,
