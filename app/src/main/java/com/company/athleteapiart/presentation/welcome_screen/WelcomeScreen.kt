@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.MenuDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,18 +80,6 @@ fun WelcomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-
-                    /*
-                    // TODO This exists to test dropdown, will remove when
-                    // styling of dropdown composable is complete
-                    DropdownComposable(
-                        menuItems = listOf("test", "test1", "test2"),
-                        onItemSelected = { },
-                        modifier = Modifier.fillMaxWidth().height(48.dp)
-                    )
-
-                     */
-
 
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),

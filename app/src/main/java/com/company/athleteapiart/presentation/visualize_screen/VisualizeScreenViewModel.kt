@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.company.athleteapiart.data.entities.ActivityEntity
 import com.company.athleteapiart.domain.use_case.ActivitiesUseCases
 import com.company.athleteapiart.presentation.ui.theme.Coal
@@ -43,10 +44,6 @@ class VisualizeScreenViewModel @Inject constructor(
     // Permissions
     val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-    // Size of file
-    private val _imageSize = mutableStateOf(Pair(3840f, 2160f))
-    val imageSize: State<Pair<Float, Float>> = _imageSize
-
     // Paints
     private val backgroundPaint = Paint().also { it.color = Coal.toArgb() }
     private val activityPaint = Paint().also {
@@ -54,6 +51,26 @@ class VisualizeScreenViewModel @Inject constructor(
         it.isAntiAlias = true
         it.strokeCap = Paint.Cap.ROUND
         it.style = Paint.Style.STROKE
+    }
+
+    // Acceptable Resolutions
+    private val _selectedResolution = mutableStateOf(4)
+    val selectedResolution: State<Int> = _selectedResolution
+    val resolutions = listOf(
+        600f to 900f,
+        1200f to 1800f,
+        1280f to 720f,
+        1500f to 2100f,
+        1920f to 1080f,
+        2400f to 3000f,
+        2400f to 3600f,
+        3300f to 4200f,
+        4800f to 6000f,
+        7200f to 10800f
+    )
+    fun updateSelectedResolution(int: Int) {
+        _selectedResolution.value = int
+        _screenState.value = GET_SPECIFICATION
     }
 
 
@@ -134,7 +151,7 @@ class VisualizeScreenViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Default) {
             val composableHeight =
-                (composableWidth / (_imageSize.value.toList().reduce { x, y -> x / y })).toInt()
+                (composableWidth / (resolutions[_selectedResolution.value].toList().reduce { x, y -> x / y })).toInt()
 
             visWidth = composableWidth
             visHeight = composableHeight
@@ -153,14 +170,14 @@ class VisualizeScreenViewModel @Inject constructor(
             saveImage(
                 bitmap = visualizeBitmapMaker(
                     VisualizeSpecification(
-                        _imageSize.value.first.toInt(),
-                        _imageSize.value.second.toInt(),
+                        resolutions[_selectedResolution.value].first.toInt(),
+                        resolutions[_selectedResolution.value].second.toInt(),
                         backgroundPaint,
                         activityPaint.also {
                             it.strokeWidth =
-                                sqrt((_imageSize.value.toList().reduce { x, y -> x * y })) * 0.0015f
+                                sqrt((resolutions[_selectedResolution.value].toList().reduce { x, y -> x * y })) * 0.00125f
                         },
-                        computeActivityPaths(_imageSize.value.first.toInt())
+                        computeActivityPaths(resolutions[_selectedResolution.value].first.toInt())
                     )
                 ),
                 context = context,
@@ -173,7 +190,7 @@ class VisualizeScreenViewModel @Inject constructor(
     private fun computeActivityPaths(
         bitmapWidth: Int, // e.g. 4g00
     ): List<Path> {
-        val widthHeightRatio = _imageSize.value.first / _imageSize.value.second
+        val widthHeightRatio = resolutions[_selectedResolution.value].first / resolutions[_selectedResolution.value].second
         // Determine height of bitmap given width and ratio
         val bitmapHeight = (bitmapWidth / widthHeightRatio).toInt()
 

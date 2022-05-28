@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,10 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
-import com.company.athleteapiart.presentation.common.ButtonComposable
-import com.company.athleteapiart.presentation.common.HeaderWithEmphasisComposable
-import com.company.athleteapiart.presentation.common.LoadingComposable
-import com.company.athleteapiart.presentation.common.WarningComposable
+import com.company.athleteapiart.presentation.common.*
 import com.company.athleteapiart.presentation.ui.theme.*
 import com.company.athleteapiart.presentation.visualize_screen.VisualizeScreenState.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -43,7 +41,7 @@ fun VisualizeScreen(
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
-    val imageSize by remember { viewModel.imageSize }
+    val selectedResolution by remember { viewModel.selectedResolution }
 
     val bitmap = remember { viewModel.bitmapState }
 
@@ -107,13 +105,14 @@ fun VisualizeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
-                    Text(
-                        text = "${imageSize.first.toInt()} x ${imageSize.second.toInt()}",
-                        fontSize = 26.sp,
-                        fontFamily = Lato,
-                        color = Asphalt,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                    DropdownComposable(
+                        menuItems = viewModel.resolutions
+                            .map {
+                                "${it.first.toInt()} x ${it.second.toInt()}"
+                            },
+                        icon = Icons.Default.AspectRatio,
+                        onItemSelected = { viewModel.updateSelectedResolution(it) },
+                        defaultSelectedIndex = selectedResolution
                     )
                     Card(
                         elevation = 4.dp,

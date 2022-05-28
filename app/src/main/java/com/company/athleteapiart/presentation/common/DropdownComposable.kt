@@ -16,8 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
@@ -26,24 +29,30 @@ import com.company.athleteapiart.presentation.ui.theme.*
 @Composable
 fun DropdownComposable(
     menuItems: List<String>,
+    icon: ImageVector,
     onItemSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    width: Dp = 256.dp,
+    height: Dp = 44.dp,
     defaultSelectedIndex: Int = 0,
 ) {
     val expanded = remember { mutableStateOf(false) }
     val selectedIndex = remember { mutableStateOf(defaultSelectedIndex) }
 
     Row(
-        modifier = modifier
+        modifier = Modifier
+            .width(width)
+            .height(height)
             .clip(RoundedCornerShape(4.dp))
     ) {
-        Box(modifier = Modifier
-            .fillMaxHeight()
-            .width(48.dp)
-            .background(Pumpkin),
-        contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(48.dp)
+                .background(Pumpkin),
+            contentAlignment = Alignment.Center
+        ) {
             Icon(
-                imageVector = Icons.Default.FormatSize,
+                imageVector = icon,
                 contentDescription = null,
                 tint = White
             )
@@ -51,9 +60,11 @@ fun DropdownComposable(
         BoxWithConstraints {
             val maxWidth = this.maxWidth
             val maxHeight = this.maxHeight
-            Box(
+
+            BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .width(maxWidth)
+                    .height(maxHeight)
                     .clickable {
                         expanded.value = !expanded.value
                     }
@@ -65,6 +76,7 @@ fun DropdownComposable(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
                     Icon(
                         imageVector =
                         if (expanded.value)
@@ -76,7 +88,7 @@ fun DropdownComposable(
                     )
                     Text(
                         text = menuItems.getOrElse(selectedIndex.value) { "ERR" },
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontFamily = Lato,
                         fontWeight = FontWeight.SemiBold,
                         color = Black,
