@@ -111,7 +111,7 @@ fun LoginScreen(
                             color = Asphalt,
                             fontWeight = FontWeight.Black,
                         )
-                    }g
+                    }
                     Image(
                         painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
                         contentDescription = "Connect with Strava",
