@@ -15,7 +15,9 @@ import java.io.OutputStream
 fun saveImage(bitmap: Bitmap, context: Context, folderName: String) {
     if (android.os.Build.VERSION.SDK_INT >= 29) {
         val values = contentValues()
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + folderName)
+
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$folderName")
+       // values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + folderName)
         values.put(MediaStore.Images.Media.IS_PENDING, true)
         // RELATIVE_PATH and IS_PENDING are introduced in API 29.
 
@@ -27,13 +29,17 @@ fun saveImage(bitmap: Bitmap, context: Context, folderName: String) {
             context.contentResolver.update(uri, values, null, null)
         }
     } else {
-        val directory = Environment.getExternalStoragePublicDirectory(
+        val directory = "${Environment.DIRECTORY_PICTURES}/$folderName"
+        // val directory = Environment.DIRECTORY_PICTURES
+            /*Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_PICTURES
         )
+
+             */
         // getExternalStorageDirectory is deprecated in API 29
 
     //    if (!directory.exists()) {
-            directory.mkdirs()
+        //    directory.mkdirs()
     //    }
         val fileName = System.currentTimeMillis().toString() + ".png"
         val file = File(directory, fileName)

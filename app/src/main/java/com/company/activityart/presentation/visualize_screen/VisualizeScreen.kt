@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.visualize_screen
 
+import android.os.Environment
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -11,7 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -19,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.ui.theme.*
 import com.company.activityart.presentation.visualize_screen.VisualizeScreenState.*
+import com.company.activityart.util.Constants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -125,7 +130,16 @@ fun VisualizeScreen(
                         ) {
                             permState.launchPermissionRequest()
                         }
+
                     }
+                    Text(
+                        text = "Will be saved to" +
+                                " ${Environment.DIRECTORY_PICTURES}/${Constants.IMAGE_DIRECTORY}",
+                        fontFamily = Lato,
+                        color = Asphalt,
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
