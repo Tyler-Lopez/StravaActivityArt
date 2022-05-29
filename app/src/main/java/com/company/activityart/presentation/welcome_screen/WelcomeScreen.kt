@@ -89,7 +89,7 @@ fun WelcomeScreen(
                         backgroundColor = Silver,
                     ) {
                         Text(
-                            text = viewModel.athleteName.uppercase(),
+                            text = viewModel.athleteName,
                             modifier = Modifier
                                 .padding(16.dp)
                                 .fillMaxWidth(),
