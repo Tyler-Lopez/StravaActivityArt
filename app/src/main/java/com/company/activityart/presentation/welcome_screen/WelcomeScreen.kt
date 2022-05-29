@@ -96,7 +96,7 @@ fun WelcomeScreen(
                             fontFamily = MaisonNeue,
                             color = Coal,
                             fontSize = 32.sp,
-                            fontWeight = FontWeight.Black,
+                            fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                     }

@@ -64,7 +64,6 @@ fun FilterYearScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    println("Here in ${viewModel.rows}")
                     HeaderWithEmphasisComposable(emphasized = "years")
                     Table.TableComposable(
                         modifier = Modifier
