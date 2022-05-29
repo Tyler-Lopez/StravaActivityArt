@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.company.athleteapiart.Screen
+import com.company.athleteapiart.presentation.common.AppVersionNameComposable
 import com.company.athleteapiart.presentation.common.ButtonComposable
 import com.company.athleteapiart.presentation.common.DropdownComposable
 import com.company.athleteapiart.presentation.common.LoadingComposable
@@ -89,27 +90,7 @@ fun WelcomeScreen(
                             .clip(CircleShape)
                             .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
                     )
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "${Constants.STAGE.uppercase()} " + Constants.VERSION,
-                            fontSize = 18.sp,
-                            fontFamily = Lato,
-                            color = Gravel,
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            text = Constants.APP_NAME,
-                            fontSize = 26.sp,
-                            fontFamily = Lato,
-                            color = Asphalt,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-
-                    }
+                    AppVersionNameComposable()
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         backgroundColor = Silver,
