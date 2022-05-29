@@ -113,6 +113,7 @@ fun LoginScreen(
                         painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
                         contentDescription = "Connect with Strava",
                         modifier = Modifier
+                            .width(stravaButtonWidth)
                             .height(stravaButtonHeight)
                             .clip(ClippedImageShape)
                             .clickable { onLoginIntent(viewModel.loginIntent) },

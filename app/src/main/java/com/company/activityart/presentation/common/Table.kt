@@ -134,7 +134,7 @@ class Table {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(with(LocalDensity.current) { ROW_HEIGHT.toDp() }) // If hard coded may have solution to scroll size
+                 //   .height(with(LocalDensity.current) { ROW_HEIGHT.toDp() }) // If hard coded may have solution to scroll size
                     .background(Silver)
                     .padding(4.dp),
                 verticalAlignment = Alignment.CenterVertically,

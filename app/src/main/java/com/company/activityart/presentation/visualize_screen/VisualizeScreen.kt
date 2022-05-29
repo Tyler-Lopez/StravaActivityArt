@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -104,6 +105,13 @@ fun VisualizeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
+                    Text(
+                        text = "3840 x 2160",
+                        fontFamily = Lato,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Coal
+                    )
                     Card(
                         elevation = 4.dp,
                         modifier = Modifier
@@ -132,14 +140,6 @@ fun VisualizeScreen(
                         }
 
                     }
-                    Text(
-                        text = "Will be saved to" +
-                                " ${Environment.DIRECTORY_PICTURES}/${Constants.IMAGE_DIRECTORY}",
-                        fontFamily = Lato,
-                        color = Asphalt,
-                        textAlign = TextAlign.Center,
-                        fontSize = 16.sp
-                    )
                 }
             }
         }

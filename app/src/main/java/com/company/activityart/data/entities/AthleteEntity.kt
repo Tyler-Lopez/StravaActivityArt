@@ -5,7 +5,7 @@ import androidx.room.Entity
 @Entity(primaryKeys = ["athleteId"])
 data class AthleteEntity(
     val athleteId: Long,
-    val userName: String,
+    val userName: String?,
     // This is important as Strava does not want you caching data for more than 3 days
     val receivedOn: Int,
     val profilePictureMedium: String,
