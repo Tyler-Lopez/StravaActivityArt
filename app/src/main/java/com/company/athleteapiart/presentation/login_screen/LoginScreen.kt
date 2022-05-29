@@ -6,12 +6,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,8 +52,11 @@ fun LoginScreen(
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val screenState by remember { viewModel.loginScreenState }
-
     val context = LocalContext.current
+
+    val stravaButtonWidth = with(LocalDensity.current) { 386f.toDp() }
+    val stravaButtonHeight = with(LocalDensity.current) { 96f.toDp() }
+    val stravaButtonMargin = with(LocalDensity.current) { 16f.toDp() }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -85,7 +93,8 @@ fun LoginScreen(
                         painterResource(id = R.drawable.ic_paint_brush_svgrepo_com),
                         "",
                         modifier = Modifier
-                            .size(256.dp)
+                            .width(stravaButtonWidth - stravaButtonMargin),
+                        contentScale = ContentScale.FillWidth
                     )
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
@@ -102,14 +111,15 @@ fun LoginScreen(
                             color = Asphalt,
                             fontWeight = FontWeight.Black,
                         )
-                    }
+                    }g
                     Image(
                         painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
                         contentDescription = "Connect with Strava",
                         modifier = Modifier
-                            .width(300.dp)
+                            .height(stravaButtonHeight)
                             .clip(ClippedImageShape)
-                            .clickable { onLoginIntent(viewModel.loginIntent) }
+                            .clickable { onLoginIntent(viewModel.loginIntent) },
+                        contentScale = ContentScale.FillBounds
                     )
                 }
                 // User has been successfully authorized

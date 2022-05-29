@@ -14,10 +14,10 @@ object ClippedImageShape : Shape {
         density: Density
     ): Outline = Outline.Rectangle(
         Rect(
-            left = size.width * .045f,
-            right = size.width - (size.width * .040f),
-            top = size.height * .070f,
-            bottom = size.height - (size.height * .075f)
+            left = 8f,
+            right = size.width - 8f,
+            top = 8f,
+            bottom = size.height - 8f
         )
     )
 }

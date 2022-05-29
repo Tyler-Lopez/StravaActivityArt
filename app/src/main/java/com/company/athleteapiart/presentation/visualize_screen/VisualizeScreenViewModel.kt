@@ -56,7 +56,7 @@ class VisualizeScreenViewModel @Inject constructor(
     // Acceptable Resolutions
     private val _selectedResolution = mutableStateOf(4)
     val selectedResolution: State<Int> = _selectedResolution
-    val resolutions = listOf(
+    var resolutions = listOf(
         600f to 900f,
         1200f to 1800f,
         1280f to 720f,
@@ -66,8 +66,13 @@ class VisualizeScreenViewModel @Inject constructor(
         2400f to 3600f,
         3300f to 4200f,
         4800f to 6000f,
+        5120f to 1440f,
         7200f to 10800f
     )
+    fun rotateResolutions() {
+        resolutions = resolutions.map { it.second to it.first }
+        _screenState.value = GET_SPECIFICATION
+    }
     fun updateSelectedResolution(int: Int) {
         _selectedResolution.value = int
         _screenState.value = GET_SPECIFICATION

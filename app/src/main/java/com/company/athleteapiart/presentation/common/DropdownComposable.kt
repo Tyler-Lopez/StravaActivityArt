@@ -48,7 +48,7 @@ fun DropdownComposable(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(48.dp)
-                .background(Pumpkin),
+                .background(Asphalt),
             contentAlignment = Alignment.Center
         ) {
             Icon(

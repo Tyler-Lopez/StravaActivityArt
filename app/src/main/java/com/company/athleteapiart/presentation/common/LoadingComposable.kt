@@ -12,14 +12,16 @@ import androidx.compose.ui.unit.sp
 import com.company.athleteapiart.presentation.ui.theme.Lato
 
 @Composable
-fun LoadingComposable() {
+fun LoadingComposable(
+    loadingText: String = "Loading..."
+){
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CircularProgressIndicator()
         Text(
-            text = "Loading...",
+            text = loadingText,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = Lato

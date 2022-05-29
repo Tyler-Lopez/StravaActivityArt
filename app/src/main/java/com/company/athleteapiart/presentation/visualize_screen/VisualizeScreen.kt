@@ -2,10 +2,10 @@ package com.company.athleteapiart.presentation.visualize_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.RotateRight
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -70,10 +70,9 @@ fun VisualizeScreen(
                 val width = LocalDensity.current.run { maxWidth.roundToPx() }
                 viewModel.loadVisualizeSpecification(composableWidth = width)
             }
-            LOADING -> {
-                LoadingComposable()
-            }
-            STANDBY, SAVING -> {
+            LOADING -> LoadingComposable()
+            SAVING -> LoadingComposable("Saving to device...")
+            STANDBY -> {
 
                 val permState = rememberPermissionState(permission = viewModel.permission)
                 val hasPermission = remember { derivedStateOf { permState.hasPermission } }
@@ -105,15 +104,6 @@ fun VisualizeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
-                    DropdownComposable(
-                        menuItems = viewModel.resolutions
-                            .map {
-                                "${it.first.toInt()} x ${it.second.toInt()}"
-                            },
-                        icon = Icons.Default.AspectRatio,
-                        onItemSelected = { viewModel.updateSelectedResolution(it) },
-                        defaultSelectedIndex = selectedResolution
-                    )
                     Card(
                         elevation = 4.dp,
                         modifier = Modifier
@@ -125,9 +115,8 @@ fun VisualizeScreen(
 
                     if (hasPermission.value)
                         ButtonComposable(
-                            text = if (screenState == SAVING) "Saving Image" else "Save Image",
+                            text = "Save Image",
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = screenState != SAVING,
                             icon = Icons.Default.Save
                         ) {
                             viewModel.startSave(context)
