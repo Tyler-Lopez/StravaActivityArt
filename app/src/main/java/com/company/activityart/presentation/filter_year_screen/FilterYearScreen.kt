@@ -38,32 +38,27 @@ fun FilterYearScreen(
     val screenState by remember { viewModel.timeSelectScreenState }
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
-    val coroutineScope  = rememberCoroutineScope()
 
-    when (screenState) {
-        LAUNCH -> SideEffect {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                accessToken = accessToken
-            )
-        }
-        LOADING, STANDBY, ERROR -> {
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Icicle),
-                contentAlignment = Alignment.Center
-            ) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Icicle),
+        contentAlignment = Alignment.Center
+    ) {
+        val maxHeight = this.maxHeight
 
-                val maxHeight = this.maxHeight
-                val maxWidth = this.maxWidth
+        ContainerColumn(maxWidth) {
 
-                Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+            when (screenState) {
+                LAUNCH -> SideEffect {
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        accessToken = accessToken
+                    )
+                }
+                LOADING, STANDBY, ERROR -> {
+
                     HeaderWithEmphasisComposable(emphasized = "years")
                     Table.TableComposable(
                         modifier = Modifier

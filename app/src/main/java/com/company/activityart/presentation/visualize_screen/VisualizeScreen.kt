@@ -1,11 +1,9 @@
 package com.company.activityart.presentation.visualize_screen
 
-import android.os.Environment
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,7 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,7 +21,6 @@ import androidx.navigation.NavHostController
 import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.ui.theme.*
 import com.company.activityart.presentation.visualize_screen.VisualizeScreenState.*
-import com.company.activityart.util.Constants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -56,54 +52,51 @@ fun VisualizeScreen(
         val maxWidth = this.maxWidth
         val maxHeight = this.maxHeight
 
-        when (screenState) {
-            LAUNCH -> {
-                viewModel.loadActivities(
-                    context = context,
-                    athleteId = athleteId,
-                    yearMonths = yearMonths,
-                    activityTypes = activityTypes,
-                    gears = gears,
-                    distances = distances
-                )
-            }
-            GET_SPECIFICATION -> {
-                val width = LocalDensity.current.run { maxWidth.roundToPx() }
-                viewModel.loadVisualizeSpecification(composableWidth = width)
-            }
-            LOADING -> LoadingComposable()
-            SAVING -> LoadingComposable("Saving to device...")
-            STANDBY -> {
+        ContainerColumn(maxWidth) {
 
-                val permState = rememberPermissionState(permission = viewModel.permission)
-                val hasPermission = remember { derivedStateOf { permState.hasPermission } }
+            when (screenState) {
+                LAUNCH -> {
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        yearMonths = yearMonths,
+                        activityTypes = activityTypes,
+                        gears = gears,
+                        distances = distances
+                    )
+                }
+                GET_SPECIFICATION -> {
+                    val width = LocalDensity.current.run { maxWidth.roundToPx() }
+                    viewModel.loadVisualizeSpecification(composableWidth = width)
+                }
+                LOADING -> LoadingComposable()
+                SAVING -> LoadingComposable("Saving to device...")
+                STANDBY -> {
 
-                val lifecycleOwner = LocalLifecycleOwner.current
+                    val permState = rememberPermissionState(permission = viewModel.permission)
+                    val hasPermission = remember { derivedStateOf { permState.hasPermission } }
 
-                // For side effects that need to be cleaned up after keys change
-                // or the composable leaves the composition
-                // If keys change, composable disposes current effect and resets by calling again
-                DisposableEffect(
-                    key1 = lifecycleOwner,
-                    effect = {
-                        val observer = LifecycleEventObserver { _, event ->
-                            if (event == Lifecycle.Event.ON_START) {
-                                permState.launchPermissionRequest()
+                    val lifecycleOwner = LocalLifecycleOwner.current
+
+                    // For side effects that need to be cleaned up after keys change
+                    // or the composable leaves the composition
+                    // If keys change, composable disposes current effect and resets by calling again
+                    DisposableEffect(
+                        key1 = lifecycleOwner,
+                        effect = {
+                            val observer = LifecycleEventObserver { _, event ->
+                                if (event == Lifecycle.Event.ON_START) {
+                                    permState.launchPermissionRequest()
+                                }
+                            }
+                            lifecycleOwner.lifecycle.addObserver(observer)
+
+                            onDispose {
+                                lifecycleOwner.lifecycle.removeObserver(observer)
                             }
                         }
-                        lifecycleOwner.lifecycle.addObserver(observer)
+                    )
 
-                        onDispose {
-                            lifecycleOwner.lifecycle.removeObserver(observer)
-                        }
-                    }
-                )
-
-                Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
                     HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
                     Text(
                         text = "3840 x 2160",

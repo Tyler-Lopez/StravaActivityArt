@@ -17,12 +17,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.activityart.R
 import com.company.activityart.Screen
+import com.company.activityart.presentation.common.ContainerColumn
 import com.company.activityart.presentation.common.LoadingComposable
 import com.company.activityart.presentation.login_screen.LoginScreenState.*
 import com.company.activityart.presentation.ui.shapes.ClippedImageShape
@@ -61,12 +61,7 @@ fun LoginScreen(
             .background(Icicle),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .widthIn(360.dp, maxWidth * 0.8f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        ContainerColumn(maxWidth) {
             when (screenState) {
                 // Just launched Login screen, check URI for access code
                 // In future, check ROOM database for previous code

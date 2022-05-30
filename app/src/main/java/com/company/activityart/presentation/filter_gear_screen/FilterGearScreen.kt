@@ -26,32 +26,29 @@ fun FilterGearScreen(
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
     val selectedCount by remember { viewModel.selectedCount }
-    val coroutineScope  = rememberCoroutineScope()
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Icicle),
+        contentAlignment = Alignment.Center
+    ) {
 
-    when (screenState) {
-        LAUNCH -> SideEffect {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                accessToken = accessToken,
-                yearMonths = yearMonths,
-                activityTypes = activityTypes
-            )
-        }
-        LOADING, STANDBY -> {
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize().background(Icicle),
-                contentAlignment = Alignment.Center
-            ) {
+        val maxHeight = this.maxHeight
+        val maxWidth = this.maxWidth
 
-                val maxHeight = this.maxHeight
-                val maxWidth = this.maxWidth
+        ContainerColumn(maxWidth) {
+            when (screenState) {
+                LAUNCH -> SideEffect {
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        accessToken = accessToken,
+                        yearMonths = yearMonths,
+                        activityTypes = activityTypes
+                    )
+                }
+                LOADING, STANDBY -> {
 
-                Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
                     HeaderWithEmphasisComposable(emphasized = "gears")
 
                     // Anytime rows is mutated, invoke call to convert them from ID to name

@@ -26,7 +26,6 @@ fun FilterMonthScreen(
     val screenState by remember { viewModel.filterMonthScreenState }
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedCount }
-    val coroutineScope = rememberCoroutineScope()
 
     println("recomposed")
 
@@ -37,30 +36,22 @@ fun FilterMonthScreen(
         contentAlignment = Alignment.Center
     ) {
         val maxHeight = this.maxHeight
-        val maxWidth = this.maxWidth
-        when (screenState) {
-            LAUNCH -> {
-                SideEffect {
-                    viewModel.loadActivities(
-                        context = context,
-                        athleteId = athleteId,
-                        years = years
-                    )
+        ContainerColumn(maxWidth) {
+            when (screenState) {
+                LAUNCH -> {
+                    SideEffect {
+                        viewModel.loadActivities(
+                            context = context,
+                            athleteId = athleteId,
+                            years = years
+                        )
+                    }
                 }
-            }
-            LOADING -> {
-                LoadingComposable()
-            }
-            STANDBY -> {
-                println("HERE IN STANDBY")
-                Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                LOADING -> {
+                    LoadingComposable()
+                }
+                STANDBY -> {
                     HeaderWithEmphasisComposable(emphasized = "months")
-
-
                     Table.TableComposable(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -72,7 +63,6 @@ fun FilterMonthScreen(
                         },
                         selectionList = viewModel.selected
                     )
-
 
                     if (screenState == LOADING)
                         LoadingComposable()

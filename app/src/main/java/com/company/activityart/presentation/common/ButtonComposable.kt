@@ -2,6 +2,7 @@ package com.company.activityart.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.activityart.presentation.ui.theme.MaisonNeue
+import com.company.activityart.presentation.ui.theme.Rust
 
 @Composable
 fun ButtonComposable(
@@ -38,7 +40,6 @@ fun ButtonComposable(
         Text(
             text = text,
             fontFamily = MaisonNeue,
-            fontWeight = FontWeight.SemiBold,
             fontSize = 28.sp
         )
     }

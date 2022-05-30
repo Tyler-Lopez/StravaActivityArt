@@ -22,6 +22,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.company.activityart.Screen
 import com.company.activityart.presentation.common.AppVersionNameComposable
 import com.company.activityart.presentation.common.ButtonComposable
+import com.company.activityart.presentation.common.ContainerColumn
 import com.company.activityart.presentation.common.LoadingComposable
 import com.company.activityart.presentation.ui.theme.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenState.*
@@ -53,28 +54,19 @@ fun WelcomeScreen(
             .background(Icicle),
         contentAlignment = Alignment.Center
     ) {
-
-        when (screenState) {
-            LAUNCH -> SideEffect {
-                viewModel.getAthlete(
-                    context = context,
-                    athleteId = athleteId,
-                    accessToken = accessToken
-                )
-            }
-            LOADING -> {
-                LoadingComposable()
-            }
-            STANDBY -> {
-
-                val maxWidth = this.maxWidth
-
-                Column(
-                    modifier = Modifier.widthIn(240.dp, maxWidth * 0.75f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-
+        ContainerColumn(maxWidth) {
+            when (screenState) {
+                LAUNCH -> SideEffect {
+                    viewModel.getAthlete(
+                        context = context,
+                        athleteId = athleteId,
+                        accessToken = accessToken
+                    )
+                }
+                LOADING -> {
+                    LoadingComposable()
+                }
+                STANDBY -> {
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
                         contentDescription = null,
@@ -128,15 +120,15 @@ fun WelcomeScreen(
                         viewModel.logout(context = context)
                     }
                 }
-            }
-            LOGOUT ->
-                LaunchedEffect(Unit) {
-                    navController.navigate(route = Screen.Login.route) {
-                        popUpTo(route = Screen.Welcome.route + "/{athleteId}/{accessToken}") {
-                            inclusive = true
+                LOGOUT ->
+                    LaunchedEffect(Unit) {
+                        navController.navigate(route = Screen.Login.route) {
+                            popUpTo(route = Screen.Welcome.route + "/{athleteId}/{accessToken}") {
+                                inclusive = true
+                            }
                         }
                     }
-                }
+            }
         }
     }
 }

@@ -26,32 +26,28 @@ fun FilterTypeScreen(
     val screenState by remember { viewModel.filterTypeScreenState }
     val context = LocalContext.current
     val selectedTypesCount by remember { viewModel.selectedTypesCount }
-    val coroutineScope  = rememberCoroutineScope()
 
-    when (screenState) {
-        LAUNCH -> SideEffect {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                yearMonths = yearMonths
-            )
-        }
-        LOADING, STANDBY -> {
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize().background(Icicle),
-                contentAlignment = Alignment.Center
-            ) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Icicle),
+        contentAlignment = Alignment.Center
+    ) {
 
-                val maxHeight = this.maxHeight
-                val maxWidth = this.maxWidth
+        val maxHeight = this.maxHeight
 
-                Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+        ContainerColumn(maxWidth) {
+
+            when (screenState) {
+                LAUNCH -> SideEffect {
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        yearMonths = yearMonths
+                    )
+                }
+                LOADING, STANDBY -> {
                     HeaderWithEmphasisComposable(emphasized = "activity types")
-
 
                     Table.TableComposable(
                         modifier = Modifier
@@ -64,9 +60,6 @@ fun FilterTypeScreen(
                         },
                         selectionList = viewModel.selectedTypes,
                     )
-
-
-
 
                     if (screenState == LOADING)
                         LoadingComposable()

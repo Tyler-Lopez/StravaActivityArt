@@ -15,9 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.activityart.Screen
-import com.company.activityart.presentation.common.ActivitiesCountComposable
-import com.company.activityart.presentation.common.ButtonWithCountComposable
-import com.company.activityart.presentation.common.HeaderWithEmphasisComposable
+import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.ui.theme.Icicle
 import com.company.activityart.presentation.ui.theme.Lato
 import com.company.activityart.util.ScreenState
@@ -43,33 +41,30 @@ fun FilterDistanceScreen(
     val distancesHeightMap by remember { viewModel.distancesHeightMap }
     val selectedMiles by remember { viewModel.selectedMiles }
 
-    when (screenState) {
-        ScreenState.LAUNCH -> SideEffect {
-            viewModel.loadActivities(
-                context = context,
-                athleteId = athleteId,
-                yearMonths = yearMonths,
-                activityTypes = activityTypes,
-                gears = gears
-            )
-        }
-        ScreenState.LOADING -> {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Icicle),
+        contentAlignment = Alignment.Center
+    ) {
 
-        }
-        ScreenState.STANDBY -> {
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize().background(Icicle),
-                contentAlignment = Alignment.Center
-            ) {
+        val maxHeight = this.maxHeight
 
-                val maxHeight = this.maxHeight
-                val maxWidth = this.maxWidth
-
-                Column(
-                    modifier = Modifier.widthIn(360.dp, maxWidth * 0.8f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+        ContainerColumn(maxWidth) {
+            when (screenState) {
+                ScreenState.LAUNCH -> SideEffect {
+                    viewModel.loadActivities(
+                        context = context,
+                        athleteId = athleteId,
+                        yearMonths = yearMonths,
+                        activityTypes = activityTypes,
+                        gears = gears
+                    )
+                }
+                ScreenState.LOADING -> {
+                    LoadingComposable()
+                }
+                ScreenState.STANDBY -> {
                     HeaderWithEmphasisComposable(emphasized = "distances")
                     DistanceGraphComposable(
                         distanceRange = distanceRangeInt ?: 0..0,
