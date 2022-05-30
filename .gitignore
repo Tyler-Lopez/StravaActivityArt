@@ -16,3 +16,4 @@ local.properties
 app/src/main/java/com/company/athleteapiart/util/ClientSecret.kt
 app/src/main/java/com/company/activityart/util/ClientSecret.kt
 app/src/main/java/com/company/activityart/util/ClientSecret.kt
+*.aab
