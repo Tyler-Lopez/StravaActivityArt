@@ -87,7 +87,7 @@ fun LoginScreen(
                 // Wait for user to press Login
                 STANDBY -> {
                     Image(
-                        painterResource(id = R.drawable.ic_paint_brush_svgrepo_com),
+                        painterResource(id = R.drawable.ic_frameactivityart),
                         "",
                         modifier = Modifier
                             .width(stravaButtonWidth - stravaButtonMargin),
