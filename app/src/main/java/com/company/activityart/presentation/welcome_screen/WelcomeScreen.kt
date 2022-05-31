@@ -62,9 +62,7 @@ fun WelcomeScreen(
                         accessToken = accessToken
                     )
                 }
-                LOADING -> {
-                    LoadingComposable()
-                }
+                LOADING -> LoadingComposable()
                 STANDBY -> {
                     Image(
                         painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
