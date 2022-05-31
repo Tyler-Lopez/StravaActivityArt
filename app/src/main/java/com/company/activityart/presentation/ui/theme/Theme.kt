@@ -11,15 +11,15 @@ import com.company.activityart.presentation.ui.LocalSpacing
 import com.company.activityart.presentation.ui.Spacing
 
 private val DarkColorPalette = darkColors(
-    primary = StravaOrange,
-    primaryVariant = DarkerOrange,
-    secondary = StravaOrange
+    primary = Rust,
+    primaryVariant = Rust,
+    secondary = Rust
 )
 
 private val LightColorPalette = lightColors(
-    primary = StravaOrange,
-    primaryVariant = DarkerOrange,
-    secondary = StravaOrange,
+    primary = Rust,
+    primaryVariant = Rust,
+    secondary = Rust,
     background = Color(242, 242, 242),
 
     /* Other default colors to override

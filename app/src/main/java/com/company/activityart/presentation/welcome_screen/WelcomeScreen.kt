@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Radar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,10 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.company.activityart.Screen
-import com.company.activityart.presentation.common.AppVersionNameComposable
-import com.company.activityart.presentation.common.ButtonComposable
-import com.company.activityart.presentation.common.ContainerColumn
-import com.company.activityart.presentation.common.LoadingComposable
+import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.ui.theme.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenState.*
 

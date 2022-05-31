@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.activityart.presentation.common.AppVersionNameComposable
+import com.company.activityart.presentation.common.ContainerColumn
 import com.company.activityart.presentation.ui.theme.*
 
 @Composable
@@ -30,13 +31,7 @@ fun AboutScreen() {
             .background(Icicle),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .widthIn(360.dp, maxWidth * 0.8f)
-                .padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        ContainerColumn(maxWidth) {
             Box(
                 modifier = Modifier
             ) {
