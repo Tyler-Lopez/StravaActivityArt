@@ -106,16 +106,12 @@ fun WelcomeScreen(
                     ButtonComposable(
                         text = "About",
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        navController.navigate(route = Screen.About.route)
-                    }
+                    ) { navController.navigate(route = Screen.About.route) }
                     // De-authenticates the user and clears OAuth2 database entry
                     ButtonComposable(
                         text = "Logout",
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        viewModel.logout(context = context)
-                    }
+                    ) { viewModel.logout(context = context) }
                 }
                 LOGOUT ->
                     LaunchedEffect(Unit) {
