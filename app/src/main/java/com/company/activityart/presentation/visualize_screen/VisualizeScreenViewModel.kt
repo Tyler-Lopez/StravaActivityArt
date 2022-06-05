@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Path
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.toArgb
@@ -56,7 +57,7 @@ class VisualizeScreenViewModel @Inject constructor(
     private val _selectedResolution = mutableStateOf(0)
     val selectedResolution: State<Int> = _selectedResolution
     var resolutions = listOf(
-        3840f to 2160f
+       1584f to 396f
     )
     fun rotateResolutions() {
         resolutions = resolutions.map { it.second to it.first }

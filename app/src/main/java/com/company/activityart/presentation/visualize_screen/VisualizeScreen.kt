@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
+import com.company.activityart.R
 import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.ui.theme.*
 import com.company.activityart.presentation.visualize_screen.VisualizeScreenState.*
@@ -41,6 +43,8 @@ fun VisualizeScreen(
     val selectedResolution by remember { viewModel.selectedResolution }
 
     val bitmap = remember { viewModel.bitmapState }
+
+
 
     BoxWithConstraints(
         modifier = Modifier
