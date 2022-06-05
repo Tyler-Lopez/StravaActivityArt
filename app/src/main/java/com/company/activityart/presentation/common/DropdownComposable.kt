@@ -8,9 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,36 +19,37 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.company.activityart.presentation.ui.theme.*
+import com.company.activityart.presentation.visualize_screen.ResolutionSpec
 
 @Composable
 fun DropdownComposable(
-    menuItems: List<String>,
-    icon: ImageVector,
+    menuItems: List<ResolutionSpec>,
+    message: String,
     onItemSelected: (Int) -> Unit,
-    width: Dp = 256.dp,
+    selectedIndex: Int,
+    modifier: Modifier = Modifier,
     height: Dp = 44.dp,
-    defaultSelectedIndex: Int = 0,
 ) {
     val expanded = remember { mutableStateOf(false) }
-    val selectedIndex = remember { mutableStateOf(defaultSelectedIndex) }
 
+    println("Recomposed, selected index is $selectedIndex")
+    println("Recomposed, selected display is ${menuItems.get(selectedIndex).display}")
     Row(
-        modifier = Modifier
-            .width(width)
+        modifier = modifier
             .height(height)
-            .clip(RoundedCornerShape(4.dp))
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .width(48.dp)
-                .background(Asphalt),
+                .background(Asphalt)
+                .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = White
+            Text(
+                text = message,
+                fontFamily = MaisonNeue,
+                fontSize = 24.sp,
+                color = Fog
             )
         }
         BoxWithConstraints {
@@ -83,7 +82,7 @@ fun DropdownComposable(
                         tint = Black
                     )
                     Text(
-                        text = menuItems.getOrElse(selectedIndex.value) { "ERR" },
+                        text = menuItems.get(selectedIndex).display,
                         fontSize = 20.sp,
                         fontFamily = Lato,
                         fontWeight = FontWeight.SemiBold,
@@ -105,15 +104,13 @@ fun DropdownComposable(
                     modifier = Modifier.width(maxWidth)
                 ) {
                     menuItems.forEachIndexed { index, item ->
-                        if (index != selectedIndex.value)
+                        if (index != selectedIndex)
                             DropdownMenuItem(onClick = {
                                 expanded.value = false
-                                selectedIndex.value = index
                                 onItemSelected(index)
                             }) {
-                                Spacer(modifier = Modifier.width(32.dp))
                                 Text(
-                                    text = item,
+                                    text = item.display,
                                     fontSize = 18.sp,
                                     fontFamily = Lato,
                                     color = Asphalt,

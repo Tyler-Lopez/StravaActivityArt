@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,100 +46,109 @@ fun VisualizeScreen(
     val bitmap = remember { viewModel.bitmapState }
 
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        DropdownComposable(
+            menuItems = viewModel.resolutions,
+            message = "Size",
+            onItemSelected = {
+                viewModel.updateResolution(it)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            selectedIndex = viewModel.selectedResolution.value
+        )
 
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Icicle),
-        contentAlignment = Alignment.Center
-    ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Icicle),
+            contentAlignment = Alignment.Center
+        ) {
+                val maxWidth = this.maxWidth
+                val maxHeight = this.maxHeight
 
-        val maxWidth = this.maxWidth
-        val maxHeight = this.maxHeight
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    when (screenState) {
+                        LAUNCH -> {
+                            viewModel.loadActivities(
+                                context = context,
+                                athleteId = athleteId,
+                                yearMonths = yearMonths,
+                                activityTypes = activityTypes,
+                                gears = gears,
+                                distances = distances
+                            )
+                        }
+                        GET_SPECIFICATION -> {
+                            val width = LocalDensity.current.run { maxWidth.roundToPx() }
+                            viewModel.loadVisualizeSpecification(composableWidth = width)
+                        }
+                        LOADING -> LoadingComposable()
+                        SAVING -> LoadingComposable("Saving to device...")
+                        STANDBY -> {
 
-        ContainerColumn(maxWidth) {
+                            val permState =
+                                rememberPermissionState(permission = viewModel.permission)
+                            val hasPermission =
+                                remember { derivedStateOf { permState.hasPermission } }
 
-            when (screenState) {
-                LAUNCH -> {
-                    viewModel.loadActivities(
-                        context = context,
-                        athleteId = athleteId,
-                        yearMonths = yearMonths,
-                        activityTypes = activityTypes,
-                        gears = gears,
-                        distances = distances
-                    )
-                }
-                GET_SPECIFICATION -> {
-                    val width = LocalDensity.current.run { maxWidth.roundToPx() }
-                    viewModel.loadVisualizeSpecification(composableWidth = width)
-                }
-                LOADING -> LoadingComposable()
-                SAVING -> LoadingComposable("Saving to device...")
-                STANDBY -> {
+                            val lifecycleOwner = LocalLifecycleOwner.current
 
-                    val permState = rememberPermissionState(permission = viewModel.permission)
-                    val hasPermission = remember { derivedStateOf { permState.hasPermission } }
+                            // For side effects that need to be cleaned up after keys change
+                            // or the composable leaves the composition
+                            // If keys change, composable disposes current effect and resets by calling again
+                            DisposableEffect(
+                                key1 = lifecycleOwner,
+                                effect = {
+                                    val observer = LifecycleEventObserver { _, event ->
+                                        if (event == Lifecycle.Event.ON_START) {
+                                            permState.launchPermissionRequest()
+                                        }
+                                    }
+                                    lifecycleOwner.lifecycle.addObserver(observer)
 
-                    val lifecycleOwner = LocalLifecycleOwner.current
+                                    onDispose {
+                                        lifecycleOwner.lifecycle.removeObserver(observer)
+                                    }
+                                }
+                            )
 
-                    // For side effects that need to be cleaned up after keys change
-                    // or the composable leaves the composition
-                    // If keys change, composable disposes current effect and resets by calling again
-                    DisposableEffect(
-                        key1 = lifecycleOwner,
-                        effect = {
-                            val observer = LifecycleEventObserver { _, event ->
-                                if (event == Lifecycle.Event.ON_START) {
+                            HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
+
+                            Card(
+                                elevation = 4.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(0.dp, maxHeight * 0.75f)
+                            ) {
+                                bitmap.value?.let { VisualizeImage(bitmap = it) }
+                            }
+
+                            if (hasPermission.value)
+                                ButtonComposable(
+                                    text = "Save Image",
+                                    modifier = Modifier.fillMaxWidth().height(64.dp),
+                                    icon = Icons.Default.Save
+                                ) {
+                                    viewModel.startSave(context)
+                                }
+                            else {
+                                if (permState.shouldShowRationale)
+                                    WarningComposable()
+                                ButtonComposable(
+                                    text = "Grant Save Permission",
+                                    modifier = Modifier.fillMaxWidth().height(64.dp)
+                                ) {
                                     permState.launchPermissionRequest()
                                 }
-                            }
-                            lifecycleOwner.lifecycle.addObserver(observer)
 
-                            onDispose {
-                                lifecycleOwner.lifecycle.removeObserver(observer)
                             }
                         }
-                    )
-
-                    HeaderWithEmphasisComposable(emphasized = "Preview", string = "Preview")
-                    Text(
-                        text = "3840 x 2160",
-                        fontFamily = Lato,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Coal
-                    )
-                    Card(
-                        elevation = 4.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(0.dp, maxHeight * 0.75f)
-                    ) {
-                        bitmap.value?.let { VisualizeImage(bitmap = it) }
-                    }
-
-                    if (hasPermission.value)
-                        ButtonComposable(
-                            text = "Save Image",
-                            modifier = Modifier.fillMaxWidth(),
-                            icon = Icons.Default.Save
-                        ) {
-                            viewModel.startSave(context)
-                        }
-                    else {
-                        if (permState.shouldShowRationale)
-                            WarningComposable()
-                        ButtonComposable(
-                            text = "Grant Save Permission",
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            permState.launchPermissionRequest()
-                        }
-
                     }
                 }
-            }
         }
     }
 }

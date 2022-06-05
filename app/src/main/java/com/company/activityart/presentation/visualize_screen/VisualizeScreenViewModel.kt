@@ -33,6 +33,9 @@ class VisualizeScreenViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
+    // Constant Factor to Shrink Size
+    private val strokeWidthFactor = 0.00125f
+
     // Screen State
     private val _screenState = mutableStateOf(LAUNCH)
     val screenState: State<VisualizeScreenState> = _screenState
@@ -54,17 +57,19 @@ class VisualizeScreenViewModel @Inject constructor(
     }
 
     // Acceptable Resolutions
-    private val _selectedResolution = mutableStateOf(0)
+    val resolutions = ResolutionSpec.values().toList()
+    private val _selectedResolution = mutableStateOf(1)
     val selectedResolution: State<Int> = _selectedResolution
-    var resolutions = listOf(
-       1584f to 396f
-    )
-    fun rotateResolutions() {
-        resolutions = resolutions.map { it.second to it.first }
-        _screenState.value = GET_SPECIFICATION
+
+    private val _isRotated = mutableStateOf(false)
+    val isRotate: State<Boolean> = _isRotated
+
+    fun rotate() {
+        _isRotated.value = !_isRotated.value
     }
-    fun updateSelectedResolution(int: Int) {
-        _selectedResolution.value = int
+
+    fun updateResolution(index: Int) {
+        _selectedResolution.value = index
         _screenState.value = GET_SPECIFICATION
     }
 
@@ -92,13 +97,12 @@ class VisualizeScreenViewModel @Inject constructor(
                 visualizationHeight = visHeight,
                 backgroundPaint = backgroundPaint,
                 activityPaint = activityPaint.also {
-                    it.strokeWidth = sqrt(visWidth * visHeight.toFloat()) * 0.0015f
+                    it.strokeWidth = sqrt(visWidth * visHeight.toFloat()) * strokeWidthFactor
                 },
                 activities = activityPaths
             )
         )
     }
-
 
     // Load activities from ROOM
     fun loadActivities(
@@ -146,7 +150,8 @@ class VisualizeScreenViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Default) {
             val composableHeight =
-                (composableWidth / (resolutions[_selectedResolution.value].toList().reduce { x, y -> x / y })).toInt()
+                (composableWidth / (resolutions[_selectedResolution.value].resolution.toList()
+                    .reduce { x, y -> x / y })).toInt()
 
             visWidth = composableWidth
             visHeight = composableHeight
@@ -165,14 +170,14 @@ class VisualizeScreenViewModel @Inject constructor(
             saveImage(
                 bitmap = visualizeBitmapMaker(
                     VisualizeSpecification(
-                        resolutions[_selectedResolution.value].first.toInt(),
-                        resolutions[_selectedResolution.value].second.toInt(),
+                        resolutions[_selectedResolution.value].resolution.first.toInt(),
+                        resolutions[_selectedResolution.value].resolution.second.toInt(),
                         backgroundPaint,
                         activityPaint.also {
                             it.strokeWidth =
-                                sqrt((resolutions[_selectedResolution.value].toList().reduce { x, y -> x * y })) * 0.00125f
+                                resolutions[_selectedResolution.value].totalPixels * strokeWidthFactor
                         },
-                        computeActivityPaths(resolutions[_selectedResolution.value].first.toInt())
+                        computeActivityPaths(resolutions[_selectedResolution.value].resolution.first.toInt())
                     )
                 ),
                 context = context,
@@ -183,9 +188,10 @@ class VisualizeScreenViewModel @Inject constructor(
     }
 
     private fun computeActivityPaths(
-        bitmapWidth: Int, // e.g. 4g00
+        bitmapWidth: Int, // e.g. 400
     ): List<Path> {
-        val widthHeightRatio = resolutions[_selectedResolution.value].first / resolutions[_selectedResolution.value].second
+        val widthHeightRatio =
+            resolutions[_selectedResolution.value].widthHeightRatio
         // Determine height of bitmap given width and ratio
         val bitmapHeight = (bitmapWidth / widthHeightRatio).toInt()
 
