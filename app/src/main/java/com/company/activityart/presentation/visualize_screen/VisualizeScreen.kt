@@ -41,7 +41,6 @@ fun VisualizeScreen(
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
-    val selectedResolution by remember { viewModel.selectedResolution }
 
     val bitmap = remember { viewModel.bitmapState }
 
@@ -56,7 +55,6 @@ fun VisualizeScreen(
             modifier = Modifier.fillMaxWidth(),
             selectedIndex = viewModel.selectedResolution.value
         )
-
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()

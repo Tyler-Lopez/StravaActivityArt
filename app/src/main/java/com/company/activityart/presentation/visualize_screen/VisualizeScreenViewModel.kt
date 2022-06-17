@@ -254,7 +254,6 @@ class VisualizeScreenViewModel @Inject constructor(
 
         return _activities.mapIndexed { index, act ->
             // Decode each Polyline into a List<LatLng>
-            println("Here summary polyline was ${act.summaryPolyline}")
             PolyUtil.decode(act.summaryPolyline).let { latLngList ->
 
                 // Convert List<LatLng> to List<Pair<Float, Float>>
