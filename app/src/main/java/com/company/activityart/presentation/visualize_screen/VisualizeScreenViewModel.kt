@@ -8,11 +8,13 @@ import android.graphics.Path
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.*
 import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.domain.use_case.ActivitiesUseCases
 import com.company.activityart.presentation.ui.theme.Coal
+import com.company.activityart.presentation.ui.theme.Pumpkin
 import com.company.activityart.presentation.ui.theme.StravaOrange
 import com.company.activityart.presentation.visualize_screen.VisualizeScreenState.*
 import com.company.activityart.util.Constants
@@ -34,7 +36,11 @@ class VisualizeScreenViewModel @Inject constructor(
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
     // Constant Factor to Shrink Size
-    private val strokeWidthFactor = 0.00125f
+    private val strokeWidthFactor = 0.0050f
+
+    // Shrink stroke width relative to total activities
+    private val activitiesCountStrokeFactor: Float
+        get() = sqrt(sqrt(activityPaths.size.toFloat()))
 
     // Screen State
     private val _screenState = mutableStateOf(LAUNCH)
@@ -51,9 +57,10 @@ class VisualizeScreenViewModel @Inject constructor(
     private val backgroundPaint = Paint().also { it.color = Coal.toArgb() }
     private val activityPaint = Paint().also {
         it.color = StravaOrange.toArgb()
-        it.isAntiAlias = true
-        it.strokeCap = Paint.Cap.ROUND
         it.style = Paint.Style.STROKE
+        it.strokeJoin = Paint.Join.ROUND
+        it.isAntiAlias = true
+        // it.setShadowLayer(5f, 5f, 5f, Pumpkin.toArgb())
     }
 
     // Acceptable Resolutions
@@ -97,7 +104,8 @@ class VisualizeScreenViewModel @Inject constructor(
                 visualizationHeight = visHeight,
                 backgroundPaint = backgroundPaint,
                 activityPaint = activityPaint.also {
-                    it.strokeWidth = sqrt(visWidth * visHeight.toFloat()) * strokeWidthFactor
+                    it.strokeWidth =
+                        (sqrt(visWidth * visHeight.toFloat()) * strokeWidthFactor) / activitiesCountStrokeFactor
                 },
                 activities = activityPaths
             )
@@ -175,7 +183,7 @@ class VisualizeScreenViewModel @Inject constructor(
                         backgroundPaint,
                         activityPaint.also {
                             it.strokeWidth =
-                                resolutions[_selectedResolution.value].totalPixels * strokeWidthFactor
+                                (resolutions[_selectedResolution.value].totalPixels * strokeWidthFactor) / activitiesCountStrokeFactor
                         },
                         computeActivityPaths(resolutions[_selectedResolution.value].resolution.first.toInt())
                     )

@@ -1,5 +1,7 @@
 package com.company.activityart.presentation.visualize_screen
 
+import kotlin.math.sqrt
+
 enum class ResolutionSpec(
     val display: String,
     val resolution: Pair<Float, Float>
@@ -18,6 +20,6 @@ enum class ResolutionSpec(
     FOURTYEIGHT_BY_SEVENTYTWO("48x72 Print", Pair(7200f, 10800f)),
     FOURTYEIGHT_BY_ONEHUNDRED("48x100 Print", Pair(7200f, 15000f));
 
-    val totalPixels = (resolution.first + resolution.second).toInt()
+    val totalPixels = sqrt(resolution.first * resolution.second)
     val widthHeightRatio = resolution.first / resolution.second
 }
