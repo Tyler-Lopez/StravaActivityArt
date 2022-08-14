@@ -1,10 +1,13 @@
 package com.company.activityart.presentation.welcome_screen
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.data.entities.AthleteEntity
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.*
 import com.company.activityart.domain.use_case.AthleteUseCases
 import com.company.activityart.domain.use_case.AuthenticationUseCases
 import com.company.activityart.util.Resource.*
@@ -23,8 +26,9 @@ class WelcomeScreenViewModel @Inject constructor(
     private val getAthleteUseCase = athleteUseCases.getAthleteUseCase
     private val setAthleteUseCase = athleteUseCases.setAthleteUseCase
 
-    // State - observed in the view
-    val screenState = mutableStateOf(WelcomeScreenState.LAUNCH)
+    // ViewState - observed in the view
+    private val _viewState: MutableState<WelcomeScreenViewState> = mutableStateOf(LAUNCH)
+    val viewState: State<WelcomeScreenViewState> = _viewState
 
     // Received Athlete
     private val athlete = mutableStateOf<AthleteEntity?>(null)
@@ -38,7 +42,7 @@ class WelcomeScreenViewModel @Inject constructor(
         athleteId: Long,
         accessToken: String
     ) {
-        screenState.value = WelcomeScreenState.LOADING
+        _viewState.value = LOADING
         viewModelScope.launch {
             when (val response =
                 getAthleteUseCase.getAthlete(context = context, athleteId = athleteId, code = accessToken)) {
@@ -46,7 +50,7 @@ class WelcomeScreenViewModel @Inject constructor(
                     val data = response.data
                     athlete.value = data
                     setAthleteUseCase.setAthlete(context = context, athleteEntity = data)
-                    screenState.value = WelcomeScreenState.STANDBY
+                    _viewState.value = STANDBY
                 }
                 is Error -> {
                     logout(context)
@@ -58,10 +62,10 @@ class WelcomeScreenViewModel @Inject constructor(
     fun logout(
         context: Context
     ) {
-        screenState.value = WelcomeScreenState.LOADING
+        _viewState.value = LOADING
         viewModelScope.launch {
             authenticationUseCases.clearAccessTokenUseCase.clearAccessToken(context = context)
-            screenState.value = WelcomeScreenState.LOGOUT
+            _viewState.value = LOGOUT
         }
     }
 }

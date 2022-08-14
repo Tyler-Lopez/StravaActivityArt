@@ -66,7 +66,7 @@ fun LoginScreen(
                 // Just launched Login screen, check URI for access code
                 // In future, check ROOM database for previous code
                 // SideEffect composable invoked on every recomposition
-                // Necessary to ensure we recompose screenState
+                // Necessary to ensure we recompose viewState
                 LAUNCH -> SideEffect {
                     viewModel.attemptGetAccessToken(
                         uri = uri,

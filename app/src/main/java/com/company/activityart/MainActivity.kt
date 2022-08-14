@@ -307,10 +307,6 @@ class MainActivity : ComponentActivity() {
                                 distances = distances
                             )
                         }
-
-                        composable(Screen.SaveImage.route) {
-                        //    SaveImageScreen(navController = navController)
-                        }
                     }
                 }
             }

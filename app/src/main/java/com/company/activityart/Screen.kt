@@ -11,9 +11,7 @@ sealed class Screen(
     object FilterType : Screen("FilterType")
     object FilterGear : Screen("FilterGear")
     object FilterDistance : Screen("FilterDistance")
-
     object VisualizeActivities : Screen("VisualizeActivities")
-    object SaveImage : Screen("SaveImage")
 
     fun withArgs(vararg args: String, optionalArgs: Array<Pair<String, String>>? = null): String {
         return buildString {
