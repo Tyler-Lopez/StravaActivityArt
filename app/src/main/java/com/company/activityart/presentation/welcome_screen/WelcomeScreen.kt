@@ -45,7 +45,7 @@ fun WelcomeScreen(
     navController: NavHostController,
     viewModel: WelcomeScreenViewModel = hiltViewModel()
 ) {
-    val screenState by remember { viewModel.viewState }
+    val state by remember { viewModel.viewState }
 
     val context = LocalContext.current
     BoxWithConstraints(
@@ -55,74 +55,92 @@ fun WelcomeScreen(
         contentAlignment = Alignment.Center
     ) {
         ContainerColumn(maxWidth) {
-            when (screenState) {
-                LAUNCH -> SideEffect {
-                    viewModel.getAthlete(
-                        context = context,
-                        athleteId = athleteId,
-                        accessToken = accessToken
-                    )
-                }
-                LOADING -> LoadingComposable()
-                STANDBY -> {
-                    Image(
-                        painter = rememberAsyncImagePainter(viewModel.athleteImageUrl),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(156.dp)
-                            .clip(CircleShape)
-                            .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
-                    )
-                    AppVersionNameComposable()
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = Silver,
-                    ) {
-                        Text(
-                            text = viewModel.athleteName,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            fontFamily = MaisonNeue,
-                            color = Coal,
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+            Render(state)
+        }
+    }
+}
 
-                    // Navigate user to screen where they may select which years of activities to visualize
-                    ButtonComposable(
-                        text = "Make Art",
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        navController.navigate(
-                            Screen.FilterYear.withArgs(
-                                athleteId.toString(),
-                                accessToken
-                            )
-                        )
-                    }
-                    // Navigates user to a simple screen showing information about app & author
-                    ButtonComposable(
-                        text = "About",
-                        modifier = Modifier.fillMaxWidth()
-                    ) { navController.navigate(route = Screen.About.route) }
-                    // De-authenticates the user and clears OAuth2 database entry
-                    ButtonComposable(
-                        text = "Logout",
-                        modifier = Modifier.fillMaxWidth()
-                    ) { viewModel.logout(context = context) }
-                }
-                LOGOUT ->
-                    LaunchedEffect(Unit) {
-                        navController.navigate(route = Screen.Login.route) {
-                            popUpTo(route = Screen.Welcome.route + "/{athleteId}/{accessToken}") {
-                                inclusive = true
-                            }
-                        }
-                    }
+@Composable
+private fun Render(state: WelcomeScreenViewState) {
+    when (state) {
+        is Launch -> SideEffect {
+            /*
+            viewModel.getAthlete(
+                context = context,
+                athleteId = athleteId,
+                accessToken = accessToken
+            )
+
+             */
+        }
+        is Loading -> LoadingComposable()
+        is Standby -> {
+            Image(
+                painter = rememberAsyncImagePainter(state.athleteImageUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(156.dp)
+                    .clip(CircleShape)
+                    .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
+            )
+            AppVersionNameComposable()
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = Silver,
+            ) {
+                Text(
+                    text = state.athleteName,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    fontFamily = MaisonNeue,
+                    color = Coal,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            // Navigate user to screen where they may select which years of activities to visualize
+            ButtonComposable(
+                text = "Make Art",
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                /*
+                navController.navigate(
+                    Screen.FilterYear.withArgs(
+                        athleteId.toString(),
+                        accessToken
+                    )
+                )
+
+                 */
+            }
+            // Navigates user to a simple screen showing information about app & author
+            ButtonComposable(
+                text = "About",
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // todo navController.navigate(route = Screen.About.route)
+            }
+            // De-authenticates the user and clears OAuth2 database entry
+            ButtonComposable(
+                text = "Logout",
+                modifier = Modifier.fillMaxWidth()
+            ) {
+               // todo viewModel.logout(context = context)
             }
         }
+        is Logout ->
+            LaunchedEffect(Unit) {
+                /* todo
+                navController.navigate(route = Screen.Login.route) {
+                    popUpTo(route = Screen.Welcome.route + "/{athleteId}/{accessToken}") {
+                        inclusive = true
+                    }
+                }
+
+                 */
+            }
     }
 }

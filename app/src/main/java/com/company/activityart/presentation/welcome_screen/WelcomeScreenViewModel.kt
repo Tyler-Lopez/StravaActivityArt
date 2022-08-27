@@ -27,14 +27,14 @@ class WelcomeScreenViewModel @Inject constructor(
     private val setAthleteUseCase = athleteUseCases.setAthleteUseCase
 
     // ViewState - observed in the view
-    private val _viewState: MutableState<WelcomeScreenViewState> = mutableStateOf(LAUNCH)
+    private val _viewState: MutableState<WelcomeScreenViewState> = mutableStateOf(Launch)
     val viewState: State<WelcomeScreenViewState> = _viewState
 
     // Received Athlete
     private val athlete = mutableStateOf<AthleteEntity?>(null)
-    val athleteImageUrl: String
+    private val athleteImageUrl: String
         get() = athlete.value?.profilePictureLarge ?: "via.placeholder.com/128"
-    val athleteName: String
+    private val athleteName: String
         get() = "${athlete.value?.firstName} ${athlete.value?.lastName}"
 
     fun getAthlete(
@@ -42,7 +42,7 @@ class WelcomeScreenViewModel @Inject constructor(
         athleteId: Long,
         accessToken: String
     ) {
-        _viewState.value = LOADING
+        _viewState.value = Loading
         viewModelScope.launch {
             when (val response =
                 getAthleteUseCase.getAthlete(context = context, athleteId = athleteId, code = accessToken)) {
@@ -50,7 +50,7 @@ class WelcomeScreenViewModel @Inject constructor(
                     val data = response.data
                     athlete.value = data
                     setAthleteUseCase.setAthlete(context = context, athleteEntity = data)
-                    _viewState.value = STANDBY
+                    _viewState.value = Standby
                 }
                 is Error -> {
                     logout(context)
@@ -62,10 +62,10 @@ class WelcomeScreenViewModel @Inject constructor(
     fun logout(
         context: Context
     ) {
-        _viewState.value = LOADING
+        _viewState.value = Loading
         viewModelScope.launch {
             authenticationUseCases.clearAccessTokenUseCase.clearAccessToken(context = context)
-            _viewState.value = LOGOUT
+            _viewState.value = Logout
         }
     }
 }
