@@ -1,5 +1,7 @@
 package com.company.activityart.di
 
+import android.content.Context
+import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.ActivitiesUseCases
 import com.company.activityart.domain.use_case.AthleteUseCases
@@ -17,6 +19,7 @@ import com.company.activityart.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -70,6 +73,13 @@ object AppModule {
             .baseUrl(BASE_URL)
             .build()
             .create(AthleteApi::class.java) // Creates singleton implementation of interface
+    }
+
+    // TODO come back to https://svvashishtha.medium.com/using-room-with-hilt-cb57a1bc32f
+    @Singleton
+    @Provides
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AthleteDatabase {
+
     }
 
 }
