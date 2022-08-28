@@ -15,9 +15,4 @@ interface AthleteDao {
 
     @Query("SELECT * FROM athleteEntity WHERE athleteEntity.athleteId = :athleteId")
     suspend fun getAthleteById(athleteId: Long): AthleteEntity?
-
-  //  @MapInfo(keyColumn = "gears", valueColumn = "gears")
- //   @Query("SELECT athleteEntity.gears FROM athleteentity WHERE athleteEntity.athleteId = :athleteId")
- //   suspend fun getAthleteGearsById(athleteId: Long): Map<String, String>
-
 }

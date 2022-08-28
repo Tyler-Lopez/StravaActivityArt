@@ -34,7 +34,7 @@ interface AthleteApi {
     @GET("api/v3/athlete")
     suspend fun getAuthenticatedAthlete(
         @Header("Authorization") authHeader: String
-    ): AuthenticatedAthlete
+    ): AthleteResponse
 
     @GET("api/v3/gear/{id}?")
     suspend fun getGearById(

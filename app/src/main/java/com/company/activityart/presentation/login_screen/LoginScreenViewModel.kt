@@ -77,7 +77,7 @@ class LoginScreenViewModel @Inject constructor(
                     loginScreenState.value = LoginScreenState.AUTHORIZED
                 }
                 // Not able to receive access token from ROOM database
-                is Resource.Error -> {
+                is Resource.Failure -> {
                     when {
                         // We just connected with Strava but have not parsed or done work with code
                         uri != null -> {
@@ -96,7 +96,7 @@ class LoginScreenViewModel @Inject constructor(
                                     setAccessTokenUseCase.setAccessToken(context, responseCode.data)
                                     loginScreenState.value = LoginScreenState.AUTHORIZED
                                 }
-                                is Resource.Error -> {
+                                is Resource.Failure -> {
                                     println("Response code from uri is error")
                                 }
                             }

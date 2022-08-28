@@ -4,7 +4,6 @@ import android.content.Context
 import com.company.activityart.data.database.ActivityDatabase
 import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.data.remote.AthleteApi
-import com.company.activityart.util.HTTPFault
 import com.company.activityart.util.Resource
 import com.company.activityart.util.TimeUtils
 import java.util.*
@@ -106,7 +105,7 @@ class GetActivitiesUseCase @Inject constructor(
             } while (activitiesResponse.isNotEmpty())
         } catch (e: Exception) {
             println("An error has occurred - ${e.message}")
-            return Resource.Error(HTTPFault.getEnum(e.message))
+            return Resource.Failure(HTTPFault.getEnum(e.message))
         }
         return Resource.Success(yearlyActivities)
     }

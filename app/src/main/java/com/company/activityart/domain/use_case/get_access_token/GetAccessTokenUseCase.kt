@@ -5,7 +5,6 @@ import com.company.activityart.data.database.OAuth2Database
 import com.company.activityart.data.entities.OAuth2Entity
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.data.remote.responses.Bearer
-import com.company.activityart.util.HTTPFault
 import com.company.activityart.util.Resource
 import com.company.activityart.util.clientSecret
 import java.util.*
@@ -28,7 +27,7 @@ class GetAccessTokenUseCase @Inject constructor(
         println("OAUTH2ENTITY IS ${oAuth2Entity}")
         return when {
             // There is no previous entry in the ROOM database
-            oAuth2Entity == null -> Resource.Error(HTTPFault.UNAUTHORIZED)
+            oAuth2Entity == null -> Resource.Failure(HTTPFault.UNAUTHORIZED)
             // There is a previous, expired entry
             accessTokenIsExpired(oAuth2Entity.receivedOn) -> {
                 // Attempt to refresh the access token
@@ -54,7 +53,7 @@ class GetAccessTokenUseCase @Inject constructor(
                         )
                     }
                     // Was not able to successfully refresh the token
-                    else -> Resource.Error(HTTPFault.UNKNOWN)
+                    else -> Resource.Failure(HTTPFault.UNKNOWN)
                 }
             }
             // There is a previous non-expired entry, return the oAuth2Entity
@@ -74,7 +73,7 @@ class GetAccessTokenUseCase @Inject constructor(
             )
         } catch (e: Exception) {
             println("An error has occurred - ${e.message}")
-            return Resource.Error(HTTPFault.getEnum(e.message))
+            return Resource.Failure(HTTPFault.getEnum(e.message))
         }
         return Resource.Success(
             OAuth2Entity(
@@ -101,7 +100,7 @@ class GetAccessTokenUseCase @Inject constructor(
             )
         } catch (e: Exception) {
             println("ERROR OCCURRED GETTING REFRESH TOKEN")
-            return Resource.Error(HTTPFault.getEnum(e.message))
+            return Resource.Failure(HTTPFault.getEnum(e.message))
         }
 
         return Resource.Success(response)

@@ -1,0 +1,22 @@
+package com.company.activityart.domain.models
+
+import java.util.concurrent.TimeUnit
+
+private const val DATA_EXPIRY_DAYS = 3
+private const val SECONDS_IN_DAY = 86400
+
+val Athlete.secondsSinceReceived: Int
+    get() {
+        val currSeconds = TimeUnit.SECONDS.toMillis(System.currentTimeMillis())
+        return currSeconds.toInt() - receivedOnUnixSeconds
+    }
+
+// This is important as Strava does not want you caching data for more than 3 days
+val Athlete.dataExpired: Boolean
+    get() {
+        val expirationSeconds = SECONDS_IN_DAY * DATA_EXPIRY_DAYS
+        return secondsSinceReceived > expirationSeconds
+    }
+
+val Athlete.fullName: String
+    get() = "$firstName $lastName"

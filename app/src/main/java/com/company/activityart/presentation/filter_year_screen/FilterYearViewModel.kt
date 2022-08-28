@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.domain.use_case.ActivitiesUseCases
-import com.company.activityart.domain.use_case.AthleteUseCases
 import com.company.activityart.util.Constants
 import com.company.activityart.util.Resource.*
 import com.company.activityart.presentation.filter_year_screen.TimeSelectScreenState.*
@@ -142,7 +141,7 @@ class TimeSelectViewModel @Inject constructor(
                                             year to currentMonth
                                     } else year to 12 // This was changed from -1... we were calling for every single year and shouldn't have been
                                 }
-                                is Error -> {
+                                is Failure -> {
                                     year to -1
                                 }
                             }

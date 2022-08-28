@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.company.activityart.Screen
 import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.domain.use_case.ActivitiesUseCases
-import com.company.activityart.domain.use_case.AthleteUseCases
 import com.company.activityart.domain.use_case.GearUseCases
 import com.company.activityart.util.NavigationUtils
 import com.company.activityart.util.Resource
@@ -127,7 +126,7 @@ class FilterGearViewModel @Inject constructor(
                                 gearsIdMap[gearId] = gearName
                                 gearId to gearName
                             }
-                            is Resource.Error -> {
+                            is Resource.Failure -> {
                                 null // Todo add some handling in view
                             }
                         }
