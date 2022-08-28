@@ -6,6 +6,15 @@ import com.company.activityart.util.Resource
 import com.company.activityart.util.Resource.Success
 import javax.inject.Inject
 
+/**
+ * Use-case to receive the currently authenticated [Athlete] from either
+ * local or remote repositories.
+ *
+ * If an athlete is fetched from the remote repository, they will be
+ * inserted into the local repository for future access.
+ *
+ * @return The currently authenticated [Athlete].
+ */
 class GetAthleteUseCase @Inject constructor(
     private val getAthleteFromLocalUseCase: GetAthleteFromLocalUseCase,
     private val getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase,
@@ -18,8 +27,9 @@ class GetAthleteUseCase @Inject constructor(
         getAthleteFromLocalUseCase(athleteId).apply {
             return when {
                 this == null || dataExpired -> getAthleteFromRemoteUseCase(code)
+                    .also { if (it is Success) insertAthleteUseCase(it.data) }
                 else -> Success(this)
-            }.also { if (it is Success) insertAthleteUseCase(it.data) }
+            }
         }
     }
 }

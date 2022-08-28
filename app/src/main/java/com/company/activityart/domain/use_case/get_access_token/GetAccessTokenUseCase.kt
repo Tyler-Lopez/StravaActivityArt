@@ -1,12 +1,11 @@
 package com.company.activityart.domain.use_case.get_access_token
 
 import android.content.Context
-import com.company.activityart.data.database.OAuth2Database
 import com.company.activityart.data.entities.OAuth2Entity
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.data.remote.responses.Bearer
 import com.company.activityart.util.Resource
-import com.company.activityart.util.clientSecret
+import com.company.activityart.util.CLIENT_SECRET
 import java.util.*
 import javax.inject.Inject
 
@@ -34,7 +33,7 @@ class GetAccessTokenUseCase @Inject constructor(
                 val response =
                     getAccessTokenFromRefreshToken(
                         clientId = clientId,
-                        clientSecret = clientSecret,
+                        clientSecret = CLIENT_SECRET,
                         code = oAuth2Entity.refreshToken
                     )
                 when (response) {
@@ -67,7 +66,7 @@ class GetAccessTokenUseCase @Inject constructor(
         val data = try {
             api.getAccessToken(
                 clientId = clientId,
-                clientSecret = clientSecret,
+                clientSecret = CLIENT_SECRET,
                 code = code,
                 grantType = "authorization_code"
             )

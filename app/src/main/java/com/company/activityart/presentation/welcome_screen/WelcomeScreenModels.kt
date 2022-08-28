@@ -1,7 +1,6 @@
 package com.company.activityart.presentation.welcome_screen
 
 import androidx.navigation.NavController
-import com.company.activityart.architecture.Destination
 import com.company.activityart.architecture.Event
 
 sealed class WelcomeScreenViewEvent : Event {

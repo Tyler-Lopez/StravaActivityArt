@@ -62,9 +62,14 @@ object AppModule {
     @Provides
     fun providesGetAthleteUseCase(
         getAthleteFromLocalUseCase: GetAthleteFromLocalUseCase,
-        getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase
+        getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase,
+        insertAthleteUseCase: InsertAthleteUseCase,
     ): GetAthleteUseCase =
-        GetAthleteUseCase(getAthleteFromLocalUseCase, getAthleteFromRemoteUseCase)
+        GetAthleteUseCase(
+            getAthleteFromLocalUseCase,
+            getAthleteFromRemoteUseCase,
+            insertAthleteUseCase
+        )
 
     @Provides
     fun providesInsertAthleteFromRemoteUseCase(athleteDatabase: AthleteDatabase) =

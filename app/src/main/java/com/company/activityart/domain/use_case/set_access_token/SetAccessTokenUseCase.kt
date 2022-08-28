@@ -1,7 +1,6 @@
 package com.company.activityart.domain.use_case.set_access_token
 
 import android.content.Context
-import com.company.activityart.data.database.OAuth2Database
 import com.company.activityart.data.entities.OAuth2Entity
 
 class SetAccessTokenUseCase {

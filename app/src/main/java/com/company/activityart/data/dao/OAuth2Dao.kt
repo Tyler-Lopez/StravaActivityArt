@@ -16,7 +16,7 @@ interface OAuth2Dao {
     @Query("DELETE FROM oauth2entity")
     suspend fun clearOauth2()
 
-    @Query("SELECT * FROM oauth2entity")
-    suspend fun getOauth2(): OAuth2Entity?
+    @Query("SELECT * FROM oauth2entity WHERE oauth2entity.athleteId = :athleteId")
+    suspend fun getOauth2ByAthleteId(athleteId: Long): OAuth2Entity?
 
 }

@@ -23,10 +23,6 @@ class WelcomeScreenViewModel @Inject constructor(
     private val getAthleteAndInsertUseCase: GetAthleteUseCase
 ) : ViewModel(), EventReceiver<WelcomeScreenViewEvent> {
 
-    companion object {
-        private const val PLACEHOLDER_IMAGE_URL = "via.placeholder.com/128"
-    }
-
     // ViewState - observed in the view
     var viewState: MutableState<WelcomeScreenViewState> = mutableStateOf(Launch)
         private set
@@ -72,12 +68,10 @@ class WelcomeScreenViewModel @Inject constructor(
             accessToken = event.accessToken
             when (val response = getAthleteAndInsertUseCase(event.athleteId, event.accessToken)) {
                 is Success -> {
-                    val data = response.data
-                    athlete.value = data
-                    viewState.value = Standby(
-                        athlete.value?.fullName ?: "",
-                        athlete.value?.profilePictureLarge ?: PLACEHOLDER_IMAGE_URL
-                    )
+                    response.data.let {
+                        athlete.value = it
+                        viewState.value = Standby(it.fullName, it.profilePictureLarge)
+                    }
                 }
                 is Error -> {
                     // Todo, add logic re: parsing exception into error message
