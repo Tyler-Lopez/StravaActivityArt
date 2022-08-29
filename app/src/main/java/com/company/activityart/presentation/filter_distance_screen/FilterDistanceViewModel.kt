@@ -28,7 +28,7 @@ class FilterDistanceViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
-    // State - observed in the view
+    // ViewState - observed in the view
     private val _screenState = mutableStateOf(LAUNCH)
     val screenState: State<ScreenState> = _screenState
 

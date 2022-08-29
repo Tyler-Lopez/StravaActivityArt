@@ -16,7 +16,7 @@ import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.athlete.InsertAthleteUseCase
 import com.company.activityart.domain.use_case.get_gear.GetGearFromApiUseCase
 import com.company.activityart.domain.use_case.insert_activities.InsertActivitiesUseCase
-import com.company.activityart.domain.use_case.set_access_token.SetAccessTokenUseCase
+import com.company.activityart.domain.use_case.authentication.SetAccessTokenUseCase
 import com.company.activityart.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides

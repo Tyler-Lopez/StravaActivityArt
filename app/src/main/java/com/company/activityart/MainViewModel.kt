@@ -1,9 +1,12 @@
 package com.company.activityart
 
 import androidx.lifecycle.ViewModel
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.util.Constants
+import com.company.activityart.MainViewEvent.*
 
-class MainViewModel : ViewModel() {
+class MainViewModel : ViewModel(), EventReceiver<MainViewEvent> {
+
 
     fun parseYearsFromNav(raw: String?) = (raw ?: "").split(Constants.NAV_DELIMITER)
         .filter { it.isNotEmpty() }
@@ -34,6 +37,14 @@ class MainViewModel : ViewModel() {
         val arr = raw?.split(Constants.NAV_DELIMITER)?.filter { it.isNotEmpty() }
         return arr?.let {
             it[0].toFloat()..it[1].toFloat()
+        }
+    }
+
+    override fun onEvent(event: MainViewEvent) {
+        when (event) {
+            is IntentReceived -> {
+
+            }
         }
     }
 }

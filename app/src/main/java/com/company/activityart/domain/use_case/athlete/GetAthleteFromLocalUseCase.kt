@@ -4,6 +4,8 @@ import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.entities.AthleteEntity
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.models.Athlete
+import com.company.activityart.domain.models.dataExpired
+import com.company.activityart.domain.models.requiresRefresh
 import javax.inject.Inject
 
 class GetAthleteFromLocalUseCase @Inject constructor(
@@ -13,5 +15,6 @@ class GetAthleteFromLocalUseCase @Inject constructor(
         return athleteDatabase
             .athleteDao
             .getAthleteById(athleteId)
+            ?.takeIf { !it.dataExpired }
     }
 }

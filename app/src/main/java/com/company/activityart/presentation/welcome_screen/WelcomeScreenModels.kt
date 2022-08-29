@@ -1,9 +1,10 @@
 package com.company.activityart.presentation.welcome_screen
 
 import androidx.navigation.NavController
-import com.company.activityart.architecture.Event
+import com.company.activityart.architecture.ViewEvent
+import com.company.activityart.architecture.ViewState
 
-sealed class WelcomeScreenViewEvent : Event {
+sealed class WelcomeScreenViewEvent : ViewEvent {
     data class ClickedAbout(val navController: NavController) : WelcomeScreenViewEvent()
     data class ClickedMakeArt(val navController: NavController) : WelcomeScreenViewEvent()
     data class ClickedLogout(val navController: NavController) : WelcomeScreenViewEvent()
@@ -13,7 +14,7 @@ sealed class WelcomeScreenViewEvent : Event {
     ) : WelcomeScreenViewEvent()
 }
 
-sealed class WelcomeScreenViewState {
+sealed class WelcomeScreenViewState : ViewState {
     object Launch : WelcomeScreenViewState()
     data class LoadError(val message: String) : WelcomeScreenViewState()
     object Loading : WelcomeScreenViewState()

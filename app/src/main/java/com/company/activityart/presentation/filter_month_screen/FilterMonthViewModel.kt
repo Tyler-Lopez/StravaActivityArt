@@ -23,7 +23,7 @@ class FilterMonthViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
-    // State - observed in the view
+    // ViewState - observed in the view
     private val _filterMonthScreenState = mutableStateOf(LAUNCH)
     val filterMonthScreenState: State<FilterMonthScreenState> = _filterMonthScreenState
 

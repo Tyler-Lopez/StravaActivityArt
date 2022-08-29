@@ -25,7 +25,7 @@ class FilterTypeViewModel @Inject constructor(
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
-    // State - observed in the view
+    // ViewState - observed in the view
     private val _filterTypeScreenState = mutableStateOf(FilterTypeScreenState.LAUNCH)
     val filterTypeScreenState: State<FilterTypeScreenState> = _filterTypeScreenState
 

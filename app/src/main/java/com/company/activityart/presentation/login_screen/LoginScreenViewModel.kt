@@ -1,24 +1,54 @@
 package com.company.activityart.presentation.login_screen
 
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.activityart.data.entities.OAuth2Entity
-import com.company.activityart.domain.use_case.AuthenticationUseCases
-import com.company.activityart.util.*
+import com.company.activityart.architecture.EventReceiver
+import com.company.activityart.architecture.StateSender
+import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
+import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
+import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
+import com.company.activityart.util.Resource
+import com.company.activityart.util.Resource.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
-    private val authenticationUseCases: AuthenticationUseCases,
-) : ViewModel() {
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val stravaIntent: StravaIntent
+) : ViewModel(), EventReceiver<LoginScreenViewEvent>, StateSender<LoginScreenViewState> {
 
-    private val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
+    // ViewState - observed in the view
+    private var _viewState: MutableState<LoginScreenViewState> = mutableStateOf(Launch)
+    override val viewState: State<LoginScreenViewState> = _viewState
+
+    override fun onEvent(event: LoginScreenViewEvent) {
+        when (event) {
+            is ConnectWithStravaClicked -> onConnectWithStravaClicked(event)
+            is LoadAccessToken -> onLoadAccessToken(event)
+        }
+    }
+
+    private fun onConnectWithStravaClicked(event: ConnectWithStravaClicked) {
+        event.mainEventReceiver.onEvent(stravaIntent)
+    }
+
+    private fun onLoadAccessToken(event: LoadAccessToken) {
+        viewModelScope.launch {
+            when (val response = getAccessTokenUseCase(event.uri)) {
+                is Success -> {}
+                is Error -> {}
+            }
+        }
+    }
+
+    /*
+    val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
         .buildUpon()
         .appendQueryParameter("client_id", "75992")
         .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
@@ -29,10 +59,7 @@ class LoginScreenViewModel @Inject constructor(
 
     // Use cases
     private val getAccessTokenUseCase = authenticationUseCases.getAccessTokenUseCase
-    private val setAccessTokenUseCase = authenticationUseCases.setAccessTokenUseCase
-
-    // State - observed in the view
-    val loginScreenState = mutableStateOf(LoginScreenState.LAUNCH)
+    private val setAccessTokenUseCase = authenticationUseCases.setAccessTokenUseCase1
 
     private var oAuth2Entity: OAuth2Entity? = null
     val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
@@ -44,6 +71,7 @@ class LoginScreenViewModel @Inject constructor(
     init {
         println("Init invoked on loginScreenViewModel state is ${loginScreenState.value}")
     }
+
     /*
 
     FUNCTION: attemptGetAccessToken
@@ -113,4 +141,5 @@ class LoginScreenViewModel @Inject constructor(
     private fun parseUri(uri: Uri): String =
         uri.toString().substring(43).substringBefore('&')
 
+     */
 }

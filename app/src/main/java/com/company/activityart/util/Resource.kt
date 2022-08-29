@@ -7,7 +7,7 @@ sealed class Resource<T>(open val data: T? = null) {
     data class Success<T>(override val data: T) : Resource<T>(data)
     data class Error<T>(
         override val data: T? = null,
-        val exception: Exception
+        val exception: Exception? = null,
+        val message: String? = null
     ) : Resource<T>(data)
-
 }

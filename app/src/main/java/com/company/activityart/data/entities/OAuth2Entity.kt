@@ -8,7 +8,7 @@ import com.company.activityart.domain.models.OAuth2
 data class OAuth2Entity(
     @PrimaryKey
     override val athleteId: Long,
-    override val receivedOnUnixSeconds: Int,
+    override val expiresAtUnixSeconds: Int,
     override val accessToken: String,
     override val refreshToken: String
 ) : OAuth2

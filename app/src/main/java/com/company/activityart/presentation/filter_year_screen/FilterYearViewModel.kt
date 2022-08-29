@@ -44,7 +44,7 @@ class TimeSelectViewModel @Inject constructor(
     val rows: List<List<Pair<String, Boolean>>> = _rows
     val columns = arrayOf(columnYear, columnNoActivities)
 
-    // Screen State
+    // Screen ViewState
     private val _timeSelectScreenState = mutableStateOf(LAUNCH)
     val timeSelectScreenState: State<TimeSelectScreenState> = _timeSelectScreenState
 

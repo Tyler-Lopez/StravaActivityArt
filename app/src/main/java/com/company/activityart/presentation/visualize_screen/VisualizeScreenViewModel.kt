@@ -42,7 +42,7 @@ class VisualizeScreenViewModel @Inject constructor(
     private val activitiesCountStrokeFactor: Float
         get() = sqrt(sqrt(activityPaths.size.toFloat()))
 
-    // Screen State
+    // Screen ViewState
     private val _screenState = mutableStateOf(LAUNCH)
     val screenState: State<VisualizeScreenState> = _screenState
 
@@ -84,7 +84,7 @@ class VisualizeScreenViewModel @Inject constructor(
     // Margin size
     private val marginFraction = 0.05f // 5% margin
 
-    // Bitmap State - referenced in view to create image composable
+    // Bitmap ViewState - referenced in view to create image composable
     private val _bitmapState = mutableStateOf<Bitmap?>(null)
     val bitmapState: State<Bitmap?> = _bitmapState
 

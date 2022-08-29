@@ -2,32 +2,15 @@ package com.company.activityart.presentation.login_screen
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.activityart.R
-import com.company.activityart.Screen
-import com.company.activityart.presentation.common.ContainerColumn
-import com.company.activityart.presentation.common.LoadingComposable
-import com.company.activityart.presentation.login_screen.LoginScreenState.*
-import com.company.activityart.presentation.ui.shapes.ClippedImageShape
+import com.company.activityart.MainViewEvent
+import com.company.activityart.architecture.EventReceiver
+import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
+import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.ui.theme.*
-import com.company.activityart.util.Constants
 
 
 /*
@@ -45,9 +28,22 @@ import com.company.activityart.util.Constants
 fun LoginScreen(
     uri: Uri?,
     navController: NavHostController,
-    onLoginIntent: (Intent) -> Unit,
+    mainEventReceiver: EventReceiver<MainViewEvent>,
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
+    remember { viewModel.viewState }.value.let {
+        when (it) {
+            is Launch -> LoginScreenLaunchState(
+                uri = uri,
+                eventReceiver = viewModel
+            )
+            is Standby -> {
+
+            }
+        }
+    }
+
+    /*
     val screenState by remember { viewModel.loginScreenState }
     val context = LocalContext.current
 
@@ -134,4 +130,6 @@ fun LoginScreen(
             }
         }
     }
+
+     */
 }

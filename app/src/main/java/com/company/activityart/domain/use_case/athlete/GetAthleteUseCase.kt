@@ -26,7 +26,7 @@ class GetAthleteUseCase @Inject constructor(
     ): Resource<Athlete> {
         getAthleteFromLocalUseCase(athleteId).apply {
             return when {
-                this == null || dataExpired -> getAthleteFromRemoteUseCase(code)
+                this == null -> getAthleteFromRemoteUseCase(code)
                     .also { if (it is Success) insertAthleteUseCase(it.data) }
                 else -> Success(this)
             }

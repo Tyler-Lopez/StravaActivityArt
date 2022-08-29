@@ -35,7 +35,7 @@ class FilterGearViewModel @Inject constructor(
     private val getGearFromApiUseCase = gearUseCase.getGearFromApiUseCase
     private val setAthleteUseCase = athleteUseCases.setAthleteUseCase
 
-    // State - observed in the view
+    // ViewState - observed in the view
     private val _screenState = mutableStateOf(LAUNCH)
     val screenState: State<ScreenState> = _screenState
 
