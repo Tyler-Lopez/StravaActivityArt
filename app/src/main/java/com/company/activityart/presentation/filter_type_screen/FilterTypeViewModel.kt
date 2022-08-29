@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.activityart.Screen
+import com.company.activityart.util.Screen
 import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.domain.use_case.ActivitiesUseCases
 import com.company.activityart.util.NavigationUtils

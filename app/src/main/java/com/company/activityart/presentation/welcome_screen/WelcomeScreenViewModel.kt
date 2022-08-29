@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.activityart.Screen.*
+import com.company.activityart.util.Screen.*
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.architecture.StateSender
 import com.company.activityart.domain.models.Athlete

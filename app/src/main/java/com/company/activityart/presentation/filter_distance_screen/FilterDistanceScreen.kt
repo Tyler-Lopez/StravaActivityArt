@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.activityart.Screen
+import com.company.activityart.util.Screen
 import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.ui.theme.Icicle
 import com.company.activityart.presentation.ui.theme.Lato

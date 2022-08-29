@@ -36,13 +36,4 @@ class UriUtils {
             ?.takeIf { it.contains(URI_DELIMITER_CHAR) }
             ?.substringBefore(URI_DELIMITER_CHAR)
 
-    val authenticationUri: Uri =
-        Uri.parse(STRAVA_BASE_AUTH_URL)
-            .buildUpon()
-            .appendQueryParameter(CLIENT_ID_QUERY, CLIENT_ID_STRING)
-            .appendQueryParameter(REDIRECT_URI_QUERY, REDIRECT_URI)
-            .appendQueryParameter(RESPONSE_TYPE_QUERY, RESPONSE_TYPE)
-            .appendQueryParameter(APPROVAL_PROMPT_QUERY, APPROVAL_PROMPT)
-            .appendQueryParameter(SCOPE_QUERY, SCOPE)
-            .build()
 }

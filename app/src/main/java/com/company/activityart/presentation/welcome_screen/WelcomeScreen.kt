@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.company.activityart.architecture.Router
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.common.LoadingComposable
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.*
 
@@ -20,9 +22,7 @@ https://developers.strava.com/guidelines/
 
 @Composable
 fun WelcomeScreen(
-    athleteId: Long,
-    accessToken: String,
-    navController: NavHostController,
+    router: Router<MainDestination>,
     viewModel: WelcomeScreenViewModel = hiltViewModel()
 ) {
     remember { viewModel.viewState }.value.let {

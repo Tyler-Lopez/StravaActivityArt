@@ -1,4 +1,4 @@
-package com.company.activityart
+package com.company.activityart.util
 
 sealed class Screen(
     val route: String

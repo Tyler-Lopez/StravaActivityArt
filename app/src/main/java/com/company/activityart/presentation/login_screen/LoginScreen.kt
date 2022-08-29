@@ -1,16 +1,13 @@
 package com.company.activityart.presentation.login_screen
 
-import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.activityart.MainViewEvent
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.architecture.EventReceiver
+import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
-import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
-import com.company.activityart.presentation.ui.theme.*
 
 
 /*
@@ -26,9 +23,8 @@ import com.company.activityart.presentation.ui.theme.*
 
 @Composable
 fun LoginScreen(
-    uri: Uri?,
-    navController: NavHostController,
-    mainEventReceiver: EventReceiver<MainViewEvent>,
+    authUri: Uri?,
+    router: Router<MainDestination>,
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     remember { viewModel.viewState }.value.let {

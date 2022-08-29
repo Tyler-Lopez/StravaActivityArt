@@ -1,5 +1,7 @@
 package com.company.activityart.util
 
+import android.net.Uri
+
 object TokenConstants {
     const val STRAVA_BASE_AUTH_URL = "https://www.strava.com/oauth/mobile/authorize"
     const val CLIENT_ID_QUERY = "client_id"
@@ -15,4 +17,14 @@ object TokenConstants {
     const val RESPONSE_TYPE = "code"
     const val APPROVAL_PROMPT = "auto"
     const val SCOPE = "activity:read,activity:read_all"
+
+    val authenticationUri: Uri =
+        Uri.parse(STRAVA_BASE_AUTH_URL)
+            .buildUpon()
+            .appendQueryParameter(CLIENT_ID_QUERY, CLIENT_ID_STRING)
+            .appendQueryParameter(REDIRECT_URI_QUERY, REDIRECT_URI)
+            .appendQueryParameter(RESPONSE_TYPE_QUERY, RESPONSE_TYPE)
+            .appendQueryParameter(APPROVAL_PROMPT_QUERY, APPROVAL_PROMPT)
+            .appendQueryParameter(SCOPE_QUERY, SCOPE)
+            .build()
 }

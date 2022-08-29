@@ -1,14 +1,23 @@
-package com.company.activityart
+package com.company.activityart.presentation
 
 import androidx.lifecycle.ViewModel
-import com.company.activityart.architecture.EventReceiver
-import com.company.activityart.util.Constants
-import com.company.activityart.MainViewEvent.*
+import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.architecture.Router
+import dagger.hilt.android.lifecycle.HiltViewModel
 
-class MainViewModel : ViewModel(), EventReceiver<MainViewEvent> {
+@HiltViewModel
+class MainRouter : ViewModel(), Router<MainDestination> {
+
+    override fun navigateTo(destination: MainDestination) {
+        when (destination) {
+            is NavigateToWelcome -> {}
+            else -> {}
+        }
+    }
 
 
-    fun parseYearsFromNav(raw: String?) = (raw ?: "").split(Constants.NAV_DELIMITER)
+    /*
+        fun parseYearsFromNav(raw: String?) = (raw ?: "").split(Constants.NAV_DELIMITER)
         .filter { it.isNotEmpty() }
         .map { it.toInt() }
         .toTypedArray()
@@ -39,12 +48,5 @@ class MainViewModel : ViewModel(), EventReceiver<MainViewEvent> {
             it[0].toFloat()..it[1].toFloat()
         }
     }
-
-    override fun onEvent(event: MainViewEvent) {
-        when (event) {
-            is IntentReceived -> {
-
-            }
-        }
-    }
+     */
 }
