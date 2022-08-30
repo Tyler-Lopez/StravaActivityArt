@@ -39,6 +39,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 viewState is LoadingAuthentication
             }
         }
+
+        // Push event to ViewModel to determine authentication
         intent.data = intent.data.let {
             viewModel.onEvent(LoadAuthentication(it))
             null
