@@ -21,18 +21,17 @@ https://developers.strava.com/guidelines/
  */
 
 @Composable
-fun WelcomeScreen(
-    onNavigateAbout: (NavigateAbout) -> Unit,
-    onNavigateLogin: (NavigateLogin) -> Unit,
-    onNavigateMakeArt: (NavigateMakeArt) -> Unit,
-    viewModel: WelcomeScreenViewModel = hiltViewModel()
-) {
+fun WelcomeScreen(viewModel: WelcomeScreenViewModel = hiltViewModel()) {
     remember { viewModel.viewState }.value.let {
+        /*
         when (it) {
+
             is Launch -> WelcomeScreenLaunchState(athleteId, accessToken, viewModel)
             is LoadError -> WelcomeScreenLoadError(viewModel, navController)
             is Loading -> LoadingComposable()
             is Standby -> WelcomeScreenStandbyState(it, viewModel, navController)
         }
+
+         */
     }
 }

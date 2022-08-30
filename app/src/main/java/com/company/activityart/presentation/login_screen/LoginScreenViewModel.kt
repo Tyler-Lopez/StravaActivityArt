@@ -7,10 +7,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.activityart.presentation.Destination
+import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.architecture.StateSender
 import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
+import com.company.activityart.presentation.DestinationFlow
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 import com.company.activityart.util.Resource.*
@@ -21,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
-    private val getAccessTokenUseCase: GetAccessTokenUseCase
+    private val destinationFlow: DestinationFlow,
 ) : ViewModel(), EventReceiver<LoginScreenViewEvent>, StateSender<LoginScreenViewState> {
 
     companion object {
@@ -29,20 +31,20 @@ class LoginScreenViewModel @Inject constructor(
     }
 
     // ViewState - observed in the view
-    private var _viewState: MutableState<LoginScreenViewState> = mutableStateOf(Launch)
+    private var _viewState: MutableState<LoginScreenViewState> = mutableStateOf(Standby)
     override val viewState: State<LoginScreenViewState> = _viewState
 
     override fun onEvent(event: LoginScreenViewEvent) {
         when (event) {
-            is ConnectWithStravaClicked -> onConnectWithStravaClicked(event)
-            is LoadAccessToken -> onLoadAccessToken(event)
+            is ConnectWithStravaClicked -> onConnectWithStravaClicked()
         }
     }
 
-    private fun onConnectWithStravaClicked(event: ConnectWithStravaClicked) {
-        event.mainEventReceiver.onEvent(Destination.IntentReceived())
+    private fun onConnectWithStravaClicked() {
+        destinationFlow.destinations.value = ConnectWithStrava
     }
 
+    /*
     private fun onLoadAccessToken(event: LoadAccessToken) {
         viewModelScope.launch {
             when (val response = getAccessTokenUseCase(event.uri)) {
@@ -51,6 +53,8 @@ class LoginScreenViewModel @Inject constructor(
             }
         }
     }
+
+     */
 
     /*
     val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")

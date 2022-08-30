@@ -17,8 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.company.activityart.R
-import com.company.activityart.presentation.Destination
+import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.architecture.EventReceiver
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainViewEvent
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.ui.theme.Asphalt
@@ -28,16 +29,8 @@ import com.company.activityart.presentation.ui.theme.MaisonNeue
 import com.company.activityart.util.Constants
 
 @Composable
-fun LoginScreenLaunchState(
-    uri: Uri?,
-    eventReceiver: EventReceiver<LoginScreenViewEvent>
-) {
-    SideEffect { eventReceiver.onEvent(LoadAccessToken(uri)) }
-}
-
-@Composable
 fun LoginScreenStandbyState(
-    mainEventReceiver: EventReceiver<MainViewEvent>
+    eventReceiver: EventReceiver<LoginScreenViewEvent>
 ) {
     Image(
         painterResource(id = R.drawable.ic_frameactivityart),
@@ -70,7 +63,7 @@ fun LoginScreenStandbyState(
             //.width(stravaButtonWidth)
             //.height(stravaButtonHeight)
             //.clip(ClippedImageShape)
-            .clickable { mainEventReceiver. },
+            .clickable { eventReceiver.onEvent(ConnectWithStravaClicked) },
         contentScale = ContentScale.FillBounds
     )
 }

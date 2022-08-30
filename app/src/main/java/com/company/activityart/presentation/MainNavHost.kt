@@ -14,22 +14,17 @@ import com.google.accompanist.navigation.animation.composable
 @Composable
 fun MainNavHost(
     navController: NavHostController,
-    startScreen: Screen,
-    router: Router<MainDestination>
+    startScreen: Screen
 ) {
     AnimatedNavHost(
         navController = navController,
         startDestination = startScreen.route
     ) {
         composable(Screen.Login.route) {
-            LoginScreen(onConnectWithStrava = router::routeTo)
+            LoginScreen()
         }
         composable(Screen.Welcome.route) {
-            WelcomeScreen(
-                onNavigateAbout = router::routeTo,
-                onNavigateLogin = router::routeTo,
-                onNavigateMakeArt = router::routeTo
-            )
+            WelcomeScreen()
         }
     }
 }

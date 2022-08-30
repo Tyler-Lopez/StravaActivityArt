@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
@@ -18,13 +19,17 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewState.*
 import com.company.activityart.presentation.MainViewEvent.*
+import com.company.activityart.util.Screen.*
 import com.company.activityart.util.TokenConstants.authUri
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @AndroidEntryPoint
-class MainActivity : ComponentActivity(), Router<MainDestination> {
+class MainActivity @Inject constructor(
+    private val destinationFlow: DestinationFlow
+) : ComponentActivity(), Router<MainDestination> {
 
     lateinit var navController: NavHostController
 
@@ -56,10 +61,12 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             AthleteApiArtTheme {
                 MainNavHost(
                     navController = navController,
-                    startScreen = startScreen,
-                    router = this
+                    startScreen = startScreen
                 )
             }
+
+            // Listen to destinations flow changes and routeTo on new
+            destinationFlow.destinations.collectAsState().value?.apply(::routeTo)
         }
     }
 
@@ -71,8 +78,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     override fun routeTo(destination: MainDestination) {
         when (destination) {
             is ConnectWithStrava -> connectWithStrava()
-            is NavigateAbout -> {}
-            is NavigateLogin -> {}
+            is NavigateAbout -> navigateAbout()
+            is NavigateLogin -> navigateLogin()
             is NavigateMakeArt -> {}
         }
     }
@@ -83,7 +90,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     }
 
     private fun navigateAbout() {
-
+        navController.navigate(About.route)
     }
 
     private fun navigateLogin() {

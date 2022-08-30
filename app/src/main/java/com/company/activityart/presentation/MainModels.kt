@@ -17,7 +17,6 @@ sealed class MainViewState : ViewState {
 
 sealed class MainViewEvent : ViewEvent {
     data class LoadAuthentication(val uri: Uri?) : MainViewEvent()
-    object ConnectWithStravaClicked : MainViewEvent()
 }
 
 sealed class MainDestination : Destination {
