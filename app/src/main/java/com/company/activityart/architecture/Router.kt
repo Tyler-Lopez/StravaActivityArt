@@ -1,5 +1,7 @@
 package com.company.activityart.architecture
 
+import androidx.compose.runtime.Composable
+
 interface Router<T: Destination> {
-    fun navigateTo(destination: T)
+    fun routeTo(destination: T)
 }

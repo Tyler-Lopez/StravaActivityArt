@@ -3,10 +3,8 @@ package com.company.activityart.presentation.login_screen
 import android.net.Uri
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.company.activityart.presentation.MainDestination
-import com.company.activityart.architecture.EventReceiver
-import com.company.activityart.architecture.Router
+import com.company.activityart.presentation.MainViewEvent.*
+import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 
 
@@ -23,19 +21,19 @@ import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 
 @Composable
 fun LoginScreen(
-    authUri: Uri?,
-    router: Router<MainDestination>,
+    onConnectWithStrava: (ConnectWithStrava) -> Unit,
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     remember { viewModel.viewState }.value.let {
         when (it) {
+            /*
             is Launch -> LoginScreenLaunchState(
                 uri = uri,
                 eventReceiver = viewModel
             )
-            is Standby -> {
 
-            }
+             */
+            is Standby -> LoginScreenStandbyState(mainEventReceiver = mainEventReceiver)
         }
     }
 

@@ -1,28 +1,33 @@
 package com.company.activityart.presentation
 
+import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.architecture.Router
 import com.company.activityart.architecture.StateSender
-import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
-import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.company.activityart.presentation.MainViewState.*
 import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+class MainViewModel : ViewModel(),
+    EventReceiver<MainViewEvent>,
+    StateSender<MainViewState> {
 
-) : ViewModel(), EventReceiver<MainViewEvent>, Router<MainDestination> {
-
+    // ViewState - observed in the view
+    private var _viewState: MutableState<MainViewState> = mutableStateOf(LoadingAuthentication)
+    override val viewState: State<MainViewState> = _viewState
 
     override fun onEvent(event: MainViewEvent) {
-        TODO("Not yet implemented")
+        when (event) {
+            is MainViewEvent.LoadAuthentication -> {
+            }
+        }
     }
 
-    override fun navigateTo(destination: MainDestination) {
-        TODO("Not yet implemented")
+    private fun onParseIntent(uri: Uri?) {
+
     }
 
 }

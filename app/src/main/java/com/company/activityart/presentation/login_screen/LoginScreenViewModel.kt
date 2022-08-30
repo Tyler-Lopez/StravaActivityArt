@@ -7,14 +7,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.activityart.presentation.MainDestination
+import com.company.activityart.presentation.Destination
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.architecture.StateSender
 import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 import com.company.activityart.util.Resource.*
-import com.company.activityart.util.TokenConstants.authenticationUri
+import com.company.activityart.util.TokenConstants.authUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class LoginScreenViewModel @Inject constructor(
 ) : ViewModel(), EventReceiver<LoginScreenViewEvent>, StateSender<LoginScreenViewState> {
 
     companion object {
-        private val authIntent = Intent(ACTION_VIEW, authenticationUri)
+        private val authIntent = Intent(ACTION_VIEW, authUri)
     }
 
     // ViewState - observed in the view
@@ -40,7 +40,7 @@ class LoginScreenViewModel @Inject constructor(
     }
 
     private fun onConnectWithStravaClicked(event: ConnectWithStravaClicked) {
-        event.mainEventReceiver.onEvent(MainDestination.IntentReceived())
+        event.mainEventReceiver.onEvent(Destination.IntentReceived())
     }
 
     private fun onLoadAccessToken(event: LoadAccessToken) {

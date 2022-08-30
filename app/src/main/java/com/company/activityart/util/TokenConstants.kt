@@ -18,7 +18,7 @@ object TokenConstants {
     const val APPROVAL_PROMPT = "auto"
     const val SCOPE = "activity:read,activity:read_all"
 
-    val authenticationUri: Uri =
+    val authUri: Uri =
         Uri.parse(STRAVA_BASE_AUTH_URL)
             .buildUpon()
             .appendQueryParameter(CLIENT_ID_QUERY, CLIENT_ID_STRING)

@@ -13,14 +13,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AthleteApiArt">
+        android:theme="@style/Theme.App.Starting">
 
         <activity
             android:name="com.company.activityart.presentation.MainActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AthleteApiArt.NoActionBar">
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

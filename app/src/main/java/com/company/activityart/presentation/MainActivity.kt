@@ -1,56 +1,95 @@
 package com.company.activityart.presentation
 
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import com.company.activityart.presentation.login_screen.LoginScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
+import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
-import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.util.Screen.Login
 import com.company.activityart.util.Screen.Welcome
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.MainViewState.*
+import com.company.activityart.presentation.MainViewEvent.*
+import com.company.activityart.util.TokenConstants.authUri
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), Router<MainDestination> {
+
+    lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        // Don't love the way of doing this
-        // The reason for this is to only fetch from URI on activity creation and never after
-        // So we use it once, then set it null
         val viewModel: MainViewModel by viewModels()
+        val viewState = viewModel.viewState.value
 
-        super.onCreate(savedInstanceState)
-        setContent {
-            AthleteApiArtTheme {
-                AnimatedNavHost(
-                    navController = rememberAnimatedNavController(),
-                    startDestination = Login.route
-                ) {
-                    composable(Login.route) {
-                        LoginScreen(authUri = intent.data, router = viewModel)
-                    }
-                    composable(Welcome.route) {
-                        WelcomeScreen(router = viewModel)
-                    }
-                }
+        // Install Splash Screen & keep it on screen until authentication determined
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewState is LoadingAuthentication
             }
         }
+        intent.data = intent.data.let {
+            viewModel.onEvent(LoadAuthentication(it))
+            null
+        }
 
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            navController = rememberAnimatedNavController()
+            val startScreen =
+                if (viewState is Authenticated) Welcome else Login
+
+            AthleteApiArtTheme {
+                MainNavHost(
+                    navController = navController,
+                    startScreen = startScreen,
+                    router = this
+                )
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+    }
+
+    override fun routeTo(destination: MainDestination) {
+        when (destination) {
+            is ConnectWithStrava -> connectWithStrava()
+            is NavigateAbout -> {}
+            is NavigateLogin -> {}
+            is NavigateMakeArt -> {}
+        }
+    }
+
+    private fun connectWithStrava() {
+        finish()
+        startActivity(Intent(ACTION_VIEW, authUri))
+    }
+
+    private fun navigateAbout() {
+
+    }
+
+    private fun navigateLogin() {
+
+    }
+
+    private fun navigateMakeArt() {
+
     }
 }
 /*
