@@ -6,6 +6,7 @@ import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewEvent.*
+import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 
 
@@ -25,11 +26,13 @@ fun LoginScreen(
     router: Router<MainDestination>,
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        attachRouter(router)
-        viewState.collectAsState().value?.let {
-            when (it) {
-                is Standby -> LoginScreenStandbyState(this)
+    ScreenBackground {
+        viewModel.apply {
+            attachRouter(router)
+            viewState.collectAsState().value?.let {
+                when (it) {
+                    is Standby -> LoginScreenStandbyState(this)
+                }
             }
         }
     }

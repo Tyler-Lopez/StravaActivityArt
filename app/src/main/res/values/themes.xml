@@ -12,8 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <!-- What shows up before your Activity -->
-        <item name="android:windowBackground"></item>
+        <item name="android:colorBackground">@color/white</item>
     </style>
 
     <style name="Theme.AthleteApiArt.NoActionBar">

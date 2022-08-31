@@ -15,6 +15,7 @@ import com.company.activityart.domain.use_case.get_activities.GetActivitiesUseCa
 import com.company.activityart.domain.use_case.get_gear.GetGearFromApiUseCase
 import com.company.activityart.domain.use_case.insert_activities.InsertActivitiesUseCase
 import com.company.activityart.util.Constants.BASE_URL
+import com.company.activityart.util.UriUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -95,4 +96,7 @@ object AppModule {
             .build()
             .create(AthleteApi::class.java) // Creates singleton implementation of interface
     }
+
+    @Provides
+    fun provideUriUtils(): UriUtils = UriUtils()
 }

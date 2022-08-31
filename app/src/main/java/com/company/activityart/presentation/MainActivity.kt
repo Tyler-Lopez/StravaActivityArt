@@ -8,7 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
@@ -18,9 +21,12 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewState.*
 import com.company.activityart.presentation.MainViewEvent.*
+import com.company.activityart.presentation.common.LoadingComposable
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.TokenConstants.authUri
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -30,38 +36,32 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        val viewModel: MainViewModel by viewModels()
-        val viewState = viewModel.viewState.value
-
-        // Install Splash Screen & keep it on screen until authentication determined
-        installSplashScreen().apply {
-            setKeepOnScreenCondition {
-                viewState is LoadingAuthentication
-            }
-        }
-
         // Push event to ViewModel to determine authentication
-        intent.data = intent.data.let {
-            viewModel.onEvent(LoadAuthentication(it))
-            null
-        }
-
+        val intentUri = intent.data.also { intent.data = null }
         super.onCreate(savedInstanceState)
-
+        // Install Splash Screen before content is setContent
+        val splashScreen = installSplashScreen()
         setContent {
-            navController = rememberAnimatedNavController()
-            val startScreen =
-                if (viewState is Authenticated) Welcome else Login
+            val viewModel: MainViewModel = hiltViewModel()
+            viewModel.apply {
+                splashScreen.setKeepOnScreenCondition {
+                    viewState.value is LoadingAuthentication
+                }
+                // Push event to ViewModel to determine authentication
+                onEvent(LoadAuthentication(intentUri))
+                navController = rememberAnimatedNavController()
 
-            AthleteApiArtTheme {
-                MainNavHost(
-                    navController = navController,
-                    startScreen = startScreen,
-                    router = this
-                )
+                viewState.collectAsState().value?.let {
+                    val startScreen = if (it is Authenticated) Welcome else Login
+                    AthleteApiArtTheme {
+                        MainNavHost(
+                            navController = navController,
+                            startScreen = startScreen,
+                            router = this@MainActivity
+                        )
+                    }
+                }
             }
-
         }
     }
 

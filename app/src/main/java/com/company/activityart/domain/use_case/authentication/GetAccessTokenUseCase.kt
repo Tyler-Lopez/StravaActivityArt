@@ -8,12 +8,19 @@ import com.company.activityart.util.UriUtils
 import javax.inject.Inject
 
 class GetAccessTokenUseCase @Inject constructor(
+    private val getAccessTokenFromLocalUseCase: GetAccessTokenFromLocalUseCase,
     private val getAccessTokenWithRefreshUseCase: GetAccessTokenWithRefreshUseCase,
     private val getAccessTokenFromRemoteUseCase: GetAccessTokenFromRemoteUseCase,
     private val insertAccessTokenUseCase: InsertAccessTokenUseCase,
     private val uriUtils: UriUtils
 ) {
     suspend operator fun invoke(uri: Uri? = null): Resource<OAuth2> {
+
+        // If local access token exists, use that
+        getAccessTokenFromLocalUseCase()?.let {
+            return Success(it)
+        }
+
         // If a URI was provided, read from remote
         val authCode: String? = uri?.let { uriUtils.parseUri(it) }
         return when {

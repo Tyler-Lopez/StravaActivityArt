@@ -10,16 +10,16 @@ import androidx.compose.ui.unit.dp
 // https://www.youtube.com/watch?v=S61mXlMQkLY
 
 data class Spacing(
-    val default: Dp = 0.dp,
-    val xxs: Dp = 4.dp,
-    val xs: Dp = 8.dp,
-    val sm: Dp = 16.dp,
-    val md: Dp = 24.dp,
-    val lg: Dp = 32.dp,
-    val xl: Dp = 64.dp,
-    val xxl: Dp = 128.dp
+    val xSmall: Dp = 4.dp,
+    val small: Dp = 8.dp,
+    val medium: Dp = 16.dp,
+    val large: Dp = 32.dp,
+    val extraLarge: Dp = 64.dp
 )
 
+/**
+ * Provides Spacing for a Composable.
+ */
 val LocalSpacing = compositionLocalOf { Spacing() }
 
 val MaterialTheme.spacing: Spacing
