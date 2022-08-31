@@ -14,10 +14,14 @@ data class AthleteEntity(
     override val firstName: String,
     override val lastName: String,
     // This is to tell us what we have and have not yet mapped to Room
+    /*
     override val yearMonthsCached: Map<Int, Int>,
     override val gears: Map<String, String>
+
+     */
 ) : Athlete {
 
+    /*
     fun lastCachedMonth(year: Int): Int = yearMonthsCached.getOrDefault(year, -1)
 
     fun withNewCaches(cache: Map<Int, Int>): AthleteEntity = AthleteEntity(
@@ -44,4 +48,6 @@ data class AthleteEntity(
         gears = gears.plus(caches)
     )
 
+
+     */
 }

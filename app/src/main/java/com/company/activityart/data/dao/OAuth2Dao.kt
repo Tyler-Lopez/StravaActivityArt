@@ -13,10 +13,10 @@ interface OAuth2Dao {
     suspend fun insertOauth2(oAuth2Entity: OAuth2Entity)
 
     // https://stackoverflow.com/questions/44244508/room-persistance-library-delete-all
-    @Query("DELETE FROM oauth2entity")
+    @Query("DELETE FROM oAuth2Entity")
     suspend fun clearOauth2()
 
-    @Query("SELECT * FROM oauth2entity")
+    @Query("SELECT * FROM oAuth2Entity")
     suspend fun getCurrAuth(): OAuth2Entity?
 
 }

@@ -16,6 +16,9 @@ interface Athlete {
     val firstName: String
     val lastName: String
     // This is to tell us what we have and have not yet mapped to Room
+    /*
     val yearMonthsCached: Map<Int, Int>
     val gears: Map<String, String>
+
+     */
 }

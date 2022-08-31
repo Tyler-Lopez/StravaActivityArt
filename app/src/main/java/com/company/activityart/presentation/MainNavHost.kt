@@ -14,14 +14,15 @@ import com.google.accompanist.navigation.animation.composable
 @Composable
 fun MainNavHost(
     navController: NavHostController,
-    startScreen: Screen
+    startScreen: Screen,
+    router: Router<MainDestination>
 ) {
     AnimatedNavHost(
         navController = navController,
         startDestination = startScreen.route
     ) {
         composable(Screen.Login.route) {
-            LoginScreen()
+            LoginScreen(router)
         }
         composable(Screen.Welcome.route) {
             WelcomeScreen()

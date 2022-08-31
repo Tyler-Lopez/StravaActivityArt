@@ -5,17 +5,13 @@ import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 
 sealed class WelcomeScreenViewEvent : ViewEvent {
-    data class ClickedAbout(val navController: NavController) : WelcomeScreenViewEvent()
-    data class ClickedMakeArt(val navController: NavController) : WelcomeScreenViewEvent()
-    data class ClickedLogout(val navController: NavController) : WelcomeScreenViewEvent()
-    data class LoadAthlete(
-        val athleteId: Long,
-        val accessToken: String,
-    ) : WelcomeScreenViewEvent()
+    object ClickedAbout : WelcomeScreenViewEvent()
+    object ClickedMakeArt : WelcomeScreenViewEvent()
+    object ClickedLogout : WelcomeScreenViewEvent()
+    object LoadAthlete : WelcomeScreenViewEvent()
 }
 
 sealed class WelcomeScreenViewState : ViewState {
-    object Launch : WelcomeScreenViewState()
     data class LoadError(val message: String) : WelcomeScreenViewState()
     object Loading : WelcomeScreenViewState()
     data class Standby(

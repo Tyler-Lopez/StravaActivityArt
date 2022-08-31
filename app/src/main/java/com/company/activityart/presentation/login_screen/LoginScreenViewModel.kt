@@ -2,37 +2,27 @@ package com.company.activityart.presentation.login_screen
 
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.company.activityart.architecture.*
 import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.architecture.EventReceiver
-import com.company.activityart.architecture.StateSender
-import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
-import com.company.activityart.presentation.DestinationFlow
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 import com.company.activityart.util.Resource.*
 import com.company.activityart.util.TokenConstants.authUri
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(
-    private val destinationFlow: DestinationFlow,
-) : ViewModel(), EventReceiver<LoginScreenViewEvent>, StateSender<LoginScreenViewState> {
+class LoginScreenViewModel : BaseRoutingViewModel<
+        LoginScreenViewState,
+        LoginScreenViewEvent,
+        MainDestination>() {
 
-    companion object {
-        private val authIntent = Intent(ACTION_VIEW, authUri)
+    init {
+        pushState(Standby)
     }
-
-    // ViewState - observed in the view
-    private var _viewState: MutableState<LoginScreenViewState> = mutableStateOf(Standby)
-    override val viewState: State<LoginScreenViewState> = _viewState
 
     override fun onEvent(event: LoginScreenViewEvent) {
         when (event) {
@@ -41,114 +31,114 @@ class LoginScreenViewModel @Inject constructor(
     }
 
     private fun onConnectWithStravaClicked() {
-        destinationFlow.destinations.value = ConnectWithStrava
+        routeTo(ConnectWithStrava)
     }
+}
 
-    /*
-    private fun onLoadAccessToken(event: LoadAccessToken) {
-        viewModelScope.launch {
-            when (val response = getAccessTokenUseCase(event.uri)) {
-                is Success -> {}
-                is Error -> {}
-            }
+/*
+private fun onLoadAccessToken(event: LoadAccessToken) {
+    viewModelScope.launch {
+        when (val response = getAccessTokenUseCase(event.uri)) {
+            is Success -> {}
+            is Error -> {}
         }
     }
+}
 
-     */
+ */
 
-    /*
-    val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
-        .buildUpon()
-        .appendQueryParameter("client_id", "75992")
-        .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
-        .appendQueryParameter("response_type", "code")
-        .appendQueryParameter("approval_prompt", "auto")
-        .appendQueryParameter("scope", "activity:read,activity:read_all")
-        .build()
+/*
+val intentUri: Uri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
+    .buildUpon()
+    .appendQueryParameter("client_id", "75992")
+    .appendQueryParameter("redirect_uri", "com.company.athleteapiart://myapp.com")
+    .appendQueryParameter("response_type", "code")
+    .appendQueryParameter("approval_prompt", "auto")
+    .appendQueryParameter("scope", "activity:read,activity:read_all")
+    .build()
 
-    // Use cases
-    private val getAccessTokenUseCase = authenticationUseCases.getAccessTokenUseCase
-    private val setAccessTokenUseCase = authenticationUseCases.setAccessTokenUseCase1
+// Use cases
+private val getAccessTokenUseCase = authenticationUseCases.getAccessTokenUseCase
+private val setAccessTokenUseCase = authenticationUseCases.setAccessTokenUseCase1
 
-    private var oAuth2Entity: OAuth2Entity? = null
-    val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
+private var oAuth2Entity: OAuth2Entity? = null
+val loginIntent = Intent(Intent.ACTION_VIEW, intentUri)
 
-    fun getNavArgs(): Array<String> =
-        arrayOf(oAuth2Entity?.athleteId.toString(), oAuth2Entity?.accessToken ?: "null")
+fun getNavArgs(): Array<String> =
+    arrayOf(oAuth2Entity?.athleteId.toString(), oAuth2Entity?.accessToken ?: "null")
 
 
-    init {
-        println("Init invoked on loginScreenViewModel state is ${loginScreenState.value}")
-    }
+init {
+    println("Init invoked on loginScreenViewModel state is ${loginScreenState.value}")
+}
 
-    /*
+/*
 
-    FUNCTION: attemptGetAccessToken
-    Invoked when screen is in a LAUNCH state
-    Attempts to obtain a valid access token from both ROOM and URI intent
+FUNCTION: attemptGetAccessToken
+Invoked when screen is in a LAUNCH state
+Attempts to obtain a valid access token from both ROOM and URI intent
 
-     */
+ */
 
-    fun attemptGetAccessToken(
-        uri: Uri?,
-        context: Context
-    ) {
-        viewModelScope.launch {
+fun attemptGetAccessToken(
+    uri: Uri?,
+    context: Context
+) {
+    viewModelScope.launch {
 
-            // Set state of screen to loading
-            loginScreenState.value = LoginScreenState.LOADING
+        // Set state of screen to loading
+        loginScreenState.value = LoginScreenState.LOADING
 
-            // Attempt to receive access token from ROOM database
-            val responseRoom = getAccessTokenUseCase.getAccessToken(context)
+        // Attempt to receive access token from ROOM database
+        val responseRoom = getAccessTokenUseCase.getAccessToken(context)
 
-            // Update access token with whatever result was
-            oAuth2Entity = responseRoom.data
+        // Update access token with whatever result was
+        oAuth2Entity = responseRoom.data
 
-            println("Here, response room is ${responseRoom.data}")
-            when (responseRoom) {
+        println("Here, response room is ${responseRoom.data}")
+        when (responseRoom) {
 
-                // Successfully received
-                is Resource.Success -> {
-                    // Update ROOM database
-                    setAccessTokenUseCase.setAccessToken(context, responseRoom.data)
-                    loginScreenState.value = LoginScreenState.AUTHORIZED
-                }
-                // Not able to receive access token from ROOM database
-                is Resource.Failure -> {
-                    when {
-                        // We just connected with Strava but have not parsed or done work with code
-                        uri != null -> {
-                            println("Here, uri is not null it is $uri")
-                            // URI --> Authentication Code --> Access Token
-                            // If successful, also add to ROOM in Use Case
-                            val responseCode = authenticationUseCases
-                                .getAccessTokenUseCase
-                                .getAccessTokenFromAuthorizationCode(parseUri(uri))
+            // Successfully received
+            is Resource.Success -> {
+                // Update ROOM database
+                setAccessTokenUseCase.setAccessToken(context, responseRoom.data)
+                loginScreenState.value = LoginScreenState.AUTHORIZED
+            }
+            // Not able to receive access token from ROOM database
+            is Resource.Failure -> {
+                when {
+                    // We just connected with Strava but have not parsed or done work with code
+                    uri != null -> {
+                        println("Here, uri is not null it is $uri")
+                        // URI --> Authentication Code --> Access Token
+                        // If successful, also add to ROOM in Use Case
+                        val responseCode = authenticationUseCases
+                            .getAccessTokenUseCase
+                            .getAccessTokenFromAuthorizationCode(parseUri(uri))
 
-                            // Update access token with whatever result was
-                            oAuth2Entity = responseCode.data
+                        // Update access token with whatever result was
+                        oAuth2Entity = responseCode.data
 
-                            when (responseCode) {
-                                is Resource.Success -> {
-                                    setAccessTokenUseCase.setAccessToken(context, responseCode.data)
-                                    loginScreenState.value = LoginScreenState.AUTHORIZED
-                                }
-                                is Resource.Failure -> {
-                                    println("Response code from uri is error")
-                                }
+                        when (responseCode) {
+                            is Resource.Success -> {
+                                setAccessTokenUseCase.setAccessToken(context, responseCode.data)
+                                loginScreenState.value = LoginScreenState.AUTHORIZED
+                            }
+                            is Resource.Failure -> {
+                                println("Response code from uri is error")
                             }
                         }
-                        // We have not yet connected with Strava
-                        else -> loginScreenState.value = LoginScreenState.STANDBY
                     }
+                    // We have not yet connected with Strava
+                    else -> loginScreenState.value = LoginScreenState.STANDBY
                 }
             }
         }
     }
-
-    // Invoked to parse authorization code from the URI string from intent
-    private fun parseUri(uri: Uri): String =
-        uri.toString().substring(43).substringBefore('&')
-
-     */
 }
+
+// Invoked to parse authorization code from the URI string from intent
+private fun parseUri(uri: Uri): String =
+    uri.toString().substring(43).substringBefore('&')
+
+ */

@@ -1,26 +1,19 @@
 package com.company.activityart.presentation.login_screen
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.company.activityart.R
-import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.architecture.EventReceiver
-import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainViewEvent
+import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.ui.theme.Asphalt
 import com.company.activityart.presentation.ui.theme.Gravel
@@ -30,7 +23,7 @@ import com.company.activityart.util.Constants
 
 @Composable
 fun LoginScreenStandbyState(
-    eventReceiver: EventReceiver<LoginScreenViewEvent>
+    eventReceiver: ViewEventListener<LoginScreenViewEvent>
 ) {
     Image(
         painterResource(id = R.drawable.ic_frameactivityart),

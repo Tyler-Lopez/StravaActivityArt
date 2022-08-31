@@ -1,10 +1,11 @@
 package com.company.activityart.presentation.login_screen
 
-import android.net.Uri
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.company.activityart.presentation.MainViewEvent.*
+import com.company.activityart.architecture.Router
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.MainViewEvent.*
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
 
 
@@ -20,10 +21,16 @@ import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
  */
 
 @Composable
-fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel()) {
-    remember { viewModel.viewState }.value.let {
-        when (it) {
-            is Standby -> LoginScreenStandbyState(viewModel)
+fun LoginScreen(
+    router: Router<MainDestination>,
+    viewModel: LoginScreenViewModel = hiltViewModel()
+) {
+    viewModel.apply {
+        attachRouter(router)
+        viewState.collectAsState().value?.let {
+            when (it) {
+                is Standby -> LoginScreenStandbyState(this)
+            }
         }
     }
 }

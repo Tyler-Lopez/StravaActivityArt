@@ -5,19 +5,21 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.company.activityart.architecture.EventReceiver
-import com.company.activityart.architecture.Router
-import com.company.activityart.architecture.StateSender
+import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.architecture.ViewEventListener
+import com.company.activityart.architecture.ViewStateSender
 import com.company.activityart.presentation.MainViewState.*
-import javax.inject.Inject
+import com.company.activityart.presentation.login_screen.LoginScreenViewEvent
+import com.company.activityart.presentation.login_screen.LoginScreenViewState
 
-class MainViewModel : ViewModel(),
-    EventReceiver<MainViewEvent>,
-    StateSender<MainViewState> {
+class MainViewModel : BaseRoutingViewModel<
+        MainViewState,
+        MainViewEvent,
+        MainDestination>() {
 
-    // ViewState - observed in the view
-    private var _viewState: MutableState<MainViewState> = mutableStateOf(LoadingAuthentication)
-    override val viewState: State<MainViewState> = _viewState
+    init {
+        pushState(LoadingAuthentication)
+    }
 
     override fun onEvent(event: MainViewEvent) {
         when (event) {

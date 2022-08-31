@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.company.activityart.architecture.EventReceiver
+import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.common.AppVersionNameComposable
 import com.company.activityart.presentation.common.ButtonComposable
 import com.company.activityart.presentation.ui.theme.Coal
@@ -29,17 +29,8 @@ import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewStat
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
 
 @Composable
-fun WelcomeScreenLaunchState(
-    athleteId: Long,
-    accessToken: String,
-    eventReceiver: EventReceiver<WelcomeScreenViewEvent>
-) {
-    SideEffect { eventReceiver.onEvent(LoadAthlete(athleteId, accessToken)) }
-}
-
-@Composable
 fun WelcomeScreenLoadError(
-    eventReceiver: EventReceiver<WelcomeScreenViewEvent>,
+    eventReceiver: ViewEventListener<WelcomeScreenViewEvent>,
     navController: NavController
 ) {
 
@@ -48,7 +39,7 @@ fun WelcomeScreenLoadError(
 @Composable
 fun WelcomeScreenStandbyState(
     state: Standby,
-    eventReceiver: EventReceiver<WelcomeScreenViewEvent>,
+    eventReceiver: ViewEventListener<WelcomeScreenViewEvent>,
     navController: NavController
 ) {
     Image(
@@ -81,16 +72,16 @@ fun WelcomeScreenStandbyState(
         ButtonComposable(
             text = "Make Art",
             modifier = Modifier.fillMaxWidth()
-        ) { onEvent(ClickedMakeArt(navController)) }
+        ) { onEvent(ClickedMakeArt) }
 
         ButtonComposable(
             text = "About",
             modifier = Modifier.fillMaxWidth()
-        ) { onEvent(ClickedAbout(navController)) }
+        ) { onEvent(ClickedAbout) }
 
         ButtonComposable(
             text = "Logout",
             modifier = Modifier.fillMaxWidth()
-        ) { onEvent(ClickedLogout(navController)) }
+        ) { onEvent(ClickedLogout) }
     }
 }

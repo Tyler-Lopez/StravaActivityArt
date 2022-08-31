@@ -1,7 +1,5 @@
 package com.company.activityart.architecture
 
-import androidx.compose.runtime.Composable
-
-interface Router<T: Destination> {
-    fun routeTo(destination: T)
+interface Router<TypeOfDestination: Destination> {
+    fun routeTo(destination: TypeOfDestination)
 }

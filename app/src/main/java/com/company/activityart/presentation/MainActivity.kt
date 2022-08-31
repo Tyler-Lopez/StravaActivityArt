@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
@@ -22,14 +21,11 @@ import com.company.activityart.presentation.MainViewEvent.*
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.TokenConstants.authUri
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @AndroidEntryPoint
-class MainActivity @Inject constructor(
-    private val destinationFlow: DestinationFlow
-) : ComponentActivity(), Router<MainDestination> {
+class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     lateinit var navController: NavHostController
 
@@ -61,12 +57,11 @@ class MainActivity @Inject constructor(
             AthleteApiArtTheme {
                 MainNavHost(
                     navController = navController,
-                    startScreen = startScreen
+                    startScreen = startScreen,
+                    router = this
                 )
             }
 
-            // Listen to destinations flow changes and routeTo on new
-            destinationFlow.destinations.collectAsState().value?.apply(::routeTo)
         }
     }
 
