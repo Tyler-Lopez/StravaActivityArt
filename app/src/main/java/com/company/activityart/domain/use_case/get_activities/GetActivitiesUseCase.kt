@@ -12,6 +12,7 @@ import javax.inject.Inject
 class GetActivitiesUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
+    /*
     suspend fun getActivitiesByYearFromCache(
         context: Context,
         athleteId: Long,
@@ -123,5 +124,7 @@ class GetActivitiesUseCase @Inject constructor(
         after = after
     )
 
+
+     */
 
 }

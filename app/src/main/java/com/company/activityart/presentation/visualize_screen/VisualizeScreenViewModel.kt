@@ -30,8 +30,9 @@ import kotlin.math.sqrt
 
 @HiltViewModel
 class VisualizeScreenViewModel @Inject constructor(
-    activitiesUseCases: ActivitiesUseCases
+   // activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
+    /*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
@@ -306,4 +307,6 @@ class VisualizeScreenViewModel @Inject constructor(
             }
         }
     }
+
+     */
 }

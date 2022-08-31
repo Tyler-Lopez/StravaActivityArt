@@ -20,8 +20,8 @@ class InsertAthleteUseCase @Inject constructor(
                 profilePictureLarge,
                 firstName,
                 lastName,
-                yearMonthsCached,
-                gears
+            //    yearMonthsCached,
+            //    gears
             )
         }
         athleteDatabase.athleteDao.insertAthlete(entity)

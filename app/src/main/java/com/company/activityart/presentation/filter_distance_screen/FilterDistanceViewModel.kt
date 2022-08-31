@@ -22,9 +22,10 @@ import kotlin.math.floor
 
 @HiltViewModel
 class FilterDistanceViewModel @Inject constructor(
-    activitiesUseCases: ActivitiesUseCases
+ //   activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
 
+    /*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
@@ -151,4 +152,6 @@ class FilterDistanceViewModel @Inject constructor(
     fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
         NavigationUtils.yearMonthsNavArgs(yearMonths)
 
+
+     */
 }

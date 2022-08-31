@@ -8,6 +8,7 @@ import javax.inject.Inject
 class GetGearFromApiUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
+    /*
     suspend fun getGearFromApi(
         gearId: String,
         accessToken: String
@@ -22,4 +23,6 @@ class GetGearFromApiUseCase @Inject constructor(
             Resource.Failure(HTTPFault.UNKNOWN)
         }
     }
+
+     */
 }

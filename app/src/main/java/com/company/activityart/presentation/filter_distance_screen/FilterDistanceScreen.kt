@@ -30,6 +30,7 @@ fun FilterDistanceScreen(
     gears: Array<String?>? = null, // If null do not filter, if string is null then that means null gearId is included
     viewModel: FilterDistanceViewModel = hiltViewModel()
 ) {
+    /*
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
@@ -123,4 +124,6 @@ fun FilterDistanceScreen(
             }
         }
     }
+
+     */
 }

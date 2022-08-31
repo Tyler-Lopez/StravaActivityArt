@@ -43,6 +43,6 @@ data class AthleteResponse(
 ) : Athlete {
     override val receivedOnUnixSeconds: Int =
         TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
-    override val yearMonthsCached: Map<Int, Int> = mapOf()
-    override val gears: Map<String, String> = mapOf()
+    //override val yearMonthsCached: Map<Int, Int> = mapOf()
+    //override val gears: Map<String, String> = mapOf()
 }

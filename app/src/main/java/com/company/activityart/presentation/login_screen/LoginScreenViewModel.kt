@@ -1,24 +1,19 @@
 package com.company.activityart.presentation.login_screen
 
-import android.content.Intent
-import android.content.Intent.ACTION_VIEW
-import androidx.lifecycle.ViewModel
-import com.company.activityart.architecture.*
-import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
-import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
-import com.company.activityart.util.Resource.*
-import com.company.activityart.util.TokenConstants.authUri
+import com.company.activityart.presentation.MainDestination.ConnectWithStrava
+import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.ConnectWithStravaClicked
+import com.company.activityart.presentation.login_screen.LoginScreenViewState.Standby
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel : BaseRoutingViewModel<
+class LoginScreenViewModel @Inject constructor() : BaseRoutingViewModel<
         LoginScreenViewState,
         LoginScreenViewEvent,
-        MainDestination>() {
+        MainDestination
+        >() {
 
     init {
         pushState(Standby)

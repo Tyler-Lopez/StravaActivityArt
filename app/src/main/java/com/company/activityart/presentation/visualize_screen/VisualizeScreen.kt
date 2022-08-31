@@ -38,6 +38,7 @@ fun VisualizeScreen(
     distances: ClosedFloatingPointRange<Float>? = null,
     viewModel: VisualizeScreenViewModel = hiltViewModel()
 ) {
+    /*
 
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
@@ -149,4 +150,6 @@ fun VisualizeScreen(
                 }
         }
     }
+
+     */
 }

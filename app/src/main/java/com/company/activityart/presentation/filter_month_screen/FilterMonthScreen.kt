@@ -22,6 +22,7 @@ fun FilterMonthScreen(
     navController: NavHostController,
     viewModel: FilterMonthViewModel = hiltViewModel()
 ) {
+    /*
 
     val screenState by remember { viewModel.filterMonthScreenState }
     val context = LocalContext.current
@@ -81,4 +82,6 @@ fun FilterMonthScreen(
             }
         }
     }
+
+     */
 }

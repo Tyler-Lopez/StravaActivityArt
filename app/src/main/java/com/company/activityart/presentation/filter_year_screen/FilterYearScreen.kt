@@ -35,6 +35,7 @@ fun FilterYearScreen(
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
 
+    /*
     val screenState by remember { viewModel.timeSelectScreenState }
     val context = LocalContext.current
     val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
@@ -102,4 +103,6 @@ fun FilterYearScreen(
             }
         }
     }
+
+     */
 }

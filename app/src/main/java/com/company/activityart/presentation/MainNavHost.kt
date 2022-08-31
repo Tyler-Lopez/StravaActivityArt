@@ -25,7 +25,7 @@ fun MainNavHost(
             LoginScreen(router)
         }
         composable(Screen.Welcome.route) {
-            WelcomeScreen()
+            WelcomeScreen(router)
         }
     }
 }

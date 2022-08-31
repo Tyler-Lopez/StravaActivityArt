@@ -10,7 +10,7 @@ import com.company.activityart.domain.use_case.athlete.GetAthleteFromLocalUseCas
 import com.company.activityart.domain.use_case.athlete.GetAthleteFromRemoteUseCase
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.athlete.InsertAthleteUseCase
-import com.company.activityart.domain.use_case.clear_access_token.ClearAccessTokenUseCase
+import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.company.activityart.domain.use_case.get_activities.GetActivitiesUseCase
 import com.company.activityart.domain.use_case.get_gear.GetGearFromApiUseCase
 import com.company.activityart.domain.use_case.insert_activities.InsertActivitiesUseCase
@@ -64,8 +64,9 @@ object AppModule {
 
     @Provides
     fun clearAccessTokenUseCase(athleteDatabase: AthleteDatabase) =
-        ClearAccessTokenUseCase()
+        ClearAccessTokenUseCase(athleteDatabase)
 
+    /*
     @Singleton
     @Provides
     fun provideGearUseCases(
@@ -82,6 +83,8 @@ object AppModule {
         getActivitiesUseCase = GetActivitiesUseCase(api),
         insertActivitiesUseCase = InsertActivitiesUseCase()
     )
+
+     */
 
     @Singleton
     @Provides

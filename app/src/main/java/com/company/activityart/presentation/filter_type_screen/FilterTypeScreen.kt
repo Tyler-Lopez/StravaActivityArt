@@ -23,6 +23,7 @@ fun FilterTypeScreen(
     viewModel: FilterTypeViewModel = hiltViewModel()
 ) {
 
+    /*
     val screenState by remember { viewModel.filterTypeScreenState }
     val context = LocalContext.current
     val selectedTypesCount by remember { viewModel.selectedTypesCount }
@@ -82,4 +83,6 @@ fun FilterTypeScreen(
             }
         }
     }
+
+     */
 }

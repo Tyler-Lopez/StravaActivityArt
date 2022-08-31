@@ -23,6 +23,7 @@ fun FilterGearScreen(
     viewModel: FilterGearViewModel = hiltViewModel()
 ) {
 
+    /*
     val screenState by remember { viewModel.screenState }
     val context = LocalContext.current
     val selectedCount by remember { viewModel.selectedCount }
@@ -90,4 +91,6 @@ fun FilterGearScreen(
             }
         }
     }
+
+     */
 }

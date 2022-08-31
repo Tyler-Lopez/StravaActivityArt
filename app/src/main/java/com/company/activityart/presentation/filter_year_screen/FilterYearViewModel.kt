@@ -21,10 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimeSelectViewModel @Inject constructor(
-    athleteUseCases: AthleteUseCases,
-    activitiesUseCases: ActivitiesUseCases
+   // athleteUseCases: AthleteUseCases,
+   // activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
-
+/*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
     private val insertActivitiesUseCase = activitiesUseCases.insertActivitiesUseCase
@@ -207,4 +207,6 @@ class TimeSelectViewModel @Inject constructor(
             }
         }
 
+
+ */
 }

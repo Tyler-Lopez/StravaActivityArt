@@ -17,9 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilterMonthViewModel @Inject constructor(
-    activitiesUseCases: ActivitiesUseCases
+  //  activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
 
+    /*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
@@ -119,4 +120,6 @@ class FilterMonthViewModel @Inject constructor(
         NavigationUtils.yearMonthsNavArgs(_rows.filterIndexed { index, _ -> _selected[index] }
             .map { (it[1].first.toInt()) to (TimeUtils.monthStringToInt(it[0].first)) }
             .toTypedArray())
+
+     */
 }

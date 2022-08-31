@@ -24,11 +24,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilterGearViewModel @Inject constructor(
-    activitiesUseCases: ActivitiesUseCases,
-    gearUseCase: GearUseCases,
-    athleteUseCases: AthleteUseCases
+ //   activitiesUseCases: ActivitiesUseCases,
+  //  gearUseCase: GearUseCases,
+   // athleteUseCases: AthleteUseCases
 ) : ViewModel() {
 
+    /*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
     private val getAthleteUseCase = athleteUseCases.getAthleteUseCase
@@ -234,4 +235,6 @@ class FilterGearViewModel @Inject constructor(
     fun activityTypesNavArgs(types: Array<String>?) = NavigationUtils.activityTypesNavArgs(types)
     fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
         NavigationUtils.yearMonthsNavArgs(yearMonths)
+
+     */
 }

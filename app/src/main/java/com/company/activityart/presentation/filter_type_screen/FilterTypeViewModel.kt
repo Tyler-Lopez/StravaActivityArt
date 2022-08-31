@@ -19,9 +19,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilterTypeViewModel @Inject constructor(
-    activitiesUseCases: ActivitiesUseCases
+    //activitiesUseCases: ActivitiesUseCases
 ) : ViewModel() {
 
+    /*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
 
@@ -145,4 +146,6 @@ class FilterTypeViewModel @Inject constructor(
     )
     fun yearMonthsNavArgs(yearMonths: Array<Pair<Int, Int>>) =
         NavigationUtils.yearMonthsNavArgs(yearMonths)
+
+     */
 }
