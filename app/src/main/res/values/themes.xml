@@ -10,9 +10,9 @@
         <item name="colorSecondaryVariant">@color/strava_orange</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" >@color/rust</item>
         <!-- Customize your theme here. -->
-        <item name="android:colorBackground">@color/white</item>
+        <item name="android:colorBackground">@color/light_background</item>
     </style>
 
     <style name="Theme.AthleteApiArt.NoActionBar">

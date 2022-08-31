@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Activity Art</string>
+    <!-- Content description for the button which connects this app with the
+    athletes Strava account when clicked -->
+    <string name="connect_with_strava_button_cd">Connect with Strava</string>
 </resources>

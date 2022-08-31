@@ -3,37 +3,27 @@ package com.company.activityart.presentation.login_screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
-import com.company.activityart.presentation.ui.theme.Asphalt
-import com.company.activityart.presentation.ui.theme.Gravel
-import com.company.activityart.presentation.ui.theme.Lato
-import com.company.activityart.presentation.ui.theme.MaisonNeue
+import com.company.activityart.presentation.ui.theme.*
 import com.company.activityart.util.Constants
 
 @Composable
 fun LoginScreenStandbyState(
     eventReceiver: ViewEventListener<LoginScreenViewEvent>
 ) {
-    Image(
-        painterResource(id = R.drawable.ic_frameactivityart),
-        "",
-        modifier = Modifier,
-        contentScale = ContentScale.FillWidth
-    )
-    Column(horizontalAlignment = Alignment
-
-        .CenterHorizontally) {
+    Column(modifier = Modifier.padding(spacing.medium)) {
         Text(
             text = "${Constants.STAGE.uppercase()} " + Constants.VERSION,
             fontSize = 18.sp,
@@ -50,13 +40,12 @@ fun LoginScreenStandbyState(
         )
     }
     Image(
-        painter = painterResource(id = R.drawable.btn_strava_connectwith_orange),
-        contentDescription = "Connect with Strava",
+        painter = painterResource(id = R.drawable.ic_btn_strava_connectwith_orange),
+        contentDescription = stringResource(id = R.string.connect_with_strava_button_cd),
         modifier = Modifier
             //.width(stravaButtonWidth)
             //.height(stravaButtonHeight)
             //.clip(ClippedImageShape)
             .clickable { eventReceiver.onEvent(ConnectWithStravaClicked) },
-        contentScale = ContentScale.FillBounds
     )
 }

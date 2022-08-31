@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.ui
+package com.company.activityart.presentation.ui.theme
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,7 +22,7 @@ data class Spacing(
  */
 val LocalSpacing = compositionLocalOf { Spacing() }
 
-val MaterialTheme.spacing: Spacing
+val spacing: Spacing
     @Composable
     @ReadOnlyComposable
     get() = LocalSpacing.current

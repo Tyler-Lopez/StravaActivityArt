@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.login_screen
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.architecture.Router

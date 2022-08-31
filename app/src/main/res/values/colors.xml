@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="strava_orange">#FFFC6100</color>
-    <color name="teal_200">#FFFC6100</color>
-    <color name="teal_700">#FFFC6100</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="light_text_primary">@color/n90_coal</color>
+    <color name="light_text_secondary">@color/n80_asphalt</color>
+    <color name="light_text_tertiary">@color/n70_gravel</color>
+    <color name="light_background">#fff</color>
+    <color name="light_background_selected">#d6d6d6</color>
+    <color name="light_foreground_selected">#29000000</color>
+    <color name="light_panel">#f8f8f8</color>
+    <color name="light_panel_selected">#d0d0d0</color>
+    <color name="light_divider">#ccc</color>
+    <color name="graph_line">#6d6d78</color>
+
+    <color name="strava_orange">#FC4C02</color>
+    <color name="strava_orange_25_opacity">#40FC4C02</color>
+    <color name="pumpkin">#FC6100</color>
+    <color name="rust">#CC4200</color>
+
+    <color name="n90_coal">#242428</color>
+    <color name="n80_asphalt">#494950</color>
+    <color name="n70_gravel">#6D6D78</color>
+    <color name="n10_fog">#F7F7FA</color>
+    <color name="n20_icicle">#F0F0F5</color>
+    <color name="n30_silver">#DFDFE8</color>
+
+    <color name="black">#000</color>
+    <color name="white">#fff</color>
 </resources>

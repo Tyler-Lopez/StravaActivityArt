@@ -42,25 +42,28 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         // Install Splash Screen before content is setContent
         val splashScreen = installSplashScreen()
         setContent {
-            val viewModel: MainViewModel = hiltViewModel()
-            viewModel.apply {
-                splashScreen.setKeepOnScreenCondition {
-                    viewState.value is LoadingAuthentication
-                }
-                // Push event to ViewModel to determine authentication
-                onEvent(LoadAuthentication(intentUri))
-                navController = rememberAnimatedNavController()
+            AthleteApiArtTheme {
+                val viewModel: MainViewModel = hiltViewModel()
+                viewModel.apply {
+                    splashScreen.setKeepOnScreenCondition {
+                        viewState.value is LoadingAuthentication
+                    }
+                    // Push event to ViewModel to determine authentication
+                    onEvent(LoadAuthentication(intentUri))
+                    navController = rememberAnimatedNavController()
 
-                viewState.collectAsState().value?.let {
-                    val startScreen = if (it is Authenticated) Welcome else Login
-                    AthleteApiArtTheme {
-                        MainNavHost(
-                            navController = navController,
-                            startScreen = startScreen,
-                            router = this@MainActivity
-                        )
+                    viewState.collectAsState().value?.let {
+                        val startScreen = if (it is Authenticated) Welcome else Login
+                        AthleteApiArtTheme {
+                            MainNavHost(
+                                navController = navController,
+                                startScreen = startScreen,
+                                router = this@MainActivity
+                            )
+                        }
                     }
                 }
+
             }
         }
     }
