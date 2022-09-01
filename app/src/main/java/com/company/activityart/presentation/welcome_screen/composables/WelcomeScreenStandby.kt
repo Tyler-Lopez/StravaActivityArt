@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.welcome_screen
+package com.company.activityart.presentation.welcome_screen.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -25,20 +24,13 @@ import com.company.activityart.presentation.ui.theme.Coal
 import com.company.activityart.presentation.ui.theme.MaisonNeue
 import com.company.activityart.presentation.ui.theme.Silver
 import com.company.activityart.presentation.ui.theme.StravaOrange
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.*
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
 
-@Composable
-fun WelcomeScreenLoadError(
-    eventReceiver: ViewEventListener<WelcomeScreenViewEvent>,
-    navController: NavController
-) {
-
-}
 
 @Composable
 fun WelcomeScreenStandbyState(
-    state: Standby,
+    state: WelcomeScreenViewState.Standby,
     eventReceiver: ViewEventListener<WelcomeScreenViewEvent>,
     navController: NavController
 ) {
@@ -72,16 +64,16 @@ fun WelcomeScreenStandbyState(
         ButtonComposable(
             text = "Make Art",
             modifier = Modifier.fillMaxWidth()
-        ) { onEvent(ClickedMakeArt) }
+        ) { onEvent(WelcomeScreenViewEvent.ClickedMakeArt) }
 
         ButtonComposable(
             text = "About",
             modifier = Modifier.fillMaxWidth()
-        ) { onEvent(ClickedAbout) }
+        ) { onEvent(WelcomeScreenViewEvent.ClickedAbout) }
 
         ButtonComposable(
             text = "Logout",
             modifier = Modifier.fillMaxWidth()
-        ) { onEvent(ClickedLogout) }
+        ) { onEvent(WelcomeScreenViewEvent.ClickedLogout) }
     }
 }

@@ -1,6 +1,5 @@
 package com.company.activityart.presentation.login_screen
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.architecture.Router
@@ -9,6 +8,7 @@ import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewEvent.*
 import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
+import com.company.activityart.presentation.login_screen.composables.LoginScreenStandby
 
 
 /*
@@ -32,7 +32,7 @@ fun LoginScreen(
             attachRouter(router)
             viewState.collectAsState().value?.let {
                 when (it) {
-                    is Standby -> LoginScreenStandbyState(this)
+                    is Standby -> LoginScreenStandby(this)
                 }
             }
         }

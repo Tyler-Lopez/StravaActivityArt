@@ -12,7 +12,7 @@ class GetAccessTokenFromRemoteUseCase @Inject constructor(
     private val api: AthleteApi
 ) {
     companion object {
-        private const val GRANT_TYPE = "refresh_token"
+        private const val GRANT_TYPE = "authorization_code"
     }
 
     suspend operator fun invoke(
@@ -20,10 +20,10 @@ class GetAccessTokenFromRemoteUseCase @Inject constructor(
     ): Resource<OAuth2> {
         return try {
             Resource.Success(
-                api.getAccessTokenFromRefresh(
+                api.getAccessToken(
                     clientId = CLIENT_ID,
                     clientSecret = CLIENT_SECRET,
-                    refreshToken = authorizationCode,
+                    code = authorizationCode,
                     grantType = GRANT_TYPE
                 )
             )
