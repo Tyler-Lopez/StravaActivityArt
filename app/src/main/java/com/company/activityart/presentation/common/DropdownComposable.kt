@@ -30,6 +30,7 @@ fun DropdownComposable(
     modifier: Modifier = Modifier,
     height: Dp = 44.dp,
 ) {
+    /*
     val expanded = remember { mutableStateOf(false) }
 
     println("Recomposed, selected index is $selectedIndex")
@@ -122,4 +123,6 @@ fun DropdownComposable(
             }
         }
     }
+
+     */
 }

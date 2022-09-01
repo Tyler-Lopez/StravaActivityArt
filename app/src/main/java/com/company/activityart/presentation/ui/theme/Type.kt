@@ -1,6 +1,7 @@
 package com.company.activityart.presentation.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -9,45 +10,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.company.activityart.R
 
-val Roboto = FontFamily(
-    Font(R.font.roboto_light, FontWeight.Light),
-    Font(R.font.roboto_regular, FontWeight.Normal),
-    Font(R.font.roboto_medium, FontWeight.Medium),
-    Font(R.font.roboto_bold, FontWeight.Bold),
-)
-
 val MaisonNeue = FontFamily(
-    Font(R.font.maisonneue_black, FontWeight.Black),
     Font(R.font.maisonneue_bold, FontWeight.Bold),
-    Font(R.font.maisonneue_medium, FontWeight.Medium),
-    Font(R.font.maisonneue_light, FontWeight.Light),
-    Font(R.font.maisonneue_thin, FontWeight.Thin)
+    Font(R.font.maisonneue_demi, FontWeight.Medium),
+    Font(R.font.maisonneue_book, FontWeight.Normal),
 )
 
-val Lato = FontFamily(
-    Font(R.font.lato_light, FontWeight.Light),
-    Font(R.font.lato_lightitalic, FontWeight.Light, FontStyle.Italic),
-    Font(R.font.lato_thin, FontWeight.Thin),
-    Font(R.font.lato_thinitalic, FontWeight.Thin, FontStyle.Italic),
-    Font(R.font.lato_regular, FontWeight.Normal),
-    Font(R.font.lato_italic, FontWeight.Normal, FontStyle.Italic),
-    Font(R.font.lato_bold, FontWeight.Bold),
-    Font(R.font.lato_bolditalic, FontWeight.Bold, FontStyle.Italic),
-    Font(R.font.lato_black, FontWeight.Black),
-    Font(R.font.lato_blackitalic, FontWeight.Black, FontStyle.Italic)
-)
-
-val RobotoCondensed = FontFamily(
-    Font(R.font.robotocondensed_light, FontWeight.Light),
-    Font(R.font.robotocondensed_regular, FontWeight.Normal),
-)
-
+/**
+ * Normal == book
+ * Medium == demi
+ * Bold == bold
+ */
 // Set of Material typography styles to start with
 val Typography = Typography(
     body1 = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = MaisonNeue,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
+    ),
+    h1 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 34.sp,
+        color = LightTextPrimary
+    ),
+    subtitle1 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Normal,
+        lineHeight = 20.sp,
+        color = LightTextSecondary
     )
     /* Other default text styles to override
     button = TextStyle(

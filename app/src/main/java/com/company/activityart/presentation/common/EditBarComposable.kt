@@ -28,6 +28,7 @@ fun EditBarComposable(
     modifier: Modifier = Modifier,
     onEdit: () -> Unit
 ) {
+    /*
     val expanded = remember { mutableStateOf(false) }
 
     Row(
@@ -80,4 +81,6 @@ fun EditBarComposable(
         }
 
     }
+
+     */
 }

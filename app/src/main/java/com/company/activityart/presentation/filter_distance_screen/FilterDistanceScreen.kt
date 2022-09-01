@@ -1,24 +1,9 @@
 package com.company.activityart.presentation.filter_distance_screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.RangeSlider
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.activityart.util.Screen
-import com.company.activityart.presentation.common.*
-import com.company.activityart.presentation.ui.theme.Icicle
-import com.company.activityart.presentation.ui.theme.Lato
-import com.company.activityart.util.ScreenState
 
 @ExperimentalMaterialApi
 @Composable

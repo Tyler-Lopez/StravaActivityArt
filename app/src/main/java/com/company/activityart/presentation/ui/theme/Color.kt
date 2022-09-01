@@ -29,3 +29,14 @@ val Silver = Color(0xFFDFDFE8)
 
 val Pumpkin = Color(0xFFFC6100)
 val Rust = Color(0xFFFC6100)
+
+val LightTextPrimary = Coal
+val LightTextSecondary = Asphalt
+val LightTextTertiary = Gravel
+val LightBackground = White
+val LightBackgroundSelected = Color(0xFFFFFFFF)
+val LightForegroundSelected = Color(0x29000000)
+val LightPanel = Color(0xFFF8F8F8)
+val LightPanelSelected = Color(0xFFD0D0D0)
+val LightDivider = Color(0xFFCCCCCC)
+val GraphLine = Color(0xFF6D6D78)

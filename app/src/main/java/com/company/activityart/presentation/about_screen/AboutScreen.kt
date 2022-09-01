@@ -63,6 +63,7 @@ fun AboutScreen() {
                         end = start + "bunsendevelopment@gmail.com".length
                     )
                 )
+                /*
                 Text(
                     text = AnnotatedString(
                         text = text,
@@ -73,6 +74,8 @@ fun AboutScreen() {
                     fontSize = 22.sp,
                     lineHeight = 28.sp
                 )
+
+                 */
             }
 
         }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Begin Module System Theme -->
+    <dimen name="title_large_text_size">24sp</dimen>
+    <dimen name="title_small_text_size">17sp</dimen>
+    <dimen name="label_large_text_size">13sp</dimen>
+    <dimen name="label_small_text_size">10sp</dimen>
+    <dimen name="body_large_text_size">15sp</dimen>
+    <dimen name="button_height">48dp</dimen>
+    <!-- 16dp is the default gutter value in the app -->
+    <dimen name="one_gutter">16dp</dimen>
+    <!-- 3dip is the default corner radius in the app. -->
+</resources>

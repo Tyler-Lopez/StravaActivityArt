@@ -13,6 +13,8 @@
         <item name="android:statusBarColor" >@color/rust</item>
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/light_background</item>
+
+        <item name="android:fontFamily">@font/maison_neue</item>
     </style>
 
     <style name="Theme.AthleteApiArt.NoActionBar">

@@ -177,6 +177,7 @@ class Table {
                     onCheckedChange = {
                         onChecked()
                     })
+                /*
                 for (field in fields) {
                     Text(
                         text = field.first,
@@ -187,6 +188,8 @@ class Table {
                         modifier = Modifier.weight(1f)
                     )
                 }
+
+                 */
             }
         }
     }

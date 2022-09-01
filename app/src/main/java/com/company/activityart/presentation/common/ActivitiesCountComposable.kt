@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.company.activityart.presentation.ui.theme.Lato
 import com.company.activityart.presentation.ui.theme.MaisonNeue
 import com.company.activityart.presentation.ui.theme.StravaOrange
 
@@ -35,12 +34,15 @@ fun ActivitiesCountComposable(
                 color = StravaOrange,
                 fontSize = 28.sp
             )
+            /*
             Text(
                 text = "Activities Selected",
                 fontFamily = Lato,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold
             )
+
+             */
         }
 
     }
