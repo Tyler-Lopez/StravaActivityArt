@@ -43,7 +43,6 @@ class WelcomeScreenViewModel @Inject constructor(
             is ClickedAbout -> onClickedAbout()
             is ClickedMakeArt -> onClickedMakeArt()
             is ClickedLogout -> onClickedLogout()
-            is LoadAthlete -> onLoadAthlete()
         }
     }
 
@@ -96,38 +95,12 @@ class WelcomeScreenViewModel @Inject constructor(
                             athleteImageUrl = it.data.profilePictureLarge
                         )
                     )
-                } ?: run {
-                    pushState(Loading)
-                    clearAccessTokenUseCase()
-                    routeTo(NavigateLogin)
                 }
             } ?: run {
                 pushState(Loading)
                 clearAccessTokenUseCase()
                 routeTo(NavigateLogin)
             }
-        }
-    }
-
-    private fun onLoadAthlete() {
-        pushState(Loading)
-        viewModelScope.launch {
-            /*
-            accessToken = event.accessToken
-            when (val response = getAthleteAndInsertUseCase(event.athleteId, event.accessToken)) {
-                is Success -> {
-                    response.data.let {
-                        athlete.value = it
-                       pushState(Standby(it.fullName, it.profilePictureLarge))
-                    }
-                }
-                is Error -> {
-                    // Todo, add logic re: parsing exception into error message
-                    pushState(LoadError("An error occurred."))
-                }
-            }
-
-             */
         }
     }
 }

@@ -1,12 +1,11 @@
 package com.company.activityart.presentation.welcome_screen
 
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.common.LoadingComposable
 import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Loading
@@ -33,7 +32,7 @@ fun WelcomeScreen(
             attachRouter(router)
             viewState.collectAsState().value?.let {
                 when (it) {
-                    is Loading -> LoadingComposable()
+                    is Loading -> CircularProgressIndicator()
                     is Standby -> WelcomeScreenStandby(
                         state = it,
                         eventReceiver = viewModel
@@ -44,13 +43,3 @@ fun WelcomeScreen(
         }
     }
 }
-/*
-when (it) {
-
-    is Launch -> WelcomeScreenLaunchState(athleteId, accessToken, viewModel)
-    is LoadError -> WelcomeScreenLoadError(viewModel, navController)
-    is Loading -> LoadingComposable()
-    is Standby -> WelcomeScreenStandbyState(it, viewModel, navController)
-}
-
- */

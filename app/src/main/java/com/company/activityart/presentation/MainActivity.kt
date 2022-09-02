@@ -5,28 +5,22 @@ import android.content.Intent.ACTION_VIEW
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
-import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
-import com.company.activityart.util.Screen.Login
-import com.company.activityart.util.Screen.Welcome
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.MainViewState.*
-import com.company.activityart.presentation.MainViewEvent.*
-import com.company.activityart.presentation.common.LoadingComposable
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
+import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
+import com.company.activityart.presentation.MainViewState.Authenticated
+import com.company.activityart.presentation.MainViewState.LoadingAuthentication
+import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.TokenConstants.authUri
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -92,7 +86,11 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     }
 
     private fun navigateLogin() {
-
+        navController.navigate(route = Login.route) {
+            popUpTo(route = Welcome.route + "/{athleteId}/{accessToken}") {
+                inclusive = true
+            }
+        }
     }
 
     private fun navigateMakeArt() {

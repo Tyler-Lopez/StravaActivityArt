@@ -8,7 +8,6 @@ sealed class WelcomeScreenViewEvent : ViewEvent {
     object ClickedAbout : WelcomeScreenViewEvent()
     object ClickedMakeArt : WelcomeScreenViewEvent()
     object ClickedLogout : WelcomeScreenViewEvent()
-    object LoadAthlete : WelcomeScreenViewEvent()
 }
 
 sealed class WelcomeScreenViewState : ViewState {
