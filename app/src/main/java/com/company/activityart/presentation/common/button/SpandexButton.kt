@@ -1,11 +1,16 @@
 package com.company.activityart.presentation.common.button
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
@@ -23,15 +28,7 @@ fun SpandexButton(
     val borderStrokeDp = dimensionResource(id = R.dimen.button_stroke_width)
 
     buttonStyle.apply {
-        OutlinedButton(
-            border = strokeColorEnabled?.let { sce ->
-                strokeColorDisabled?.let { scd ->
-                    BorderStroke(
-                        width = borderStrokeDp,
-                        color = if (enabled) sce else scd
-                    )
-                }
-            },
+        Button(
             onClick = onClick,
             shape = RoundedCornerShape(cornerRadiusDp),
             colors = ButtonDefaults.outlinedButtonColors(
@@ -45,7 +42,8 @@ fun SpandexButton(
                 .defaultMinSize(
                     minWidth = Dp.Unspecified,
                     minHeight = size.getMinHeight()
-                ),
+                )
+                .indication(remember { MutableInteractionSource() }, rememberRipple(color = Color.Black)),
             enabled = enabled
         ) {
             text?.let {
