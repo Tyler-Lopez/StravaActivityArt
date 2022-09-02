@@ -2,16 +2,16 @@ package com.company.activityart.presentation.welcome_screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.common.LoadingComposable
-import com.company.activityart.presentation.login_screen.LoginScreenStandbyState
-import com.company.activityart.presentation.login_screen.LoginScreenViewState
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.*
+import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.ui.theme.spacing
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Loading
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Standby
+import com.company.activityart.presentation.welcome_screen.composables.WelcomeScreenStandby
 
 
 /*
@@ -28,12 +28,18 @@ fun WelcomeScreen(
     router: Router<MainDestination>,
     viewModel: WelcomeScreenViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        attachRouter(router)
-        viewState.collectAsState().value?.let {
-            when (it) {
-                is Loading -> LoadingComposable()
-                else -> {}
+    ScreenBackground(spacedBy = spacing.medium) {
+        viewModel.apply {
+            attachRouter(router)
+            viewState.collectAsState().value?.let {
+                when (it) {
+                    is Loading -> LoadingComposable()
+                    is Standby -> WelcomeScreenStandby(
+                        state = it,
+                        eventReceiver = viewModel
+                    )
+                    else -> {}
+                }
             }
         }
     }

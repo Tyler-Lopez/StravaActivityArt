@@ -35,6 +35,13 @@ val Typography = Typography(
         lineHeight = 34.sp,
         color = LightTextPrimary
     ),
+    h2 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 28.sp,
+        color = LightTextPrimary
+    ),
     subtitle1 = TextStyle(
         fontFamily = FontFamily.Default,
         fontSize = 15.sp,

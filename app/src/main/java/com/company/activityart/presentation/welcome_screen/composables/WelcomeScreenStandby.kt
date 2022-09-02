@@ -2,78 +2,77 @@ package com.company.activityart.presentation.welcome_screen.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import coil.compose.rememberAsyncImagePainter
+import com.company.activityart.R
 import com.company.activityart.architecture.ViewEventListener
-import com.company.activityart.presentation.common.AppVersionNameComposable
-import com.company.activityart.presentation.common.ButtonComposable
-import com.company.activityart.presentation.ui.theme.Coal
-import com.company.activityart.presentation.ui.theme.MaisonNeue
-import com.company.activityart.presentation.ui.theme.Silver
+import com.company.activityart.presentation.common.button.ButtonSize.*
+import com.company.activityart.presentation.common.button.HighEmphasisButton
+import com.company.activityart.presentation.common.type.Subhead
+import com.company.activityart.presentation.common.type.TitleTwo
 import com.company.activityart.presentation.ui.theme.StravaOrange
+import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
 
 
 @Composable
-fun WelcomeScreenStandbyState(
+fun WelcomeScreenStandby(
     state: WelcomeScreenViewState.Standby,
     eventReceiver: ViewEventListener<WelcomeScreenViewEvent>,
-    navController: NavController
 ) {
+    val profilePictureSize = dimensionResource(id = R.dimen.profile_picture_size)
+    val strokeWidth = dimensionResource(id = R.dimen.rounded_picture_stroke_width)
+    val buttonMinWidth = dimensionResource(id = R.dimen.button_min_width)
+
     Image(
         painter = rememberAsyncImagePainter(state.athleteImageUrl),
-        contentDescription = null,
+        contentDescription = stringResource(id = R.string.profile_picture_cd),
         modifier = Modifier
-            .size(156.dp)
+            .size(profilePictureSize)
             .clip(CircleShape)
-            .border(width = 8.dp, color = StravaOrange, shape = CircleShape)
+            .border(
+                width = strokeWidth,
+                color = StravaOrange,
+                shape = CircleShape
+            )
     )
-    AppVersionNameComposable()
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Silver,
+    Column(
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = spacedBy(spacing.small)
     ) {
-        Text(
-            text = state.athleteName,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            fontFamily = MaisonNeue,
-            color = Coal,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
+        Subhead(text = stringResource(id = R.string.app_name))
+        TitleTwo(text = state.athleteName)
     }
-
     eventReceiver.apply {
-        ButtonComposable(
-            text = "Make Art",
-            modifier = Modifier.fillMaxWidth()
-        ) { onEvent(WelcomeScreenViewEvent.ClickedMakeArt) }
-
-        ButtonComposable(
-            text = "About",
-            modifier = Modifier.fillMaxWidth()
-        ) { onEvent(WelcomeScreenViewEvent.ClickedAbout) }
-
-        ButtonComposable(
-            text = "Logout",
-            modifier = Modifier.fillMaxWidth()
-        ) { onEvent(WelcomeScreenViewEvent.ClickedLogout) }
+        HighEmphasisButton(
+            enabled = true,
+            size = LARGE,
+            text = stringResource(id = R.string.welcome_button_make_art),
+            modifier = Modifier.defaultMinSize(minWidth = buttonMinWidth)
+        ) { onEvent(ClickedMakeArt) }
+        HighEmphasisButton(
+            enabled = true,
+            size = LARGE,
+            text = stringResource(id = R.string.welcome_button_about),
+            modifier = Modifier.defaultMinSize(minWidth = buttonMinWidth)
+        ) { onEvent(ClickedAbout) }
+        HighEmphasisButton(
+            enabled = true,
+            size = LARGE,
+            text = stringResource(id = R.string.welcome_button_logout),
+            modifier = Modifier.defaultMinSize(minWidth = buttonMinWidth)
+        ) { onEvent(ClickedLogout) }
     }
 }

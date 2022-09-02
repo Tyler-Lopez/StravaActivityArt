@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.*
 import com.company.activityart.architecture.Router
+import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.login_screen.LoginScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.util.Screen
@@ -28,4 +29,5 @@ fun MainNavHost(
             WelcomeScreen(router)
         }
     }
+
 }

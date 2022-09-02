@@ -7,6 +7,7 @@ import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.models.fullName
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
@@ -21,17 +22,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WelcomeScreenViewModel @Inject constructor(
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val getAthleteAndInsertUseCase: GetAthleteUseCase
+    private val getAthleteUseCase: GetAthleteUseCase
 ) : BaseRoutingViewModel<WelcomeScreenViewState, WelcomeScreenViewEvent, MainDestination>() {
 
     init {
         pushState(Loading)
+        loadAthlete()
     }
 
+
     // Received Athlete
-    private var accessToken: String? = null
-    private val athlete = mutableStateOf<Athlete?>(null)
+    //  private var accessToken: String? = null
+    private var athlete = mutableStateOf<Athlete?>(null)
+
 
     override fun onEvent(event: WelcomeScreenViewEvent) {
         when (event) {
@@ -72,6 +77,35 @@ class WelcomeScreenViewModel @Inject constructor(
             }
 
              */
+        }
+    }
+
+    private fun loadAthlete() {
+        viewModelScope.launch {
+            val accessTokenResponse = getAccessTokenUseCase()
+            (accessTokenResponse as? Success)?.let {
+                val athleteResponse = getAthleteUseCase(
+                    it.data.athleteId,
+                    it.data.accessToken
+                )
+                (athleteResponse as? Success)?.let {
+                    athlete.value = it.data
+                    pushState(
+                        Standby(
+                            athleteName = it.data.fullName,
+                            athleteImageUrl = it.data.profilePictureLarge
+                        )
+                    )
+                } ?: run {
+                    pushState(Loading)
+                    clearAccessTokenUseCase()
+                    routeTo(NavigateLogin)
+                }
+            } ?: run {
+                pushState(Loading)
+                clearAccessTokenUseCase()
+                routeTo(NavigateLogin)
+            }
         }
     }
 

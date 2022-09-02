@@ -32,6 +32,9 @@ class MainViewModel @Inject constructor(
         pushState(LoadingAuthentication)
     }
 
+    var athleteId: Long? = null
+    var accessToken: String? = null
+
     override fun onEvent(event: MainViewEvent) {
         when (event) {
             is LoadAuthentication -> onLoadAuthentication(event)
@@ -40,8 +43,12 @@ class MainViewModel @Inject constructor(
 
     private fun onLoadAuthentication(event: LoadAuthentication) {
         viewModelScope.launch {
-            pushState(when (getAccessTokenUseCase(event.uri)) {
-                is Success -> Authenticated
+            pushState(when (val response = getAccessTokenUseCase(event.uri)) {
+                is Success -> {
+                    athleteId = response.data.athleteId
+                    accessToken = response.data.accessToken
+                    Authenticated
+                }
                 is Error -> Unauthenticated
             })
         }

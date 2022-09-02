@@ -3,4 +3,13 @@
     <!-- Content description for the button which connects this app with the
     athletes Strava account when clicked -->
     <string name="connect_with_strava_button_cd">Connect with Strava</string>
+    <!-- Content description for the athlete's profile picture -->
+    <string name="profile_picture_cd">Profile Picture</string>
+
+    <!-- Text shown on a button which directs athlete to being making activity art -->
+    <string name="welcome_button_make_art">Make Art</string>
+    <!-- Text shown on a button which directs athlete to information about app -->
+    <string name="welcome_button_about">About</string>
+    <!-- Text shown on a button which directs athletes to logout -->
+    <string name="welcome_button_logout">Logout</string>
 </resources>
