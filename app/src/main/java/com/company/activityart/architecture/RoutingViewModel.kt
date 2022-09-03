@@ -21,6 +21,13 @@ interface RoutingViewModel<
     override fun onEvent(event: TypeOfViewEvent)
 
     /**
+     * Invoked by the View wishing to transmit a debounced ViewEvent to this ViewModel.
+     * This is useful for events that should only occur once in a short period of time
+     * and where, for example, rapidly clicking a button might open undesirable screens.
+     */
+    override fun onEventDebounced(event: TypeOfViewEvent)
+
+    /**
      * Pushes the given ViewState to the StateFlow which the view is observing.
      */
     fun pushState(state: TypeOfViewState)

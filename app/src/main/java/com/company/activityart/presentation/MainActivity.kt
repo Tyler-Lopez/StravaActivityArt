@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateAbout -> navigateAbout()
             is NavigateLogin -> navigateLogin()
             is NavigateMakeArt -> {}
+            is NavigateUp -> navigateUp()
         }
     }
 
@@ -95,6 +96,10 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateMakeArt() {
 
+    }
+
+    private fun navigateUp() {
+        navController.navigateUp()
     }
 }
 /*

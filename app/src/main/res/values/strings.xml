@@ -5,6 +5,8 @@
     <string name="connect_with_strava_button_cd">Connect with Strava</string>
     <!-- Content description for the athlete's profile picture -->
     <string name="profile_picture_cd">Profile Picture</string>
+    <!-- Content description for the button that navigates to previous screen -->
+    <string name="navigate_up_cd">Navigate Up</string>
 
     <!-- Text shown on a button which directs athlete to being making activity art -->
     <string name="welcome_button_make_art">Make Art</string>
@@ -12,4 +14,22 @@
     <string name="welcome_button_about">About</string>
     <!-- Text shown on a button which directs athletes to logout -->
     <string name="welcome_button_logout">Logout</string>
+
+    <!-- Text shown on action bar for the page which shows app information -->
+    <string name="action_bar_about_header">About</string>
+
+    <!-- Content shown on the about screen describing the app -->
+    <string-array name="about_screen_content">
+        <item>
+        This app lets athletes create digital pictures of their Strava activities at a very high resolution appropriate for printing and framing.
+        </item>
+        <item>
+        As an athlete might have thousands of activities, they can choose which to make art from based on the activity date, type, gear, and distance.
+        </item>
+        <item>
+        Activity Art is still in development; please send suggestions or any bugs found to bunsendevelopment@gmail.com
+        </item>
+    </string-array>
+
+
 </resources>

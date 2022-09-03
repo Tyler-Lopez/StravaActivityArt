@@ -7,14 +7,12 @@ import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.models.fullName
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.*
-import com.company.activityart.util.Resource.Error
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Loading
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Standby
 import com.company.activityart.util.Resource.Success
-import com.company.activityart.util.Screen.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +20,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WelcomeScreenViewModel @Inject constructor(
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
     private val getAthleteUseCase: GetAthleteUseCase
 ) : BaseRoutingViewModel<WelcomeScreenViewState, WelcomeScreenViewEvent, MainDestination>() {
@@ -68,34 +65,20 @@ class WelcomeScreenViewModel @Inject constructor(
             pushState(Loading)
             clearAccessTokenUseCase()
             routeTo(NavigateLogin)
-            /*
-            event.navController.navigate(route = Login.route) {
-                popUpTo(route = Welcome.route + "/{athleteId}/{accessToken}") {
-                    inclusive = true
-                }
-            }
-
-             */
         }
     }
 
     private fun loadAthlete() {
         viewModelScope.launch {
-            val accessTokenResponse = getAccessTokenUseCase()
-            (accessTokenResponse as? Success)?.let {
-                val athleteResponse = getAthleteUseCase(
-                    it.data.athleteId,
-                    it.data.accessToken
-                )
-                (athleteResponse as? Success)?.let {
-                    athlete.value = it.data
-                    pushState(
-                        Standby(
-                            athleteName = it.data.fullName,
-                            athleteImageUrl = it.data.profilePictureLarge
-                        )
+            val athleteResponse = getAthleteUseCase()
+            (athleteResponse as? Success)?.let {
+                athlete.value = it.data
+                pushState(
+                    Standby(
+                        athleteName = it.data.fullName,
+                        athleteImageUrl = it.data.profilePictureLarge
                     )
-                }
+                )
             } ?: run {
                 pushState(Loading)
                 clearAccessTokenUseCase()

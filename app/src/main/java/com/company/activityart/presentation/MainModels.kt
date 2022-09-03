@@ -21,4 +21,5 @@ sealed class MainDestination : Destination {
     object NavigateAbout : MainDestination()
     object NavigateLogin : MainDestination()
     object NavigateMakeArt : MainDestination()
+    object NavigateUp : MainDestination()
 }

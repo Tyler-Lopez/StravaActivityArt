@@ -11,6 +11,7 @@ import com.company.activityart.domain.use_case.athlete.GetAthleteFromRemoteUseCa
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.athlete.InsertAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.domain.use_case.get_activities.GetActivitiesUseCase
 import com.company.activityart.domain.use_case.get_gear.GetGearFromApiUseCase
 import com.company.activityart.domain.use_case.insert_activities.InsertActivitiesUseCase
@@ -49,11 +50,13 @@ object AppModule {
 
     @Provides
     fun providesGetAthleteUseCase(
+        getAccessTokenUseCase: GetAccessTokenUseCase,
         getAthleteFromLocalUseCase: GetAthleteFromLocalUseCase,
         getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase,
         insertAthleteUseCase: InsertAthleteUseCase,
     ): GetAthleteUseCase =
         GetAthleteUseCase(
+            getAccessTokenUseCase,
             getAthleteFromLocalUseCase,
             getAthleteFromRemoteUseCase,
             insertAthleteUseCase
