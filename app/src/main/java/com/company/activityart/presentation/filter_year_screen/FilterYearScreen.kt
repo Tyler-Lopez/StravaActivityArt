@@ -11,6 +11,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.company.activityart.architecture.Router
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.util.Screen
 import com.company.activityart.presentation.common.*
 import com.company.activityart.presentation.filter_year_screen.TimeSelectScreenState.*
@@ -31,7 +33,7 @@ import com.company.activityart.presentation.ui.theme.Icicle
 fun FilterYearScreen(
     athleteId: Long,
     accessToken: String,
-    navController: NavHostController,
+    router: Router<MainDestination>,
     viewModel: TimeSelectViewModel = hiltViewModel()
 ) {
 

@@ -9,7 +9,7 @@
     <dimen name="button_height">48dp</dimen>
 
     <dimen name="button_corner_radius">4dp</dimen>
-    <dimen name="button_stroke_width">2dp</dimen>
+    <dimen name="button_stroke_width">1dp</dimen>
     <dimen name="button_height_large">48dp</dimen>
     <dimen name="button_height_medium">40dp</dimen>
     <dimen name="button_height_small">32dp</dimen>
@@ -22,7 +22,7 @@
 
     <dimen name="button_min_width">164dp</dimen>
     <dimen name="profile_picture_size">64dp</dimen>
-    <dimen name="rounded_picture_stroke_width">2dp</dimen>
+    <dimen name="rounded_picture_stroke_width">1dp</dimen>
     <!-- 16dp is the default gutter value in the app -->
     <dimen name="one_gutter">16dp</dimen>
     <!-- 3dip is the default corner radius in the app. -->

@@ -18,7 +18,8 @@ import com.company.activityart.util.Constants
 fun AboutScreenStandby() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(spacing.small)
+        verticalArrangement = Arrangement.spacedBy(spacing.small),
+        modifier = Modifier.padding(top = spacing.medium)
     ) {
         Subhead(text = "${Constants.STAGE} ${Constants.VERSION}")
         TitleOne(text = Constants.APP_NAME)

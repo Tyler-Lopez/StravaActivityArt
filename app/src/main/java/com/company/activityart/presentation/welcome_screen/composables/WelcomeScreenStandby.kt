@@ -29,6 +29,7 @@ import com.company.activityart.R
 import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.common.button.ButtonSize.*
 import com.company.activityart.presentation.common.button.HighEmphasisButton
+import com.company.activityart.presentation.common.button.MediumEmphasisButton
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleTwo
 import com.company.activityart.presentation.ui.theme.Asphalt
@@ -51,7 +52,6 @@ fun WelcomeScreenStandby(
     @Px val profilePictureSizePx = LocalDensity.current.run {
         profilePictureSize.toPx().toInt()
     }
-
 
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
@@ -87,13 +87,13 @@ fun WelcomeScreenStandby(
             text = stringResource(id = R.string.welcome_button_make_art),
             modifier = Modifier.defaultMinSize(minWidth = buttonMinWidth)
         ) { onEventDebounced(ClickedMakeArt) }
-        HighEmphasisButton(
+        MediumEmphasisButton(
             enabled = true,
             size = LARGE,
             text = stringResource(id = R.string.welcome_button_about),
             modifier = Modifier.defaultMinSize(minWidth = buttonMinWidth)
         ) { onEventDebounced(ClickedAbout) }
-        HighEmphasisButton(
+        MediumEmphasisButton(
             enabled = true,
             size = LARGE,
             text = stringResource(id = R.string.welcome_button_logout),

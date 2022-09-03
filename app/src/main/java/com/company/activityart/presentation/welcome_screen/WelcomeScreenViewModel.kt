@@ -62,7 +62,6 @@ class WelcomeScreenViewModel @Inject constructor(
 
     private fun onClickedLogout() {
         viewModelScope.launch {
-            pushState(Loading)
             clearAccessTokenUseCase()
             routeTo(NavigateLogin)
         }
@@ -80,8 +79,6 @@ class WelcomeScreenViewModel @Inject constructor(
                     )
                 )
             } ?: run {
-                pushState(Loading)
-                clearAccessTokenUseCase()
                 routeTo(NavigateLogin)
             }
         }
