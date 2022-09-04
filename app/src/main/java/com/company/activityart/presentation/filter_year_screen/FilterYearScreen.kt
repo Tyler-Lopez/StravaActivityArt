@@ -33,15 +33,15 @@ fun FilterYearScreen(
     viewModel.apply {
         attachRouter(router)
         AppBarScaffold(
-            text = stringResource(R.string.action_bar_about_header),
+            text = stringResource(R.string.action_bar_filter_year_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
         ) {
             ScreenBackground(
                 spacedBy = spacing.medium,
                 verticalAlignment = Alignment.Top
             ) {
-                viewState.collectAsState().value?.let { state ->
-                    when (state) {
+                viewState.collectAsState().value?.apply {
+                    when (this) {
                         else -> {}
                     }
                 }

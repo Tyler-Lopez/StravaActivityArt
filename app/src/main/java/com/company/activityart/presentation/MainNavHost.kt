@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.*
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.about_screen.AboutScreen
+import com.company.activityart.presentation.filter_year_screen.FilterYearScreen
 import com.company.activityart.presentation.login_screen.LoginScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.util.Screen
@@ -31,6 +32,9 @@ fun MainNavHost(
         }
         swipingInOutComposable(route = Screen.About.route) {
             AboutScreen(router)
+        }
+        swipingInOutComposable(route = Screen.FilterYear.route) {
+            FilterYearScreen(router)
         }
     }
 

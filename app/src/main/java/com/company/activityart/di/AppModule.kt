@@ -54,12 +54,14 @@ object AppModule {
         getAthleteFromLocalUseCase: GetAthleteFromLocalUseCase,
         getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase,
         insertAthleteUseCase: InsertAthleteUseCase,
+        clearAccessTokenUseCase: ClearAccessTokenUseCase
     ): GetAthleteUseCase =
         GetAthleteUseCase(
             getAccessTokenUseCase,
             getAthleteFromLocalUseCase,
             getAthleteFromRemoteUseCase,
-            insertAthleteUseCase
+            insertAthleteUseCase,
+            clearAccessTokenUseCase
         )
 
     @Provides

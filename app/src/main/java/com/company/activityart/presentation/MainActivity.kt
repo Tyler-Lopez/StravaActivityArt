@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is ConnectWithStrava -> connectWithStrava()
             is NavigateAbout -> navigateAbout()
             is NavigateLogin -> navigateLogin()
-            is NavigateMakeArt -> {}
+            is NavigateMakeArt -> navigateMakeArt()
             is NavigateUp -> navigateUp()
         }
     }
@@ -88,14 +88,14 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateLogin() {
         navController.navigate(route = Login.route) {
-            popUpTo(route = Welcome.route + "/{athleteId}/{accessToken}") {
+            popUpTo(route = Welcome.route) {
                 inclusive = true
             }
         }
     }
 
     private fun navigateMakeArt() {
-
+        navController.navigate(route = FilterYear.route)
     }
 
     private fun navigateUp() {

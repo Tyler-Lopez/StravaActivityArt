@@ -17,7 +17,6 @@
 
     <!-- Text shown on action bar for the page which shows app information -->
     <string name="action_bar_about_header">About</string>
-
     <!-- Content shown on the about screen describing the app -->
     <string-array name="about_screen_content">
         <item>
@@ -30,6 +29,9 @@
         Activity Art is still in development; please send suggestions or any bugs found to bunsendevelopment@gmail.com
         </item>
     </string-array>
+
+    <!-- Text shown on action bar for the page which shows years for athlete to select -->
+    <string name="action_bar_filter_year_header">Select Years</string>
 
 
 </resources>

@@ -12,7 +12,6 @@ import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Loading
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Standby
-import com.company.activityart.util.Resource.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,15 +48,6 @@ class WelcomeScreenViewModel @Inject constructor(
 
     private fun onClickedMakeArt() {
         routeTo(NavigateMakeArt)
-        /*
-        event.navController.navigate(
-            FilterYear.withArgs(
-                (athlete.value?.athleteId).toString(),
-                accessToken ?: error("Access token was not found.")
-            )
-        )
-
-         */
     }
 
     private fun onClickedLogout() {
@@ -69,18 +59,19 @@ class WelcomeScreenViewModel @Inject constructor(
 
     private fun loadAthlete() {
         viewModelScope.launch {
-            val athleteResponse = getAthleteUseCase()
-            (athleteResponse as? Success)?.let {
-                athlete.value = it.data
-                pushState(
-                    Standby(
-                        athleteName = it.data.fullName,
-                        athleteImageUrl = it.data.profilePictureLarge
+            getAthleteUseCase()
+                .doOnSuccess {
+                    athlete.value = data
+                    pushState(
+                        Standby(
+                            athleteName = data.fullName,
+                            athleteImageUrl = data.profilePictureLarge
+                        )
                     )
-                )
-            } ?: run {
-                routeTo(NavigateLogin)
-            }
+                }
+                .doOnError {
+                    routeTo(NavigateLogin)
+                }
         }
     }
 }
