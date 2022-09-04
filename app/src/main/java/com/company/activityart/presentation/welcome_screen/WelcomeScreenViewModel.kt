@@ -1,9 +1,7 @@
 package com.company.activityart.presentation.welcome_screen
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
-import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.models.fullName
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
@@ -25,14 +23,7 @@ class WelcomeScreenViewModel @Inject constructor(
 
     init {
         pushState(Loading)
-        loadAthlete()
     }
-
-
-    // Received Athlete
-    //  private var accessToken: String? = null
-    private var athlete = mutableStateOf<Athlete?>(null)
-
 
     override fun onEvent(event: WelcomeScreenViewEvent) {
         when (event) {
@@ -57,11 +48,14 @@ class WelcomeScreenViewModel @Inject constructor(
         }
     }
 
+    override fun onRouterAttached() {
+        loadAthlete()
+    }
+
     private fun loadAthlete() {
         viewModelScope.launch {
             getAthleteUseCase()
                 .doOnSuccess {
-                    athlete.value = data
                     pushState(
                         Standby(
                             athleteName = data.fullName,
@@ -69,9 +63,7 @@ class WelcomeScreenViewModel @Inject constructor(
                         )
                     )
                 }
-                .doOnError {
-                    routeTo(NavigateLogin)
-                }
+                .doOnError { routeTo(NavigateLogin) }
         }
     }
 }

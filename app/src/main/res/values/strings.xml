@@ -33,5 +33,7 @@
     <!-- Text shown on action bar for the page which shows years for athlete to select -->
     <string name="action_bar_filter_year_header">Select Years</string>
 
+    <!-- Text shown on button which progresses to the next stage of making art when clicked -->
+    <string name="button_continue">Continue</string>
 
 </resources>

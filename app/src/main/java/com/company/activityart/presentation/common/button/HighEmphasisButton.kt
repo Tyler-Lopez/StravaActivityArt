@@ -20,10 +20,10 @@ import com.company.activityart.R
 
 @Composable
 fun HighEmphasisButton(
-    enabled: Boolean,
     size: ButtonSize,
     modifier: Modifier = Modifier,
     text: String? = null,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     val cornerRadiusDp = dimensionResource(id = R.dimen.button_corner_radius)

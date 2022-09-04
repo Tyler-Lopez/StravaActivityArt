@@ -27,4 +27,6 @@ class AboutScreenViewModel : BaseRoutingViewModel<
     private fun onNavigateUpClicked() {
         routeTo(NavigateUp)
     }
+
+    override fun onRouterAttached() {} // No-op
 }

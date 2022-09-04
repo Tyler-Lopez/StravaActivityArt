@@ -35,6 +35,8 @@ class MainViewModel @Inject constructor(
     var athleteId: Long? = null
     var accessToken: String? = null
 
+    override fun onRouterAttached() {} // No-op
+
     override fun onEvent(event: MainViewEvent) {
         when (event) {
             is LoadAuthentication -> onLoadAuthentication(event)

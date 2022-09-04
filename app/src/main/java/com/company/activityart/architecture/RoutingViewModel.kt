@@ -16,6 +16,12 @@ interface RoutingViewModel<
     fun attachRouter(router: Router<TypeOfDestination>)
 
     /**
+     * Invoked internally when a [Router] has been attached.
+     * Any functions which require a [Router] should be called no earlier than this.
+     */
+    fun onRouterAttached()
+
+    /**
      * Invoked by the View wishing to transmit a ViewEvent to this ViewModel.
      */
     override fun onEvent(event: TypeOfViewEvent)

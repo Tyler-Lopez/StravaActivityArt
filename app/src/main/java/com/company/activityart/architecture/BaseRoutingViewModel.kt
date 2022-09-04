@@ -26,6 +26,7 @@ abstract class BaseRoutingViewModel<
 
     final override fun attachRouter(router: Router<TypeOfDestination>) {
         this.router = router
+        onRouterAttached()
     }
 
     final override fun routeTo(destination: TypeOfDestination) {

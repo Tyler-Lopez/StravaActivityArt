@@ -12,10 +12,13 @@ import javax.inject.Inject
  * Use-case to receive the currently authenticated [Athlete] from either
  * local or remote repositories.
  *
- * If an athlete is fetched from the remote repository, they will be
- * inserted into the local repository for future access.
+ * Fetched athlete data will be inserted into the local repository as cache.
  *
- * @return The currently authenticated [Athlete].
+ * If an error occurs accessing the authentication repository, an [Error]
+ * will be returned and the existing authentication entry will be removed
+ * from the repository.
+ *
+ * @return The currently authenticated [Athlete], wrapped either as [Success] or [Error].
  */
 class GetAthleteUseCase @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,

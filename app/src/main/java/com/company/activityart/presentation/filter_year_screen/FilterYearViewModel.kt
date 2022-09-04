@@ -1,44 +1,63 @@
 package com.company.activityart.presentation.filter_year_screen
 
-import android.content.Context
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
-import com.company.activityart.data.entities.ActivityEntity
-import com.company.activityart.domain.use_case.ActivitiesUseCases
+import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
-import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.util.Constants
-import com.company.activityart.util.Resource.*
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
+import com.company.activityart.presentation.MainDestination.NavigateLogin
+import com.company.activityart.presentation.MainDestination.NavigateUp
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.ContinueClicked
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.NavigateUpClicked
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.Loading
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.Standby
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import java.util.*
-import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.*
 import javax.inject.Inject
 
 @HiltViewModel
-class FilterYearViewModel  @Inject constructor(
+class FilterYearViewModel @Inject constructor(
     private val getAthleteUseCase: GetAthleteUseCase
 ) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
 
+    init {
+        pushState(Loading)
+    }
+
     override fun onEvent(event: FilterYearViewEvent) {
         when (event) {
+            is ContinueClicked -> onContinueClicked()
             is NavigateUpClicked -> onNavigateUpClicked()
         }
     }
 
+    private fun onContinueClicked() {
+
+    }
+
     private fun onNavigateUpClicked() {
         routeTo(NavigateUp)
+    }
+
+    override fun onRouterAttached() {
+        loadAthlete()
+    }
+
+    private fun loadActivities() {
+    }
+
+    private fun loadAthlete() {
+        viewModelScope.launch {
+            getAthleteUseCase()
+                .doOnSuccess {
+                    pushState(
+                        Standby(
+                            selectedActivitiesCount = 10
+                        )
+                    )
+                }
+                .doOnError { routeTo(NavigateLogin) }
+        }
     }
 
     /*

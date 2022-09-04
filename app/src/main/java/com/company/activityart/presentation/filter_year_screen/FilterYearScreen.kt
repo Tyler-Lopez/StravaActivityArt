@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.filter_year_screen
 
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
@@ -7,11 +8,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.R
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.*
 import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.*
 import com.company.activityart.presentation.about_screen.AboutScreenViewState
 import com.company.activityart.presentation.about_screen.composables.AboutScreenStandby
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.filter_year_screen.composables.FilterYearScreenStandby
 import com.company.activityart.presentation.ui.theme.spacing
 
 /*
@@ -42,7 +45,8 @@ fun FilterYearScreen(
             ) {
                 viewState.collectAsState().value?.apply {
                     when (this) {
-                        else -> {}
+                        is Loading -> CircularProgressIndicator()
+                        is Standby -> FilterYearScreenStandby(eventReceiver = viewModel)
                     }
                 }
             }
