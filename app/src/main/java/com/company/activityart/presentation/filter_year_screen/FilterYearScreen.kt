@@ -1,22 +1,18 @@
 package com.company.activityart.presentation.filter_year_screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import com.company.activityart.R
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.util.Screen
-import com.company.activityart.presentation.common.*
-import com.company.activityart.presentation.filter_year_screen.TimeSelectScreenState.*
-import com.company.activityart.presentation.ui.theme.Icicle
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.*
+import com.company.activityart.presentation.about_screen.AboutScreenViewState
+import com.company.activityart.presentation.about_screen.composables.AboutScreenStandby
+import com.company.activityart.presentation.common.AppBarScaffold
+import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.ui.theme.spacing
 
 /*
 
@@ -31,80 +27,95 @@ import com.company.activityart.presentation.ui.theme.Icicle
 
 @Composable
 fun FilterYearScreen(
-    athleteId: Long,
-    accessToken: String,
     router: Router<MainDestination>,
-    viewModel: TimeSelectViewModel = hiltViewModel()
+    viewModel: FilterYearViewModel = hiltViewModel()
 ) {
-
-    /*
-    val screenState by remember { viewModel.timeSelectScreenState }
-    val context = LocalContext.current
-    val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
-
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Icicle),
-        contentAlignment = Alignment.Center
-    ) {
-        val maxHeight = this.maxHeight
-
-        ContainerColumn(maxWidth) {
-
-            when (screenState) {
-                LAUNCH -> SideEffect {
-                    viewModel.loadActivities(
-                        context = context,
-                        athleteId = athleteId,
-                        accessToken = accessToken
-                    )
-                }
-                LOADING, STANDBY, ERROR -> {
-
-                    HeaderWithEmphasisComposable(emphasized = "years")
-                    Table.TableComposable(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(0.dp, maxHeight * 0.6f),
-                        columns = viewModel.columns.toList(),
-                        rows = viewModel.rows.toList(),
-                        onSelectIndex = {
-                            viewModel.updateSelectedActivities(it)
-                        },
-                        selectionList = viewModel.selectedActivities,
-                    )
-
-                    if (screenState == LOADING)
-                        LoadingComposable()
-
-                    ActivitiesCountComposable(count = selectedActivitiesCount)
-                    ButtonWithCountComposable(activitiesEmpty = selectedActivitiesCount == 0) {
-                        navController.navigate(
-                            Screen.FilterMonth.withArgs(
-                                athleteId.toString(),
-                                accessToken,
-                                viewModel.selectedYearsNavArgs()
-                            )
-                        )
-                    }
-
-                    // If there is an error, allow user to try to load activities again
-                    if (screenState == ERROR) {
-                        Button(onClick = {
-                            viewModel.loadActivities(
-                                context = context,
-                                athleteId = athleteId,
-                                accessToken = accessToken
-                            )
-                        }) {
-                            Text("ERROR")
-                        }
+    viewModel.apply {
+        attachRouter(router)
+        AppBarScaffold(
+            text = stringResource(R.string.action_bar_about_header),
+            onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
+        ) {
+            ScreenBackground(
+                spacedBy = spacing.medium,
+                verticalAlignment = Alignment.Top
+            ) {
+                viewState.collectAsState().value?.let { state ->
+                    when (state) {
+                        else -> {}
                     }
                 }
             }
         }
     }
-
-     */
 }
+/*
+val screenState by remember { viewModel.timeSelectScreenState }
+val context = LocalContext.current
+val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
+
+BoxWithConstraints(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(Icicle),
+    contentAlignment = Alignment.Center
+) {
+    val maxHeight = this.maxHeight
+
+    ContainerColumn(maxWidth) {
+
+        when (screenState) {
+            LAUNCH -> SideEffect {
+                viewModel.loadActivities(
+                    context = context,
+                    athleteId = athleteId,
+                    accessToken = accessToken
+                )
+            }
+            LOADING, STANDBY, ERROR -> {
+
+                HeaderWithEmphasisComposable(emphasized = "years")
+                Table.TableComposable(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(0.dp, maxHeight * 0.6f),
+                    columns = viewModel.columns.toList(),
+                    rows = viewModel.rows.toList(),
+                    onSelectIndex = {
+                        viewModel.updateSelectedActivities(it)
+                    },
+                    selectionList = viewModel.selectedActivities,
+                )
+
+                if (screenState == LOADING)
+                    LoadingComposable()
+
+                ActivitiesCountComposable(count = selectedActivitiesCount)
+                ButtonWithCountComposable(activitiesEmpty = selectedActivitiesCount == 0) {
+                    navController.navigate(
+                        Screen.FilterMonth.withArgs(
+                            athleteId.toString(),
+                            accessToken,
+                            viewModel.selectedYearsNavArgs()
+                        )
+                    )
+                }
+
+                // If there is an error, allow user to try to load activities again
+                if (screenState == ERROR) {
+                    Button(onClick = {
+                        viewModel.loadActivities(
+                            context = context,
+                            athleteId = athleteId,
+                            accessToken = accessToken
+                        )
+                    }) {
+                        Text("ERROR")
+                    }
+                }
+            }
+        }
+    }
+}
+
+ */

@@ -6,25 +6,42 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.domain.use_case.ActivitiesUseCases
+import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
+import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.presentation.MainDestination
 import com.company.activityart.util.Constants
 import com.company.activityart.util.Resource.*
-import com.company.activityart.presentation.filter_year_screen.TimeSelectScreenState.*
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.util.*
+import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.*
 import javax.inject.Inject
 
 @HiltViewModel
-class TimeSelectViewModel @Inject constructor(
-   // athleteUseCases: AthleteUseCases,
-   // activitiesUseCases: ActivitiesUseCases
-) : ViewModel() {
-/*
+class FilterYearViewModel  @Inject constructor(
+    private val getAthleteUseCase: GetAthleteUseCase
+) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
+
+    override fun onEvent(event: FilterYearViewEvent) {
+        when (event) {
+            is NavigateUpClicked -> onNavigateUpClicked()
+        }
+    }
+
+    private fun onNavigateUpClicked() {
+        routeTo(NavigateUp)
+    }
+
+    /*
     // Use cases
     private val getActivitiesUseCase = activitiesUseCases.getActivitiesUseCase
     private val insertActivitiesUseCase = activitiesUseCases.insertActivitiesUseCase

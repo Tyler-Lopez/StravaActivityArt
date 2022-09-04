@@ -30,11 +30,12 @@ fun WelcomeScreen(
     ScreenBackground(spacedBy = spacing.medium) {
         viewModel.apply {
             attachRouter(router)
-            viewState.collectAsState().value?.let {
-                when (it) {
+            viewState.collectAsState().value?.apply {
+                when (this) {
                     is Loading -> CircularProgressIndicator()
                     is Standby -> WelcomeScreenStandby(
-                        state = it,
+                        athleteImageUrl = athleteImageUrl,
+                        athleteName = athleteName,
                         eventReceiver = viewModel
                     )
                     else -> {}
