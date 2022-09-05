@@ -27,13 +27,11 @@ fun LoginScreen(
     router: Router<MainDestination>,
     viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(router) { viewModel.attachRouter(router) }
     ScreenBackground {
-        viewModel.apply {
-            attachRouter(router)
-            viewState.collectAsState().value?.let {
-                when (it) {
-                    is Standby -> LoginScreenStandby(this)
-                }
+        viewModel.viewState.collectAsState().value?.apply {
+            when (this) {
+                is Standby -> LoginScreenStandby(viewModel)
             }
         }
     }

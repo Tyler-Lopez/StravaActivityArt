@@ -1,6 +1,7 @@
 package com.company.activityart.presentation.about_screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.res.stringResource
@@ -20,20 +21,18 @@ fun AboutScreen(
     router: Router<MainDestination>,
     viewModel: AboutScreenViewModel = viewModel()
 ) {
-    viewModel.apply {
-        attachRouter(router)
-        AppBarScaffold(
-            text = stringResource(R.string.action_bar_about_header),
-            onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
+    LaunchedEffect(router) { viewModel.attachRouter(router) }
+    AppBarScaffold(
+        text = stringResource(R.string.action_bar_about_header),
+        onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
+    ) {
+        ScreenBackground(
+            spacedBy = spacing.medium,
+            verticalAlignment = Top
         ) {
-            ScreenBackground(
-                spacedBy = spacing.medium,
-                verticalAlignment = Top
-            ) {
-                viewState.collectAsState().value?.let {
-                    when (it) {
-                        is Standby -> AboutScreenStandby()
-                    }
+            viewModel.viewState.collectAsState().value?.apply {
+                when (this) {
+                    is Standby -> AboutScreenStandby()
                 }
             }
         }

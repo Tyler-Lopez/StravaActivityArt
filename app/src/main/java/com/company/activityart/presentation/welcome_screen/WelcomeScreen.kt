@@ -28,21 +28,17 @@ fun WelcomeScreen(
     router: Router<MainDestination>,
     viewModel: WelcomeScreenViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(router) { viewModel.attachRouter(router) }
     ScreenBackground(spacedBy = spacing.medium) {
-        viewModel.apply {
-            LaunchedEffect(key1 = router, block = {
-                attachRouter(router)
-            })
-            viewState.collectAsState().value?.apply {
-                when (this) {
-                    is Loading -> CircularProgressIndicator()
-                    is Standby -> WelcomeScreenStandby(
-                        athleteImageUrl = athleteImageUrl,
-                        athleteName = athleteName,
-                        eventReceiver = viewModel
-                    )
-                    else -> {}
-                }
+        viewModel.viewState.collectAsState().value?.apply {
+            when (this) {
+                is Loading -> CircularProgressIndicator()
+                is Standby -> WelcomeScreenStandby(
+                    athleteImageUrl = athleteImageUrl,
+                    athleteName = athleteName,
+                    eventReceiver = viewModel
+                )
+                else -> {}
             }
         }
     }

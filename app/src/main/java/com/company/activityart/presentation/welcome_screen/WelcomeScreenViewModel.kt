@@ -19,12 +19,10 @@ import javax.inject.Inject
 @HiltViewModel
 class WelcomeScreenViewModel @Inject constructor(
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val getAthleteUseCase: GetAthleteUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val getAthleteUseCase: GetAthleteUseCase
 ) : BaseRoutingViewModel<WelcomeScreenViewState, WelcomeScreenViewEvent, MainDestination>() {
 
     init {
-        savedStateHandle.
         pushState(Loading)
     }
 

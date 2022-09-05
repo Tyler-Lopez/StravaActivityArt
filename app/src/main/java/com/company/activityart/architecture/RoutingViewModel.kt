@@ -12,6 +12,9 @@ interface RoutingViewModel<
 
     /**
      * Provides a [Router] for the [RoutingViewModel] to [routeTo]]
+     * TODO
+     * Ideally, this should be provided to the ViewModel on init,
+     * but Hilt does not support AssistedInject.
      */
     fun attachRouter(router: Router<TypeOfDestination>)
 
