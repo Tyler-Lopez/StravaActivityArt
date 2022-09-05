@@ -2,6 +2,7 @@ package com.company.activityart.presentation.welcome_screen
 
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.architecture.Router
@@ -29,7 +30,9 @@ fun WelcomeScreen(
 ) {
     ScreenBackground(spacedBy = spacing.medium) {
         viewModel.apply {
-            attachRouter(router)
+            LaunchedEffect(key1 = router, block = {
+                attachRouter(router)
+            })
             viewState.collectAsState().value?.apply {
                 when (this) {
                     is Loading -> CircularProgressIndicator()

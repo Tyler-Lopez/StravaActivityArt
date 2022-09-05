@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.welcome_screen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.fullName
@@ -18,10 +19,12 @@ import javax.inject.Inject
 @HiltViewModel
 class WelcomeScreenViewModel @Inject constructor(
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val getAthleteUseCase: GetAthleteUseCase
+    private val getAthleteUseCase: GetAthleteUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseRoutingViewModel<WelcomeScreenViewState, WelcomeScreenViewEvent, MainDestination>() {
 
     init {
+        savedStateHandle.
         pushState(Loading)
     }
 
