@@ -18,10 +18,14 @@ import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
 import com.company.activityart.presentation.MainViewState.Authenticated
 import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
+import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewModel
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -30,6 +34,12 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     lateinit var navController: NavHostController
+
+    @EntryPoint
+    @InstallIn(ActivityComponent::class)
+    interface ViewModelFactoryProvider {
+        fun welcomeScreenViewModelFactory(): WelcomeScreenViewModel.Factory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Push event to ViewModel to determine authentication
