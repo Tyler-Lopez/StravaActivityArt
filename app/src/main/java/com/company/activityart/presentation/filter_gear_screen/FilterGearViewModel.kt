@@ -1,24 +1,7 @@
 package com.company.activityart.presentation.filter_gear_screen
 
-import android.content.Context
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.company.activityart.util.Screen
-import com.company.activityart.data.entities.ActivityEntity
-import com.company.activityart.domain.use_case.ActivitiesUseCases
-import com.company.activityart.domain.use_case.GearUseCases
-import com.company.activityart.util.NavigationUtils
-import com.company.activityart.util.Resource
-import com.company.activityart.util.ScreenState
-import com.company.activityart.util.ScreenState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 

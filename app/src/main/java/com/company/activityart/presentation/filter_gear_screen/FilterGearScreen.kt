@@ -1,17 +1,8 @@
 package com.company.activityart.presentation.filter_gear_screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.company.activityart.presentation.common.*
-import com.company.activityart.presentation.ui.theme.Icicle
-import com.company.activityart.util.ScreenState.*
 
 @Composable
 fun FilterGearScreen(

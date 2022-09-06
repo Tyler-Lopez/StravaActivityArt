@@ -1,7 +1,6 @@
 package com.company.activityart.util
 
 import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 

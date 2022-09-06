@@ -1,13 +1,13 @@
 package com.company.activityart.presentation.login_screen
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.MainViewEvent.*
 import com.company.activityart.presentation.common.ScreenBackground
-import com.company.activityart.presentation.login_screen.LoginScreenViewState.*
+import com.company.activityart.presentation.login_screen.LoginScreenViewState.Standby
 import com.company.activityart.presentation.login_screen.composables.LoginScreenStandby
 
 

@@ -1,6 +1,9 @@
 package com.company.activityart.util
 
-// https://youtu.be/aaChg9aJDW4?t=881
+/**
+ * Wrapper class around a [TypeOfData] which is used when that data is retrieved
+ * from a repository which may either be successful, [Success], or error, [Error].
+ */
 sealed class Resource<TypeOfData>(open val data: TypeOfData? = null) {
 
     data class Success<TypeOfData>(override val data: TypeOfData) : Resource<TypeOfData>(data)

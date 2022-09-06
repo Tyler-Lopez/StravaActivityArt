@@ -34,13 +34,14 @@ class FilterYearViewModel @Inject constructor(
         pushState(Loading)
         println(athleteId)
         println(accessToken)
-        println("here")
     }
 
     override fun onEvent(event: FilterYearViewEvent) {
-        when (event) {
-            is ContinueClicked -> onContinueClicked()
-            is NavigateUpClicked -> onNavigateUpClicked()
+        viewModelScope.launch {
+            when (event) {
+                is ContinueClicked -> onContinueClicked()
+                is NavigateUpClicked -> onNavigateUpClicked()
+            }
         }
     }
 
@@ -53,7 +54,9 @@ class FilterYearViewModel @Inject constructor(
     }
 
     override fun onRouterAttached() {
-        //      loadAthlete()
+        viewModelScope.launch {
+            loadActivities()
+        }
     }
 
     private fun loadActivities() {
