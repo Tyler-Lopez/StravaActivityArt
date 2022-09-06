@@ -1,6 +1,6 @@
 package com.company.activityart.util
 
-import com.company.activityart.util.Constants.FIRST_YEAR
+import com.company.activityart.util.StringConstants.FIRST_YEAR
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset

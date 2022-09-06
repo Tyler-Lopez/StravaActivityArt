@@ -4,9 +4,11 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.architecture.Router
 import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.architecture.ViewStateSender
 import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
@@ -22,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getAccessTokenUseCase: GetAccessTokenUseCase
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
 ): BaseRoutingViewModel<
         MainViewState,
         MainViewEvent,

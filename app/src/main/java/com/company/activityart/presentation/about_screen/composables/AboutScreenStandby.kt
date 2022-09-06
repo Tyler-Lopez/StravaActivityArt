@@ -12,7 +12,7 @@ import com.company.activityart.presentation.common.type.Body
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.util.Constants
+import com.company.activityart.util.StringConstants
 
 @Composable
 fun AboutScreenStandby() {
@@ -21,8 +21,8 @@ fun AboutScreenStandby() {
         verticalArrangement = Arrangement.spacedBy(spacing.small),
         modifier = Modifier.padding(top = spacing.medium)
     ) {
-        Subhead(text = "${Constants.STAGE} ${Constants.VERSION}")
-        TitleOne(text = Constants.APP_NAME)
+        Subhead(text = "${StringConstants.STAGE} ${StringConstants.VERSION}")
+        TitleOne(text = StringConstants.APP_NAME)
     }
     stringArrayResource(id = R.array.about_screen_content).forEach {
         Body(text = it, modifier = Modifier.padding(horizontal = spacing.medium))

@@ -80,14 +80,14 @@ BoxWithConstraints(
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${Constants.STAGE.uppercase()} " + Constants.VERSION,
+                        text = "${StringConstants.STAGE.uppercase()} " + StringConstants.VERSION,
                         fontSize = 18.sp,
                         fontFamily = Lato,
                         color = Gravel,
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = Constants.APP_NAME,
+                        text = StringConstants.APP_NAME,
                         fontSize = 32.sp,
                         fontFamily = MaisonNeue,
                         color = Asphalt,

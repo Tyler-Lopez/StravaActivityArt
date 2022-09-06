@@ -43,7 +43,7 @@ class FilterMonthViewModel @Inject constructor(
     val columns =
         arrayOf(columnMonth, columnYear, columnNoActivities)
 
-    // Constants
+    // StringConstants
     private val defaultSelected = true
 
 

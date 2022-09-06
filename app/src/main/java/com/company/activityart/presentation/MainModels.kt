@@ -20,6 +20,9 @@ sealed class MainDestination : Destination {
     object ConnectWithStrava : MainDestination()
     object NavigateAbout : MainDestination()
     object NavigateLogin : MainDestination()
-    object NavigateMakeArt : MainDestination()
+    data class NavigateMakeArt(
+        val athleteId: Long,
+        val accessToken: String
+    ) : MainDestination()
     object NavigateUp : MainDestination()
 }

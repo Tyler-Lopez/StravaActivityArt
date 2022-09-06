@@ -44,7 +44,7 @@ class FilterTypeViewModel @Inject constructor(
     val rows: List<List<Pair<String, Boolean>>> = _rows
     val columns = arrayOf(columnType, columnNoActivities)
 
-    // Constants
+    // StringConstants
     private val defaultSelected = true
 
     // Keep track of what has occurred

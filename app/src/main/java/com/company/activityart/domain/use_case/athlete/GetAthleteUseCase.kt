@@ -21,27 +21,27 @@ import javax.inject.Inject
  * @return The currently authenticated [Athlete], wrapped either as [Success] or [Error].
  */
 class GetAthleteUseCase @Inject constructor(
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getAthleteFromLocalUseCase: GetAthleteFromLocalUseCase,
     private val getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase,
     private val insertAthleteUseCase: InsertAthleteUseCase,
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase
 ) {
-    suspend operator fun invoke(): Resource<Athlete> {
-        val accessTokenResponse = getAccessTokenUseCase()
-        return ((accessTokenResponse as? Success)?.data?.let { localAuth ->
-            getAthleteFromLocalUseCase(localAuth.athleteId).run {
-                when {
-                    this == null -> getAthleteFromRemoteUseCase(localAuth.accessToken)
-                    else -> Success(this)
-                }
-            }
-        } ?: Resource.Error(message = "Bad Auth")).also {
-            if (it is Success) {
-                insertAthleteUseCase(it.data)
-            } else {
-                clearAccessTokenUseCase()
+    suspend operator fun invoke(
+        athleteId: Long,
+        accessToken: String
+    ): Resource<Athlete> {
+        return getAthleteFromLocalUseCase(athleteId).run {
+            when {
+                this == null -> getAthleteFromRemoteUseCase(accessToken)
+                else -> Success(this)
             }
         }
+            .doOnSuccess {
+                insertAthleteUseCase(data)
+            }
+            .doOnError {
+                clearAccessTokenUseCase()
+            }
     }
 }
+

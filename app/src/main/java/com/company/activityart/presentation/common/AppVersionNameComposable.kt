@@ -14,14 +14,14 @@ fun AppVersionNameComposable() {
     ) {
         /*
         Text(
-            text = "${Constants.STAGE.uppercase()} " + Constants.VERSION,
+            text = "${StringConstants.STAGE.uppercase()} " + StringConstants.VERSION,
             fontSize = 18.sp,
             fontFamily = Lato,
             color = Gravel,
             textAlign = TextAlign.Center
         )
         Text(
-            text = Constants.APP_NAME,
+            text = StringConstants.APP_NAME,
             fontSize = 26.sp,
             fontFamily = Lato,
             color = Asphalt,

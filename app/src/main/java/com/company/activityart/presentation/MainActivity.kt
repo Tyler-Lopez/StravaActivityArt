@@ -18,14 +18,12 @@ import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
 import com.company.activityart.presentation.MainViewState.Authenticated
 import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewModel
+import com.company.activityart.util.NavArg
 import com.company.activityart.util.Screen.*
+import com.company.activityart.util.StringConstants.SSH_ROUTER_KEY
 import com.company.activityart.util.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -34,12 +32,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     lateinit var navController: NavHostController
-
-    @EntryPoint
-    @InstallIn(ActivityComponent::class)
-    interface ViewModelFactoryProvider {
-        fun welcomeScreenViewModelFactory(): WelcomeScreenViewModel.Factory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Push event to ViewModel to determine authentication
@@ -50,6 +42,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         setContent {
             AthleteApiArtTheme {
                 val viewModel: MainViewModel = hiltViewModel()
+
                 viewModel.apply {
                     splashScreen.setKeepOnScreenCondition {
                         viewState.value is LoadingAuthentication
@@ -59,12 +52,12 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     navController = rememberAnimatedNavController()
 
                     viewState.collectAsState().value?.let {
-                        val startScreen = if (it is Authenticated) Welcome else Login
+                        val startScreen = if (it is Authenticated) Welcome.route else Login.route
                         AthleteApiArtTheme {
                             MainNavHost(
                                 navController = navController,
-                                startScreen = startScreen,
-                                router = this@MainActivity
+                                startRoute = startScreen,
+                                router = this@MainActivity,
                             )
                         }
                     }
@@ -84,7 +77,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is ConnectWithStrava -> connectWithStrava()
             is NavigateAbout -> navigateAbout()
             is NavigateLogin -> navigateLogin()
-            is NavigateMakeArt -> navigateMakeArt()
+            is NavigateMakeArt -> navigateMakeArt(destination)
             is NavigateUp -> navigateUp()
         }
     }
@@ -106,8 +99,17 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         }
     }
 
-    private fun navigateMakeArt() {
-        navController.navigate(route = FilterYear.route)
+    private fun navigateMakeArt(destination: NavigateMakeArt) {
+        destination.apply {
+            navController.navigate(
+                route = FilterYear.withArgs(
+                    optionalArgs = arrayOf(
+                        NavArg.AthleteId.key to athleteId.toString(),
+                        NavArg.AccessToken.key to accessToken
+                    )
+                )
+            )
+        }
     }
 
     private fun navigateUp() {

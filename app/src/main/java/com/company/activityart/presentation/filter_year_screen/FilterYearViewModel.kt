@@ -1,7 +1,9 @@
 package com.company.activityart.presentation.filter_year_screen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.architecture.Router
 import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.presentation.MainDestination
@@ -11,17 +13,28 @@ import com.company.activityart.presentation.filter_year_screen.FilterYearViewEve
 import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.NavigateUpClicked
 import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.Loading
 import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.Standby
+import com.company.activityart.util.NavArg
+import com.company.activityart.util.ext.accessToken
+import com.company.activityart.util.ext.athleteId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FilterYearViewModel @Inject constructor(
-    private val getAthleteUseCase: GetAthleteUseCase
+    private val getAthleteUseCase: GetAthleteUseCase,
+    savedStateHandle: SavedStateHandle
 ) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
+
+
+    private val athleteId: Long = savedStateHandle.athleteId
+    private val accessToken: String = savedStateHandle.accessToken
 
     init {
         pushState(Loading)
+        println(athleteId)
+        println(accessToken)
+        println("here")
     }
 
     override fun onEvent(event: FilterYearViewEvent) {
@@ -40,24 +53,10 @@ class FilterYearViewModel @Inject constructor(
     }
 
     override fun onRouterAttached() {
-        loadAthlete()
+        //      loadAthlete()
     }
 
     private fun loadActivities() {
-    }
-
-    private fun loadAthlete() {
-        viewModelScope.launch {
-            getAthleteUseCase()
-                .doOnSuccess {
-                    pushState(
-                        Standby(
-                            selectedActivitiesCount = 10
-                        )
-                    )
-                }
-                .doOnError { routeTo(NavigateLogin) }
-        }
     }
 
     /*
@@ -84,7 +83,7 @@ class FilterYearViewModel @Inject constructor(
     private val _timeSelectScreenState = mutableStateOf(LAUNCH)
     val timeSelectScreenState: State<TimeSelectScreenState> = _timeSelectScreenState
 
-    // Constants
+    // StringConstants
     private val defaultSelected = false
 
     // Invoked upon LAUNCH
@@ -118,7 +117,7 @@ class FilterYearViewModel @Inject constructor(
             launch {
                 // Iterate through all years
                 val caches = mutableSetOf<Deferred<Pair<Int, Int>>>()
-                for (year in Constants.FIRST_YEAR..currentYear) {
+                for (year in StringConstants.FIRST_YEAR..currentYear) {
                     val cache = async {
                         // Get last cached month of this year
                         val lastCachedMonth = athlete.lastCachedMonth(year)
@@ -239,7 +238,7 @@ class FilterYearViewModel @Inject constructor(
         buildString {
             _rows.forEachIndexed { index, fields ->
                 if (selectedActivities[index])
-                    append(fields[0].first).append(Constants.NAV_DELIMITER)
+                    append(fields[0].first).append(StringConstants.NAV_DELIMITER)
             }
         }
 

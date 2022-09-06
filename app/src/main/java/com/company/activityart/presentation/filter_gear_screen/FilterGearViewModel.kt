@@ -56,7 +56,7 @@ class FilterGearViewModel @Inject constructor(
     // Correlate gearIds with gear names
     private lateinit var gearsIdMap: MutableMap<String, String>
 
-    // Constants
+    // StringConstants
     private val defaultSelected = true
 
     // Keep track of what has occurred

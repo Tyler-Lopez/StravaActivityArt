@@ -1,8 +1,24 @@
 package com.company.activityart.util
 
-sealed class Screen(
-    val route: String
-) {
+import androidx.navigation.NavType
+import androidx.navigation.NavType.Companion.StringType
+import androidx.navigation.navArgument
+
+sealed class Screen(val route: String) {
+
+    companion object {
+        private const val ATHLETE_ID_ARG = "athleteId"
+        private const val ACCESS_TOKEN_ARG = "accessToken"
+        const val ATHLETE_ACCESS_ARGS =
+            "?$ATHLETE_ID_ARG={$ATHLETE_ID_ARG}&$ACCESS_TOKEN_ARG={$ACCESS_TOKEN_ARG}"
+
+        val ATHLETE_ID_NAV_ARG = navArgument(
+            name = ATHLETE_ID_ARG
+        ) {
+            type = StringType
+        }
+    }
+
     object Login : Screen("Login")
     object Welcome : Screen("Welcome")
     object About : Screen("About")
@@ -13,13 +29,10 @@ sealed class Screen(
     object FilterDistance : Screen("FilterDistance")
     object VisualizeActivities : Screen("VisualizeActivities")
 
-    fun withArgs(vararg args: String, optionalArgs: Array<Pair<String, String>>? = null): String {
+    fun withArgs(args: Array<Pair<String, String>>? = null): String {
         return buildString {
             append(route)
-            args.filter { it.isNotEmpty() }.forEach { arg ->
-                append("/$arg")
-            }
-            optionalArgs?.forEachIndexed { index, pair ->
+            args?.forEachIndexed { index, pair ->
                 append(if (index == 0) '?' else '&')
                     .append(pair.first)
                     .append('=')

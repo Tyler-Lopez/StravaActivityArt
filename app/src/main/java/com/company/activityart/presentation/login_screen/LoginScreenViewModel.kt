@@ -1,6 +1,7 @@
 package com.company.activityart.presentation.login_screen
 
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.ConnectWithStrava
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.ConnectWithStravaClicked
@@ -14,6 +15,8 @@ class LoginScreenViewModel @Inject constructor() : BaseRoutingViewModel<
         LoginScreenViewEvent,
         MainDestination
         >() {
+
+
 
     init {
         pushState(Standby)

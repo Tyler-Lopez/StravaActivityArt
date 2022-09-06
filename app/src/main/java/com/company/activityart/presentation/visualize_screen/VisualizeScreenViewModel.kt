@@ -1,32 +1,8 @@
 package com.company.activityart.presentation.visualize_screen
 
-import android.Manifest
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Paint
-import android.graphics.Path
-import androidx.compose.material.icons.Icons
-import androidx.compose.runtime.*
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.*
-import com.company.activityart.data.entities.ActivityEntity
-import com.company.activityart.domain.use_case.ActivitiesUseCases
-import com.company.activityart.presentation.ui.theme.Coal
-import com.company.activityart.presentation.ui.theme.Pumpkin
-import com.company.activityart.presentation.ui.theme.StravaOrange
-import com.company.activityart.presentation.visualize_screen.VisualizeScreenState.*
-import com.company.activityart.util.Constants
-import com.company.activityart.util.meterToMiles
-import com.company.activityart.util.saveImage
-import com.google.maps.android.PolyUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import javax.inject.Inject
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.sqrt
 
 @HiltViewModel
 class VisualizeScreenViewModel @Inject constructor(
@@ -190,7 +166,7 @@ class VisualizeScreenViewModel @Inject constructor(
                     )
                 ),
                 context = context,
-                folderName = Constants.IMAGE_DIRECTORY
+                folderName = StringConstants.IMAGE_DIRECTORY
             )
             _screenState.value = STANDBY
         }

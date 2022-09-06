@@ -5,56 +5,54 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.navigation.NavHostController
+import androidx.navigation.navArgument
 import com.company.activityart.architecture.Router
+import com.company.activityart.domain.models.Athlete
 import com.company.activityart.presentation.about_screen.AboutScreen
 import com.company.activityart.presentation.filter_year_screen.FilterYearScreen
 import com.company.activityart.presentation.login_screen.LoginScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewModel
+import com.company.activityart.util.NavArg.*
 import com.company.activityart.util.Screen
+import com.company.activityart.util.Screen.*
+import com.company.activityart.util.StringConstants.SSH_ROUTER_KEY
+import com.company.activityart.util.ext.swipingInOutComposable
 import com.company.activityart.util.ext.swipingOutComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.company.activityart.util.ext.swipingInOutComposable
 import dagger.hilt.android.EntryPointAccessors
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainNavHost(
     navController: NavHostController,
-    startScreen: Screen,
-    router: Router<MainDestination>
+    startRoute: String,
+    router: Router<MainDestination>,
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = startScreen.route
+        startDestination = startRoute
     ) {
-        swipingOutComposable(route = Screen.Login.route) {
+        swipingOutComposable(route = Login.route) {
             LoginScreen(router)
         }
-        swipingOutComposable(route = Screen.Welcome.route) {
-            val factory = EntryPointAccessors.fromActivity(
-                LocalContext.current as Activity,
-                MainActivity.ViewModelFactoryProvider::class.java
-            ).welcomeScreenViewModelFactory()
-            WelcomeScreen(
-                router = router,
-                viewModel = viewModel(
-                    factory = WelcomeScreenViewModel.newInstance(
-                        factory,
-                        "HELPNEEEE"
-                    )
-                )
-            )
-          //  WelcomeScreen(router)
+        swipingOutComposable(route = Welcome.route) {
+            WelcomeScreen(router)
         }
-        swipingInOutComposable(route = Screen.About.route) {
+        swipingInOutComposable(route = About.route) {
             AboutScreen(router)
         }
-        swipingInOutComposable(route = Screen.FilterYear.route) {
+        swipingInOutComposable(
+            route = FilterYear.route +
+                    "?${AthleteId.route}&${AccessToken.route}",
+            arguments = listOf(AthleteId.navArg, AccessToken.navArg)
+        ) {
             FilterYearScreen(router)
         }
     }
-
 }

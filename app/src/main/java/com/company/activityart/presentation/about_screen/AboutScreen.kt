@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.company.activityart.R
 import com.company.activityart.architecture.Router
@@ -19,7 +20,7 @@ import com.company.activityart.presentation.ui.theme.spacing
 @Composable
 fun AboutScreen(
     router: Router<MainDestination>,
-    viewModel: AboutScreenViewModel = viewModel()
+    viewModel: AboutScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(router) { viewModel.attachRouter(router) }
     AppBarScaffold(

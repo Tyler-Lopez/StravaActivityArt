@@ -1,60 +1,42 @@
 package com.company.activityart.presentation.welcome_screen
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.models.fullName
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Loading
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Standby
-import com.company.activityart.util.Screen
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-//@HiltViewModel
-class WelcomeScreenViewModel @AssistedInject constructor(
-    @Assisted private val help: String,
+@HiltViewModel
+class WelcomeScreenViewModel @Inject constructor(
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val getAthleteUseCase: GetAthleteUseCase
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getAthleteUseCase: GetAthleteUseCase,
 ) : BaseRoutingViewModel<WelcomeScreenViewState, WelcomeScreenViewEvent, MainDestination>() {
-
-    companion object {
-        fun newInstance(
-            factory: Factory,
-            help: String
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(help) as T
-            }
-        }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(help: String): WelcomeScreenViewModel
-    }
 
     init {
         pushState(Loading)
-        println("HERE HELP IS $help")
     }
 
+    private var athlete: Athlete? = null
+    private var accessToken: String? = null
+
     override fun onEvent(event: WelcomeScreenViewEvent) {
-        when (event) {
-            is ClickedAbout -> onClickedAbout()
-            is ClickedMakeArt -> onClickedMakeArt()
-            is ClickedLogout -> onClickedLogout()
+        viewModelScope.launch {
+            when (event) {
+                is ClickedAbout -> onClickedAbout()
+                is ClickedMakeArt -> onClickedMakeArt()
+                is ClickedLogout -> onClickedLogout()
+            }
         }
     }
 
@@ -63,32 +45,52 @@ class WelcomeScreenViewModel @AssistedInject constructor(
     }
 
     private fun onClickedMakeArt() {
-        routeTo(NavigateMakeArt)
+            routeTo(
+                NavigateMakeArt(
+                    athlete?.athleteId ?: error("AthleteID missing."),
+                    accessToken ?: error("Access token missing.")
+                )
+            )
     }
 
-    private fun onClickedLogout() {
-        viewModelScope.launch {
-            clearAccessTokenUseCase()
-            routeTo(NavigateLogin)
-        }
+    private suspend fun onClickedLogout() {
+        clearAccessTokenUseCase()
+        routeTo(NavigateLogin)
     }
 
     override fun onRouterAttached() {
-        loadAthlete()
+        viewModelScope.launch {
+            getAccessToken()
+        }
     }
 
-    private fun loadAthlete() {
-        viewModelScope.launch {
-            getAthleteUseCase()
-                .doOnSuccess {
-                    pushState(
-                        Standby(
-                            athleteName = data.fullName,
-                            athleteImageUrl = data.profilePictureLarge
-                        )
+    private suspend fun getAccessToken() {
+        getAccessTokenUseCase()
+            .doOnSuccess {
+                accessToken = data.accessToken
+                loadAthlete(data.athleteId, data.accessToken)
+            }
+            .doOnError {
+                clearAccessTokenUseCase()
+                routeTo(NavigateLogin)
+            }
+
+    }
+
+    private suspend fun loadAthlete(
+        athleteId: Long,
+        accessToken: String
+    ) {
+        getAthleteUseCase(athleteId, accessToken)
+            .doOnSuccess {
+                athlete = data
+                pushState(
+                    Standby(
+                        athleteName = data.fullName,
+                        athleteImageUrl = data.profilePictureLarge
                     )
-                }
-                .doOnError { routeTo(NavigateLogin) }
-        }
+                )
+            }
+            .doOnError { routeTo(NavigateLogin) } // Todo, load error state instead
     }
 }

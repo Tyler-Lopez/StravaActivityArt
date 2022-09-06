@@ -8,18 +8,18 @@ import java.lang.System.currentTimeMillis
 
 abstract class BaseRoutingViewModel<
         TypeOfViewState : ViewState,
-        TypeOfViewEvent: ViewEvent,
-        TypeOfDestination : Destination>
-    : ViewModel(), RoutingViewModel<TypeOfViewState, TypeOfViewEvent, TypeOfDestination> {
+        TypeOfViewEvent : ViewEvent,
+        TypeOfDestination : Destination> : ViewModel(), RoutingViewModel<TypeOfViewState, TypeOfViewEvent, TypeOfDestination> {
 
     companion object {
         /** A debounced event may be invoked no more frequently than this time. */
         private const val DEBOUNCE_TIME_MS = 1000L
     }
 
+    protected open var router: Router<TypeOfDestination>? = null
     private var lastDebouncedMs: Long = 0L
 
-    private var router: Router<TypeOfDestination>? = null
+ //   private var router: Router<TypeOfDestination>? = null
     private var _viewState: MutableStateFlow<TypeOfViewState?> = MutableStateFlow(null)
 
     final override val viewState: StateFlow<TypeOfViewState?> = _viewState

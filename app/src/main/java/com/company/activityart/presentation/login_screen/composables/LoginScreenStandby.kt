@@ -15,7 +15,7 @@ import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.util.Constants
+import com.company.activityart.util.StringConstants
 
 @Composable
 fun LoginScreenStandby(
@@ -25,8 +25,8 @@ fun LoginScreenStandby(
         modifier = Modifier.padding(spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Subhead(text = "${Constants.STAGE} ${Constants.VERSION}")
-        TitleOne(text = Constants.APP_NAME)
+        Subhead(text = "${StringConstants.STAGE} ${StringConstants.VERSION}")
+        TitleOne(text = StringConstants.APP_NAME)
     }
     Image(
         painter = painterResource(id = R.drawable.ic_btn_strava_connectwith_orange_clipped),
