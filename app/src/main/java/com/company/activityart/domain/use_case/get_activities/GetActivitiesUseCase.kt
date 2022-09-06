@@ -1,12 +1,6 @@
 package com.company.activityart.domain.use_case.get_activities
 
-import android.content.Context
-import com.company.activityart.data.database.ActivityDatabase
-import com.company.activityart.data.entities.ActivityEntity
 import com.company.activityart.data.remote.AthleteApi
-import com.company.activityart.util.Resource
-import com.company.activityart.util.TimeUtils
-import java.util.*
 import javax.inject.Inject
 
 class GetActivitiesUseCase @Inject constructor(

@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         destination.apply {
             navController.navigate(
                 route = FilterYear.withArgs(
-                    optionalArgs = arrayOf(
+                    args = arrayOf(
                         NavArg.AthleteId.key to athleteId.toString(),
                         NavArg.AccessToken.key to accessToken
                     )

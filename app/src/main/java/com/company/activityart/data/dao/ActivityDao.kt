@@ -13,16 +13,16 @@ interface ActivityDao {
     suspend fun insertAllActivities(vararg activityEntity: ActivityEntity)
 
     @Query("SELECT * " +
-            "FROM activityentity " +
-            "WHERE activityEntity.activityYear = :year " +
-            "AND activityEntity.athleteId = :athleteId " +
-            "AND activityEntity.summaryPolyline IS NOT NULL")
+            "FROM activityEntity " +
+            "WHERE year = :year " +
+            "AND athleteId = :athleteId " +
+            "AND summaryPolyline IS NOT NULL")
     suspend fun getActivitiesByYear(
         athleteId: Long,
         year: Int
     ): List<ActivityEntity>
 
-    @Query("SELECT * FROM activityentity WHERE activityEntity.activityYear = :year AND activityEntity.activityMonth = :month AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
+    @Query("SELECT * FROM activityEntity WHERE year = :year AND month = :month AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
     suspend fun getActivitiesByYearMonth(
         athleteId: Long,
         month: Int,
@@ -31,16 +31,15 @@ interface ActivityDao {
 
     @Query(
         "SELECT * " +
-                "FROM activityentity " +
-                "WHERE activityEntity.activityYear = :year " +
-                "AND activityEntity.activityMonth <= :month " +
-                "AND activityEntity.athleteId = :athleteId " +
-                "AND activityEntity.summaryPolyline IS NOT NULL"
+                "FROM activityEntity " +
+                "WHERE year = :year " +
+                "AND month <= :month " +
+                "AND athleteId = :athleteId " +
+                "AND summaryPolyline IS NOT NULL"
     )
     suspend fun getActivitiesByYearUpToMonth(
         athleteId: Long,
         month: Int,
         year: Int
     ): List<ActivityEntity>
-
 }

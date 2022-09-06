@@ -40,7 +40,7 @@ data class Activity(
     val start_latitude: Double,
     val start_latlng: List<Double>,
     val start_longitude: Double,
-    val suffer_score: Any,
+    val suffer_score: Int?,
     val timezone: String,
     val total_elevation_gain: Double,
     val total_photo_count: Int,

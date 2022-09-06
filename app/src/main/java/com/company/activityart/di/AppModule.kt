@@ -32,7 +32,7 @@ object AppModule {
             appContext,
             AthleteDatabase::class.java,
             "athlete_db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides

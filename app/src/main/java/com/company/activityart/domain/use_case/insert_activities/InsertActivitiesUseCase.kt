@@ -1,11 +1,11 @@
 package com.company.activityart.domain.use_case.insert_activities
 
 import android.content.Context
-import com.company.activityart.data.database.ActivityDatabase
 import com.company.activityart.data.entities.ActivityEntity
 
 class InsertActivitiesUseCase {
 
+    /*
     // Invoked to set access token in Room database
     suspend fun insertActivities(
         context: Context,
@@ -18,5 +18,7 @@ class InsertActivitiesUseCase {
 
         activityDao.insertAllActivities(activityEntity = activities)
     }
+
+     */
     
 }

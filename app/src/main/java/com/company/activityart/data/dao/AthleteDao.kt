@@ -13,6 +13,6 @@ interface AthleteDao {
     @Query("DELETE FROM athleteEntity")
     suspend fun clearAthlete()
 
-    @Query("SELECT * FROM athleteEntity WHERE athleteEntity.athleteId = :athleteId")
+    @Query("SELECT * FROM athleteEntity WHERE athleteId = :athleteId")
     suspend fun getAthleteById(athleteId: Long): AthleteEntity?
 }
