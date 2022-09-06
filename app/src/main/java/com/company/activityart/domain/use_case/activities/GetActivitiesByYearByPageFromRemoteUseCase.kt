@@ -6,10 +6,9 @@ import com.company.activityart.util.Resource
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
-class GetActivitiesInYearByPageFromRemoteUseCase @Inject constructor(
+class GetActivitiesByYearByPageFromRemoteUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
-
     suspend operator fun invoke(
         code: String,
         page: Int,
