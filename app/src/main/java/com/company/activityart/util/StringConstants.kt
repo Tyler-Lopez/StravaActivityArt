@@ -1,7 +1,7 @@
 package com.company.activityart.util
 
 object StringConstants {
-    const val APP_NAME = "Activity Art"
+    const val APP_NAME = "ActivityResponse Art"
     const val BASE_URL = "https://www.strava.com/"
     const val STAGE = "Alpha"
     const val VERSION = "0.3.0"
