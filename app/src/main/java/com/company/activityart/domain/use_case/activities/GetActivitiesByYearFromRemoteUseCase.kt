@@ -14,11 +14,4 @@ class GetActivitiesInYearFromRemoteUseCase @Inject constructor(
         private const val ACTIVITIES_PER_PAGE = 200
     }
 
-    suspend operator fun invoke(
-        code: String,
-        beforeUnixSeconds: Int,
-        afterUnixSeconds: Int
-    ): Resource<List<Activity>> {
-        
-    }
 }
