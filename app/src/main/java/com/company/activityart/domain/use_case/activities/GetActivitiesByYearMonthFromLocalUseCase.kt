@@ -2,8 +2,13 @@ package com.company.activityart.domain.use_case.activities
 
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.domain.models.Activity
+import com.company.activityart.domain.models.Athlete
 import javax.inject.Inject
 
+/**
+ * Retrieves all [Activity] stored locally associated with an
+ * [Athlete] occurring on the given year and month.
+ */
 class GetActivitiesByYearMonthFromLocalUseCase @Inject constructor(
     private val athleteDatabase: AthleteDatabase
 ) {
