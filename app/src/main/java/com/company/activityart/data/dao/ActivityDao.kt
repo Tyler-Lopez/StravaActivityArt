@@ -12,37 +12,33 @@ interface ActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllActivities(vararg activityEntity: ActivityEntity)
 
-    /*
-    @Query("SELECT * " +
-            "FROM activityEntity " +
-            "WHERE year = :year " +
-            "AND athleteId = :athleteId " +
-            "AND summaryPolyline IS NOT NULL")
+    /**
+     * Retrieves all activities which match the year provided.
+     * Functions by pattern recognition of the iso8601 String.
+     */
+    @Query(
+        "SELECT * " +
+                "FROM activityEntity " +
+                "WHERE iso8601LocalDate LIKE '%' || :year + '-' || '%' " +
+                "AND athleteId = :athleteId " +
+                "AND summaryPolyline IS NOT NULL"
+    )
     suspend fun getActivitiesByYear(
         athleteId: Long,
         year: Int
     ): List<ActivityEntity>
 
-    @Query("SELECT * FROM activityEntity WHERE year = :year AND month = :month AND activityEntity.athleteId = :athleteId AND activityEntity.summaryPolyline IS NOT NULL")
-    suspend fun getActivitiesByYearMonth(
-        athleteId: Long,
-        month: Int,
-        year: Int
-    ): List<ActivityEntity>
 
     @Query(
         "SELECT * " +
                 "FROM activityEntity " +
-                "WHERE year = :year " +
-                "AND month <= :month " +
-                "AND athleteId = :athleteId " +
-                "AND summaryPolyline IS NOT NULL"
+                "WHERE iso8601LocalDate LIKE '%' || :year + '-' || '%' " +
+                "AND iso8601LocalDate LIKE '%' || '-' + :month + '-' || '%' " +
+                "AND activityEntity.athleteId = :athleteId "
     )
-    suspend fun getActivitiesByYearUpToMonth(
+    suspend fun getActivitiesByYearMonth(
         athleteId: Long,
-        month: Int,
+        month: String,
         year: Int
     ): List<ActivityEntity>
-    
-     */
 }

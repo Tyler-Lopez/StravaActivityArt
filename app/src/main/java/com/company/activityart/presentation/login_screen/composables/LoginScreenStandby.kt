@@ -14,6 +14,7 @@ import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent
+import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.StringConstants
 
@@ -26,12 +27,12 @@ fun LoginScreenStandby(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Subhead(text = "${StringConstants.STAGE} ${StringConstants.VERSION}")
-        TitleOne(text = StringConstants.APP_NAME)
+        TitleOne(text = stringResource(id = R.string.app_name))
     }
     Image(
         painter = painterResource(id = R.drawable.ic_btn_strava_connectwith_orange_clipped),
         contentDescription = stringResource(id = R.string.connect_with_strava_button_cd),
         modifier = Modifier
-            .clickable { eventReceiver.onEvent(LoginScreenViewEvent.ConnectWithStravaClicked) },
+            .clickable { eventReceiver.onEvent(ConnectWithStravaClicked) },
     )
 }
