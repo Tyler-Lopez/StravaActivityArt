@@ -7,9 +7,12 @@ import javax.inject.Inject
 class GetActivitiesByYearMonthFromLocalUseCase @Inject constructor(
     private val athleteDatabase: AthleteDatabase
 ) {
+    /*
     suspend operator fun invoke(athleteId: Long, year: Int, month: Int): List<Activity> {
         return athleteDatabase
             .activityDao
             .getActivitiesByYearMonth(athleteId, year, month)
     }
+
+     */
 }

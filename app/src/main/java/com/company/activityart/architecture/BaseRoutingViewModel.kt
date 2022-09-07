@@ -16,10 +16,9 @@ abstract class BaseRoutingViewModel<
         private const val DEBOUNCE_TIME_MS = 1000L
     }
 
-    protected open var router: Router<TypeOfDestination>? = null
+    private var router: Router<TypeOfDestination>? = null
     private var lastDebouncedMs: Long = 0L
 
- //   private var router: Router<TypeOfDestination>? = null
     private var _viewState: MutableStateFlow<TypeOfViewState?> = MutableStateFlow(null)
 
     final override val viewState: StateFlow<TypeOfViewState?> = _viewState

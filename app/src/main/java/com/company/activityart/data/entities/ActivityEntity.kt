@@ -17,11 +17,10 @@ data class ActivityEntity(
     override val locationCountry: String?,
     override val locationState: String?,
     override val maxSpeed: Double,
-    override val month: Int,
     override val movingTime: Int,
     override val name: String, // "Happy Friday"
     override val sufferScore: Int?,
+    override val iso8601LocalDate: String,
     override val summaryPolyline: String?,
     override val type: String, // "Ride"
-    override val year: Int
 ) : Activity

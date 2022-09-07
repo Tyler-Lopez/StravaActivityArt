@@ -8,8 +8,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TimeUtils {
-
     companion object {
+        private const val DATE_TIME_FORMAT = "dd MM uuu HH mm"
 
         fun parseIso8601(string: String): Map<String, Int> {
             val instant = Instant.parse(string)

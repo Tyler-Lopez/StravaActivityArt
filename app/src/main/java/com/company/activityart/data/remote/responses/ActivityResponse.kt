@@ -29,6 +29,8 @@ data class ActivityResponse(
     override val name: String,
     @SerializedName("type")
     override val type: String,
+    @SerializedName("start_date_local")
+    override val iso8601LocalDate: String,
     @SerializedName("suffer_score")
     override val sufferScore: Int?,
 
@@ -56,7 +58,6 @@ data class ActivityResponse(
     val `private`: Boolean,
     val resource_state: Int,
     val start_date: String,
-    val start_date_local: String,
     val start_latitude: Double,
     val start_latlng: List<Double>,
     val start_longitude: Double,
@@ -74,12 +75,6 @@ data class ActivityResponse(
     override val athleteId: Long
         get() = athlete.id
 
-    override val month: Int
-        get() = TODO("Not yet implemented")
-
     override val summaryPolyline: String?
         get() = map.summary_polyline
-
-    override val year: Int
-        get() = TODO("Not yet implemented")
 }

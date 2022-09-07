@@ -12,6 +12,7 @@ interface ActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllActivities(vararg activityEntity: ActivityEntity)
 
+    /*
     @Query("SELECT * " +
             "FROM activityEntity " +
             "WHERE year = :year " +
@@ -42,4 +43,6 @@ interface ActivityDao {
         month: Int,
         year: Int
     ): List<ActivityEntity>
+    
+     */
 }
