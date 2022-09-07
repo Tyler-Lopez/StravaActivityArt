@@ -5,19 +5,18 @@ import com.company.activityart.util.Resource
 import com.company.activityart.util.TimeUtils
 import javax.inject.Inject
 
-class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
+class GetActivitiesByYearMonthFromRemoteUseCase @Inject constructor(
     private val getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
     private val timeUtils: TimeUtils
 ) {
     companion object {
-        private const val ACTIVITIES_PER_PAGE = 200
-        private const val FIRST_MONTH_OF_YEAR = 0
-        private const val LAST_MONTH_OF_YEAR = 11
+        private const val ACTIVITIES_PER_PAGE = 50
     }
 
     suspend operator fun invoke(
         accessToken: String,
-        year: Int
+        year: Int,
+        month: Int
     ): Resource<List<Activity>> {
 
         var page = 0
@@ -30,10 +29,10 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
                 page = page++,
                 activitiesPerPage = ACTIVITIES_PER_PAGE,
                 beforeUnixSeconds = timeUtils.firstUnixSecondAfterYearMonth(
-                    year, LAST_MONTH_OF_YEAR
+                    year, month
                 ),
                 afterUnixSeconds = timeUtils.lastUnixSecondBeforeYearMonth(
-                    year, FIRST_MONTH_OF_YEAR
+                    year, month
                 ),
             )
                 .doOnSuccess {

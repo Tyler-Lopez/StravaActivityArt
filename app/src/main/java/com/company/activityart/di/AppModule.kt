@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.room.Room
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
+import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.GetAthleteFromLocalUseCase
 import com.company.activityart.domain.use_case.athlete.GetAthleteFromRemoteUseCase
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.athlete.InsertAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.util.StringConstants.BASE_URL
+import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.UriUtils
 import dagger.Module
 import dagger.Provides
@@ -58,32 +59,46 @@ object AppModule {
         )
 
     @Provides
+    fun providesGetActivitiesByPageFromRemoteUseCase(
+        api: AthleteApi
+    ): GetActivitiesByPageFromRemoteUseCase =
+        GetActivitiesByPageFromRemoteUseCase(api)
+
+    @Provides
+    fun providesGetActivitiesByYearFromRemoteUseCase(
+        getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
+        timeUtils: TimeUtils
+    ) = GetActivitiesByYearFromRemoteUseCase(
+        getActivitiesInYearByPageFromRemoteUseCase,
+        timeUtils
+    )
+
+    @Provides
+    fun providesGetActivitiesByYearMonthFromRemoteUseCase(
+        getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
+        timeUtils: TimeUtils
+    ) = GetActivitiesByYearMonthFromRemoteUseCase(
+        getActivitiesInYearByPageFromRemoteUseCase,
+        timeUtils
+    )
+
+    @Provides
+    fun providesGetActivitiesByYearFromLocalUseCase(
+        athleteDatabase: AthleteDatabase
+    ) = GetActivitiesByYearFromLocalUseCase(athleteDatabase)
+
+    @Provides
+    fun providesGetActivitiesByYearMonthFromLocalUseCase(
+        athleteDatabase: AthleteDatabase
+    ) = GetActivitiesByYearMonthFromLocalUseCase(athleteDatabase)
+
+    @Provides
     fun providesInsertAthleteFromRemoteUseCase(athleteDatabase: AthleteDatabase) =
         InsertAthleteUseCase(athleteDatabase)
 
     @Provides
     fun clearAccessTokenUseCase(athleteDatabase: AthleteDatabase) =
         ClearAccessTokenUseCase(athleteDatabase)
-
-    /*
-    @Singleton
-    @Provides
-    fun provideGearUseCases(
-        api: AthleteApi
-    ) = GearUseCases(
-        getGearFromApiUseCase = GetGearFromApiUseCase(api)
-    )
-
-    @Singleton
-    @Provides
-    fun provideActivitiesUseCases(
-        api: AthleteApi
-    ) = ActivitiesUseCases(
-        getActivitiesUseCase = GetActivitiesUseCase(api),
-        insertActivitiesUseCase = InsertActivitiesUseCase()
-    )
-
-     */
 
     @Singleton
     @Provides
@@ -97,4 +112,7 @@ object AppModule {
 
     @Provides
     fun provideUriUtils(): UriUtils = UriUtils()
+
+    @Provides
+    fun provideTimeUtils(): TimeUtils = TimeUtils()
 }

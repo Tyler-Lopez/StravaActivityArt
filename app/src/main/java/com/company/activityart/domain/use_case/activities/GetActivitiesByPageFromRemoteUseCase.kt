@@ -6,7 +6,13 @@ import com.company.activityart.util.Resource
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
-class GetActivitiesByYearByPageFromRemoteUseCase @Inject constructor(
+/**
+ * Retrieves a [List] of [Activity] from remote repository occurring within a
+ * given year by a certain page from paginated results.
+ *
+ * Intended for internal abstracted use within [GetActivitiesByYearFromRemoteUseCase].
+ */
+class GetActivitiesByPageFromRemoteUseCase @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
     suspend operator fun invoke(
