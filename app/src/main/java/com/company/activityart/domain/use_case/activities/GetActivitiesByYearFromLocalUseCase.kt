@@ -9,12 +9,9 @@ import javax.inject.Inject
 class GetActivitiesByYearFromLocalUseCase @Inject constructor(
     private val athleteDatabase: AthleteDatabase
 ) {
-    /*
     suspend operator fun invoke(athleteId: Long, year: Int): List<Activity> {
         return athleteDatabase
             .activityDao
             .getActivitiesByYear(athleteId, year)
     }
-
-     */
 }
