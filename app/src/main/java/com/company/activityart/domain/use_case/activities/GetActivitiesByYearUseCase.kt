@@ -24,17 +24,18 @@ class GetActivitiesByYearUseCase @Inject constructor(
     ): Resource<List<Activity>> {
 
         val toReturn = mutableListOf<Activity>()
-
-        val localActivities = loadLocalActivitiesInYear(athleteId, year)
         val missingMonths = mutableListOf<Int>()
 
-        localActivities.forEach { monthlyActivities ->
-            monthlyActivities.second?.let {
-                toReturn += it
-            } ?: run { missingMonths += monthlyActivities.first }
-        }
+        /* Iterate through all activities stored locally
+        and determine which months, if any, must be loaded remotely. */
+        loadLocalActivitiesInYear(athleteId, year)
+            .forEach { monthlyActivities ->
+                monthlyActivities.second?.let {
+                    toReturn += it
+                } ?: run { missingMonths += monthlyActivities.first }
+            }
 
-        
+
     }
 
     private suspend fun loadLocalActivitiesInYear(
