@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.architecture.Router
 import com.company.activityart.domain.models.Athlete
+import com.company.activityart.domain.use_case.activities.GetActivitiesByYearMonthFromRemoteUseCase
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateLogin
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilterYearViewModel @Inject constructor(
-    private val getAthleteUseCase: GetAthleteUseCase,
+    private val getActivitiesByYearMonthFromRemoteUseCase: GetActivitiesByYearMonthFromRemoteUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
 
@@ -32,8 +33,9 @@ class FilterYearViewModel @Inject constructor(
 
     init {
         pushState(Loading)
-        println(athleteId)
-        println(accessToken)
+        viewModelScope.launch {
+            loadActivities()
+        }
     }
 
     override fun onEvent(event: FilterYearViewEvent) {
@@ -55,11 +57,27 @@ class FilterYearViewModel @Inject constructor(
 
     override fun onRouterAttached() {
         viewModelScope.launch {
-            loadActivities()
+     //       loadActivities()
         }
     }
 
-    private fun loadActivities() {
+    private suspend fun loadActivities() {
+        getActivitiesByYearMonthFromRemoteUseCase(
+            accessToken,
+            2022,
+            8
+        ).doOnSuccess {
+            pushState(
+                Standby(
+                    data.size,
+                    data
+                )
+            )
+            println("here $data")
+        }
+            .doOnError {
+                println("here error $exception")
+            }
     }
 
     /*

@@ -22,6 +22,8 @@ class GetActivitiesByPageFromRemoteUseCase @Inject constructor(
         beforeUnixSeconds: Int,
         afterUnixSeconds: Int
     ): Resource<List<Activity>> {
+        println("here before is $beforeUnixSeconds")
+        println("here after is $afterUnixSeconds")
         return try {
             Resource.Success(data = api.getActivities(
                 authHeader = "Bearer $code",

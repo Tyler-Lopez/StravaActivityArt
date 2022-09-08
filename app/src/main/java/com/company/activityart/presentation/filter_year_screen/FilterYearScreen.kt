@@ -46,7 +46,10 @@ fun FilterYearScreen(
                 viewState.collectAsState().value?.apply {
                     when (this) {
                         is Loading -> CircularProgressIndicator()
-                        is Standby -> FilterYearScreenStandby(eventReceiver = viewModel)
+                        is Standby -> FilterYearScreenStandby(
+                            activities = selectedActivities,
+                            eventReceiver = viewModel
+                        )
                     }
                 }
             }

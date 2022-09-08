@@ -32,7 +32,6 @@ import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
 import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
 
-
 @Composable
 fun WelcomeScreenStandby(
     athleteImageUrl: String,

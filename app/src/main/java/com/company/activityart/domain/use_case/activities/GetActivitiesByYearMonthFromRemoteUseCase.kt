@@ -11,6 +11,7 @@ class GetActivitiesByYearMonthFromRemoteUseCase @Inject constructor(
 ) {
     companion object {
         private const val ACTIVITIES_PER_PAGE = 50
+        private const val FIRST_PAGE = 1
     }
 
     suspend operator fun invoke(
@@ -19,8 +20,8 @@ class GetActivitiesByYearMonthFromRemoteUseCase @Inject constructor(
         month: Int
     ): Resource<List<Activity>> {
 
-        var page = 0
-        var activitiesInPage = 0
+        var page = FIRST_PAGE
+        var activitiesInPage = ACTIVITIES_PER_PAGE
         val activities = mutableListOf<Activity>()
 
         while (activitiesInPage >= ACTIVITIES_PER_PAGE) {

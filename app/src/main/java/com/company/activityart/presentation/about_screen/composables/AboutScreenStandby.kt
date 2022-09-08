@@ -7,12 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.presentation.common.type.Body
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.util.StringConstants
+import com.company.activityart.util.StringConstants.STAGE
+import com.company.activityart.util.StringConstants.VERSION
 
 @Composable
 fun AboutScreenStandby() {
@@ -21,8 +23,8 @@ fun AboutScreenStandby() {
         verticalArrangement = Arrangement.spacedBy(spacing.small),
         modifier = Modifier.padding(top = spacing.medium)
     ) {
-        Subhead(text = "${StringConstants.STAGE} ${StringConstants.VERSION}")
-        TitleOne(text = StringConstants.APP_NAME)
+        Subhead(text = "$STAGE $VERSION")
+        TitleOne(text = stringResource(R.string.app_name))
     }
     stringArrayResource(id = R.array.about_screen_content).forEach {
         Body(text = it, modifier = Modifier.padding(horizontal = spacing.medium))
