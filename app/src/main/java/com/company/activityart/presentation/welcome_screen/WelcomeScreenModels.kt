@@ -1,6 +1,5 @@
 package com.company.activityart.presentation.welcome_screen
 
-import androidx.navigation.NavController
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 

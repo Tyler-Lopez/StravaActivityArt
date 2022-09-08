@@ -12,7 +12,8 @@ sealed class FilterYearViewEvent : ViewEvent {
 sealed class FilterYearViewState : ViewState {
     object Loading : FilterYearViewState()
     data class Standby(
-        val selectedActivitiesCount: Int,
-        val selectedActivities: List<Activity>
+        val isLoading: Boolean,
+        val loadErrorOccurred: Boolean,
+        val activitiesByYear: List<Pair<Int, List<Activity>>>
     ) : FilterYearViewState()
 }

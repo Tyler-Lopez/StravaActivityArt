@@ -36,6 +36,10 @@ abstract class BaseRoutingViewModel<
         _viewState.value = state
     }
 
+    final override fun TypeOfViewState.push() {
+        pushState(this)
+    }
+
     final override fun onEventDebounced(event: TypeOfViewEvent) {
         val currTime = currentTimeMillis()
         if (currTime > lastDebouncedMs + DEBOUNCE_TIME_MS) {

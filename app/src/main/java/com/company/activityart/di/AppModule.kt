@@ -93,6 +93,11 @@ object AppModule {
     ) = GetActivitiesByYearMonthFromLocalUseCase(athleteDatabase)
 
     @Provides
+    fun providesGetActivitiesByYear(
+        getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase
+    ) = GetActivitiesByYearUseCase(getActivitiesByYearFromRemoteUseCase)
+
+    @Provides
     fun providesInsertAthleteFromRemoteUseCase(athleteDatabase: AthleteDatabase) =
         InsertAthleteUseCase(athleteDatabase)
 

@@ -13,6 +13,7 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
         private const val ACTIVITIES_PER_PAGE = 200
         private const val FIRST_MONTH_OF_YEAR = 0
         private const val LAST_MONTH_OF_YEAR = 11
+        private const val FIRST_PAGE = 1
     }
 
     suspend operator fun invoke(
@@ -20,11 +21,11 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
         year: Int
     ): Resource<List<Activity>> {
 
-        var page = 0
-        var activitiesInPage = 0
+        var page = FIRST_PAGE
+        var activitiesInLastPage = ACTIVITIES_PER_PAGE
         val activities = mutableListOf<Activity>()
 
-        while (activitiesInPage >= ACTIVITIES_PER_PAGE) {
+        while (activitiesInLastPage >= ACTIVITIES_PER_PAGE) {
             getActivitiesInYearByPageFromRemoteUseCase(
                 code = accessToken,
                 page = page++,
@@ -37,7 +38,7 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
                 ),
             )
                 .doOnSuccess {
-                    activitiesInPage = data.size
+                    activitiesInLastPage = data.size
                     activities.addAll(data)
                 }
                 .doOnError {

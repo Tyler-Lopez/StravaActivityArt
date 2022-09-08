@@ -7,4 +7,5 @@ interface ViewState
 
 interface ViewStateSender<TypeOfViewState: ViewState> {
     val viewState: StateFlow<TypeOfViewState?>
+    fun TypeOfViewState.push()
 }

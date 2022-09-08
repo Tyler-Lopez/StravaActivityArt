@@ -17,7 +17,7 @@ class GetActivitiesByYearMonthFromLocalUseCase @Inject constructor(
         private const val PADDING_DIGIT = 0
     }
 
-    suspend operator fun invoke(athleteId: Long, month: Int, year: Int): List<Activity> {
+    suspend operator fun invoke(athleteId: Long, month: Int, year: Int): List<Activity>? {
         return athleteDatabase
             .activityDao
             .getActivitiesByYearMonth(
