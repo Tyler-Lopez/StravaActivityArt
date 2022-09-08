@@ -26,7 +26,7 @@ interface ActivityDao {
     suspend fun getActivitiesByYear(
         athleteId: Long,
         year: Int
-    ): List<ActivityEntity>?
+    ): List<ActivityEntity>
 
 
     @Query(
@@ -40,5 +40,6 @@ interface ActivityDao {
         athleteId: Long,
         month: String,
         year: Int
-    ): List<ActivityEntity>?
+    ): List<ActivityEntity>
+
 }

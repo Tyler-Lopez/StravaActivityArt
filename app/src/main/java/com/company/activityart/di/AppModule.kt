@@ -5,10 +5,7 @@ import androidx.room.Room
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.activities.*
-import com.company.activityart.domain.use_case.athlete.GetAthleteFromLocalUseCase
-import com.company.activityart.domain.use_case.athlete.GetAthleteFromRemoteUseCase
-import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
-import com.company.activityart.domain.use_case.athlete.InsertAthleteUseCase
+import com.company.activityart.domain.use_case.athlete.*
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.company.activityart.util.StringConstants.BASE_URL
 import com.company.activityart.util.TimeUtils
@@ -59,6 +56,10 @@ object AppModule {
         )
 
     @Provides
+    fun providesGetCachedMonthsByYearUseCase(athleteDatabase: AthleteDatabase) =
+        GetCachedMonthsByYearUseCase(athleteDatabase)
+
+    @Provides
     fun providesGetActivitiesByPageFromRemoteUseCase(
         api: AthleteApi
     ): GetActivitiesByPageFromRemoteUseCase =
@@ -94,8 +95,14 @@ object AppModule {
 
     @Provides
     fun providesGetActivitiesByYear(
-        getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase
-    ) = GetActivitiesByYearUseCase(getActivitiesByYearFromRemoteUseCase)
+        getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
+        getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
+        getActivitiesByYearMonthFromRemoteUseCase: GetActivitiesByYearMonthFromRemoteUseCase
+    ) = GetActivitiesByYearUseCase(
+        getActivitiesByYearMonthFromLocalUseCase,
+        getActivitiesByYearFromRemoteUseCase,
+        getActivitiesByYearMonthFromRemoteUseCase
+    )
 
     @Provides
     fun providesInsertAthleteFromRemoteUseCase(athleteDatabase: AthleteDatabase) =

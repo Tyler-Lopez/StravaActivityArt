@@ -1,11 +1,25 @@
 package com.company.activityart.data
 
 import androidx.room.TypeConverter
-
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Converters {
 
+    @TypeConverter
+    fun stringToMap(value: String): Map<Int, List<Int>> {
+        return Gson().fromJson(
+            value,
+            object : TypeToken<Map<Int, List<Int>>>() {}.type
+        )
+    }
 
+    @TypeConverter
+    fun mapToString(value: Map<Int, List<Int>>?): String {
+        return if (value == null) "" else Gson().toJson(value)
+    }
+
+/*
     @TypeConverter
     fun fromYearsMonthCached(yearsMonthCached: Map<Int, Int>): String {
         return buildString {
@@ -67,4 +81,6 @@ class Converters {
         private const val GEAR_ID_DELIMITER = '‽'
         private const val GEAR_DELIMITER = '█'
     }
+
+ */
 }

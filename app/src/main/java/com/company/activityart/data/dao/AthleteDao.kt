@@ -15,4 +15,5 @@ interface AthleteDao {
 
     @Query("SELECT * FROM athleteEntity WHERE athleteId = :athleteId")
     suspend fun getAthleteById(athleteId: Long): AthleteEntity?
+
 }

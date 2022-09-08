@@ -1,6 +1,8 @@
 package com.company.activityart.data.entities
 
 import androidx.room.Entity
+import androidx.room.TypeConverters
+import com.company.activityart.data.Converters
 import com.company.activityart.domain.models.Athlete
 
 @Entity(primaryKeys = ["athleteId"])
@@ -13,6 +15,9 @@ data class AthleteEntity(
     override val profilePictureLarge: String,
     override val firstName: String,
     override val lastName: String,
+
+    @TypeConverters(Converters::class)
+    override val cachedYearMonths: Map<Int, List<Int>>
     // This is to tell us what we have and have not yet mapped to Room
     /*
     override val yearMonthsCached: Map<Int, Int>,
