@@ -20,6 +20,16 @@ class TimeUtils {
     }
 
     /**
+     * Returns a 0-indexed month corresponding to an ISO8601 String.
+     */
+    fun iso8601StringToMonth(value: String): Int {
+        return Calendar.getInstance().run {
+            time = Date.from(Instant.parse(value))
+            get(Calendar.MONTH)
+        }
+    }
+
+    /**
      * Returns the first unix second before the given year month.
      *
      * @param month Zero-indexed month ranging from 0 to 11.

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 interface Athlete {
     val athleteId: Long
     val userName: String?
-    val receivedOnUnixSeconds: Int
+    val receivedOnUnixSeconds: Int?
     val profilePictureMedium: String
     val profilePictureLarge: String
     val firstName: String

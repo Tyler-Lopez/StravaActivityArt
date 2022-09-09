@@ -15,6 +15,8 @@ class GetAthleteFromLocalUseCase @Inject constructor(
         return athleteDatabase
             .athleteDao
             .getAthleteById(athleteId)
-            ?.takeIf { !it.dataExpired }
+            ?.takeIf {
+                !it.dataExpired
+            }
     }
 }

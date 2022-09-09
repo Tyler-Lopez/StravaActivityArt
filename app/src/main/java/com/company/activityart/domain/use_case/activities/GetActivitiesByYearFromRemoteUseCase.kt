@@ -16,9 +16,14 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
         private const val FIRST_PAGE = 1
     }
 
+    /**
+     * @param startMonth Optional parameter to specify the first 0-indexed month which to read
+     * from remote. Activities in months which precede this parameter will be omitted.
+     */
     suspend operator fun invoke(
         accessToken: String,
-        year: Int
+        year: Int,
+        startMonth: Int = FIRST_MONTH_OF_YEAR
     ): Resource<List<Activity>> {
 
         var page = FIRST_PAGE
@@ -34,7 +39,7 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
                     year, LAST_MONTH_OF_YEAR
                 ),
                 afterUnixSeconds = timeUtils.lastUnixSecondBeforeYearMonth(
-                    year, FIRST_MONTH_OF_YEAR
+                    year, startMonth
                 ),
             )
                 .doOnSuccess {

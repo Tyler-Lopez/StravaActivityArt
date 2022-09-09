@@ -3,12 +3,12 @@ package com.company.activityart.domain.use_case.activities
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.Athlete
 import com.company.activityart.util.Resource
-import com.company.activityart.util.Resource.*
+import com.company.activityart.util.Resource.Success
+import com.company.activityart.util.TimeUtils
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import java.time.Month
 import java.time.Year
 import java.util.*
 import javax.inject.Inject
@@ -20,12 +20,12 @@ import javax.inject.Inject
 class GetActivitiesByYearUseCase @Inject constructor(
     private val getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
     private val getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
-    private val getActivitiesByYearMonthFromRemoteUseCase: GetActivitiesByYearMonthFromRemoteUseCase,
+    private val insertActivitiesUseCase: InsertActivitiesUseCase,
+    private val timeUtils: TimeUtils
 ) {
     companion object {
         private const val FIRST_MONTH_OF_YEAR = 0
         private const val LAST_MONTH_OF_YEAR = 11
-        private const val MONTHS_IN_YEAR = 12
         private const val NO_CACHED_MONTHS = -1
     }
 
@@ -47,28 +47,43 @@ class GetActivitiesByYearUseCase @Inject constructor(
                 toReturn += monthlyActivities.second
             }
 
-        /** If no months were cached, return remote response **/
+        if (lastCachedMonth != LAST_MONTH_OF_YEAR) {
+            getActivitiesByYearFromRemoteUseCase(
+                accessToken = accessToken,
+                year = year,
+                startMonth = lastCachedMonth.takeIf {
+                    it != NO_CACHED_MONTHS
+                }?.plus(1) ?: FIRST_MONTH_OF_YEAR
+            ).doOnSuccess {
 
-        //   if (lastCachedMonth == NO_CACHED_MONTHS) {
-        //      return getActivitiesByYearFromRemoteUseCase(accessToken, year)
-        //  } else {
-        val lastAdjMonth = when (Year.now().value) {
-            year -> Calendar.getInstance().get(Calendar.MONTH)
-            else -> LAST_MONTH_OF_YEAR
-        }
-        println("here month is " + Calendar.getInstance().get(Calendar.MONTH))
-        val remainingMonthActivities: MutableList<Deferred<List<Activity>>> = mutableListOf()
-        coroutineScope {
-            ((lastCachedMonth + 1)..lastAdjMonth).forEach {
-                remainingMonthActivities.add(async {
-                    (getActivitiesByYearMonthFromRemoteUseCase(
-                        accessToken, year, month = it
-                    ) as Success).data
-                })
+                val cal = Calendar.getInstance()
+                val currMonth = cal.get(Calendar.MONTH)
+                val currYear = cal.get(Calendar.YEAR)
+                val lastStableMonth = if (currYear == year) {
+                    currMonth - 1
+                } else {
+                    LAST_MONTH_OF_YEAR
+                }
+                println("data is $data")
+                toReturn += data
+
+                /** Cache received activities from remote, excl currMonth **/
+                data.filter {
+                    if (currYear == year) {
+                        timeUtils.iso8601StringToMonth(it.iso8601LocalDate) != currMonth
+                    } else {
+                        true
+                    }
+                }
+                    .let {
+                        lastStableMonth.takeIf { it >= 0 }?.let { month ->
+                            insertActivitiesUseCase(data, athleteId, year, month)
+                        }
+                    }
+
             }
-            //     }
-            toReturn += remainingMonthActivities.awaitAll().flatten()
         }
+
         return Success(toReturn)
     }
 

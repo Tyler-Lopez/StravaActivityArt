@@ -57,9 +57,4 @@ class MainViewModel @Inject constructor(
             })
         }
     }
-
-    private fun onParseIntent(uri: Uri?) {
-
-    }
-
 }

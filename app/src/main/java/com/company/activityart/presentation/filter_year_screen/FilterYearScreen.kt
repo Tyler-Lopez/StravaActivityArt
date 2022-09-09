@@ -34,7 +34,7 @@ fun FilterYearScreen(
     viewModel: FilterYearViewModel = hiltViewModel()
 ) {
     viewModel.apply {
-        attachRouter(router)
+        LaunchedEffect(router) { attachRouter(router) }
         AppBarScaffold(
             text = stringResource(R.string.action_bar_filter_year_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
@@ -57,73 +57,4 @@ fun FilterYearScreen(
         }
     }
 }
-/*
-val screenState by remember { viewModel.timeSelectScreenState }
-val context = LocalContext.current
-val selectedActivitiesCount by remember { viewModel.selectedActivitiesCount }
 
-BoxWithConstraints(
-    modifier = Modifier
-        .fillMaxSize()
-        .background(Icicle),
-    contentAlignment = Alignment.Center
-) {
-    val maxHeight = this.maxHeight
-
-    ContainerColumn(maxWidth) {
-
-        when (screenState) {
-            LAUNCH -> SideEffect {
-                viewModel.loadActivities(
-                    context = context,
-                    athleteId = athleteId,
-                    accessToken = accessToken
-                )
-            }
-            LOADING, STANDBY, ERROR -> {
-
-                HeaderWithEmphasisComposable(emphasized = "years")
-                Table.TableComposable(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(0.dp, maxHeight * 0.6f),
-                    columns = viewModel.columns.toList(),
-                    rows = viewModel.rows.toList(),
-                    onSelectIndex = {
-                        viewModel.updateSelectedActivities(it)
-                    },
-                    selectionList = viewModel.selectedActivities,
-                )
-
-                if (screenState == LOADING)
-                    LoadingComposable()
-
-                ActivitiesCountComposable(count = selectedActivitiesCount)
-                ButtonWithCountComposable(activitiesEmpty = selectedActivitiesCount == 0) {
-                    navController.navigate(
-                        Screen.FilterMonth.withArgs(
-                            athleteId.toString(),
-                            accessToken,
-                            viewModel.selectedYearsNavArgs()
-                        )
-                    )
-                }
-
-                // If there is an error, allow user to try to load activities again
-                if (screenState == ERROR) {
-                    Button(onClick = {
-                        viewModel.loadActivities(
-                            context = context,
-                            athleteId = athleteId,
-                            accessToken = accessToken
-                        )
-                    }) {
-                        Text("ERROR")
-                    }
-                }
-            }
-        }
-    }
-}
-
- */

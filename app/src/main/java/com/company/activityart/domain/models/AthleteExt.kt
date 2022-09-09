@@ -7,8 +7,8 @@ private const val SECONDS_IN_DAY = 86400
 
 val Athlete.secondsSinceReceived: Int
     get() {
-        val currSeconds = TimeUnit.SECONDS.toMillis(System.currentTimeMillis())
-        return currSeconds.toInt() - receivedOnUnixSeconds
+        val currSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+        return currSeconds - (receivedOnUnixSeconds ?: currSeconds)
     }
 
 // This is important as Strava does not want you caching data for more than 3 days

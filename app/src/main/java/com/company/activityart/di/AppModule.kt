@@ -97,11 +97,13 @@ object AppModule {
     fun providesGetActivitiesByYear(
         getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
         getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
-        getActivitiesByYearMonthFromRemoteUseCase: GetActivitiesByYearMonthFromRemoteUseCase
+        insertActivitiesUseCase: InsertActivitiesUseCase,
+        timeUtils: TimeUtils
     ) = GetActivitiesByYearUseCase(
         getActivitiesByYearMonthFromLocalUseCase,
         getActivitiesByYearFromRemoteUseCase,
-        getActivitiesByYearMonthFromRemoteUseCase
+        insertActivitiesUseCase,
+        timeUtils
     )
 
     @Provides

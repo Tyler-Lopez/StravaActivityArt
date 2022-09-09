@@ -3,6 +3,7 @@ package com.company.activityart.domain.use_case.athlete
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.entities.AthleteEntity
 import com.company.activityart.domain.models.Athlete
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class InsertAthleteUseCase @Inject constructor(
@@ -13,7 +14,8 @@ class InsertAthleteUseCase @Inject constructor(
             AthleteEntity(
                 athleteId,
                 userName,
-                receivedOnUnixSeconds,
+                receivedOnUnixSeconds ?: TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+                    .toInt(),
                 profilePictureMedium,
                 profilePictureLarge,
                 firstName,

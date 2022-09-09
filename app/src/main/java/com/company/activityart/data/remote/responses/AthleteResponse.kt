@@ -41,8 +41,7 @@ data class AthleteResponse(
     val updated_at: String,
     val weight: Int
 ) : Athlete {
-    override val receivedOnUnixSeconds: Int =
-        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+    override val receivedOnUnixSeconds: Int? = null
 
     override val lastCachedYearMonth: Map<Int, Int>
         get() = mapOf()
