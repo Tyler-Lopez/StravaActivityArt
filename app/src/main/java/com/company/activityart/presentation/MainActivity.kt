@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,12 +45,17 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 val viewModel: MainViewModel = hiltViewModel()
 
                 viewModel.apply {
+                    /** Set splash screen to on while loading authentication **/
                     splashScreen.setKeepOnScreenCondition {
                         viewState.value is LoadingAuthentication
                     }
-                    // Push event to ViewModel to determine authentication
-                    onEvent(LoadAuthentication(intentUri))
+                    /** Push event to [MainViewModel] to determine authentication **/
+                    LaunchedEffect(key1 = intentUri) {
+                        onEvent(LoadAuthentication(intentUri))
+                    }
+                    /** Set global nav controller for [routeTo] **/
                     navController = rememberAnimatedNavController()
+
 
                     viewState.collectAsState().value?.let {
                         val startScreen = if (it is Authenticated) Welcome.route else Login.route
@@ -62,7 +68,6 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         }
                     }
                 }
-
             }
         }
     }

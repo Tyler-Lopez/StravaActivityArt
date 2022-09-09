@@ -11,11 +11,16 @@ data class Bearer(
     @SerializedName("refresh_token")
     override val refreshToken: String,
 
-    val athlete: Athlete,
+    val athlete: Athlete?,
     val expires_in: Int,
     val token_type: String
 
 ) : OAuth2 {
-    override val athleteId: Long
-        get() = athlete.id
+
+    companion object {
+        private const val NO_EXPLICIT_ATHLETE_ID = -1L
+    }
+
+    override var athleteId: Long = NO_EXPLICIT_ATHLETE_ID
+        get() = athlete?.id ?: field
 }

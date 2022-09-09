@@ -76,8 +76,9 @@ class GetActivitiesByYearUseCase @Inject constructor(
                     }
                 }
                     .let {
+                        println("data to insert is $it")
                         lastStableMonth.takeIf { it >= 0 }?.let { month ->
-                            insertActivitiesUseCase(data, athleteId, year, month)
+                            insertActivitiesUseCase(it, athleteId, year, month)
                         }
                     }
 
@@ -108,7 +109,9 @@ class GetActivitiesByYearUseCase @Inject constructor(
                 })
             }
         }
-        return localYearActivitiesDeferred.awaitAll()
+        val b = localYearActivitiesDeferred.awaitAll()
+        println("here b is $b")
+        return b
     }
 
 

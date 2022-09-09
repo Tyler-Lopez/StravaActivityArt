@@ -26,7 +26,7 @@ https://developers.strava.com/guidelines/
 @Composable
 fun WelcomeScreen(
     router: Router<MainDestination>,
-    viewModel: WelcomeScreenViewModel = hiltViewModel<WelcomeScreenViewModel>()
+    viewModel: WelcomeScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = router) { viewModel.attachRouter(router) }
     ScreenBackground(spacedBy = spacing.medium) {

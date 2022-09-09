@@ -28,7 +28,7 @@ class FilterYearViewModel @Inject constructor(
 ) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
 
     companion object {
-        private const val YEAR_START = 2018
+        private const val YEAR_START = 2021
         private val YEAR_NOW = Year.now().value
     }
 

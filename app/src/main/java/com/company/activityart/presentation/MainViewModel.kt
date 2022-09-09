@@ -49,6 +49,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             pushState(when (val response = getAccessTokenUseCase(event.uri)) {
                 is Success -> {
+                    println("here success ${response.data}")
                     athleteId = response.data.athleteId
                     accessToken = response.data.accessToken
                     Authenticated

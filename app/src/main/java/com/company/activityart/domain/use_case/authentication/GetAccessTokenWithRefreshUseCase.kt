@@ -27,22 +27,27 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
         getAccessTokenFromLocalUseCase().apply {
             return when {
                 this == null -> Error()
-                requiresRefresh -> onRequiresRefresh(refreshToken)
+                /** On refresh, pass in local athlete id as refresh does not incl Athlete **/
+                requiresRefresh -> onRequiresRefresh(refreshToken, athleteId)
                 else -> Success(this)
             }
         }
     }
 
-    private suspend fun onRequiresRefresh(refreshToken: String):
+    private suspend fun onRequiresRefresh(refreshToken: String, athleteId: Long):
             Resource<OAuth2> {
         return try {
             Success(
-                athleteApi.getAccessToken(
+                athleteApi.getAccessTokenFromRefresh(
                     clientId = TokenConstants.CLIENT_ID,
                     clientSecret = TokenConstants.CLIENT_SECRET,
-                    code = refreshToken,
+                    refreshToken = refreshToken,
                     grantType = GRANT_TYPE
-                )
+                ).apply {
+                    /** Refresh token [Bearer] does not include the athlete and thus
+                     * id must be SET to prevent an NPE. **/
+                    this.athleteId = athleteId
+                }
             )
         } catch (e: Exception) {
             /* When using try catch in a suspend block,

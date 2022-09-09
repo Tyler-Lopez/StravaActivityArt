@@ -29,7 +29,10 @@ class GetAccessTokenUseCase @Inject constructor(
         }
             /** On success, store locally, else on error clear out previous entry
              * Todo, improve this - maybe best to not clear out error **/
-            .doOnSuccess { insertAccessTokenUseCase(data) }
+            .doOnSuccess {
+                println("here $data")
+                insertAccessTokenUseCase(data)
+            }
             .doOnError { clearAccessTokenUseCase() }
     }
 }

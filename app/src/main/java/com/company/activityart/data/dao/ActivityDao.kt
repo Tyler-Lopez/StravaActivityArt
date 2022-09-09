@@ -32,14 +32,14 @@ interface ActivityDao {
     @Query(
         "SELECT * " +
                 "FROM activityEntity " +
-                "WHERE iso8601LocalDate LIKE '%' || :year + '-' || '%' " +
-                "AND iso8601LocalDate LIKE '%' || '-' + :month + '-' || '%' " +
+                "WHERE iso8601LocalDate LIKE :yearStringWithDelimiter || '%' " +
+                "AND iso8601LocalDate LIKE '%' || :monthStringWithDelimiter || '%' " +
                 "AND activityEntity.athleteId = :athleteId "
     )
     suspend fun getActivitiesByYearMonth(
         athleteId: Long,
-        month: String,
-        year: Int
+        monthStringWithDelimiter: String,
+        yearStringWithDelimiter: String
     ): List<ActivityEntity>
 
 }

@@ -18,6 +18,7 @@ class GetAccessTokenFromRemoteUseCase @Inject constructor(
     suspend operator fun invoke(
         authorizationCode: String
     ): Resource<OAuth2> {
+        println("here auth code is $authorizationCode")
         return try {
             Resource.Success(
                 api.getAccessToken(

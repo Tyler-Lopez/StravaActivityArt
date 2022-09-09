@@ -45,12 +45,12 @@ class WelcomeScreenViewModel @Inject constructor(
     }
 
     private fun onClickedMakeArt() {
-            routeTo(
-                NavigateMakeArt(
-                    athlete?.athleteId ?: error("AthleteID missing."),
-                    accessToken ?: error("Access token missing.")
-                )
+        routeTo(
+            NavigateMakeArt(
+                athlete?.athleteId ?: error("AthleteID missing."),
+                accessToken ?: error("Access token missing.")
             )
+        )
     }
 
     private suspend fun onClickedLogout() {
