@@ -17,7 +17,7 @@ data class AthleteEntity(
     override val lastName: String,
 
     @TypeConverters(Converters::class)
-    override val cachedYearMonths: Map<Int, List<Int>>
+    override val lastCachedYearMonth: Map<Int, Int>
     // This is to tell us what we have and have not yet mapped to Room
     /*
     override val yearMonthsCached: Map<Int, Int>,

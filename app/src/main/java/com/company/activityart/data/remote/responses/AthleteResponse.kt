@@ -44,7 +44,7 @@ data class AthleteResponse(
     override val receivedOnUnixSeconds: Int =
         TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
 
-    override val cachedYearMonths: Map<Int, List<Int>>
+    override val lastCachedYearMonth: Map<Int, Int>
         get() = mapOf()
     //override val yearMonthsCached: Map<Int, Int> = mapOf()
     //override val gears: Map<String, String> = mapOf()

@@ -21,5 +21,5 @@ interface Athlete {
     val gears: Map<String, String>
 
      */
-    val cachedYearMonths: Map<Int, List<Int>>
+    val lastCachedYearMonth: Map<Int, Int>
 }

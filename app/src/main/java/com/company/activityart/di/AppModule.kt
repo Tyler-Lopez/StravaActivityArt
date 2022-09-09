@@ -57,7 +57,7 @@ object AppModule {
 
     @Provides
     fun providesGetCachedMonthsByYearUseCase(athleteDatabase: AthleteDatabase) =
-        GetCachedMonthsByYearUseCase(athleteDatabase)
+        GetLastCachedYearMonthsUseCase(athleteDatabase)
 
     @Provides
     fun providesGetActivitiesByPageFromRemoteUseCase(

@@ -18,7 +18,7 @@ class InsertAthleteUseCase @Inject constructor(
                 profilePictureLarge,
                 firstName,
                 lastName,
-                cachedYearMonths
+                lastCachedYearMonth
             )
         }
         athleteDatabase.athleteDao.insertAthlete(entity)

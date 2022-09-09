@@ -8,6 +8,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import java.time.Month
+import java.time.Year
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -23,71 +26,61 @@ class GetActivitiesByYearUseCase @Inject constructor(
         private const val FIRST_MONTH_OF_YEAR = 0
         private const val LAST_MONTH_OF_YEAR = 11
         private const val MONTHS_IN_YEAR = 12
+        private const val NO_CACHED_MONTHS = -1
     }
 
     /**
-     * @param cachedMonths The months known to be cached of this year associated
-     * with an [Athlete]. Providing this distinguishes between months which
-     * are known to have no activities from those which have never been fetched
-     * to prevent unnecessary API requests.
+     * @param lastCachedMonth
      */
     suspend operator fun invoke(
         accessToken: String,
         athleteId: Long,
         year: Int,
-        cachedMonths: List<Int>
+        lastCachedMonth: Int = NO_CACHED_MONTHS
     ): Resource<List<Activity>> {
 
         val toReturn = mutableListOf<Activity>()
 
-        /** Add all [cachedMonths] to returning List **/
-        loadLocalCachedActivitiesByYear(athleteId, year, cachedMonths)
+        /** Add all months less than [lastCachedMonth] to returning List **/
+        loadLocalCachedActivitiesByYear(athleteId, year, lastCachedMonth)
             .forEach { monthlyActivities ->
                 toReturn += monthlyActivities.second
             }
 
-        /** Filter any [cachedMonths] from those we must fetch remotely **/
-        (FIRST_MONTH_OF_YEAR..LAST_MONTH_OF_YEAR)
-            .subtract(cachedMonths.toSet())
-            .apply {
-                /** If no months were cached, fetch all activities **/
-                if (size == MONTHS_IN_YEAR) {
-                    getActivitiesByYearFromRemoteUseCase(
-                        accessToken, year
-                    )
-                        .doOnSuccess {
-                            toReturn.addAll(data)
-                        }
-                        .doOnError {
-                            // Todo
-                        }
-                } else {
-                    forEach { month ->
-                        getActivitiesByYearMonthFromRemoteUseCase(
-                            accessToken, year, month
-                        )
-                            .doOnSuccess {
-                                toReturn.addAll(data)
-                            }
-                            .doOnError {
-                                // Todo
-                            }
-                    }
-                }
-            }
+        /** If no months were cached, return remote response **/
 
+        //   if (lastCachedMonth == NO_CACHED_MONTHS) {
+        //      return getActivitiesByYearFromRemoteUseCase(accessToken, year)
+        //  } else {
+        val lastAdjMonth = when (Year.now().value) {
+            year -> Calendar.getInstance().get(Calendar.MONTH)
+            else -> LAST_MONTH_OF_YEAR
+        }
+        println("here month is " + Calendar.getInstance().get(Calendar.MONTH))
+        val remainingMonthActivities: MutableList<Deferred<List<Activity>>> = mutableListOf()
+        coroutineScope {
+            ((lastCachedMonth + 1)..lastAdjMonth).forEach {
+                remainingMonthActivities.add(async {
+                    (getActivitiesByYearMonthFromRemoteUseCase(
+                        accessToken, year, month = it
+                    ) as Success).data
+                })
+            }
+            //     }
+            toReturn += remainingMonthActivities.awaitAll().flatten()
+        }
         return Success(toReturn)
     }
 
     private suspend fun loadLocalCachedActivitiesByYear(
         athleteId: Long,
         year: Int,
-        cachedMonths: List<Int>
+        lastCachedMonth: Int
     ): List<Pair<Int, List<Activity>>> {
         val localYearActivitiesDeferred =
             mutableListOf<Deferred<Pair<Int, List<Activity>>>>()
         coroutineScope {
-            cachedMonths.forEach {
+            (FIRST_MONTH_OF_YEAR..lastCachedMonth).forEach {
                 localYearActivitiesDeferred.add(async {
                     Pair(
                         first = it,

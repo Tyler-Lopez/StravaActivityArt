@@ -34,10 +34,13 @@ class TimeUtils {
         } else {
             LAST_MONTH_OF_YEAR
         }
+
+        /** [GregorianCalendar] uses a 0-indexed [month] (0-11)
+         * while [YearMonth] uses 1-indexed (1-12) **/
         val calendar = GregorianCalendar(
             adjYear,
             adjMonth,
-            YearMonth.of(adjYear, adjMonth).lengthOfMonth(),
+            YearMonth.of(adjYear, (adjMonth + 1)).lengthOfMonth(),
             LAST_HOUR_OF_DAY,
             LAST_MINUTE_OF_HOUR,
             LAST_SECOND_OF_MINUTE

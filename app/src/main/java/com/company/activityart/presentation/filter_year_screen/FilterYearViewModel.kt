@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesByYearUseCase
-import com.company.activityart.domain.use_case.athlete.GetCachedMonthsByYearUseCase
+import com.company.activityart.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
 import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.ContinueClicked
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FilterYearViewModel @Inject constructor(
     private val getActivitiesByYearUseCase: GetActivitiesByYearUseCase,
-    private val getAthleteCachedMonthsByYearUseCase: GetCachedMonthsByYearUseCase,
+    private val getAthleteCachedMonthsByYearUseCase: GetLastCachedYearMonthsUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
 
@@ -75,7 +75,7 @@ class FilterYearViewModel @Inject constructor(
                 accessToken = accessToken,
                 athleteId = athleteId,
                 year = it,
-                cachedMonths = cachedYearMonths[it] ?: emptyList()
+                // todo add cache?
             )
                 .doOnSuccess {
                     activitiesByYear += Pair(it, data)

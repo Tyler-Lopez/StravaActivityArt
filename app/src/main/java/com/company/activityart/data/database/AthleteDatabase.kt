@@ -20,7 +20,7 @@ import com.company.activityart.data.entities.OAuth2Entity
 
 @Database(
     entities = [ActivityEntity::class, AthleteEntity::class, OAuth2Entity::class],
-    version = 4
+    version = 5
 )
 @TypeConverters(Converters::class)
 abstract class AthleteDatabase : RoomDatabase() {
