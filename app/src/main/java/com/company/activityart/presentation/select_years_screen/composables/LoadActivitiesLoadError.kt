@@ -1,8 +1,6 @@
 package com.company.activityart.presentation.select_years_screen.composables
 
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -11,19 +9,20 @@ import com.company.activityart.R
 import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.common.button.ButtonSize.*
 import com.company.activityart.presentation.common.button.HighEmphasisButton
-import com.company.activityart.presentation.select_years_screen.SelectYearsViewEvent
-import com.company.activityart.presentation.select_years_screen.SelectYearsViewEvent.*
+import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewEvent
+import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewEvent.*
 
+/**
+ * Shown when some activities or no activities have loaded.
+ * Prompts athlete to either continue (if [activitiesLoaded] > 0)
+ * or to try again to load.
+ */
 @Composable
-fun FilterYearScreenStandby(
-    activitiesCountByYear: List<Pair<Int, Int>>,
-    eventReceiver: ViewEventListener<SelectYearsViewEvent>,
+fun LoadActivitiesLoadError(
+    activitiesLoaded: Int,
+    eventReceiver: ViewEventListener<LoadActivitiesViewEvent>,
 ) {
-    LazyColumn {
-        items(activitiesCountByYear.size) {
-            Text(text = "${activitiesCountByYear[it].second}")
-        }
-    }
+
     HighEmphasisButton(
         text = stringResource(R.string.button_continue),
         modifier = Modifier.defaultMinSize(
