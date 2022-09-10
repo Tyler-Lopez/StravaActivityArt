@@ -36,7 +36,7 @@ fun LoadActivitiesScreen(
     viewModel.apply {
         LaunchedEffect(key1 = router) { attachRouter(router) }
         AppBarScaffold(
-            text = stringResource(R.string.action_bar_select_years_header),
+            text = stringResource(R.string.action_bar_load_activities_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
         ) {
             ScreenBackground(spacedBy = spacing.medium) {
