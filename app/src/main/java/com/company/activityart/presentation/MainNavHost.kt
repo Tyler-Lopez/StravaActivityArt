@@ -36,7 +36,7 @@ fun MainNavHost(
             AboutScreen(router)
         }
         swipingInOutComposable(
-            route = FilterYear.route +
+            route = LoadActivities.route +
                     "?${AthleteId.route}&${AccessToken.route}",
             arguments = listOf(AthleteId.navArg, AccessToken.navArg)
         ) {

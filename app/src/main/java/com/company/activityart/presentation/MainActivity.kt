@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination.*
@@ -21,11 +20,9 @@ import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.activityart.util.NavArg
 import com.company.activityart.util.Screen.*
-import com.company.activityart.util.StringConstants.SSH_ROUTER_KEY
 import com.company.activityart.util.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -107,7 +104,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     private fun navigateMakeArt(destination: NavigateMakeArt) {
         destination.apply {
             navController.navigate(
-                route = FilterYear.withArgs(
+                route = LoadActivities.withArgs(
                     args = arrayOf(
                         NavArg.AthleteId.key to athleteId.toString(),
                         NavArg.AccessToken.key to accessToken
@@ -175,7 +172,7 @@ Column(
         // Simple screen showing information about application
         composable(route = Screen.About.route) { AboutScreen() }
         composable(
-            route = Screen.FilterYear.route + "/{athleteId}/{accessToken}",
+            route = Screen.LoadActivities.route + "/{athleteId}/{accessToken}",
             arguments = listOf(
                 navArgument("athleteId") {
                     type = NavType.LongType
