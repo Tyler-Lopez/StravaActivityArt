@@ -39,10 +39,7 @@ fun LoadActivitiesScreen(
             text = stringResource(R.string.action_bar_select_years_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
         ) {
-            ScreenBackground(
-                spacedBy = spacing.medium,
-                verticalAlignment = Alignment.Top
-            ) {
+            ScreenBackground(spacedBy = spacing.medium) {
                 viewState.collectAsState().value?.apply {
                     when (this) {
                         is LoadError -> LoadActivitiesLoadError(
