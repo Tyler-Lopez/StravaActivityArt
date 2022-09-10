@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.about_screen.AboutScreen
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesScreen
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesScreen
 import com.company.activityart.presentation.login_screen.LoginScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.util.NavArg.*

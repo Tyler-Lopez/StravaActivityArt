@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.select_years_screen
+package com.company.activityart.presentation.load_activities_screen
 
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState

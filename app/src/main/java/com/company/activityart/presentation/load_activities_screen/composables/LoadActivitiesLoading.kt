@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.select_years_screen.composables
+package com.company.activityart.presentation.load_activities_screen.composables
 
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text

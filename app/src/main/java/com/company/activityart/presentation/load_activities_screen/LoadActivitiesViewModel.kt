@@ -1,17 +1,14 @@
-package com.company.activityart.presentation.select_years_screen
+package com.company.activityart.presentation.load_activities_screen
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesByYearUseCase
-import com.company.activityart.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewEvent.*
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewState.*
-import com.company.activityart.presentation.select_years_screen.composables.LoadActivitiesLoadError
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.*
 import com.company.activityart.util.Resource
 import com.company.activityart.util.Resource.*
 import com.company.activityart.util.ext.accessToken

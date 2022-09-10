@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.select_years_screen.composables
+package com.company.activityart.presentation.load_activities_screen.composables
 
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
@@ -9,8 +9,8 @@ import com.company.activityart.R
 import com.company.activityart.architecture.ViewEventListener
 import com.company.activityart.presentation.common.button.ButtonSize.*
 import com.company.activityart.presentation.common.button.HighEmphasisButton
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewEvent
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewEvent.*
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
 
 /**
  * Shown when some activities or no activities have loaded.

@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.select_years_screen
+package com.company.activityart.presentation.load_activities_screen
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -9,12 +9,12 @@ import com.company.activityart.architecture.Router
 import com.company.activityart.data.remote.responses.ActivityResponse
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewState.*
-import com.company.activityart.presentation.select_years_screen.LoadActivitiesViewEvent.*
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.*
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
-import com.company.activityart.presentation.select_years_screen.composables.LoadActivitiesLoadError
-import com.company.activityart.presentation.select_years_screen.composables.LoadActivitiesLoading
+import com.company.activityart.presentation.load_activities_screen.composables.LoadActivitiesLoadError
+import com.company.activityart.presentation.load_activities_screen.composables.LoadActivitiesLoading
 import com.company.activityart.presentation.ui.theme.spacing
 
 /**
