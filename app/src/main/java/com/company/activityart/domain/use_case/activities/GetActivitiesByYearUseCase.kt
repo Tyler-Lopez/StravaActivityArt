@@ -35,6 +35,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
         accessToken: String,
         athleteId: Long,
         year: Int,
+
     ): Resource<List<Activity>> {
 
         val toReturn = mutableListOf<Activity>()

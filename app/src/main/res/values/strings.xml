@@ -30,8 +30,8 @@
         </item>
     </string-array>
 
-    <!-- Text shown on action bar for the page which loads activities from remote -->
-    <string name="action_bar_load_activities_header">Loading Activities</string>
+    <!-- Text shown on action bar for the page which loads activities from remote and where an athlete selects which years to visualize -->
+    <string name="action_bar_select_years_header">Select Years</string>
 
     <!-- Text shown on button which progresses to the next stage of making art when clicked -->
     <string name="button_continue">Continue</string>

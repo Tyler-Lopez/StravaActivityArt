@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.load_activities_screen
+package com.company.activityart.presentation.select_years_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -8,10 +8,10 @@ import com.company.activityart.domain.use_case.activities.GetActivitiesByYearUse
 import com.company.activityart.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
-import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.ContinueClicked
-import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.NavigateUpClicked
-import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.Loading
-import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.Standby
+import com.company.activityart.presentation.select_years_screen.SelectYearsViewEvent.ContinueClicked
+import com.company.activityart.presentation.select_years_screen.SelectYearsViewEvent.NavigateUpClicked
+import com.company.activityart.presentation.select_years_screen.SelectYearsViewState.Loading
+import com.company.activityart.presentation.select_years_screen.SelectYearsViewState.Standby
 import com.company.activityart.util.Resource
 import com.company.activityart.util.ext.accessToken
 import com.company.activityart.util.ext.athleteId
@@ -21,11 +21,11 @@ import java.time.Year
 import javax.inject.Inject
 
 @HiltViewModel
-class LoadActivitiesViewModel @Inject constructor(
+class SelectYearsViewModel @Inject constructor(
     private val getActivitiesByYearUseCase: GetActivitiesByYearUseCase,
     private val getAthleteCachedMonthsByYearUseCase: GetLastCachedYearMonthsUseCase,
     savedStateHandle: SavedStateHandle
-) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
+) : BaseRoutingViewModel<SelectYearsViewState, SelectYearsViewEvent, MainDestination>() {
 
     companion object {
         private const val YEAR_START = 2021
@@ -39,10 +39,10 @@ class LoadActivitiesViewModel @Inject constructor(
         mutableListOf()
 
     init {
-        pushState(Loading)
+        pushState(Loading(0))
     }
 
-    override fun onEvent(event: LoadActivitiesViewEvent) {
+    override fun onEvent(event: SelectYearsViewEvent) {
         viewModelScope.launch {
             when (event) {
                 is ContinueClicked -> onContinueClicked()
@@ -92,8 +92,10 @@ class LoadActivitiesViewModel @Inject constructor(
         // Todo, add another state for when no activities exist at all
         // which should be checked when loading == false && error == false
         Standby(
-            loadErrorOccurred = loadError,
-            activitiesByYear = activitiesByYear
+            isLoading = isLoading,
+            activitiesCountByYear = activitiesByYear.map {
+                it.first to it.second.size
+            }
         ).push()
     }
 }

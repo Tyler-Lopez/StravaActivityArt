@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.load_activities_screen
+package com.company.activityart.presentation.select_years_screen
 
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -8,11 +8,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.R
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.*
-import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
+import com.company.activityart.presentation.select_years_screen.SelectYearsViewState.*
+import com.company.activityart.presentation.select_years_screen.SelectYearsViewEvent.*
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
-import com.company.activityart.presentation.load_activities_screen.composables.FilterYearScreenStandby
+import com.company.activityart.presentation.select_years_screen.composables.FilterYearScreenStandby
 import com.company.activityart.presentation.ui.theme.spacing
 
 /*
@@ -29,12 +29,12 @@ import com.company.activityart.presentation.ui.theme.spacing
 @Composable
 fun LoadActivitiesScreen(
     router: Router<MainDestination>,
-    viewModel: LoadActivitiesViewModel = hiltViewModel()
+    viewModel: SelectYearsViewModel = hiltViewModel()
 ) {
     viewModel.apply {
         LaunchedEffect(router) { attachRouter(router) }
         AppBarScaffold(
-            text = stringResource(R.string.action_bar_load_activities_header),
+            text = stringResource(R.string.action_bar_select_years_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
         ) {
             ScreenBackground(
@@ -45,7 +45,7 @@ fun LoadActivitiesScreen(
                     when (this) {
                         is Loading -> CircularProgressIndicator()
                         is Standby -> FilterYearScreenStandby(
-                            activitiesByYear = activitiesByYear,
+                            activitiesCountByYear = activitiesCountByYear,
                             eventReceiver = viewModel
                         )
                     }
