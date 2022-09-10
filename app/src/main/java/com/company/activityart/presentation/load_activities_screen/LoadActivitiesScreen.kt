@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.filter_year_screen
+package com.company.activityart.presentation.load_activities_screen
 
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -8,13 +8,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.R
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.*
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.*
-import com.company.activityart.presentation.about_screen.AboutScreenViewState
-import com.company.activityart.presentation.about_screen.composables.AboutScreenStandby
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.*
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
-import com.company.activityart.presentation.filter_year_screen.composables.FilterYearScreenStandby
+import com.company.activityart.presentation.load_activities_screen.composables.FilterYearScreenStandby
 import com.company.activityart.presentation.ui.theme.spacing
 
 /*
@@ -29,14 +27,14 @@ import com.company.activityart.presentation.ui.theme.spacing
  */
 
 @Composable
-fun FilterYearScreen(
+fun LoadActivitiesScreen(
     router: Router<MainDestination>,
-    viewModel: FilterYearViewModel = hiltViewModel()
+    viewModel: LoadActivitiesViewModel = hiltViewModel()
 ) {
     viewModel.apply {
         LaunchedEffect(router) { attachRouter(router) }
         AppBarScaffold(
-            text = stringResource(R.string.action_bar_filter_year_header),
+            text = stringResource(R.string.action_bar_load_activities_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
         ) {
             ScreenBackground(
@@ -47,7 +45,6 @@ fun FilterYearScreen(
                     when (this) {
                         is Loading -> CircularProgressIndicator()
                         is Standby -> FilterYearScreenStandby(
-                            isLoadingActivities = isLoading,
                             activitiesByYear = activitiesByYear,
                             eventReceiver = viewModel
                         )

@@ -2,6 +2,7 @@ package com.company.activityart.domain.use_case.activities
 
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.Athlete
+import com.company.activityart.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
 import com.company.activityart.util.Resource
 import com.company.activityart.util.Resource.Success
 import com.company.activityart.util.TimeUtils
@@ -18,6 +19,7 @@ import javax.inject.Inject
  * which occurred on a year from local and remote repositories.
  */
 class GetActivitiesByYearUseCase @Inject constructor(
+    private val getAthleteCachedYearMonthsUseCase: GetLastCachedYearMonthsUseCase,
     private val getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
     private val getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
     private val insertActivitiesUseCase: InsertActivitiesUseCase,
@@ -29,19 +31,18 @@ class GetActivitiesByYearUseCase @Inject constructor(
         private const val NO_CACHED_MONTHS = -1
     }
 
-    /**
-     * @param lastCachedMonth
-     */
     suspend operator fun invoke(
         accessToken: String,
         athleteId: Long,
         year: Int,
-        lastCachedMonth: Int = NO_CACHED_MONTHS
     ): Resource<List<Activity>> {
 
         val toReturn = mutableListOf<Activity>()
 
-        /** Add all months less than [lastCachedMonth] to returning List **/
+        val cachedYearMonths = getAthleteCachedYearMonthsUseCase(athleteId)
+        val lastCachedMonth = cachedYearMonths[year] ?: NO_CACHED_MONTHS
+
+        /** Add all months less than lastCachedMonth to returning List **/
         loadLocalCachedActivitiesByYear(athleteId, year, lastCachedMonth)
             .forEach { monthlyActivities ->
                 toReturn += monthlyActivities.second
@@ -51,7 +52,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
             getActivitiesByYearFromRemoteUseCase(
                 accessToken = accessToken,
                 year = year,
-                startMonth = lastCachedMonth.takeIf {
+                startMonth = cachedYearMonths[year].takeIf {
                     it != NO_CACHED_MONTHS
                 }?.plus(1) ?: FIRST_MONTH_OF_YEAR
             ).doOnSuccess {
@@ -64,7 +65,6 @@ class GetActivitiesByYearUseCase @Inject constructor(
                 } else {
                     LAST_MONTH_OF_YEAR
                 }
-                println("data is $data")
                 toReturn += data
 
                 /** Cache received activities from remote, excl currMonth **/
@@ -76,7 +76,6 @@ class GetActivitiesByYearUseCase @Inject constructor(
                     }
                 }
                     .let {
-                        println("data to insert is $it")
                         lastStableMonth.takeIf { it >= 0 }?.let { month ->
                             insertActivitiesUseCase(it, athleteId, year, month)
                         }
@@ -109,9 +108,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
                 })
             }
         }
-        val b = localYearActivitiesDeferred.awaitAll()
-        println("here b is $b")
-        return b
+        return localYearActivitiesDeferred.awaitAll()
     }
 
 

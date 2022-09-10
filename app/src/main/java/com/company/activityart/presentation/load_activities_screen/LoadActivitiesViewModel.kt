@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.filter_year_screen
+package com.company.activityart.presentation.load_activities_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -8,10 +8,10 @@ import com.company.activityart.domain.use_case.activities.GetActivitiesByYearUse
 import com.company.activityart.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.ContinueClicked
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewEvent.NavigateUpClicked
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.Loading
-import com.company.activityart.presentation.filter_year_screen.FilterYearViewState.Standby
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.ContinueClicked
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.NavigateUpClicked
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.Loading
+import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.Standby
 import com.company.activityart.util.Resource
 import com.company.activityart.util.ext.accessToken
 import com.company.activityart.util.ext.athleteId
@@ -21,11 +21,11 @@ import java.time.Year
 import javax.inject.Inject
 
 @HiltViewModel
-class FilterYearViewModel @Inject constructor(
+class LoadActivitiesViewModel @Inject constructor(
     private val getActivitiesByYearUseCase: GetActivitiesByYearUseCase,
     private val getAthleteCachedMonthsByYearUseCase: GetLastCachedYearMonthsUseCase,
     savedStateHandle: SavedStateHandle
-) : BaseRoutingViewModel<FilterYearViewState, FilterYearViewEvent, MainDestination>() {
+) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
         private const val YEAR_START = 2021
@@ -40,12 +40,9 @@ class FilterYearViewModel @Inject constructor(
 
     init {
         pushState(Loading)
-        viewModelScope.launch {
-            loadActivities()
-        }
     }
 
-    override fun onEvent(event: FilterYearViewEvent) {
+    override fun onEvent(event: LoadActivitiesViewEvent) {
         viewModelScope.launch {
             when (event) {
                 is ContinueClicked -> onContinueClicked()
@@ -63,17 +60,17 @@ class FilterYearViewModel @Inject constructor(
     }
 
     override fun onRouterAttached() {
-
+        viewModelScope.launch {
+            loadActivities()
+        }
     }
 
     private suspend fun loadActivities() {
-        val cachedYearMonths = getAthleteCachedMonthsByYearUseCase(athleteId)
         (YEAR_NOW downTo YEAR_START).takeWhile {
             getActivitiesByYearUseCase(
                 accessToken = accessToken,
                 athleteId = athleteId,
                 year = it,
-                lastCachedMonth = cachedYearMonths[it] ?: -1
             )
                 .doOnSuccess {
                     activitiesByYear += Pair(it, data)
@@ -95,7 +92,6 @@ class FilterYearViewModel @Inject constructor(
         // Todo, add another state for when no activities exist at all
         // which should be checked when loading == false && error == false
         Standby(
-            isLoading = isLoading,
             loadErrorOccurred = loadError,
             activitiesByYear = activitiesByYear
         ).push()
