@@ -31,19 +31,14 @@ import com.company.activityart.presentation.ui.theme.spacing
 @Composable
 fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
     viewModel.apply {
-        AppBarScaffold(
-            text = stringResource(R.string.action_bar_load_activities_header),
-            onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
-        ) {
-            ScreenBackground(spacedBy = spacing.medium) {
-                viewState.collectAsState().value?.apply {
-                    when (this) {
-                        is LoadError -> LoadActivitiesLoadError(
-                            activitiesLoaded = totalActivitiesLoaded,
-                            eventReceiver = viewModel
-                        )
-                        is Loading -> LoadActivitiesLoading(totalActivitiesLoaded)
-                    }
+        ScreenBackground(spacedBy = spacing.medium) {
+            viewState.collectAsState().value?.apply {
+                when (this) {
+                    is LoadError -> LoadActivitiesLoadError(
+                        activitiesLoaded = totalActivitiesLoaded,
+                        eventReceiver = viewModel
+                    )
+                    is Loading -> LoadActivitiesLoading(totalActivitiesLoaded)
                 }
             }
         }

@@ -23,11 +23,16 @@ import com.company.activityart.presentation.ui.theme.spacing
 @Composable
 fun MakeArtScreen(viewModel: MakeArtViewModel = hiltViewModel()) {
     viewModel.apply {
-        ScreenBackground(spacedBy = spacing.medium) {
-            viewState.collectAsState().value?.apply {
-                when (this) {
-                    is Loading -> CircularProgressIndicator()
-                    is Standby -> MakeArtStandby(artPreview, a)
+        AppBarScaffold(
+            text = stringResource(R.string.action_bar_edit_art_header),
+            onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
+        ) {
+            ScreenBackground(spacedBy = spacing.medium) {
+                viewState.collectAsState().value?.apply {
+                    when (this) {
+                        is Loading -> CircularProgressIndicator()
+                        is Standby -> MakeArtStandby(artPreview, a)
+                    }
                 }
             }
         }
