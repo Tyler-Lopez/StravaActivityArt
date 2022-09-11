@@ -7,6 +7,7 @@ import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesByYearFromCacheUseCase
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
+import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.make_art_screen.MakeArtViewState.*
 import com.company.activityart.presentation.make_art_screen.MakeArtViewEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,13 +37,35 @@ class MakeArtViewModel @Inject constructor(
     }
 
     override fun onEvent(event: MakeArtViewEvent) {
-        when (event) {
-            is MakeFullscreenClicked -> {}
-            is NavigateUpClicked -> {}
-            is SaveClicked -> {}
-            is SelectFiltersClicked -> {}
-            is SelectStylesClicked -> {}
+        viewModelScope.launch {
+            when (event) {
+                is MakeFullscreenClicked -> onMakeFullscreenClicked()
+                is NavigateUpClicked -> onNavigateUpClicked()
+                is SaveClicked -> onSaveClicked()
+                is SelectFiltersClicked -> onSelectFiltersClicked()
+                is SelectStylesClicked -> onSelectStylesClicked()
+            }
         }
+    }
+
+    private fun onMakeFullscreenClicked() {
+
+    }
+
+    private fun onNavigateUpClicked() {
+        routeTo(NavigateUp)
+    }
+
+    private fun onSaveClicked() {
+
+    }
+
+    private fun onSelectFiltersClicked() {
+
+    }
+
+    private fun onSelectStylesClicked() {
+
     }
 
     private fun getActivities() {
