@@ -1,6 +1,8 @@
 package com.company.activityart.presentation.common
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -18,27 +20,33 @@ import com.company.activityart.presentation.common.type.TitleFour
 fun AppBarScaffold(
     text: String,
     onNavigateUp: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit
+    actions: @Composable RowScope.() -> Unit = {},
+    tabLayout: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    TitleFour(
-                        text = text,
-                        textColor = colorResource(id = R.color.white)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onNavigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.navigate_up_cd),
-                            tint = Color.White
+            Column {
+                TopAppBar(
+                    title = {
+                        TitleFour(
+                            text = text,
+                            textColor = colorResource(id = R.color.white)
                         )
-                    }
-                }
-            )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { onNavigateUp() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = stringResource(id = R.string.navigate_up_cd),
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    actions = actions,
+                )
+                tabLayout()
+            }
         },
         content = content
     )

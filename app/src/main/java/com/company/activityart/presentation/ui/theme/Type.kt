@@ -65,6 +65,12 @@ val Typography = Typography(
         lineHeight = 20.sp,
         color = LightTextSecondary
     ),
+    subtitle2 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontSize = 13.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 18.sp,
+    ),
     button = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,

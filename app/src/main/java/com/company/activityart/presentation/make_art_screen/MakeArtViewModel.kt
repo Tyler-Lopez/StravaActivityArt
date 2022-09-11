@@ -4,18 +4,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
-import com.company.activityart.domain.use_case.activities.GetActivitiesByYearFromCacheUseCase
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.make_art_screen.MakeArtViewState.*
 import com.company.activityart.presentation.make_art_screen.MakeArtViewEvent.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.Year
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalPagerApi::class)
 class MakeArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     savedStateHandle: SavedStateHandle
@@ -25,12 +27,22 @@ class MakeArtViewModel @Inject constructor(
         private const val NO_ACTIVITIES_LOADED_COUNT = 0
         private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
+
+        private const val INITIAL_POSITION = 0
     }
 
-    val activitiesByYear: Map<Int, List<Activity>> = mutableMapOf()
+    private val activitiesByYear: Map<Int, List<Activity>> = mutableMapOf()
+    private val pagerHeaders: List<MakeArtHeaderType> = MakeArtHeaderType.values().toList()
+    private val pagerState: PagerState = PagerState(pagerHeaders.size)
 
     init {
-        Loading.push()
+        pushState(
+            Loading(
+                pageHeaders = pagerHeaders,
+                pagerState = pagerState,
+                newPosition = INITIAL_POSITION
+            )
+        )
         viewModelScope.launch {
             getActivities()
         }
@@ -41,6 +53,7 @@ class MakeArtViewModel @Inject constructor(
             when (event) {
                 is MakeFullscreenClicked -> onMakeFullscreenClicked()
                 is NavigateUpClicked -> onNavigateUpClicked()
+                is PageHeaderClicked -> onPageHeaderClicked(event)
                 is SaveClicked -> onSaveClicked()
                 is SelectFiltersClicked -> onSelectFiltersClicked()
                 is SelectStylesClicked -> onSelectStylesClicked()
@@ -56,6 +69,15 @@ class MakeArtViewModel @Inject constructor(
         routeTo(NavigateUp)
     }
 
+    private fun onPageHeaderClicked(event: PageHeaderClicked) {
+        pushState(Standby(
+            null,
+            pagerHeaders,
+            pagerState,
+            event.position
+        ))
+    }
+
     private fun onSaveClicked() {
 
     }
@@ -69,12 +91,15 @@ class MakeArtViewModel @Inject constructor(
     }
 
     private fun getActivities() {
+        /*
         pushState(
             Standby(
                 null,
                 activitiesFromCacheUseCase()[2022]?.size ?: 0
             )
         )
+
+         */
     }
 
 }

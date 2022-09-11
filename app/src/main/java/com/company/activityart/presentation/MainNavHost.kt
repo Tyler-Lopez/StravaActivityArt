@@ -65,7 +65,7 @@ fun MainNavHost(
                 AccessToken.navArg,
             )
         ) {
-            MakeArtScreen(hiltViewModel<MakeArtViewModel>().apply {
+            MakeArtScreen(viewModel = hiltViewModel<MakeArtViewModel>().apply {
                 LaunchedEffect(router) { attachRouter(router) }
             })
         }

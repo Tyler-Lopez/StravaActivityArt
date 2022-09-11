@@ -36,9 +36,42 @@
     <!-- Text shown on action bar for the page which an athlete may customize their art -->
     <string name="action_bar_edit_art_header">Edit Art</string>
 
+    <!-- Content description for a button which directs athlete to select filters for their activities -->
+    <string name="select_filters_cd">Select Filters</string>
+
+    <!-- Content description for a button which directs athlete to select styles for their activities -->
+    <string name="select_styles_cd">Select Styles</string>
+
     <!-- Text shown on button which progresses to the next stage of making art when clicked -->
     <string name="button_continue">Continue</string>
 
+    <!-- Text shown on text button which saves an athlete's art to their phone's storage -->
+    <string name="button_save_uppercase">SAVE</string>
+
+    <!-- Text shown on button which opens art preview -->
+    <string name="button_preview_uppercase">PREVIEW</string>
+
+    <!-- Content description for preview button -->
+    <string name="button_preview_cd">Preview Art</string>
+
+    <!-- Text shown on button which opens art filters, to select which activities will be shown -->
+    <string name="button_filters_uppercase">FILTERS</string>
+
+    <string name="button_filters_cd">Select Filters</string>
+
+    <string name="buttons_style_uppercase">STYLE</string>
+
+    <string name="buttons_style_cd">Style Art</string>
+
+    <string name="buttons_type_uppercase">TYPE</string>
+
+    <string name="buttons_type_cd">Typography</string>
+
+    <string name="buttons_resize_uppercase">RESIZE</string>
+
+    <string name="buttons_resize_cd">Resize Art</string>
+
+    <!-- Text shown on screen which loads activities from remote and local data sources -->
     <plurals name="loading_activities_count">
         <item quantity="zero">Loading Activities</item>
         <item quantity="one">%d Activity Loaded</item>

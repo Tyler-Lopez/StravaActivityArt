@@ -9,17 +9,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
+import com.company.activityart.presentation.ui.theme.LightTextSecondary
 
 @Composable
-fun Subhead(
+fun SubheadHeavy(
     text: String,
     modifier: Modifier = Modifier,
-    textColor: Color? = null
+    textColor: Color? = LightTextSecondary
 ) {
     Text(
         text = text,
-        color = textColor ?: colorResource(id = R.color.light_text_primary),
-        style = MaterialTheme.typography.subtitle1,
+        color = textColor ?: colorResource(id = R.color.light_text_secondary),
+        style = MaterialTheme.typography.subtitle2,
         modifier = modifier
     )
 }
