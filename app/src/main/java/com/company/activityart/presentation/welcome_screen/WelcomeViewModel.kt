@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.models.fullName
+import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.domain.use_case.athlete.GetAthleteUseCase
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
+    private val getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getAthleteUseCase: GetAthleteUseCase,
 ) : BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
@@ -48,11 +50,17 @@ class WelcomeViewModel @Inject constructor(
     }
 
     private fun onClickedMakeArt() {
+        val athleteId = athlete?.athleteId ?: error("AthleteID missing.")
+        val accessToken = accessToken ?: error("Access token missing.")
+
+        /** Either route to screen where activities are loaded into RAM cache
+         * or directly to Make Art if RAM cache is already present. */
         routeTo(
-            NavigateLoadActivities(
-                athlete?.athleteId ?: error("AthleteID missing."),
-                accessToken ?: error("Access token missing.")
-            )
+            if (getActivitiesFromCacheUseCase().isEmpty()) {
+                NavigateLoadActivities(athleteId, accessToken)
+            } else {
+                NavigateMakeArt(athleteId, accessToken)
+            }
         )
     }
 

@@ -21,7 +21,6 @@ class InsertActivitiesUseCase @Inject constructor(
         lastStableMonth: Int
     ) {
 
-        println("here activities are ${activities.size} for year $year")
         val activityEntities = activities
                 // Todo, replace with general to ActivityEntity function
             .map { it.run {
