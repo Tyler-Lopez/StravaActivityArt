@@ -46,6 +46,8 @@ fun MainNavHost(
                 LaunchedEffect(router) { attachRouter(router) }
             })
         }
+        /** TODO, determine if activities have been Singleton cached and
+         * if so skip this screen **/
         swipingInOutComposable(
             route = LoadActivities.route +
                     "?${AthleteId.route}&${AccessToken.route}",
