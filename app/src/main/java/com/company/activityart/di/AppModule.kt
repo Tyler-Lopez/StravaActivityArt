@@ -130,8 +130,11 @@ object AppModule {
         InsertAthleteUseCase(athleteDatabase)
 
     @Provides
-    fun clearAccessTokenUseCase(athleteDatabase: AthleteDatabase) =
-        ClearAccessTokenUseCase(athleteDatabase)
+    fun clearAccessTokenUseCase(
+        athleteDatabase: AthleteDatabase,
+        cache: ActivitiesCache
+    ) =
+        ClearAccessTokenUseCase(athleteDatabase, cache)
 
     @Singleton
     @Provides
