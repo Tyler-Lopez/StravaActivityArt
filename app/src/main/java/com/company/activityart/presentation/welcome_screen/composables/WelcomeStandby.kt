@@ -29,14 +29,14 @@ import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleTwo
 import com.company.activityart.presentation.ui.theme.Silver
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewEvent.*
+import com.company.activityart.presentation.welcome_screen.WelcomeViewEvent
+import com.company.activityart.presentation.welcome_screen.WelcomeViewEvent.*
 
 @Composable
 fun WelcomeScreenStandby(
     athleteImageUrl: String,
     athleteName: String,
-    eventReceiver: ViewEventListener<WelcomeScreenViewEvent>,
+    eventReceiver: ViewEventListener<WelcomeViewEvent>,
 ) {
     @Dimension val strokeWidth = dimensionResource(id = R.dimen.rounded_picture_stroke_width)
     @Dimension val buttonMinWidth = dimensionResource(id = R.dimen.button_min_width)

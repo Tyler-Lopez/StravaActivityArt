@@ -10,7 +10,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import java.time.Year
 import java.util.*
 import javax.inject.Inject
 
@@ -22,6 +21,8 @@ class GetActivitiesByYearUseCase @Inject constructor(
     private val getAthleteCachedYearMonthsUseCase: GetLastCachedYearMonthsUseCase,
     private val getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
     private val getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
+    private val getActivitiesFromCacheUseCase: GetActivitiesByYearFromCacheUseCase,
+    private val insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
     private val insertActivitiesUseCase: InsertActivitiesUseCase,
     private val timeUtils: TimeUtils
 ) {
@@ -35,20 +36,24 @@ class GetActivitiesByYearUseCase @Inject constructor(
         accessToken: String,
         athleteId: Long,
         year: Int,
-
     ): Resource<List<Activity>> {
+
+        /** If Singleton RAM cache has been populated for this year prev, return that **/
+        getActivitiesFromCacheUseCase(year)?.apply { return Success(this) }
 
         val toReturn = mutableListOf<Activity>()
 
+        /** Read from ROOM storage cache **/
         val cachedYearMonths = getAthleteCachedYearMonthsUseCase(athleteId)
         val lastCachedMonth = cachedYearMonths[year] ?: NO_CACHED_MONTHS
 
-        /** Add all months less than lastCachedMonth to returning List **/
         loadLocalCachedActivitiesByYear(athleteId, year, lastCachedMonth)
             .forEach { monthlyActivities ->
                 toReturn += monthlyActivities.second
             }
 
+        /** If any months of this year were not in ROOM storage cache,
+         * receive from remote */
         if (lastCachedMonth != LAST_MONTH_OF_YEAR) {
             getActivitiesByYearFromRemoteUseCase(
                 accessToken = accessToken,
@@ -85,6 +90,10 @@ class GetActivitiesByYearUseCase @Inject constructor(
             }
         }
 
+        /** Add data to Singleton cache for future access **/
+        insertActivitiesIntoCacheUseCase(year, toReturn)
+
+        /** Return successful result **/
         return Success(toReturn)
     }
 

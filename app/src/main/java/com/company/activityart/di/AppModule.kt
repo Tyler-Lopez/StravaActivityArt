@@ -2,6 +2,7 @@ package com.company.activityart.di
 
 import android.content.Context
 import androidx.room.Room
+import com.company.activityart.data.cache.ActivitiesCache
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.activities.*
@@ -32,6 +33,10 @@ object AppModule {
             "athlete_db"
         ).fallbackToDestructiveMigration().build()
     }
+
+    @Singleton
+    @Provides
+    fun provideActivitiesCache() = ActivitiesCache
 
     @Provides
     fun providesGetAthleteFromLocalUseCase(athleteDatabase: AthleteDatabase) =
@@ -94,16 +99,28 @@ object AppModule {
     ) = GetActivitiesByYearMonthFromLocalUseCase(athleteDatabase)
 
     @Provides
+    fun providesGetActivitiesFromCacheUseCase(cache: ActivitiesCache) =
+        GetActivitiesByYearFromCacheUseCase(cache)
+
+    @Provides
+    fun providesInsertActivitiesFromCacheUseCase(cache: ActivitiesCache) =
+        InsertActivitiesIntoCacheUseCase(cache)
+
+    @Provides
     fun providesGetActivitiesByYear(
         getAthleteLastCachedYearMonthsUseCase: GetLastCachedYearMonthsUseCase,
         getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
         getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
+        getActivitiesFromCacheUseCase: GetActivitiesByYearFromCacheUseCase,
+        insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
         insertActivitiesUseCase: InsertActivitiesUseCase,
         timeUtils: TimeUtils
     ) = GetActivitiesByYearUseCase(
         getAthleteLastCachedYearMonthsUseCase,
         getActivitiesByYearMonthFromLocalUseCase,
         getActivitiesByYearFromRemoteUseCase,
+        getActivitiesFromCacheUseCase,
+        insertActivitiesIntoCacheUseCase,
         insertActivitiesUseCase,
         timeUtils
     )

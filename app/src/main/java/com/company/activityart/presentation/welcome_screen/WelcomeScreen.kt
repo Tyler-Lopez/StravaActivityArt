@@ -2,15 +2,11 @@ package com.company.activityart.presentation.welcome_screen
 
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.company.activityart.architecture.Router
-import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Loading
-import com.company.activityart.presentation.welcome_screen.WelcomeScreenViewState.Standby
+import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Loading
+import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Standby
 import com.company.activityart.presentation.welcome_screen.composables.WelcomeScreenStandby
 
 
@@ -24,11 +20,7 @@ https://developers.strava.com/guidelines/
  */
 
 @Composable
-fun WelcomeScreen(
-    router: Router<MainDestination>,
-    viewModel: WelcomeScreenViewModel = hiltViewModel()
-) {
-    LaunchedEffect(key1 = router) { viewModel.attachRouter(router) }
+fun WelcomeScreen(viewModel: WelcomeViewModel) {
     ScreenBackground(spacedBy = spacing.medium) {
         viewModel.viewState.collectAsState().value?.apply {
             when (this) {

@@ -1,12 +1,14 @@
 package com.company.activityart.data.entities
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.company.activityart.data.Converters
 import com.company.activityart.domain.models.Athlete
 
-@Entity(primaryKeys = ["athleteId"])
+@Entity
 data class AthleteEntity(
+    @PrimaryKey
     override val athleteId: Long,
     override val userName: String?,
     // This is important as Strava does not want you caching data for more than 3 days

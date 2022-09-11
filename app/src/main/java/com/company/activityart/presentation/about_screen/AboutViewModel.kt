@@ -1,21 +1,18 @@
 package com.company.activityart.presentation.about_screen
 
-import androidx.lifecycle.SavedStateHandle
 import com.company.activityart.architecture.BaseRoutingViewModel
-import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.about_screen.AboutScreenViewState.*
-import com.company.activityart.presentation.about_screen.AboutScreenViewEvent.*
-import com.company.activityart.util.NavArg
+import com.company.activityart.presentation.about_screen.AboutViewState.*
+import com.company.activityart.presentation.about_screen.AboutViewEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AboutScreenViewModel @Inject constructor(
+class AboutViewModel @Inject constructor(
 ) : BaseRoutingViewModel<
-        AboutScreenViewState,
-        AboutScreenViewEvent,
+        AboutViewState,
+        AboutViewEvent,
         MainDestination
         >() {
 
@@ -23,7 +20,7 @@ class AboutScreenViewModel @Inject constructor(
         pushState(Standby)
     }
 
-    override fun onEvent(event: AboutScreenViewEvent) {
+    override fun onEvent(event: AboutViewEvent) {
         when (event) {
             is NavigateUpClicked -> onNavigateUpClicked()
         }
@@ -32,6 +29,4 @@ class AboutScreenViewModel @Inject constructor(
     private fun onNavigateUpClicked() {
         routeTo(NavigateUp)
     }
-
-    override fun onRouterAttached() {} // No-op
 }

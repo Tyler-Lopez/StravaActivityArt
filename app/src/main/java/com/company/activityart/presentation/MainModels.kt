@@ -1,6 +1,5 @@
 package com.company.activityart.presentation
 
-import android.content.Intent
 import android.net.Uri
 import com.company.activityart.architecture.Destination
 import com.company.activityart.architecture.ViewEvent
@@ -20,6 +19,10 @@ sealed class MainDestination : Destination {
     object ConnectWithStrava : MainDestination()
     object NavigateAbout : MainDestination()
     object NavigateLogin : MainDestination()
+    data class NavigateLoadActivities(
+        val athleteId: Long,
+        val accessToken: String
+    ) : MainDestination()
     data class NavigateMakeArt(
         val athleteId: Long,
         val accessToken: String

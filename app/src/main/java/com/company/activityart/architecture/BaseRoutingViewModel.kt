@@ -28,6 +28,10 @@ abstract class BaseRoutingViewModel<
         onRouterAttached()
     }
 
+    override fun onRouterAttached() {
+        // No-op unless implemented
+    }
+
     final override fun routeTo(destination: TypeOfDestination) {
         router?.routeTo(destination)
     }

@@ -33,6 +33,9 @@
     <!-- Text shown on action bar for the page which loads activities from remote -->
     <string name="action_bar_load_activities_header">Loading Activities</string>
 
+    <!-- Text shown on action bar for the page which an athlete may customize their art -->
+    <string name="action_bar_edit_art_header">Edit Art</string>
+
     <!-- Text shown on button which progresses to the next stage of making art when clicked -->
     <string name="button_continue">Continue</string>
 

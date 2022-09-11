@@ -14,6 +14,6 @@ sealed class MakeArtViewEvent : ViewEvent {
 
 sealed class MakeArtViewState : ViewState {
     object Loading : MakeArtViewState()
-    data class Standby(val artPreview: Bitmap) : MakeArtViewState()
+    data class Standby(val artPreview: Bitmap?, val a: Int) : MakeArtViewState()
 
 }

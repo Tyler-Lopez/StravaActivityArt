@@ -6,7 +6,7 @@ import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesByYearUseCase
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.NavigateUp
+import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.*
 import com.company.activityart.util.Resource
@@ -26,7 +26,7 @@ class LoadActivitiesViewModel @Inject constructor(
 
     companion object {
         private const val NO_ACTIVITIES_LOADED_COUNT = 0
-        private const val YEAR_START = 2021
+        private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
     }
 
@@ -64,6 +64,8 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     override fun onRouterAttached() {
+        /** Load activities only after [Router] is attached as
+         * successful load results in automatic navigation to next screen */
         viewModelScope.launch {
             loadActivities()
         }
@@ -72,27 +74,20 @@ class LoadActivitiesViewModel @Inject constructor(
     private suspend fun loadActivities() {
         /** Load activities until complete or
          * returned [Resource] is an [Error] **/
-        (YEAR_NOW downTo YEAR_START).takeWhile {
+        (YEAR_NOW downTo YEAR_START).takeWhile { year ->
             getActivitiesByYearUseCase(
                 accessToken = accessToken,
                 athleteId = athleteId,
-                year = it,
+                year = year,
             ).doOnSuccess {
-                activitiesByYear += Pair(it, data)
+                activitiesByYear += Pair(year, data)
                 activitiesCount += data.size
-                onActivitiesLoaded(activitiesCount)
+                Loading(activitiesCount).push()
             }.doOnError {
                 LoadError(activitiesCount).push()
                 return
             } is Success
         }
-        // Todo, add automatic continue route
-        //onActivitiesLoaded(isLoading = false)
-    }
-
-    private fun onActivitiesLoaded(
-        allActivitiesCount: Int,
-    ) {
-        Loading(allActivitiesCount).push()
+        routeTo(NavigateMakeArt(athleteId, accessToken))
     }
 }

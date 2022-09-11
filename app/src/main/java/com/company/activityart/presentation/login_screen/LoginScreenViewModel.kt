@@ -28,6 +28,4 @@ class LoginScreenViewModel @Inject constructor() : BaseRoutingViewModel<
     private fun onConnectWithStravaClicked() {
         routeTo(ConnectWithStrava)
     }
-
-    override fun onRouterAttached() {} // No-op
 }

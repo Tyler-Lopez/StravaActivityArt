@@ -29,12 +29,8 @@ import com.company.activityart.presentation.ui.theme.spacing
  * to choose whether to continue or try again to load.
  */
 @Composable
-fun LoadActivitiesScreen(
-    router: Router<MainDestination>,
-    viewModel: LoadActivitiesViewModel = hiltViewModel()
-) {
+fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
     viewModel.apply {
-        LaunchedEffect(key1 = router) { attachRouter(router) }
         AppBarScaffold(
             text = stringResource(R.string.action_bar_load_activities_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }

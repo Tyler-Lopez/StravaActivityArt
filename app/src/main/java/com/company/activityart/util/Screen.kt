@@ -24,6 +24,7 @@ sealed class Screen(val route: String) {
     object About : Screen("About")
     object LoadActivities : Screen("LoadActivities")
     object MakeArt : Screen("MakeArt")
+
     object FilterMonth : Screen("FilterMonth")
     object FilterType : Screen("FilterType")
     object FilterGear : Screen("FilterGear")

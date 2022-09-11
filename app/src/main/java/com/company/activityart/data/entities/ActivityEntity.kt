@@ -5,12 +5,13 @@ import androidx.room.PrimaryKey
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.Athlete
 
-@Entity(primaryKeys = ["id"])
+@Entity
 data class ActivityEntity(
     override val athleteId: Long,
     override val averageSpeed: Double,
     override val distance: Double,
     override val gearId: String?,
+    @PrimaryKey
     override val id: Long,
     override val kudosCount: Int,
     override val locationCity: String?,
