@@ -33,14 +33,12 @@ fun EditArtStandby(
     distanceMax: Double,
     distanceMin: Double,
     selectedActivitiesCount: Int,
-    eventReceiver: ViewEventListener<EditArtViewEvent>,
-    eventReceiverFilters: ViewEventListener<EditArtFiltersViewEvent>
+    eventReceiver: ViewEventListener<EditArtFiltersViewEvent>
 ) {
 
     FilterSectionDate(
         unixSecondsRangeSelected,
         unixSecondsRangeTotal,
-        eventReceiver,
-        eventReceiverFilters
+        eventReceiver
     )
 }

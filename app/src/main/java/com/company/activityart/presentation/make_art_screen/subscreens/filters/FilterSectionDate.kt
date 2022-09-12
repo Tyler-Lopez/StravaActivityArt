@@ -14,8 +14,7 @@ import com.company.activityart.presentation.make_art_screen.EditArtViewEvent
 fun FilterSectionDate(
     unixSecondsRangeSelected: ClosedFloatingPointRange<Float>,
     unixSecondsRangeTotal: ClosedFloatingPointRange<Float>,
-    eventReceiver: ViewEventListener<EditArtViewEvent>,
-    eventReceiverFilters: ViewEventListener<EditArtFiltersViewEvent>
+    eventReceiver: ViewEventListener<EditArtFiltersViewEvent>
 ) {
     FilterSection(
         header = stringResource(R.string.edit_art_filters_date_header),
@@ -24,11 +23,10 @@ fun FilterSectionDate(
         RangeSlider(
             values = unixSecondsRangeSelected,
             onValueChange = {
-                eventReceiverFilters.onEvent(
+                eventReceiver.onEvent(
                     EditArtFiltersViewEvent.DistanceRangeChanged(
                         oldUnixSecondsRange = unixSecondsRangeTotal,
                         newUnixSecondsRange = it,
-                        eventReceiverEditArt = eventReceiver
                     )
                 )
             },

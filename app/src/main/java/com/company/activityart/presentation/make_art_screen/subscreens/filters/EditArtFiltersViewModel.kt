@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
+import com.company.activityart.domain.use_case.filters.InsertFiltersIntoCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.make_art_screen.subscreens.filters.EditArtFiltersViewEvent.DistanceRangeChanged
 import com.company.activityart.presentation.make_art_screen.subscreens.filters.EditArtFiltersViewState.LoadingFilters
@@ -17,8 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditArtFiltersViewModel @Inject constructor(
+    private val insertFiltersIntoCacheUseCase: InsertFiltersIntoCacheUseCase,
+    private val timeUtils: TimeUtils,
     cacheUseCase: GetActivitiesFromCacheUseCase,
-    private val timeUtils: TimeUtils
 ) : BaseRoutingViewModel<EditArtFiltersViewState, EditArtFiltersViewEvent, MainDestination>() {
 
     private val activities: List<Activity> =
@@ -71,6 +73,10 @@ class EditArtFiltersViewModel @Inject constructor(
                 distanceMin = 1.0,
                 selectedActivitiesCount = activities.size
             )
+        )
+        insertFiltersIntoCacheUseCase(
+            startDateUnixSeconds = dateFilters.unixSecondsRangeSelected.start.toLong(),
+            endDateUnixSeconds = dateFilters.unixSecondsRangeSelected.endInclusive.toLong()
         )
     }
 

@@ -9,8 +9,7 @@ import com.company.activityart.util.YearMonthDay
 sealed class EditArtFiltersViewEvent : ViewEvent {
     data class DistanceRangeChanged(
         val oldUnixSecondsRange: ClosedFloatingPointRange<Float>,
-        val newUnixSecondsRange: ClosedFloatingPointRange<Float>,
-        val eventReceiverEditArt: ViewEventListener<EditArtViewEvent>
+        val newUnixSecondsRange: ClosedFloatingPointRange<Float>
     ) : EditArtFiltersViewEvent()
 }
 

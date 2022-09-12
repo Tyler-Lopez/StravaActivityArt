@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.welcome_screen
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Athlete
