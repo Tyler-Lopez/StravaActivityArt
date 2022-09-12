@@ -20,6 +20,8 @@ fun EditArtFilters(
         when (this) {
             is LoadingFilters -> CircularProgressIndicator()
             is Standby -> EditArtStandby(
+                yearMonthEarliest = yearMonthEarliest,
+                yearMonthLatest = yearMonthLatest,
                 distanceMax = distanceMax,
                 distanceMin = distanceMin,
                 selectedActivitiesCount = selectedActivitiesCount

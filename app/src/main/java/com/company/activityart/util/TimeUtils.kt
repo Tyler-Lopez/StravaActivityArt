@@ -30,6 +30,37 @@ class TimeUtils {
     }
 
     /**
+     * Returns a year & 0-indexed month corresponding to an ISO8601 String.
+     */
+    fun iso8601StringToYearMonth(value: String): Pair<Int, Int> {
+        return Calendar.getInstance().run {
+            time = Date.from(Instant.parse(value))
+            get(Calendar.YEAR) to get(Calendar.MONTH)
+        }
+    }
+
+    fun iso8601StringToUnixSecond(value: String): Long {
+        return Instant.parse(value).epochSecond
+    }
+
+    /**
+     * Provided a UNIX seconds timestamp, returns the corresponding year and month
+     * which it represents.
+     *
+     * Todo, currently assumes UTC TimeZone. Must adjust to pass in actual from ISO8601.
+     *
+     * @param seconds A time in UNIX seconds.
+     *
+     * @return A pair of the year to 1-index month (1-12) representing when this UNIX
+     * second occurred.
+     */
+    fun unixSecondToYearMonth(seconds: Long): Pair<Int, Int> {
+       return LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.UTC).run {
+           year to month.value
+       }
+    }
+
+    /**
      * Returns the first unix second before the given year month.
      *
      * @param month Zero-indexed month ranging from 0 to 11.
