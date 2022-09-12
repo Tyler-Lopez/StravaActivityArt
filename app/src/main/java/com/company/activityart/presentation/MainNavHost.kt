@@ -13,7 +13,7 @@ import com.company.activityart.presentation.load_activities_screen.LoadActivitie
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewModel
 import com.company.activityart.presentation.login_screen.LoginScreen
 import com.company.activityart.presentation.make_art_screen.MakeArtScreen
-import com.company.activityart.presentation.make_art_screen.MakeArtViewModel
+import com.company.activityart.presentation.make_art_screen.EditArtViewModel
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeViewModel
 import com.company.activityart.util.NavArg.*
@@ -65,7 +65,7 @@ fun MainNavHost(
                 AccessToken.navArg,
             )
         ) {
-            MakeArtScreen(viewModel = hiltViewModel<MakeArtViewModel>().apply {
+            MakeArtScreen(viewModel = hiltViewModel<EditArtViewModel>().apply {
                 LaunchedEffect(router) { attachRouter(router) }
             })
         }

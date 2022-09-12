@@ -1,13 +1,12 @@
 package com.company.activityart.presentation.make_art_screen
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.company.activityart.R
 
-enum class MakeArtHeaderType(
+enum class EditArtHeaderType(
     @StringRes val textStr: Int,
     @StringRes val contentDescription: Int,
     val icon: ImageVector
@@ -36,5 +35,11 @@ enum class MakeArtHeaderType(
         R.string.buttons_resize_uppercase,
         R.string.buttons_style_cd,
         Icons.Default.AspectRatio
-    )
+    );
+
+    companion object {
+        fun fromOrdinal(ordinal: Int): EditArtHeaderType? {
+            return values().firstOrNull { it.ordinal == ordinal }
+        }
+    }
 }

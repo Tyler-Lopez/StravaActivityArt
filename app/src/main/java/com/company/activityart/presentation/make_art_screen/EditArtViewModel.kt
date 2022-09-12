@@ -7,8 +7,8 @@ import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.make_art_screen.MakeArtViewState.*
-import com.company.activityart.presentation.make_art_screen.MakeArtViewEvent.*
+import com.company.activityart.presentation.make_art_screen.EditArtViewState.*
+import com.company.activityart.presentation.make_art_screen.EditArtViewEvent.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,10 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
-class MakeArtViewModel @Inject constructor(
+class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     savedStateHandle: SavedStateHandle
-) : BaseRoutingViewModel<MakeArtViewState, MakeArtViewEvent, MainDestination>() {
+) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
         private const val NO_ACTIVITIES_LOADED_COUNT = 0
@@ -31,13 +31,14 @@ class MakeArtViewModel @Inject constructor(
         private const val INITIAL_POSITION = 0
     }
 
-    private val activitiesByYear: Map<Int, List<Activity>> = mutableMapOf()
-    private val pagerHeaders: List<MakeArtHeaderType> = MakeArtHeaderType.values().toList()
+    private val activitiesByYear: Map<Int, List<Activity>> = activitiesFromCacheUseCase()
+    private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
     private val pagerState: PagerState = PagerState(pagerHeaders.size)
 
     init {
         pushState(
-            Loading(
+            Standby(
+                activitiesByYear = activitiesByYear,
                 pageHeaders = pagerHeaders,
                 pagerState = pagerState,
                 newPosition = INITIAL_POSITION
@@ -48,7 +49,7 @@ class MakeArtViewModel @Inject constructor(
         }
     }
 
-    override fun onEvent(event: MakeArtViewEvent) {
+    override fun onEvent(event: EditArtViewEvent) {
         viewModelScope.launch {
             when (event) {
                 is MakeFullscreenClicked -> onMakeFullscreenClicked()
@@ -70,12 +71,14 @@ class MakeArtViewModel @Inject constructor(
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
-        pushState(Standby(
-            null,
-            pagerHeaders,
-            pagerState,
-            event.position
-        ))
+        pushState(
+            Standby(
+                activitiesByYear,
+                pagerHeaders,
+                pagerState,
+                event.position
+            )
+        )
     }
 
     private fun onSaveClicked() {

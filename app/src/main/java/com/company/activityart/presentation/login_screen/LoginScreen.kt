@@ -66,7 +66,7 @@ BoxWithConstraints(
 
             // In process of trying to get response from Strava where we input in URI
             LOADING -> {
-                // Loading Screen Composable goes here later
+                // LoadingActivities Screen Composable goes here later
                 LoadingComposable()
             }
             // Wait for user to press Login
