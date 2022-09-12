@@ -27,11 +27,11 @@ import com.google.accompanist.pager.HorizontalPager
 import kotlinx.coroutines.launch
 
 /**
- * A complex screen featuring [MakeArtTabLayout]
+ * A complex screen featuring [EditArtTabLayout]
  */
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun MakeArtScreen(viewModel: EditArtViewModel) {
+fun EditArtScreen(viewModel: EditArtViewModel) {
     val coroutineScope = rememberCoroutineScope()
     viewModel.viewState.collectAsState().value?.apply {
         /** Updates pagerState to new position if necessary **/
@@ -51,7 +51,7 @@ fun MakeArtScreen(viewModel: EditArtViewModel) {
                 Spacer(modifier = Modifier.width(spacing.medium))
             },
             tabLayout = {
-                MakeArtTabLayout(
+                EditArtTabLayout(
                     pagerHeaders = pageHeaders,
                     pagerState = pagerState,
                     eventReceiver = viewModel

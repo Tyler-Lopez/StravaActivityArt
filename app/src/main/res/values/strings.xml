@@ -78,4 +78,33 @@
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
 
+    <string name="month_1_long">January</string>
+    <string name="month_1_short">JAN</string>
+    <string name="month_2_long">February</string>
+    <string name="month_2_short">FEB</string>
+    <string name="month_3_long">March</string>
+    <string name="month_3_short">MAR</string>
+    <string name="month_4_long">April</string>
+    <string name="month_4_short">APR</string>
+    <string name="month_5_long">May</string>
+    <string name="month_5_short">MAY</string>
+    <string name="month_6_long">June</string>
+    <string name="month_6_short">JUN</string>
+    <string name="month_7_long">July</string>
+    <string name="month_7_short">JUL</string>
+    <string name="month_8_long">August</string>
+    <string name="month_8_short">AUG</string>
+    <string name="month_9_long">September</string>
+    <string name="month_9_short">SEP</string>
+    <string name="month_10_long">October</string>
+    <string name="month_10_short">OCT</string>
+    <string name="month_11_long">November</string>
+    <string name="month_11_short">NOV</string>
+    <string name="month_12_long">December</string>
+    <string name="month_12_short">DEC</string>
+
+    <string name="edit_art_filters_date_header">Date</string>
+    <string name="edit_art_filters_date_description">
+        Which window of time should activities be selected from?
+    </string>
 </resources>

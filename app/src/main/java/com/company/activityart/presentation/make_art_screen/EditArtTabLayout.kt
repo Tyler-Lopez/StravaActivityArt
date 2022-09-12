@@ -17,7 +17,7 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun MakeArtTabLayout(
+fun EditArtTabLayout(
     pagerHeaders: List<EditArtHeaderType>,
     pagerState: PagerState,
     eventReceiver: ViewEventListener<EditArtViewEvent>
