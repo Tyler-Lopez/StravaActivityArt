@@ -35,7 +35,11 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
     val coroutineScope = rememberCoroutineScope()
     viewModel.viewState.collectAsState().value?.apply {
         /** Updates pagerState to new position if necessary **/
-        coroutineScope.launch { pagerState.animateScrollToPage(pagerNewPosition) }
+        coroutineScope.launch {
+            pagerStateWrapper.pagerState.animateScrollToPage(
+                pagerStateWrapper.pagerNewPosition
+            )
+        }
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) },
@@ -52,14 +56,14 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
             },
             tabLayout = {
                 EditArtTabLayout(
-                    pagerHeaders = pagerHeaders,
-                    pagerState = pagerState,
+                    pagerHeaders = pagerStateWrapper.pagerHeaders,
+                    pagerState = pagerStateWrapper.pagerState,
                     eventReceiver = viewModel
                 )
             }
         ) {
             HorizontalPager(
-                state = pagerState,
+                state = pagerStateWrapper.pagerState,
 
                 /* TODO
                 This is disabled due to wanting to intercept drag event in view model
@@ -68,19 +72,17 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
                 dragEnabled = false
             ) { page ->
                 ScreenBackground {
-                    when (this@apply) {
-                        is Standby -> {
-                            when (EditArtHeaderType.fromOrdinal(page)) {
-                                PREVIEW -> EditArtPreview()
-                                FILTERS -> EditArtFilters()
-                                STYLE -> EditArtStyle()
-                                TYPE -> EditArtType()
-                                RESIZE -> EditArtResize()
-                                null -> error("Invalid pagerState current page.")
-                            }
-                        }
+                    when (EditArtHeaderType.fromOrdinal(page)) {
+                        PREVIEW -> EditArtPreview()
+                        FILTERS -> EditArtFilters(filterStateWrapper, viewModel)
+                        STYLE -> EditArtStyle()
+                        TYPE -> EditArtType()
+                        RESIZE -> EditArtResize()
+                        null -> error("Invalid pagerState current page.")
                     }
                 }
+
+
             }
         }
     }
