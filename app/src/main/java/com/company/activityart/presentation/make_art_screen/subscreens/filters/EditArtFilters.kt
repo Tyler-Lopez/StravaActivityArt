@@ -9,10 +9,7 @@ import com.company.activityart.presentation.make_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.make_art_screen.subscreens.filters.EditArtFiltersViewState.*
 
 @Composable
-fun EditArtFilters(
-    eventReceiver: ViewEventListener<EditArtViewEvent>,
-    viewModel: EditArtFiltersViewModel = hiltViewModel()
-) {
+fun EditArtFilters(viewModel: EditArtFiltersViewModel = hiltViewModel()) {
     viewModel.viewState.collectAsState().value?.apply {
         when (this) {
             is LoadingFilters -> CircularProgressIndicator()
@@ -24,8 +21,7 @@ fun EditArtFilters(
                 distanceMax = distanceMax,
                 distanceMin = distanceMin,
                 selectedActivitiesCount = selectedActivitiesCount,
-                eventReceiver = eventReceiver,
-                eventReceiverFilters = viewModel
+                eventReceiver = viewModel,
             )
         }
     }

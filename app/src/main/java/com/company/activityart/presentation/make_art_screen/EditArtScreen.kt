@@ -35,7 +35,7 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
     val coroutineScope = rememberCoroutineScope()
     viewModel.viewState.collectAsState().value?.apply {
         /** Updates pagerState to new position if necessary **/
-        coroutineScope.launch { pagerState.animateScrollToPage(newPosition) }
+        coroutineScope.launch { pagerState.animateScrollToPage(pagerNewPosition) }
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) },
@@ -52,7 +52,7 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
             },
             tabLayout = {
                 EditArtTabLayout(
-                    pagerHeaders = pageHeaders,
+                    pagerHeaders = pagerHeaders,
                     pagerState = pagerState,
                     eventReceiver = viewModel
                 )
@@ -60,6 +60,7 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
         ) {
             HorizontalPager(
                 state = pagerState,
+
                 /* TODO
                 This is disabled due to wanting to intercept drag event in view model
                 rather than having it be controlled entirely by the view. See in future
@@ -71,7 +72,7 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
                         is Standby -> {
                             when (EditArtHeaderType.fromOrdinal(page)) {
                                 PREVIEW -> EditArtPreview()
-                                FILTERS -> EditArtFilters(viewModel)
+                                FILTERS -> EditArtFilters()
                                 STYLE -> EditArtStyle()
                                 TYPE -> EditArtType()
                                 RESIZE -> EditArtResize()

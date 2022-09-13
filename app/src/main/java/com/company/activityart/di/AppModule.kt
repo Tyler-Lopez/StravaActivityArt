@@ -3,13 +3,11 @@ package com.company.activityart.di
 import android.content.Context
 import androidx.room.Room
 import com.company.activityart.data.cache.ActivitiesCache
-import com.company.activityart.data.cache.FiltersCache
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.*
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.company.activityart.domain.use_case.filters.InsertFiltersIntoCacheUseCase
 import com.company.activityart.util.StringConstants.BASE_URL
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.UriUtils
@@ -39,10 +37,6 @@ object AppModule {
     @Singleton
     @Provides
     fun provideActivitiesCache() = ActivitiesCache
-
-    @Singleton
-    @Provides
-    fun provideFiltersCache() = FiltersCache
 
     @Provides
     fun providesGetAthleteFromLocalUseCase(athleteDatabase: AthleteDatabase) =
@@ -151,10 +145,6 @@ object AppModule {
             .build()
             .create(AthleteApi::class.java) // Creates singleton implementation of interface
     }
-
-    @Provides
-    fun provideInsertFiltersIntoCacheUseCase(cache: FiltersCache) =
-        InsertFiltersIntoCacheUseCase(cache)
 
     @Provides
     fun provideUriUtils(): UriUtils = UriUtils()

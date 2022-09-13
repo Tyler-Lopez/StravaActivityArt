@@ -1,12 +1,22 @@
+@file:OptIn(ExperimentalPagerApi::class)
+
 package com.company.activityart.presentation.make_art_screen
 
+import android.os.Parcelable
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.domain.models.Activity
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 sealed class EditArtViewEvent : ViewEvent {
+    data class FilterDateChanged(
+        val newUnixSecondStart: Float,
+        val newUnixSecondEnd: Float
+    ) : EditArtViewEvent()
+
     object MakeFullscreenClicked : EditArtViewEvent()
     object NavigateUpClicked : EditArtViewEvent()
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent()
@@ -15,17 +25,22 @@ sealed class EditArtViewEvent : ViewEvent {
     object SelectStylesClicked : EditArtViewEvent()
 }
 
-@OptIn(ExperimentalPagerApi::class)
-sealed class EditArtViewState(
-    open val pageHeaders: List<EditArtHeaderType>,
-    open val pagerState: PagerState,
-    open val newPosition: Int
-) : ViewState {
+data class EditArtViewState(
+    val filterStateWrapper: FilterStateWrapper,
+    val pagerStateWrapper: PagerStateWrapper,
+) : ViewState
 
-    data class Standby(
-        val activitiesByYear: Map<Int, List<Activity>>,
-        override val pageHeaders: List<EditArtHeaderType>,
-        override val pagerState: PagerState,
-        override val newPosition: Int
-    ) : EditArtViewState(pageHeaders, pagerState, newPosition)
-}
+@Parcelize
+data class PagerStateWrapper(
+    val pagerHeaders: List<EditArtHeaderType>,
+    val pagerState: @RawValue PagerState,
+    val pagerNewPosition: Int,
+) : Parcelable
+
+@Parcelize
+data class FilterStateWrapper(
+    val unixSecondSelectedStart: Float,
+    val unixSecondSelectedEnd: Float,
+    val unixSecondTotalStart: Float,
+    val unixSecondTotalEnd: Float
+) : Parcelable

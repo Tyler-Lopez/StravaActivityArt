@@ -1,6 +1,5 @@
 package com.company.activityart.architecture
 
-import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +19,9 @@ abstract class BaseRoutingViewModel<
     private var lastDebouncedMs: Long = 0L
 
     private var _viewState: MutableStateFlow<TypeOfViewState?> = MutableStateFlow(null)
+
+    val lastPushedState: TypeOfViewState?
+        get() = viewState.value
 
     final override val viewState: StateFlow<TypeOfViewState?> = _viewState
 
