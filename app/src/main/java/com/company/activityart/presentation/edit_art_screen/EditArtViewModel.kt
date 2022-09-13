@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.make_art_screen
+package com.company.activityart.presentation.edit_art_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -6,8 +6,7 @@ import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.make_art_screen.EditArtViewState.*
-import com.company.activityart.presentation.make_art_screen.EditArtViewEvent.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.util.TimeUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState

@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.make_art_screen
+package com.company.activityart.presentation.edit_art_screen
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons

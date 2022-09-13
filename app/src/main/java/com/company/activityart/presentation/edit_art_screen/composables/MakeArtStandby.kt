@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.make_art_screen.composables
+package com.company.activityart.presentation.edit_art_screen.composables
 
 import android.graphics.Bitmap
 import androidx.compose.material.Text

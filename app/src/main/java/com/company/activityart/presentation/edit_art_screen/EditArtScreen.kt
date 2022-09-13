@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.make_art_screen
+package com.company.activityart.presentation.edit_art_screen
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -12,14 +12,13 @@ import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.common.type.SubheadHeavy
-import com.company.activityart.presentation.make_art_screen.EditArtHeaderType.*
-import com.company.activityart.presentation.make_art_screen.EditArtViewEvent.NavigateUpClicked
-import com.company.activityart.presentation.make_art_screen.EditArtViewState.*
-import com.company.activityart.presentation.make_art_screen.subscreens.filters.EditArtFilters
-import com.company.activityart.presentation.make_art_screen.subscreens.preview.EditArtPreview
-import com.company.activityart.presentation.make_art_screen.subscreens.resize.EditArtResize
-import com.company.activityart.presentation.make_art_screen.subscreens.style.EditArtStyle
-import com.company.activityart.presentation.make_art_screen.subscreens.type.EditArtType
+import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.NavigateUpClicked
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFilters
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreview
+import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResize
+import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyle
+import com.company.activityart.presentation.edit_art_screen.subscreens.type.EditArtType
 import com.company.activityart.presentation.ui.theme.White
 import com.company.activityart.presentation.ui.theme.spacing
 import com.google.accompanist.pager.ExperimentalPagerApi

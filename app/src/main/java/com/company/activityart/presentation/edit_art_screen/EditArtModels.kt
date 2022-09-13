@@ -1,11 +1,10 @@
 @file:OptIn(ExperimentalPagerApi::class)
 
-package com.company.activityart.presentation.make_art_screen
+package com.company.activityart.presentation.edit_art_screen
 
 import android.os.Parcelable
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
-import com.company.activityart.domain.models.Activity
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.Parcelize

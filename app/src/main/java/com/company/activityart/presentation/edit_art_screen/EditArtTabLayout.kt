@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.make_art_screen
+package com.company.activityart.presentation.edit_art_screen
 
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.company.activityart.architecture.ViewEventListener
-import com.company.activityart.presentation.make_art_screen.EditArtViewEvent.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.presentation.ui.theme.Rust
 import com.company.activityart.presentation.ui.theme.White
 import com.google.accompanist.pager.ExperimentalPagerApi

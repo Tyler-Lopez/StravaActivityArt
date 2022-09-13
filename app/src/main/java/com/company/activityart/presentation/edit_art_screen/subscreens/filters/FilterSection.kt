@@ -1,10 +1,9 @@
-package com.company.activityart.presentation.make_art_screen.subscreens.filters
+package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.company.activityart.presentation.common.type.Body
-import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.common.type.TitleTwo
 import com.company.activityart.presentation.ui.theme.spacing
 
