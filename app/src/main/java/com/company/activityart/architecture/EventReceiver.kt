@@ -2,7 +2,7 @@ package com.company.activityart.architecture
 
 interface ViewEvent
 
-interface ViewEventListener<TypeOfViewEvent: ViewEvent> {
+interface EventReceiver<TypeOfViewEvent: ViewEvent> {
     fun onEvent(event: TypeOfViewEvent)
     fun onEventDebounced(event: TypeOfViewEvent)
 }

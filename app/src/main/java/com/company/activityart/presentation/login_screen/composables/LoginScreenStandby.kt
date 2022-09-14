@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
-import com.company.activityart.architecture.ViewEventListener
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent
@@ -20,7 +20,7 @@ import com.company.activityart.util.StringConstants
 
 @Composable
 fun LoginScreenStandby(
-    eventReceiver: ViewEventListener<LoginScreenViewEvent>
+    eventReceiver: EventReceiver<LoginScreenViewEvent>
 ) {
     Column(
         modifier = Modifier.padding(spacing.medium),

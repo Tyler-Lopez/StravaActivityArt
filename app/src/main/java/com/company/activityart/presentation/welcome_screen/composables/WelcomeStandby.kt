@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.company.activityart.R
-import com.company.activityart.architecture.ViewEventListener
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize.LARGE
 import com.company.activityart.presentation.common.button.HighEmphasisButton
 import com.company.activityart.presentation.common.button.MediumEmphasisButton
@@ -36,7 +36,7 @@ import com.company.activityart.presentation.welcome_screen.WelcomeViewEvent.*
 fun WelcomeScreenStandby(
     athleteImageUrl: String,
     athleteName: String,
-    eventReceiver: ViewEventListener<WelcomeViewEvent>,
+    eventReceiver: EventReceiver<WelcomeViewEvent>,
 ) {
     @Dimension val strokeWidth = dimensionResource(id = R.dimen.rounded_picture_stroke_width)
     @Dimension val buttonMinWidth = dimensionResource(id = R.dimen.button_min_width)

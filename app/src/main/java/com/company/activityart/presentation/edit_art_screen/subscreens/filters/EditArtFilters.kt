@@ -1,14 +1,24 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 
 import androidx.compose.runtime.Composable
-import com.company.activityart.architecture.ViewEventListener
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.FilterStateWrapper
 
 @Composable
 fun EditArtFilters(
     filterStateWrapper: FilterStateWrapper,
-    eventReceiver: ViewEventListener<EditArtViewEvent>
+    parentEventReceiver: EventReceiver<EditArtViewEvent>,
+    viewModel: EditArtFiltersViewModel = hiltViewModel()
 ) {
-
+    filterStateWrapper.apply {
+        val selectedRange = unixSecondSelectedStart..unixSecondSelectedEnd
+        val totalRange = unixSecondTotalStart..unixSecondTotalEnd
+        FilterSectionDate(
+            selectedRange,
+            totalRange,
+            parentEventReceiver
+        )
+    }
 }

@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.company.activityart.architecture.ViewEventListener
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.presentation.ui.theme.Rust
 import com.company.activityart.presentation.ui.theme.White
@@ -20,7 +20,7 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 fun EditArtTabLayout(
     pagerHeaders: List<EditArtHeaderType>,
     pagerState: PagerState,
-    eventReceiver: ViewEventListener<EditArtViewEvent>
+    eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val coroutineScope = rememberCoroutineScope()
     // on below line we are creating

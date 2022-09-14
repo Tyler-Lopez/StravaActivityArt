@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
-import com.company.activityart.architecture.ViewEventListener
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize.*
 import com.company.activityart.presentation.common.button.HighEmphasisButton
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent
@@ -20,7 +20,7 @@ import com.company.activityart.presentation.load_activities_screen.LoadActivitie
 @Composable
 fun LoadActivitiesLoadError(
     activitiesLoaded: Int,
-    eventReceiver: ViewEventListener<LoadActivitiesViewEvent>,
+    eventReceiver: EventReceiver<LoadActivitiesViewEvent>,
 ) {
 
     HighEmphasisButton(

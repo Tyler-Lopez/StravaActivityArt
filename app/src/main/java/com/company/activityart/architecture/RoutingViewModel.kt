@@ -1,38 +1,22 @@
 package com.company.activityart.architecture
 
-import kotlinx.coroutines.flow.StateFlow
-
-interface RoutingViewModel<
-        TypeOfViewState : ViewState,
-        TypeOfViewEvent : ViewEvent,
-        TypeOfDestination : Destination> :
-    ViewEventListener<TypeOfViewEvent>, ViewStateSender<TypeOfViewState> {
-
-    override val viewState: StateFlow<TypeOfViewState?>
+/**
+ * Blueprint for a ViewModel which can have a [Router] attached as a
+ * reference which it may invoke [routeTo] to navigate to a [Destination].
+ */
+interface RoutingViewModel<TypeOfDestination : Destination> {
 
     /**
      * Provides a [Router] for the [RoutingViewModel] to [routeTo]]
      */
     fun attachRouter(router: Router<TypeOfDestination>)
 
+    /**
+     * Invoked internally by the implementing ViewModel.
+     * This function should be used if any operations should not be
+     * started until a [Router] has been attached.
+     */
     fun onRouterAttached()
-
-    /**
-     * Invoked by the View wishing to transmit a ViewEvent to this ViewModel.
-     */
-    override fun onEvent(event: TypeOfViewEvent)
-
-    /**
-     * Invoked by the View wishing to transmit a debounced ViewEvent to this ViewModel.
-     * This is useful for events that should only occur once in a short period of time
-     * and where, for example, rapidly clicking a button might open undesirable screens.
-     */
-    override fun onEventDebounced(event: TypeOfViewEvent)
-
-    /**
-     * Pushes the given ViewState to the StateFlow which the view is observing.
-     */
-    fun pushState(state: TypeOfViewState)
 
     /**
      * Navigates to the given Destination if a Router is provided.
