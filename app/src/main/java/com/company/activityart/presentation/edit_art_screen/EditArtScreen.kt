@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
@@ -15,6 +16,7 @@ import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.NavigateUpClicked
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFilters
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewModel
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreview
 import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResize
 import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyle
@@ -73,7 +75,11 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
                 ScreenBackground {
                     when (EditArtHeaderType.fromOrdinal(page)) {
                         PREVIEW -> EditArtPreview()
-                        FILTERS -> EditArtFilters(filterStateWrapper, viewModel)
+                        FILTERS -> EditArtFilters(
+                            hiltViewModel<EditArtFiltersViewModel>().apply {
+                                attachParent(viewModel)
+                            },
+                        )
                         STYLE -> EditArtStyle()
                         TYPE -> EditArtType()
                         RESIZE -> EditArtResize()
