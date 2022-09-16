@@ -7,7 +7,7 @@ import com.company.activityart.domain.models.OAuth2
 import com.company.activityart.domain.models.requiresRefresh
 import com.company.activityart.util.Resource
 import com.company.activityart.util.Resource.*
-import com.company.activityart.util.TokenConstants
+import com.company.activityart.util.constants.TokenConstants
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 

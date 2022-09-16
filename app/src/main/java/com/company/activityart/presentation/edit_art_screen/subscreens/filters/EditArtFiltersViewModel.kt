@@ -1,12 +1,14 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 
 import com.company.activityart.architecture.BaseChildViewModel
+import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.*
 import com.company.activityart.util.TimeUtils
-import com.company.activityart.util.YearMonthDay
+import com.company.activityart.util.ext.closestValue
+import com.company.activityart.util.ext.toFloatRange
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,13 +22,31 @@ class EditArtFiltersViewModel @Inject constructor(
         EditArtViewEvent
         >() {
 
+    companion object {
+        private const val START_AND_END_STEPS = 2
+        private const val NO_STEPS = 0
+    }
+
+    /** ALL ACTIVITIES [Activity] **/
     private val activities = getActivitiesFromCacheUseCase().flatMap { it.value }
+
+    /** DATE FILTERS **/
+    /* All activities mapped to their unix seconds */
     private val activitiesUnixSeconds = activities.map {
         timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)
     }
-    private val unixSecondFirst: Float = activitiesUnixSeconds.min().toFloat()
-    private val unixSecondLast: Float = activitiesUnixSeconds.max().toFloat()
-    private val unixSecondRangeTotal = unixSecondFirst..unixSecondLast
+    /* First and last unix seconds of all activities */
+    private val unixSecondFirst = activitiesUnixSeconds.min()
+    private val unixSecondLast = activitiesUnixSeconds.max()
+    /* Utilities around unix seconds */
+    private val unixSecondsTotal = (unixSecondFirst..unixSecondLast).toFloatRange()
+    private val unixSecondsTotalRange = unixSecondLast - unixSecondFirst
+    private val yearMonthStart = timeUtils.unixSecondToYearMonth(unixSecondFirst)
+    private val yearMonthEnd = timeUtils.unixSecondToYearMonth(unixSecondLast)
+    private val yearsTotalRange = yearMonthEnd.year - yearMonthStart.year
+    private val unixSecondsAtSteps = (0..yearsTotalRange).map {
+        unixSecondFirst + ((unixSecondsTotalRange / yearsTotalRange) * it)
+    }
 
     init {
         pushState(Loading)
@@ -36,7 +56,7 @@ class EditArtFiltersViewModel @Inject constructor(
     override fun onEvent(event: EditArtFiltersViewEvent) {
         when (event) {
             is DateRangeMonthsChanged -> onDateRangeMonthsChanged()
-            is DateRangeYearsChanged -> onDateRangeYearsChanged()
+            is DateRangeYearsChanged -> onDateRangeYearsChanged(event)
         }
     }
 
@@ -44,22 +64,40 @@ class EditArtFiltersViewModel @Inject constructor(
 
     }
 
-    private fun onDateRangeYearsChanged() {
-
+    private fun onDateRangeYearsChanged(event: DateRangeYearsChanged) {
+        (lastPushedState as? Standby)?.run {
+            event.run {
+                if (changeComplete) {
+                    /* Year date range will snap to the closest whole integer value */
+                    val snapToStart = unixSecondsAtSteps.closestValue(newRange.start.toLong())
+                    val snapToEnd = unixSecondsAtSteps.closestValue(newRange.endInclusive.toLong())
+                    val yearMonthStart = timeUtils.unixSecondToYearMonth(snapToStart)
+                    val yearMonthEnd = timeUtils.unixSecondToYearMonth(snapToEnd)
+                    copy(
+                        dateSelectedStart = yearMonthStart,
+                        dateSelectedEnd = yearMonthEnd,
+                        dateYearsSelectedCount = yearMonthEnd.year - yearMonthStart.year + 1
+                    )
+                } else {
+                    copy(dateSecondsSelected = newRange)
+                }
+            }
+        }?.push()
     }
+
 
     private fun initFilters() {
-        val tmpYMD = YearMonthDay(0, 0, 0)
-        pushState(
-            Standby(
-                dateRangeSecondsSelected = unixSecondRangeTotal,
-                dateRangeSecondsSelectedYMDStart = tmpYMD,
-                dateRangeSecondsSelectedYMDEnd = tmpYMD,
-                dateRangeSecondsTotal = unixSecondRangeTotal,
-                dateRangeYearsSelected = unixSecondRangeTotal,
-                dateRangeYearsTotal = unixSecondRangeTotal
+        timeUtils.apply {
+            pushState(
+                Standby(
+                    dateSelectedStart = yearMonthStart,
+                    dateSelectedEnd = yearMonthEnd,
+                    dateSecondsSelected = unixSecondsTotal,
+                    dateSecondsTotal = unixSecondsTotal,
+                    dateYearsSelectedCount = yearsTotalRange + 1,
+                    dateYearsSteps = (yearsTotalRange - 1).coerceAtLeast(NO_STEPS)
+                )
             )
-        )
+        }
     }
-
 }

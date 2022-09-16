@@ -16,7 +16,7 @@ import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.*
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.util.StringConstants
+import com.company.activityart.util.constants.StringConstants
 
 @Composable
 fun LoginScreenStandby(

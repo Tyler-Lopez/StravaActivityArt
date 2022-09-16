@@ -1,5 +1,7 @@
 package com.company.activityart.util
 
+import com.company.activityart.util.constants.StringConstants
+
 class NavigationUtils {
 
     companion object {

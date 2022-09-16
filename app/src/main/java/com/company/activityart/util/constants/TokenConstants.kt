@@ -1,4 +1,4 @@
-package com.company.activityart.util
+package com.company.activityart.util.constants
 
 import android.net.Uri
 

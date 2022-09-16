@@ -13,8 +13,8 @@ import com.company.activityart.presentation.common.type.Body
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.TitleOne
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.util.StringConstants.STAGE
-import com.company.activityart.util.StringConstants.VERSION
+import com.company.activityart.util.constants.StringConstants.STAGE
+import com.company.activityart.util.constants.StringConstants.VERSION
 
 @Composable
 fun AboutScreenStandby() {

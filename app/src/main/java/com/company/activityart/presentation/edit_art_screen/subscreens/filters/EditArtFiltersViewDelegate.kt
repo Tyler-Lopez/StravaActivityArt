@@ -12,12 +12,12 @@ fun EditArtFilters(viewModel: EditArtFiltersViewModel) {
         when (this) {
             is Loading -> CircularProgressIndicator()
             is Standby -> FilterSectionDate(
-                dateRangeSecondsSelected,
-                dateRangeSecondsSelectedYMDStart,
-                dateRangeSecondsSelectedYMDEnd,
-                dateRangeSecondsTotal,
-                dateRangeYearsSelected,
-                dateRangeYearsTotal,
+                dateSelectedEnd,
+                dateSelectedStart,
+                dateSecondsSelected,
+                dateSecondsTotal,
+                dateYearsSelectedCount,
+                dateYearsSteps,
                 viewModel
             )
         }

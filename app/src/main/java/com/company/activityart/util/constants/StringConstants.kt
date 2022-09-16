@@ -1,4 +1,4 @@
-package com.company.activityart.util
+package com.company.activityart.util.constants
 
 object StringConstants {
     const val APP_NAME = "ActivityResponse Art"

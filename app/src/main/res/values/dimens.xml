@@ -25,5 +25,7 @@
     <dimen name="rounded_picture_stroke_width">1dp</dimen>
     <!-- 16dp is the default gutter value in the app -->
     <dimen name="one_gutter">16dp</dimen>
-    <!-- 3dip is the default corner radius in the app. -->
+
+    <!-- A RangeSlider is offset horizontally to make room for the Thumb control -->
+    <dimen name="slider_horizontal_offset">10dp</dimen>
 </resources>

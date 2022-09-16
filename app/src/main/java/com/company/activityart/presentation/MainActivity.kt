@@ -2,7 +2,6 @@ package com.company.activityart.presentation
 
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,11 +20,9 @@ import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.activityart.util.NavArg
 import com.company.activityart.util.Screen.*
-import com.company.activityart.util.TokenConstants.authUri
+import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
