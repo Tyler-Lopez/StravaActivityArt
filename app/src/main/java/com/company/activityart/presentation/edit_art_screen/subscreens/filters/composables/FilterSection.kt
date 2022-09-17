@@ -19,8 +19,7 @@ fun FilterSection(
 ) {
     Column(
         modifier = modifier
-            .padding(spacing.medium)
-            .scrollable(rememberScrollState(), Orientation.Vertical),
+            .padding(spacing.medium),
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
         TitleTwo(text = header)

@@ -54,12 +54,12 @@ class TimeUtils {
      *
      * @param seconds A time in UNIX seconds.
      *
-     * @return A pair of the year to 1-index month (1-12) representing when this UNIX
+     * @return A pair of the year to 0-index month (0-11) representing when this UNIX
      * second occurred.
      */
     fun unixSecondToYearMonthDay(seconds: Long): YearMonthDay {
        return LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.UTC).run {
-           YearMonthDay(year, month.value, dayOfMonth)
+           YearMonthDay(year, month.value - 1, dayOfMonth)
        }
     }
 

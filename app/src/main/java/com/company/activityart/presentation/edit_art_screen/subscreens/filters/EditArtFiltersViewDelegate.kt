@@ -12,12 +12,12 @@ fun EditArtFilters(viewModel: EditArtFiltersViewModel) {
     viewModel.viewState.collectAsState().value?.apply {
         when (this) {
             is Loading -> CircularProgressIndicator()
-            is Standby -> FilterSectionDate(
+            is Standby -> EditArtFiltersStandby(
                 dateMaxDateUnixMilliseconds = dateMaxDateUnixMilliseconds,
                 dateMinDateUnixMilliSeconds = dateMinDateUnixMilliSeconds,
                 dateYearMonthDayAfter = dateYearMonthDayAfter,
                 dateYearMonthDayBefore = dateYearMonthDayBefore,
-                viewModel
+                eventReceiver = viewModel
             )
         }
     }

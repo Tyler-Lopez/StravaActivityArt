@@ -5,6 +5,9 @@ import com.company.activityart.util.TimeUtils
 import java.time.YearMonth
 import java.util.*
 
+/** @param month 0-indexed
+ *
+ */
 data class YearMonthDay(
     val year: Int,
     val month: Int,
@@ -14,9 +17,9 @@ data class YearMonthDay(
         private const val MIN_LENGTH = 2
         private const val PADDING_CHAR = '0'
     }
-    
+
     override fun toString(): String {
-        val paddedMonth = "$month".padStart(
+        val paddedMonth = "${month + 1}".padStart(
             MIN_LENGTH,
             PADDING_CHAR
         )
@@ -24,7 +27,7 @@ data class YearMonthDay(
             MIN_LENGTH,
             PADDING_CHAR
         )
-        return "$month / $day / $year"
+        return "$paddedMonth / $paddedDay / $year"
     }
 
     val unixMilliseconds: Long

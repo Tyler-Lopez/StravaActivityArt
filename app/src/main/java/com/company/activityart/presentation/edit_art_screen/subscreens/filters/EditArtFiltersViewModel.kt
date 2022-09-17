@@ -49,22 +49,22 @@ class EditArtFiltersViewModel @Inject constructor(
             } else {
                 copy(dateYearMonthDayBefore = event.changedTo)
             }
-        }
+        }?.push()
     }
 
 
     private fun initFilters() {
         timeUtils.apply {
-            val unixMillisecondFirst = TimeUnit.SECONDS.toMillis(activitiesUnixSeconds.min())
-            val unixMillisecondLast = TimeUnit.SECONDS.toMillis(activitiesUnixSeconds.max())
+            val unixMillisecondFirst = activitiesUnixSeconds.min()
+            val unixMillisecondLast = activitiesUnixSeconds.max()
 
             val yearMonthStart = timeUtils.unixSecondToYearMonthDay(unixMillisecondFirst)
             val yearMonthEnd = timeUtils.unixSecondToYearMonthDay(unixMillisecondLast)
 
             pushState(
                 Standby(
-                    dateMaxDateUnixMilliseconds = unixMillisecondLast,
-                    dateMinDateUnixMilliSeconds = unixMillisecondFirst,
+                    dateMaxDateUnixMilliseconds = TimeUnit.SECONDS.toMillis(unixMillisecondLast),
+                    dateMinDateUnixMilliSeconds = TimeUnit.SECONDS.toMillis(unixMillisecondFirst),
                     dateYearMonthDayAfter = yearMonthStart,
                     dateYearMonthDayBefore = yearMonthEnd
                 )

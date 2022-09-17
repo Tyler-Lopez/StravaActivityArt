@@ -107,16 +107,11 @@
     <string name="edit_art_filters_date_description">
         Which window of time should activities be selected from?
     </string>
-    <string name="edit_art_filters_year_subheader">Years</string>
-    <plurals name="edit_art_filters_year_description">
-        <item quantity="zero" />
-        <item quantity="one">%d</item>
-        <item quantity="other">%d to %d</item>
-    </plurals>
-    <string name="edit_art_filters_month_subheader">Months</string>
-    <plurals name="edit_art_filters_month_description">
-        <item quantity="zero" />
-        <item quantity="one">%s %d</item>
-        <item quantity="other">%s %d to %s %d</item>
-    </plurals>
+    <string name="edit_art_filters_date_start">Start</string>
+    <string name="edit_art_filters_date_end">End</string>
+
+    <string name="edit_art_filters_activity_type_header">Activity Types</string>
+    <string name="edit_art_filters_activity_type_description">
+        Which types of activities should be used?
+    </string>
 </resources>
