@@ -1,6 +1,9 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.company.activityart.presentation.common.type.Body
@@ -15,7 +18,9 @@ fun FilterSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier = modifier.padding(spacing.medium),
+        modifier = modifier
+            .padding(spacing.medium)
+            .scrollable(rememberScrollState(), Orientation.Vertical),
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
         TitleTwo(text = header)

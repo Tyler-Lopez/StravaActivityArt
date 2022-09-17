@@ -52,7 +52,7 @@ data class ActivityResponse(
     val has_kudoed: Boolean,
     val heartrate_opt_out: Boolean,
     val manual: Boolean,
-    val map: Map,
+    val map: Map?,
     val photo_count: Int,
     val pr_count: Int,
     val `private`: Boolean,
@@ -76,5 +76,5 @@ data class ActivityResponse(
         get() = athlete.id
 
     override val summaryPolyline: String?
-        get() = map.summary_polyline
+        get() = map?.summary_polyline
 }

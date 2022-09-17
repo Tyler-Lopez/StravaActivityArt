@@ -31,7 +31,9 @@ class GetActivitiesByPageFromRemoteUseCase @Inject constructor(
                 perPage = activitiesPerPage,
                 before = beforeUnixSeconds,
                 after = afterUnixSeconds
-            ).toList())
+            )
+                .toList()
+                .filter { it.summaryPolyline != null })
         } catch (e: Exception) {
             /* When using try catch in a suspend block,
             ensure we do not catch CancellationException */

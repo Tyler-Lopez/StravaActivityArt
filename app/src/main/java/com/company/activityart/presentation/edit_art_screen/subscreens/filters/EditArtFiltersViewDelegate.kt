@@ -3,6 +3,7 @@ package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Standby
 
@@ -12,12 +13,10 @@ fun EditArtFilters(viewModel: EditArtFiltersViewModel) {
         when (this) {
             is Loading -> CircularProgressIndicator()
             is Standby -> FilterSectionDate(
-                dateSelectedEnd,
-                dateSelectedStart,
-                dateSecondsSelected,
-                dateSecondsTotal,
-                dateYearsSelectedCount,
-                dateYearsSteps,
+                dateMaxDateUnixMilliseconds = dateMaxDateUnixMilliseconds,
+                dateMinDateUnixMilliSeconds = dateMinDateUnixMilliSeconds,
+                dateYearMonthDayAfter = dateYearMonthDayAfter,
+                dateYearMonthDayBefore = dateYearMonthDayBefore,
                 viewModel
             )
         }

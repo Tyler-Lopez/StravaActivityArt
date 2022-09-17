@@ -75,18 +75,19 @@ class LoadActivitiesViewModel @Inject constructor(
         /** Load activities until complete or
          * returned [Resource] is an [Error] **/
         (YEAR_NOW downTo YEAR_START).takeWhile { year ->
-            getActivitiesByYearUseCase(
+            (getActivitiesByYearUseCase(
                 accessToken = accessToken,
                 athleteId = athleteId,
                 year = year,
             ).doOnSuccess {
+                println("for year $year there were ${data.size}")
                 activitiesByYear += Pair(year, data)
                 activitiesCount += data.size
                 Loading(activitiesCount).push()
             }.doOnError {
                 LoadError(activitiesCount).push()
-                return
-            } is Success
+                return@loadActivities
+            }) is Success
         }
         routeTo(NavigateMakeArt(athleteId, accessToken))
     }

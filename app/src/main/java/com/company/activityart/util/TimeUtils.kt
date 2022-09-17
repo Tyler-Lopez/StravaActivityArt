@@ -1,5 +1,6 @@
 package com.company.activityart.util
 
+import com.company.activityart.util.classes.YearMonthDay
 import java.time.*
 import java.util.*
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -17,6 +18,8 @@ class TimeUtils {
         private const val LAST_HOUR_OF_DAY = 23
         private const val LAST_MINUTE_OF_HOUR = 59
         private const val LAST_SECOND_OF_MINUTE = 59
+
+        private const val MONTHS_IN_YEAR = 12
     }
 
     /**
@@ -54,9 +57,9 @@ class TimeUtils {
      * @return A pair of the year to 1-index month (1-12) representing when this UNIX
      * second occurred.
      */
-    fun unixSecondToYearMonth(seconds: Long): YearMonth {
+    fun unixSecondToYearMonthDay(seconds: Long): YearMonthDay {
        return LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.UTC).run {
-           YearMonth.of(year, month.value)
+           YearMonthDay(year, month.value, dayOfMonth)
        }
     }
 
@@ -111,6 +114,16 @@ class TimeUtils {
             FIRST_SECOND_OF_MINUTE
         )
         return MILLISECONDS.toSeconds(calendar.timeInMillis).toInt()
+    }
+
+    /** Returns 1-indexed integer representing the last month of this year
+     * or the current month if the year is the current year. */
+    fun lastMonthInYearOrCurrentMonthIfNow(year: Int): Int {
+        return if (year == Year.now().value) {
+            YearMonth.now().month.value
+        } else {
+            MONTHS_IN_YEAR
+        }
     }
 }
 /*

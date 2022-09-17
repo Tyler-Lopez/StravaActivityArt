@@ -108,10 +108,15 @@
         Which window of time should activities be selected from?
     </string>
     <string name="edit_art_filters_year_subheader">Years</string>
-    <!-- Text shown on screen which loads activities from remote and local data sources -->
     <plurals name="edit_art_filters_year_description">
         <item quantity="zero" />
         <item quantity="one">%d</item>
         <item quantity="other">%d to %d</item>
+    </plurals>
+    <string name="edit_art_filters_month_subheader">Months</string>
+    <plurals name="edit_art_filters_month_description">
+        <item quantity="zero" />
+        <item quantity="one">%s %d</item>
+        <item quantity="other">%s %d to %s %d</item>
     </plurals>
 </resources>
