@@ -15,9 +15,10 @@ import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.NavigateUpClicked
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFilters
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewDelegate
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewModel
-import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreview
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewDelegate
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewModel
 import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResize
 import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyle
 import com.company.activityart.presentation.edit_art_screen.subscreens.type.EditArtType
@@ -65,17 +66,16 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
         ) {
             HorizontalPager(
                 state = pagerStateWrapper.pagerState,
-
-                /* TODO
-                This is disabled due to wanting to intercept drag event in view model
-                rather than having it be controlled entirely by the view. See in future
-                if control that event in view model layer. */
                 dragEnabled = false
             ) { page ->
                 ScreenBackground {
                     when (EditArtHeaderType.fromOrdinal(page)) {
-                        PREVIEW -> EditArtPreview()
-                        FILTERS -> EditArtFilters(
+                        PREVIEW -> EditArtPreviewViewDelegate(
+                            hiltViewModel<EditArtPreviewViewModel>().apply {
+                                attachParent(viewModel)
+                            },
+                        )
+                        FILTERS -> EditArtFiltersViewDelegate(
                             hiltViewModel<EditArtFiltersViewModel>().apply {
                                 attachParent(viewModel)
                             },
@@ -86,8 +86,6 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
                         null -> error("Invalid pagerState current page.")
                     }
                 }
-
-
             }
         }
     }

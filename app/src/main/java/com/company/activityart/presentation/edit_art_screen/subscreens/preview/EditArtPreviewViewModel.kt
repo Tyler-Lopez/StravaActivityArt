@@ -19,5 +19,4 @@ class EditArtPreviewViewModel @Inject constructor(
     override fun onEvent(event: EditArtPreviewViewEvent) {
         TODO("Not yet implemented")
     }
-
 }

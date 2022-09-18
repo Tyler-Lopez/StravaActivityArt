@@ -14,7 +14,7 @@ import com.company.activityart.util.Resource.*
 import com.company.activityart.util.ext.accessToken
 import com.company.activityart.util.ext.athleteId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.time.Year
 import javax.inject.Inject
 
@@ -66,7 +66,7 @@ class LoadActivitiesViewModel @Inject constructor(
     override fun onRouterAttached() {
         /** Load activities only after [Router] is attached as
          * successful load results in automatic navigation to next screen */
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             loadActivities()
         }
     }
@@ -89,6 +89,9 @@ class LoadActivitiesViewModel @Inject constructor(
                 return@loadActivities
             }) is Success
         }
-        routeTo(NavigateMakeArt(athleteId, accessToken))
+        /** [routeTo] must be invoked from the Main thread **/
+        withContext(Dispatchers.Main) {
+            routeTo(NavigateMakeArt(athleteId, accessToken))
+        }
     }
 }

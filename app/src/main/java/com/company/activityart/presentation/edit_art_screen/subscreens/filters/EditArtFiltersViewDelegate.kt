@@ -8,7 +8,7 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.filters.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Standby
 
 @Composable
-fun EditArtFilters(viewModel: EditArtFiltersViewModel) {
+fun EditArtFiltersViewDelegate(viewModel: EditArtFiltersViewModel) {
     viewModel.viewState.collectAsState().value?.apply {
         when (this) {
             is Loading -> CircularProgressIndicator()

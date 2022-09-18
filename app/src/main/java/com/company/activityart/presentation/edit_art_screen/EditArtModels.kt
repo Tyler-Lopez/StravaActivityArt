@@ -32,6 +32,7 @@ sealed interface EditArtViewEvent : ViewEvent {
 }
 
 data class EditArtViewState(
+    val filterExcludeActivityTypes: Set<String>,
     val filterStateWrapper: FilterStateWrapper,
     val pagerStateWrapper: PagerStateWrapper,
 ) : ViewState
@@ -46,7 +47,7 @@ data class PagerStateWrapper(
 @Parcelize
 data class FilterStateWrapper(
     val unixSecondSelectedStart: Float,
-    val unixSecondSelectedEnd: Float,
-    val unixSecondTotalStart: Float,
-    val unixSecondTotalEnd: Float
+    val unixSecondSelectedEnd: Float
 ) : Parcelable
+
+

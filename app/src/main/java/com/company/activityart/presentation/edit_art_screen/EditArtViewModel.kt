@@ -42,11 +42,10 @@ class EditArtViewModel @Inject constructor(
         val unixSecondLast = activitiesUnixSeconds.max().toFloat()
         pushState(
             EditArtViewState(
+                filterExcludeActivityTypes = setOf(),
                 filterStateWrapper = FilterStateWrapper(
                     unixSecondSelectedStart = unixSecondFirst,
-                    unixSecondSelectedEnd = unixSecondLast,
-                    unixSecondTotalStart = unixSecondFirst,
-                    unixSecondTotalEnd = unixSecondLast
+                    unixSecondSelectedEnd = unixSecondLast
                 ),
                 pagerStateWrapper = PagerStateWrapper(
                     pagerHeaders,
@@ -55,9 +54,6 @@ class EditArtViewModel @Inject constructor(
                 )
             )
         )
-        viewModelScope.launch {
-            getActivities()
-        }
     }
 
     override fun onEvent(event: EditArtViewEvent) {
@@ -87,7 +83,6 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterTypeChanged(event: FilterTypeChanged) {
-
     }
 
     private fun onMakeFullscreenClicked() {
@@ -119,17 +114,4 @@ class EditArtViewModel @Inject constructor(
     private fun onSelectStylesClicked() {
 
     }
-
-    private fun getActivities() {
-        /*
-        pushState(
-            Standby(
-                null,
-                activitiesFromCacheUseCase()[2022]?.size ?: 0
-            )
-        )
-
-         */
-    }
-
 }
