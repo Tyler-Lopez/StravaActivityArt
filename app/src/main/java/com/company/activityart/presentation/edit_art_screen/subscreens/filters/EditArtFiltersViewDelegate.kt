@@ -17,6 +17,7 @@ fun EditArtFilters(viewModel: EditArtFiltersViewModel) {
                 dateMinDateUnixMilliSeconds = dateMinDateUnixMilliSeconds,
                 dateYearMonthDayAfter = dateYearMonthDayAfter,
                 dateYearMonthDayBefore = dateYearMonthDayBefore,
+                typesWithSelectedFlag = typesWithSelectedFlag,
                 eventReceiver = viewModel
             )
         }

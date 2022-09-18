@@ -13,10 +13,13 @@ sealed interface EditArtFiltersViewEvent : ViewEvent {
         data class DateChangedAfter(
             override val changedTo: YearMonthDay
         ) : DateChanged
+
         data class DateChangedBefore(
             override val changedTo: YearMonthDay
         ) : DateChanged
     }
+
+    data class TypeToggleFlipped(val type: String) : EditArtFiltersViewEvent
 }
 
 sealed interface EditArtFiltersViewState : ViewState {
@@ -28,6 +31,7 @@ sealed interface EditArtFiltersViewState : ViewState {
         val dateMaxDateUnixMilliseconds: Long,
         val dateMinDateUnixMilliSeconds: Long,
         val dateYearMonthDayAfter: YearMonthDay,
-        val dateYearMonthDayBefore: YearMonthDay
+        val dateYearMonthDayBefore: YearMonthDay,
+        val typesWithSelectedFlag: Map<String, Boolean>,
     ) : EditArtFiltersViewState
 }

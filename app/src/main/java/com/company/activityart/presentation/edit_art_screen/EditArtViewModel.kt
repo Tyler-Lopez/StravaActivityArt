@@ -64,6 +64,7 @@ class EditArtViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is FilterDateChanged -> onFilterDateChanged(event)
+                is FilterTypeChanged -> onFilterTypeChanged(event)
                 is MakeFullscreenClicked -> onMakeFullscreenClicked()
                 is NavigateUpClicked -> onNavigateUpClicked()
                 is PageHeaderClicked -> onPageHeaderClicked(event)
@@ -83,6 +84,10 @@ class EditArtViewModel @Inject constructor(
                 )
             )
         }?.push()
+    }
+
+    private fun onFilterTypeChanged(event: FilterTypeChanged) {
+
     }
 
     private fun onMakeFullscreenClicked() {

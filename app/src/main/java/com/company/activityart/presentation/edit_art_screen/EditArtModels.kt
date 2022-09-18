@@ -10,18 +10,25 @@ import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
-sealed class EditArtViewEvent : ViewEvent {
+sealed interface EditArtViewEvent : ViewEvent {
     data class FilterDateChanged(
         val newUnixSecondStart: Float,
         val newUnixSecondEnd: Float
-    ) : EditArtViewEvent()
+    ) : EditArtViewEvent
 
-    object MakeFullscreenClicked : EditArtViewEvent()
-    object NavigateUpClicked : EditArtViewEvent()
-    data class PageHeaderClicked(val position: Int) : EditArtViewEvent()
-    object SaveClicked : EditArtViewEvent()
-    object SelectFiltersClicked : EditArtViewEvent()
-    object SelectStylesClicked : EditArtViewEvent()
+    sealed interface FilterTypeChanged : EditArtViewEvent {
+        val type: String
+
+        data class FilterTypeAdded(override val type: String): FilterTypeChanged
+        data class FilterTypeRemoved(override val type: String): FilterTypeChanged
+    }
+
+    object MakeFullscreenClicked : EditArtViewEvent
+    object NavigateUpClicked : EditArtViewEvent
+    data class PageHeaderClicked(val position: Int) : EditArtViewEvent
+    object SaveClicked : EditArtViewEvent
+    object SelectFiltersClicked : EditArtViewEvent
+    object SelectStylesClicked : EditArtViewEvent
 }
 
 data class EditArtViewState(
