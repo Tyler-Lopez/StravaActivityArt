@@ -3,6 +3,7 @@
 package com.company.activityart.presentation.edit_art_screen
 
 import android.os.Parcelable
+import androidx.annotation.Px
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -19,8 +20,8 @@ sealed interface EditArtViewEvent : ViewEvent {
     sealed interface FilterTypeChanged : EditArtViewEvent {
         val type: String
 
-        data class FilterTypeAdded(override val type: String): FilterTypeChanged
-        data class FilterTypeRemoved(override val type: String): FilterTypeChanged
+        data class FilterTypeAdded(override val type: String) : FilterTypeChanged
+        data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
     }
 
     object MakeFullscreenClicked : EditArtViewEvent
@@ -35,6 +36,7 @@ data class EditArtViewState(
     val filterExcludeActivityTypes: Set<String>,
     val filterStateWrapper: FilterStateWrapper,
     val pagerStateWrapper: PagerStateWrapper,
+    val sizeWrapper: SizeWrapper
 ) : ViewState
 
 @Parcelize
@@ -50,4 +52,8 @@ data class FilterStateWrapper(
     val unixSecondSelectedEnd: Float
 ) : Parcelable
 
-
+@Parcelize
+data class SizeWrapper(
+    @Px val heightPx: Float,
+    @Px val widthPx: Float
+) : Parcelable

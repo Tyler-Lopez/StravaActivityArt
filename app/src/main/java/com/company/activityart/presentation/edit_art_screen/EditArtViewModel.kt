@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.edit_art_screen
 
+import androidx.annotation.Px
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
@@ -24,11 +25,12 @@ class EditArtViewModel @Inject constructor(
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        private const val NO_ACTIVITIES_LOADED_COUNT = 0
-        private const val YEAR_START = 2018
-        private val YEAR_NOW = Year.now().value
+        @Px
+        private const val INITIAL_HEIGHT_PX = 1080f
 
-        private const val INITIAL_POSITION = 0
+        private const val INITIAL_PAGE_POSITION = 0
+        @Px
+        private const val INITIAL_WIDTH_PX = 1920f
     }
 
     private val activities = activitiesFromCacheUseCase().flatMap { it.value }
@@ -50,7 +52,11 @@ class EditArtViewModel @Inject constructor(
                 pagerStateWrapper = PagerStateWrapper(
                     pagerHeaders,
                     pagerState,
-                    INITIAL_POSITION
+                    INITIAL_PAGE_POSITION
+                ),
+                sizeWrapper = SizeWrapper(
+                    INITIAL_WIDTH_PX,
+                    INITIAL_HEIGHT_PX
                 )
             )
         )
