@@ -35,7 +35,7 @@ class EditArtPreviewViewModel @Inject constructor(
 
     private fun onDrawArtRequested(event: DrawArtRequested) {
         viewModelScope.launch {
-            
+
             pushState(
                 Standby(
                     // Create a bitmap which will be drawn on by canvas and return
