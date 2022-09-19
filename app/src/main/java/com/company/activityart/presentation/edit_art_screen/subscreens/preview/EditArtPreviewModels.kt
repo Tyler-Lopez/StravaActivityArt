@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.preview
 
+import android.graphics.Bitmap
 import androidx.annotation.Px
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
@@ -16,5 +17,5 @@ sealed interface EditArtPreviewViewEvent : ViewEvent {
 
 sealed interface EditArtPreviewViewState : ViewState {
     object Loading : EditArtPreviewViewState
-    object Standby : EditArtPreviewViewState
+    data class Standby(val bitmap: Bitmap?) : EditArtPreviewViewState
 }

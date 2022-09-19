@@ -1,5 +1,9 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.preview
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseChildViewModel
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
@@ -19,9 +23,8 @@ class EditArtPreviewViewModel @Inject constructor(
         EditArtViewEvent
         >()  {
 
-
     init {
-        pushState(Loading)
+        pushState(Standby(null))
     }
 
     override fun onEvent(event: EditArtPreviewViewEvent) {
@@ -31,6 +34,30 @@ class EditArtPreviewViewModel @Inject constructor(
     }
 
     private fun onDrawArtRequested(event: DrawArtRequested) {
-
+        viewModelScope.launch {
+            
+            pushState(
+                Standby(
+                    // Create a bitmap which will be drawn on by canvas and return
+                    Bitmap.createBitmap(
+                        event.screenWidthPx.toInt(),
+                        event.screenHeightPx.toInt(),
+                        Bitmap.Config.ARGB_8888
+                    ).also { bitmap ->
+                        Canvas(bitmap).also { canvas ->
+                            canvas.drawRect(
+                                0f,
+                                0f,
+                                canvas.width.toFloat(),
+                                canvas.height.toFloat(),
+                                Paint().also {
+                                    it.color = Color.CYAN
+                                }
+                            )
+                        }
+                    }
+                )
+            )
+        }
     }
 }

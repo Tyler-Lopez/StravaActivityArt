@@ -19,6 +19,7 @@ fun EditArtPreviewViewDelegate(
         when (this) {
             is Loading -> CircularProgressIndicator()
             is Standby -> EditArtPreviewStandby(
+                bitmap = bitmap,
                 targetHeightPx = sizeWrapper.heightPx,
                 targetWidthPx = sizeWrapper.widthPx,
                 unixSecondSelectedEnd = filterStateWrapper.unixSecondSelectedEnd,

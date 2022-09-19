@@ -71,6 +71,8 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
                 ScreenBackground {
                     when (EditArtHeaderType.fromOrdinal(page)) {
                         PREVIEW -> EditArtPreviewViewDelegate(
+                            filterStateWrapper,
+                            sizeWrapper,
                             hiltViewModel<EditArtPreviewViewModel>().apply {
                                 attachParent(viewModel)
                             },
