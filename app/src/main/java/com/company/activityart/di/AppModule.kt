@@ -8,6 +8,7 @@ import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.*
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.constants.StringConstants.BASE_URL
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.UriUtils
@@ -145,6 +146,9 @@ object AppModule {
             .build()
             .create(AthleteApi::class.java) // Creates singleton implementation of interface
     }
+
+    @Provides
+    fun provideImageSizeUtils(): ImageSizeUtils = ImageSizeUtils()
 
     @Provides
     fun provideUriUtils(): UriUtils = UriUtils()
