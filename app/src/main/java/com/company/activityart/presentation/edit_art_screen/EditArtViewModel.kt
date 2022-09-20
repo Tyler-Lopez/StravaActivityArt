@@ -49,7 +49,6 @@ class EditArtViewModel @Inject constructor(
         )
         pushState(Loading(pagerStateWrapper = pagerStateWrapper))
         viewModelScope.launch(Dispatchers.Default) {
-            delay(1000)
             val activities = activitiesFromCacheUseCase().flatMap { it.value }
             val activitiesUnixSeconds =
                 activities.map { timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate) }
