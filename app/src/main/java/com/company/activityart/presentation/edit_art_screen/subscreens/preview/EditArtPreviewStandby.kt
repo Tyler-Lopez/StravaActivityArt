@@ -43,7 +43,9 @@ fun EditArtPreviewStandby(
                         targetHeightPx = targetHeightPx,
                         targetWidthPx = targetWidthPx,
                         screenWidthPx = maxWidth.toPx(),
-                        screenHeightPx = maxHeight.toPx()
+                        screenHeightPx = maxHeight.toPx(),
+                        unixSecondSelectedStart = unixSecondSelectedStart,
+                        unixSecondSelectedEnd = unixSecondSelectedEnd
                     )
                 )
             }

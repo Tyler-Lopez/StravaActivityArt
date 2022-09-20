@@ -12,6 +12,7 @@ import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.*
 import com.company.activityart.util.ImageSizeUtils
+import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditArtPreviewViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
-    private val imageSizeUtils: ImageSizeUtils
+    private val imageSizeUtils: ImageSizeUtils,
+    private val timeUtils: TimeUtils
 ) : BaseChildViewModel<
         EditArtPreviewViewState,
         EditArtPreviewViewEvent,
@@ -45,6 +47,12 @@ class EditArtPreviewViewModel @Inject constructor(
                     maximumSize = Size(screenWidthPx.toInt(), screenHeightPx.toInt())
                 )
             }
+            val activityCount = activitiesFromCacheUseCase().flatMap { it.value }
+                .filter {
+                    timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate).let {
+                        it > event.unixSecondSelectedStart && it < event.unixSecondSelectedEnd
+                    }
+                }.size
             pushState(
                 Standby(
                     // Create a bitmap which will be drawn on by canvas and return
@@ -61,6 +69,15 @@ class EditArtPreviewViewModel @Inject constructor(
                                 canvas.height.toFloat(),
                                 Paint().also {
                                     it.color = Color.CYAN
+                                }
+                            )
+                            canvas.drawText(
+                                activityCount.toString(),
+                                0f,
+                                150f,
+                                Paint().also {
+                                    it.color = Color.BLACK
+                                    it.textSize = 50f
                                 }
                             )
                         }

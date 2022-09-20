@@ -94,7 +94,7 @@ class EditArtViewModel @Inject constructor(
             copy(
                 filterStateWrapper = filterStateWrapper.copy(
                     unixSecondSelectedStart = event.newUnixSecondStart,
-                    unixSecondSelectedEnd = event.newUnixSecondStart
+                    unixSecondSelectedEnd = event.newUnixSecondEnd
                 )
             )
         }?.push()
