@@ -54,8 +54,8 @@ class EditArtViewModel @Inject constructor(
             val activitiesUnixSeconds =
                 activities.map { timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate) }
 
-            val unixSecondFirst = activitiesUnixSeconds.min().toFloat()
-            val unixSecondLast = activitiesUnixSeconds.max().toFloat()
+            val unixSecondFirst = activitiesUnixSeconds.min()
+            val unixSecondLast = activitiesUnixSeconds.max()
 
             pushState(
                 Standby(

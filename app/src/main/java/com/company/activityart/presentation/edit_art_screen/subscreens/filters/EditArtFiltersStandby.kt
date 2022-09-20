@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.FilterSectionActivityType
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.FilterSectionDistances
+import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
 
 @Composable
@@ -23,7 +24,7 @@ fun EditArtFiltersStandby(
 ) {
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
         FilterSectionDate(
             dateMaxDateUnixMilliseconds = dateMaxDateUnixMilliseconds,

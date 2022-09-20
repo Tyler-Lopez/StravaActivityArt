@@ -8,6 +8,7 @@ import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.*
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.util.ActivityFilterUtils
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.constants.StringConstants.BASE_URL
 import com.company.activityart.util.TimeUtils
@@ -148,11 +149,16 @@ object AppModule {
     }
 
     @Provides
-    fun provideImageSizeUtils(): ImageSizeUtils = ImageSizeUtils()
+    fun provideActivityFilterUtils(timeUtils: TimeUtils) = ActivityFilterUtils(
+        timeUtils
+    )
 
     @Provides
-    fun provideUriUtils(): UriUtils = UriUtils()
+    fun provideImageSizeUtils() = ImageSizeUtils()
 
     @Provides
-    fun provideTimeUtils(): TimeUtils = TimeUtils()
+    fun provideUriUtils() = UriUtils()
+
+    @Provides
+    fun provideTimeUtils() = TimeUtils()
 }

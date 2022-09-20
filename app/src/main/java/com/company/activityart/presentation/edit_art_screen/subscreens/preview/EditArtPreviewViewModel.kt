@@ -11,6 +11,7 @@ import com.company.activityart.domain.use_case.activities.GetActivitiesFromCache
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.*
+import com.company.activityart.util.ActivityFilterUtils
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,12 +23,15 @@ import javax.inject.Inject
 class EditArtPreviewViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val imageSizeUtils: ImageSizeUtils,
-    private val timeUtils: TimeUtils
+    private val activityFilterUtils: ActivityFilterUtils,
 ) : BaseChildViewModel<
         EditArtPreviewViewState,
         EditArtPreviewViewEvent,
         EditArtViewEvent
         >() {
+
+    // Todo, this should be migrated to be its own use case without need for flatmap
+    val activities = activitiesFromCacheUseCase().flatMap { it.value }
 
     init {
         pushState(Standby(null))
@@ -47,12 +51,14 @@ class EditArtPreviewViewModel @Inject constructor(
                     maximumSize = Size(screenWidthPx.toInt(), screenHeightPx.toInt())
                 )
             }
-            val activityCount = activitiesFromCacheUseCase().flatMap { it.value }
-                .filter {
-                    timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate).let {
-                        it > event.unixSecondSelectedStart && it < event.unixSecondSelectedEnd
-                    }
-                }.size
+            val filteredActivities = activityFilterUtils.filterActivities(
+                activities = activities,
+                unixSecondsRange = event.run {
+                    unixSecondSelectedStart..unixSecondSelectedEnd
+                }
+            )
+            val activityCount = filteredActivities.size
+
             pushState(
                 Standby(
                     // Create a bitmap which will be drawn on by canvas and return

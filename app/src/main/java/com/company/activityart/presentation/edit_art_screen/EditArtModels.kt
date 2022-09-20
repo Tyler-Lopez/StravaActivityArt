@@ -47,14 +47,14 @@ sealed interface EditArtViewState : ViewState {
 @Parcelize
 data class PagerStateWrapper(
     val pagerHeaders: List<EditArtHeaderType>,
-    val pagerState: @RawValue PagerState,
+    val pagerState: @RawValue PagerState, // Todo, evaluate whether RawValue works
     val pagerNewPosition: Int,
 ) : Parcelable
 
 @Parcelize
 data class FilterStateWrapper(
-    val unixSecondSelectedStart: Float,
-    val unixSecondSelectedEnd: Float
+    val unixSecondSelectedStart: Long,
+    val unixSecondSelectedEnd: Long
 ) : Parcelable
 
 @Parcelize

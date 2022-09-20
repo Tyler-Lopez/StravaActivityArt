@@ -1,10 +1,8 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables
 
-import android.widget.EditText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
@@ -13,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.company.activityart.R
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.FilterSection
 import com.company.activityart.presentation.ui.theme.spacing
