@@ -13,8 +13,8 @@ import kotlinx.parcelize.RawValue
 
 sealed interface EditArtViewEvent : ViewEvent {
     data class FilterDateChanged(
-        val newUnixSecondStart: Float,
-        val newUnixSecondEnd: Float
+        val newUnixSecondStart: Long,
+        val newUnixSecondEnd: Long
     ) : EditArtViewEvent
 
     sealed interface FilterTypeChanged : EditArtViewEvent {

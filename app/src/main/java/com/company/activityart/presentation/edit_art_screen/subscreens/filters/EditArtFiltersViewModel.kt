@@ -5,15 +5,19 @@ import com.company.activityart.architecture.BaseChildViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.*
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.*
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterDateChanged
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedAfter
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedBefore
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.TypeToggleFlipped
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Loading
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Standby
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,13 +51,22 @@ class EditArtFiltersViewModel @Inject constructor(
 
     private fun onDateChanged(event: DateChanged) {
         (lastPushedState as? Standby)?.run {
-            val newAfter = if (event is DateChangedAfter) event.changedTo else dateYearMonthDayAfter
-            val newBefore = if (event is DateChangedBefore) event.changedTo else dateYearMonthDayBefore
-            onParentEvent(EditArtViewEvent.FilterDateChanged(
-                // todo improve this
-                newAfter.unixMilliseconds / 1000f,
-                newBefore.unixMilliseconds / 1000f
-            ))
+            val newAfter = if (event is DateChangedAfter) {
+                event.changedTo
+            } else {
+                dateYearMonthDayAfter
+            }
+            val newBefore = if (event is DateChangedBefore) {
+                event.changedTo
+            } else {
+                dateYearMonthDayBefore
+            }
+            onParentEvent(
+                FilterDateChanged(
+                    MILLISECONDS.toSeconds(newAfter.unixMilliseconds),
+                    MILLISECONDS.toSeconds(newBefore.unixMilliseconds)
+                )
+            )
             copy(
                 dateYearMonthDayBefore = newBefore,
                 dateYearMonthDayAfter = newAfter
@@ -72,7 +85,7 @@ class EditArtFiltersViewModel @Inject constructor(
     }
 
 
-    private suspend fun initFilters() {
+    private fun initFilters() {
         timeUtils.apply {
             /** Date filters **/
             val activitiesUnixSeconds =
@@ -88,8 +101,8 @@ class EditArtFiltersViewModel @Inject constructor(
 
             pushState(
                 Standby(
-                    dateMaxDateUnixMilliseconds = TimeUnit.SECONDS.toMillis(unixMillisecondLast),
-                    dateMinDateUnixMilliSeconds = TimeUnit.SECONDS.toMillis(unixMillisecondFirst),
+                    dateMaxDateUnixMilliseconds = SECONDS.toMillis(unixMillisecondLast),
+                    dateMinDateUnixMilliSeconds = SECONDS.toMillis(unixMillisecondFirst),
                     dateYearMonthDayAfter = yearMonthStart,
                     dateYearMonthDayBefore = yearMonthEnd,
                     typesWithSelectedFlag = activityTypesWithSelectedFlag
