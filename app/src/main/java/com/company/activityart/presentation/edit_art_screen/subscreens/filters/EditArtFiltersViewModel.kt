@@ -10,7 +10,9 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.filters.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.*
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -29,7 +31,7 @@ class EditArtFiltersViewModel @Inject constructor(
 
     init {
         pushState(Loading)
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             initFilters()
         }
     }
@@ -64,7 +66,7 @@ class EditArtFiltersViewModel @Inject constructor(
     }
 
 
-    private fun initFilters() {
+    private suspend fun initFilters() {
         timeUtils.apply {
             /** Date filters **/
             val activitiesUnixSeconds =

@@ -1,9 +1,13 @@
 package com.company.activityart.presentation.edit_art_screen
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -34,13 +38,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun EditArtScreen(viewModel: EditArtViewModel) {
-    val coroutineScope = rememberCoroutineScope()
     viewModel.viewState.collectAsState().value?.apply {
         /** Updates pagerState to new position if necessary **/
-        coroutineScope.launch {
-            pagerStateWrapper.pagerState.animateScrollToPage(
-                pagerStateWrapper.pagerNewPosition
-            )
+        pagerStateWrapper.apply {
+            LaunchedEffect(pagerNewPosition) {
+                pagerState.scrollToPage(pagerNewPosition)
+            }
         }
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
@@ -69,23 +72,28 @@ fun EditArtScreen(viewModel: EditArtViewModel) {
                 dragEnabled = false
             ) { page ->
                 ScreenBackground {
-                    when (EditArtHeaderType.fromOrdinal(page)) {
-                        PREVIEW -> EditArtPreviewViewDelegate(
-                            filterStateWrapper,
-                            sizeWrapper,
-                            hiltViewModel<EditArtPreviewViewModel>().apply {
-                                attachParent(viewModel)
-                            },
-                        )
-                        FILTERS -> EditArtFiltersViewDelegate(
-                            hiltViewModel<EditArtFiltersViewModel>().apply {
-                                attachParent(viewModel)
-                            },
-                        )
-                        STYLE -> EditArtStyle()
-                        TYPE -> EditArtType()
-                        RESIZE -> EditArtResize()
-                        null -> error("Invalid pagerState current page.")
+                    when (this@apply) {
+                        is EditArtViewState.Loading -> CircularProgressIndicator()
+                        is EditArtViewState.Standby -> {
+                            when (EditArtHeaderType.fromOrdinal(page)) {
+                                PREVIEW -> EditArtPreviewViewDelegate(
+                                    filterStateWrapper,
+                                    sizeWrapper,
+                                    hiltViewModel<EditArtPreviewViewModel>().apply {
+                                        attachParent(viewModel)
+                                    },
+                                )
+                                FILTERS -> EditArtFiltersViewDelegate(
+                                    hiltViewModel<EditArtFiltersViewModel>().apply {
+                                        attachParent(viewModel)
+                                    },
+                                )
+                                STYLE -> EditArtStyle()
+                                TYPE -> EditArtType()
+                                RESIZE -> EditArtResize()
+                                null -> error("Invalid pagerState current page.")
+                            }
+                        }
                     }
                 }
             }

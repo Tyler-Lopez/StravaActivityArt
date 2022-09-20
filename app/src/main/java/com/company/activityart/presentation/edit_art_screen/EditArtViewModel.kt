@@ -8,11 +8,15 @@ import com.company.activityart.domain.use_case.activities.GetActivitiesFromCache
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewState.*
 import com.company.activityart.util.TimeUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Year
 import javax.inject.Inject
 
@@ -29,37 +33,45 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_HEIGHT_PX = 1080f
 
         private const val INITIAL_PAGE_POSITION = 0
+
         @Px
         private const val INITIAL_WIDTH_PX = 1920f
     }
 
-    private val activities = activitiesFromCacheUseCase().flatMap { it.value }
-    private val activitiesUnixSeconds: List<Long> =
-        activities.map { timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate) }
-    private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
-    private val pagerState: PagerState = PagerState(pagerHeaders.size)
 
     init {
-        val unixSecondFirst = activitiesUnixSeconds.min().toFloat()
-        val unixSecondLast = activitiesUnixSeconds.max().toFloat()
-        pushState(
-            EditArtViewState(
-                filterExcludeActivityTypes = setOf(),
-                filterStateWrapper = FilterStateWrapper(
-                    unixSecondSelectedStart = unixSecondFirst,
-                    unixSecondSelectedEnd = unixSecondLast
-                ),
-                pagerStateWrapper = PagerStateWrapper(
-                    pagerHeaders,
-                    pagerState,
-                    INITIAL_PAGE_POSITION
-                ),
-                sizeWrapper = SizeWrapper(
-                    INITIAL_WIDTH_PX,
-                    INITIAL_HEIGHT_PX
+        val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
+        val pagerState = PagerState(pagerHeaders.size)
+        val pagerStateWrapper = PagerStateWrapper(
+            pagerHeaders,
+            pagerState,
+            INITIAL_PAGE_POSITION
+        )
+        pushState(Loading(pagerStateWrapper = pagerStateWrapper))
+        viewModelScope.launch(Dispatchers.Default) {
+            delay(1000)
+            val activities = activitiesFromCacheUseCase().flatMap { it.value }
+            val activitiesUnixSeconds =
+                activities.map { timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate) }
+
+            val unixSecondFirst = activitiesUnixSeconds.min().toFloat()
+            val unixSecondLast = activitiesUnixSeconds.max().toFloat()
+
+            pushState(
+                Standby(
+                    filterExcludeActivityTypes = setOf(),
+                    filterStateWrapper = FilterStateWrapper(
+                        unixSecondSelectedStart = unixSecondFirst,
+                        unixSecondSelectedEnd = unixSecondLast
+                    ),
+                    pagerStateWrapper = pagerStateWrapper,
+                    sizeWrapper = SizeWrapper(
+                        INITIAL_WIDTH_PX,
+                        INITIAL_HEIGHT_PX
+                    )
                 )
             )
-        )
+        }
     }
 
     override fun onEvent(event: EditArtViewEvent) {
@@ -78,7 +90,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterDateChanged(event: FilterDateChanged) {
-        lastPushedState?.run {
+        (lastPushedState as? Standby)?.run {
             copy(
                 filterStateWrapper = filterStateWrapper.copy(
                     unixSecondSelectedStart = event.newUnixSecondStart,
@@ -100,7 +112,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
-        lastPushedState?.run {
+        (lastPushedState as? Standby)?.run {
             copy(
                 pagerStateWrapper = pagerStateWrapper.copy(
                     pagerNewPosition = event.position

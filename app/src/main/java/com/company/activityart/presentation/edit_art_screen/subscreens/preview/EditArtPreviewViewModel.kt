@@ -13,6 +13,7 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.preview.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.*
 import com.company.activityart.util.ImageSizeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class EditArtPreviewViewModel @Inject constructor(
     }
 
     private fun onDrawArtRequested(event: DrawArtRequested) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val sizeScaled = event.run {
                 imageSizeUtils.sizeToMaximumSize(
                     actualSize = Size(targetWidthPx.toInt(), targetHeightPx.toInt()),

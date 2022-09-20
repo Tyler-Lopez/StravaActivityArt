@@ -32,12 +32,17 @@ sealed interface EditArtViewEvent : ViewEvent {
     object SelectStylesClicked : EditArtViewEvent
 }
 
-data class EditArtViewState(
-    val filterExcludeActivityTypes: Set<String>,
-    val filterStateWrapper: FilterStateWrapper,
-    val pagerStateWrapper: PagerStateWrapper,
-    val sizeWrapper: SizeWrapper
-) : ViewState
+sealed interface EditArtViewState : ViewState {
+    val pagerStateWrapper: PagerStateWrapper
+
+    data class Loading(override val pagerStateWrapper: PagerStateWrapper) : EditArtViewState
+    data class Standby(
+        val filterExcludeActivityTypes: Set<String>,
+        val filterStateWrapper: FilterStateWrapper,
+        override val pagerStateWrapper: PagerStateWrapper,
+        val sizeWrapper: SizeWrapper
+    ) : EditArtViewState
+}
 
 @Parcelize
 data class PagerStateWrapper(
