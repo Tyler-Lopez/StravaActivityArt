@@ -9,11 +9,13 @@ class ActivityFilterUtils @Inject constructor(
 
     fun filterActivities(
         activities: List<Activity>,
+        excludeActivityTypes: Set<String>,
         unixSecondsRange: LongProgression
     ) : List<Activity> {
         return activities.filter {
             when {
                 !it.activityWithinUnixSeconds(unixSecondsRange) -> false
+                excludeActivityTypes.contains(it.type) -> false
                 else -> true
             }
         }

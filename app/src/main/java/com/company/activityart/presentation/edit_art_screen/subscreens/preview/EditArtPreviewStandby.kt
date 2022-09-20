@@ -19,8 +19,9 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.preview.E
 @Composable
 fun EditArtPreviewStandby(
     bitmap: Bitmap?,
-    unixSecondSelectedStart: Float,
-    unixSecondSelectedEnd: Float,
+    unixSecondSelectedStart: Long,
+    unixSecondSelectedEnd: Long,
+    excludeActivityTypes: Set<String>,
     @Px targetHeightPx: Float,
     @Px targetWidthPx: Float,
     eventReceiver: EventReceiver<EditArtPreviewViewEvent>
@@ -35,7 +36,8 @@ fun EditArtPreviewStandby(
                     maxHeight,
                     maxWidth,
                     unixSecondSelectedEnd,
-                    unixSecondSelectedStart
+                    unixSecondSelectedStart,
+                    excludeActivityTypes
                 )
             ) {
                 eventReceiver.onEvent(
@@ -44,6 +46,7 @@ fun EditArtPreviewStandby(
                         targetWidthPx = targetWidthPx,
                         screenWidthPx = maxWidth.toPx(),
                         screenHeightPx = maxHeight.toPx(),
+                        excludeActivityTypes = excludeActivityTypes,
                         unixSecondSelectedStart = unixSecondSelectedStart,
                         unixSecondSelectedEnd = unixSecondSelectedEnd
                     )

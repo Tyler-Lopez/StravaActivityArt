@@ -12,6 +12,7 @@ sealed interface EditArtPreviewViewEvent : ViewEvent {
         @Px val targetHeightPx: Float,
         @Px val screenWidthPx: Float,
         @Px val screenHeightPx: Float,
+        val excludeActivityTypes: Set<String>,
         val unixSecondSelectedStart: Long,
         val unixSecondSelectedEnd: Long,
     ) : EditArtPreviewViewEvent

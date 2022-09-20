@@ -24,6 +24,7 @@ fun EditArtPreviewViewDelegate(
                 targetWidthPx = sizeWrapper.widthPx,
                 unixSecondSelectedEnd = filterStateWrapper.unixSecondSelectedEnd,
                 unixSecondSelectedStart = filterStateWrapper.unixSecondSelectedStart,
+                excludeActivityTypes = setOf(),
                 eventReceiver = viewModel
             )
         }
