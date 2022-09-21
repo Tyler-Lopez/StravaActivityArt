@@ -22,6 +22,7 @@ class ActivityFilterUtils @Inject constructor(
     }
 
     private fun Activity.activityWithinUnixSeconds(range: LongProgression): Boolean {
-        return timeUtils.iso8601StringToUnixSecond(iso8601LocalDate) in range
+        val calcUnix = timeUtils.iso8601StringToUnixSecond(iso8601LocalDate)
+        return calcUnix >= range.first && calcUnix <= range.last
     }
 }

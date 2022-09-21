@@ -33,6 +33,7 @@ fun EditArtPreviewViewDelegate(
                     filterStateWrapper.excludedActivityTypes
                 )
             ) {
+                println("sending event to draw art")
                 viewModel.onEvent(
                     EditArtPreviewViewEvent.DrawArtRequested(
                         targetHeightPx = sizeWrapper.heightPx,
@@ -49,15 +50,7 @@ fun EditArtPreviewViewDelegate(
         viewModel.viewState.collectAsState().value?.apply {
             when (this) {
                 is Loading -> CircularProgressIndicator()
-                is Standby -> EditArtPreviewStandby(
-                    bitmap = bitmap,
-                    targetHeightPx = sizeWrapper.heightPx,
-                    targetWidthPx = sizeWrapper.widthPx,
-                    unixSecondSelectedEnd = filterStateWrapper.unixSecondSelectedEnd,
-                    unixSecondSelectedStart = filterStateWrapper.unixSecondSelectedStart,
-                    excludeActivityTypes = setOf(),
-                    eventReceiver = viewModel
-                )
+                is Standby -> EditArtPreviewStandby(bitmap = bitmap)
             }
         }
     }

@@ -17,15 +17,7 @@ import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.*
 
 @Composable
-fun EditArtPreviewStandby(
-    bitmap: Bitmap?,
-    unixSecondSelectedStart: Long,
-    unixSecondSelectedEnd: Long,
-    excludeActivityTypes: Set<String>,
-    @Px targetHeightPx: Float,
-    @Px targetWidthPx: Float,
-    eventReceiver: EventReceiver<EditArtPreviewViewEvent>
-) {
+fun EditArtPreviewStandby(bitmap: Bitmap?) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

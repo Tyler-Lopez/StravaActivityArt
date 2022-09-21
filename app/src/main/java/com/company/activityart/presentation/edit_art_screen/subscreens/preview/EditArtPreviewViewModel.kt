@@ -33,6 +33,10 @@ class EditArtPreviewViewModel @Inject constructor(
         EditArtViewEvent
         >() {
 
+    private val activities: List<Activity> by lazy {
+        getActivitiesFromCacheUseCase().flatMap { it.value }
+    }
+
     init {
         pushState(Loading)
     }
@@ -44,6 +48,7 @@ class EditArtPreviewViewModel @Inject constructor(
     }
 
     private fun onDrawArtRequested(event: DrawArtRequested) {
+        pushState(Loading)
         viewModelScope.launch(Dispatchers.Default) {
             val sizeScaled = event.run {
                 imageSizeUtils.sizeToMaximumSize(
@@ -51,7 +56,7 @@ class EditArtPreviewViewModel @Inject constructor(
                     maximumSize = Size(screenWidthPx.toInt(), screenHeightPx.toInt())
                 )
             }
-            /*
+
             val filteredActivities = activityFilterUtils.filterActivities(
                 activities = activities,
                 unixSecondsRange = event.run {
@@ -60,8 +65,6 @@ class EditArtPreviewViewModel @Inject constructor(
                 excludeActivityTypes = event.excludeActivityTypes
             )
             val activityCount = filteredActivities.size
-
-             */
 
             pushState(
                 Standby(
@@ -82,7 +85,7 @@ class EditArtPreviewViewModel @Inject constructor(
                                 }
                             )
                             canvas.drawText(
-                                5.toString(),
+                                activityCount.toString(),
                                 0f,
                                 150f,
                                 Paint().also {
