@@ -80,7 +80,6 @@ class LoadActivitiesViewModel @Inject constructor(
                 athleteId = athleteId,
                 year = year,
             ).doOnSuccess {
-                println("for year $year there were ${data.size}")
                 activitiesByYear += Pair(year, data)
                 activitiesCount += data.size
                 Loading(activitiesCount).push()

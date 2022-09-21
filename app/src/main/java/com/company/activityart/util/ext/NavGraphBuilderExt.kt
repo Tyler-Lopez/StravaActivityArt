@@ -3,6 +3,7 @@ package com.company.activityart.util.ext
 import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
@@ -16,7 +17,7 @@ fun NavGraphBuilder.swipingInOutComposable(
     arguments: List<NamedNavArgument> = emptyList(),
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ) {
-    val animationDurationMs = 500
+    val animationDurationMs = 750
 
     composable(
         route = route,
@@ -67,7 +68,7 @@ fun NavGraphBuilder.swipingOutComposable(
     arguments: List<NamedNavArgument> = emptyList(),
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ) {
-    val animationDurationMs = 500
+    val animationDurationMs = 750
 
     composable(
         route = route,

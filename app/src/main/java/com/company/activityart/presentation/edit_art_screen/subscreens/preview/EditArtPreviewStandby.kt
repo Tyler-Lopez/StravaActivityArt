@@ -30,29 +30,7 @@ fun EditArtPreviewStandby(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        LocalDensity.current.run {
-            LaunchedEffect(
-                keys = arrayOf(
-                    maxHeight,
-                    maxWidth,
-                    unixSecondSelectedEnd,
-                    unixSecondSelectedStart,
-                    excludeActivityTypes
-                )
-            ) {
-                eventReceiver.onEvent(
-                    DrawArtRequested(
-                        targetHeightPx = targetHeightPx,
-                        targetWidthPx = targetWidthPx,
-                        screenWidthPx = maxWidth.toPx(),
-                        screenHeightPx = maxHeight.toPx(),
-                        excludeActivityTypes = excludeActivityTypes,
-                        unixSecondSelectedStart = unixSecondSelectedStart,
-                        unixSecondSelectedEnd = unixSecondSelectedEnd
-                    )
-                )
-            }
-        }
+
         bitmap?.let {
             Image(
                 bitmap = it.asImageBitmap(),

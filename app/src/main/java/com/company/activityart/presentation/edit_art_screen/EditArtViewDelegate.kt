@@ -60,7 +60,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 }
                 Spacer(modifier = Modifier.width(spacing.medium))
             },
-
             tabLayout = {
                 pagerStateWrapper.apply {
                     EditArtTabLayout(
