@@ -2,11 +2,11 @@ package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseChildViewModel
-import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterDateChanged
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeAdded
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeRemoved
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedAfter
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedBefore
@@ -16,7 +16,6 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.filters.E
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.SECONDS
@@ -24,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditArtFiltersViewModel @Inject constructor(
-    getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
+    private val getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val timeUtils: TimeUtils
 ) : BaseChildViewModel<
         EditArtFiltersViewState,
@@ -32,22 +31,15 @@ class EditArtFiltersViewModel @Inject constructor(
         EditArtViewEvent
         >() {
 
-    /** ALL ACTIVITIES [Activity] **/
-    private val activities by lazy {
-        getActivitiesFromCacheUseCase().flatMap { it.value }
-    }
-
     init {
         pushState(Loading)
         initFilters()
     }
 
     override fun onEvent(event: EditArtFiltersViewEvent) {
-        viewModelScope.launch(Dispatchers.Default) {
-            when (event) {
-                is DateChanged -> onDateChanged(event)
-                is TypeToggleFlipped -> onTypeToggleFlipped(event)
-            }
+        when (event) {
+            is DateChanged -> onDateChanged(event)
+            is TypeToggleFlipped -> onTypeToggleFlipped(event)
         }
     }
 
@@ -80,14 +72,12 @@ class EditArtFiltersViewModel @Inject constructor(
         (lastPushedState as? Standby)?.run {
             val selectedMap = typesWithSelectedFlag.toMutableMap()
             val wasSelected = selectedMap[event.type] ?: error("Type missing")
-            onParentEvent(
-                if (wasSelected) {
-                    FilterTypeRemoved(event.type)
-                } else {
-                    FilterTypeAdded(event.type)
-
-                }
-            )
+            val parentEvent = if (wasSelected) {
+                FilterTypeAdded(event.type)
+            } else {
+                FilterTypeRemoved(event.type)
+            }
+            onParentEvent(parentEvent)
             copy(
                 typesWithSelectedFlag = selectedMap.also {
                     it[event.type] = !wasSelected
@@ -99,6 +89,7 @@ class EditArtFiltersViewModel @Inject constructor(
 
     private fun initFilters() {
         viewModelScope.launch(Dispatchers.Default) {
+            val activities = getActivitiesFromCacheUseCase().flatMap { it.value }
             timeUtils.apply {
                 /** Date filters **/
                 val activitiesUnixSeconds =
@@ -110,7 +101,7 @@ class EditArtFiltersViewModel @Inject constructor(
 
                 /** Type filters **/
                 val activityTypesWithSelectedFlag =
-                    activities.map { it.type }.distinct().associateWith { false }
+                    activities.map { it.type }.distinct().associateWith { true }
 
                 pushState(
                     Standby(

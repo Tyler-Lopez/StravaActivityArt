@@ -28,11 +28,10 @@ fun FilterSectionActivityType(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val type = it.key
-                Checkbox(checked = it.value, onCheckedChange = {
-                    eventReceiver.onEvent(TypeToggleFlipped(type))
+                Checkbox(checked = it.value, onCheckedChange = { newBoolean ->
+                    eventReceiver.onEvent(TypeToggleFlipped(it.key))
                 })
-                Subhead(type)
+                Subhead(it.key)
             }
         }
     }

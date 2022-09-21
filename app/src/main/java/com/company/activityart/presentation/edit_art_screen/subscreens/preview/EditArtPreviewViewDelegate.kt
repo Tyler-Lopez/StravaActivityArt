@@ -33,7 +33,6 @@ fun EditArtPreviewViewDelegate(
                     filterStateWrapper.excludedActivityTypes
                 )
             ) {
-                println("sending event to draw art")
                 viewModel.onEvent(
                     EditArtPreviewViewEvent.DrawArtRequested(
                         targetHeightPx = sizeWrapper.heightPx,

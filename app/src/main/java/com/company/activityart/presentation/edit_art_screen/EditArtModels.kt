@@ -40,7 +40,6 @@ sealed interface EditArtViewState : ViewState {
     ) : EditArtViewState
 
     data class Standby(
-        val filterExcludeActivityTypes: Set<String>,
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
         val sizeWrapper: SizeWrapper

@@ -52,7 +52,6 @@ class EditArtViewModel @Inject constructor(
 
             pushState(
                 Standby(
-                    filterExcludeActivityTypes = setOf(),
                     filterStateWrapper = FilterStateWrapper(
                         unixSecondSelectedStart = unixSecondFirst,
                         unixSecondSelectedEnd = unixSecondLast
@@ -68,17 +67,15 @@ class EditArtViewModel @Inject constructor(
     }
 
     override fun onEvent(event: EditArtViewEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is FilterDateChanged -> onFilterDateChanged(event)
-                is FilterTypeChanged -> onFilterTypeChanged(event)
-                is MakeFullscreenClicked -> onMakeFullscreenClicked()
-                is NavigateUpClicked -> onNavigateUpClicked()
-                is PageHeaderClicked -> onPageHeaderClicked(event)
-                is SaveClicked -> onSaveClicked()
-                is SelectFiltersClicked -> onSelectFiltersClicked()
-                is SelectStylesClicked -> onSelectStylesClicked()
-            }
+        when (event) {
+            is FilterDateChanged -> onFilterDateChanged(event)
+            is FilterTypeChanged -> onFilterTypeChanged(event)
+            is MakeFullscreenClicked -> onMakeFullscreenClicked()
+            is NavigateUpClicked -> onNavigateUpClicked()
+            is PageHeaderClicked -> onPageHeaderClicked(event)
+            is SaveClicked -> onSaveClicked()
+            is SelectFiltersClicked -> onSelectFiltersClicked()
+            is SelectStylesClicked -> onSelectStylesClicked()
         }
     }
 
@@ -97,12 +94,14 @@ class EditArtViewModel @Inject constructor(
         (lastPushedState as? Standby)?.run {
             copy(
                 filterStateWrapper = filterStateWrapper.copy(
-                    excludedActivityTypes = filterExcludeActivityTypes
-                        .toMutableSet().also {
+                    excludedActivityTypes = filterStateWrapper
+                        .excludedActivityTypes
+                        .toMutableSet()
+                        .apply {
                             if (event is FilterTypeChanged.FilterTypeAdded) {
-                                it.add(event.type)
+                                add(event.type)
                             } else {
-                                it.remove(event.type)
+                                remove(event.type)
                             }
                         }
                 )
@@ -114,8 +113,10 @@ class EditArtViewModel @Inject constructor(
 
     }
 
-    private suspend fun onNavigateUpClicked() {
-        routeTo(NavigateUp)
+    private fun onNavigateUpClicked() {
+        viewModelScope.launch(Dispatchers.Default) {
+            routeTo(NavigateUp)
+        }
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
