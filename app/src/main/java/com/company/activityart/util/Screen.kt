@@ -23,7 +23,7 @@ sealed class Screen(val route: String) {
     object Welcome : Screen("Welcome")
     object About : Screen("About")
     object LoadActivities : Screen("LoadActivities")
-    object MakeArt : Screen("MakeArt")
+    object EditArt : Screen("EditArt")
 
     object FilterMonth : Screen("FilterMonth")
     object FilterType : Screen("FilterType")

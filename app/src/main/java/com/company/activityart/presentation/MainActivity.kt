@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateAbout -> navigateAbout()
             is NavigateLoadActivities -> navigateLoadActivities(destination)
             is NavigateLogin -> navigateLogin()
-            is NavigateMakeArt -> navigateMakeArt(destination)
+            is NavigateEditArt -> navigateMakeArt(destination)
             is NavigateUp -> navigateUp()
         }
     }
@@ -115,22 +115,13 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         }
     }
 
-    private fun navigateMakeArt(destination: NavigateMakeArt) {
-        destination.apply {
-            navController.navigate(
-                route = MakeArt.withArgs(
-                    args = arrayOf(
-                        NavArg.AthleteId.key to athleteId.toString(),
-                        NavArg.AccessToken.key to accessToken
-                    )
-                )
-            ) {
+    private fun navigateMakeArt(destination: NavigateEditArt) {
+        navController.navigate(EditArt.route) {
+            if (destination.fromLoad) {
                 popUpTo(
                     route = LoadActivities.route +
                             "?${NavArg.AthleteId.route}&${NavArg.AccessToken.route}"
-                ) {
-                    inclusive = true
-                }
+                ) { inclusive = true }
             }
         }
     }

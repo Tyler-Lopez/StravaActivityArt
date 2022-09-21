@@ -13,29 +13,22 @@ import com.company.activityart.util.TimeUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.time.Year
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalCoroutinesApi::class)
 class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
-    private val timeUtils: TimeUtils,
-    savedStateHandle: SavedStateHandle
+    private val timeUtils: TimeUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        @Px
         private const val INITIAL_HEIGHT_PX = 1080f
-
         private const val INITIAL_PAGE_POSITION = 0
-
-        @Px
         private const val INITIAL_WIDTH_PX = 1920f
+        private const val TRANSITION_DELAY_MS = 1000L
     }
 
 
@@ -48,6 +41,7 @@ class EditArtViewModel @Inject constructor(
             INITIAL_PAGE_POSITION
         )
         pushState(Loading(pagerStateWrapper = pagerStateWrapper))
+
         viewModelScope.launch(Dispatchers.Default) {
             val activities = activitiesFromCacheUseCase().flatMap { it.value }
             val activitiesUnixSeconds =
@@ -100,13 +94,27 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterTypeChanged(event: FilterTypeChanged) {
+        (lastPushedState as? Standby)?.run {
+            copy(
+                filterStateWrapper = filterStateWrapper.copy(
+                    excludedActivityTypes = filterExcludeActivityTypes
+                        .toMutableSet().also {
+                            if (event is FilterTypeChanged.FilterTypeAdded) {
+                                it.add(event.type)
+                            } else {
+                                it.remove(event.type)
+                            }
+                        }
+                )
+            )
+        }?.push()
     }
 
     private fun onMakeFullscreenClicked() {
 
     }
 
-    private fun onNavigateUpClicked() {
+    private suspend fun onNavigateUpClicked() {
         routeTo(NavigateUp)
     }
 

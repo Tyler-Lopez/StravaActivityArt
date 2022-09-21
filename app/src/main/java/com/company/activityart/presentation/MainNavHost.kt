@@ -12,7 +12,7 @@ import com.company.activityart.presentation.about_screen.AboutViewModel
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesScreen
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewModel
 import com.company.activityart.presentation.login_screen.LoginScreen
-import com.company.activityart.presentation.edit_art_screen.EditArtScreen
+import com.company.activityart.presentation.edit_art_screen.EditArtViewDelegate
 import com.company.activityart.presentation.edit_art_screen.EditArtViewModel
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeViewModel
@@ -57,15 +57,8 @@ fun MainNavHost(
                 LaunchedEffect(router) { attachRouter(router) }
             })
         }
-        swipingInOutComposable(
-            route = MakeArt.route +
-                    "?${AthleteId.route}&${AccessToken.route}",
-            arguments = listOf(
-                AthleteId.navArg,
-                AccessToken.navArg,
-            )
-        ) {
-            EditArtScreen(viewModel = hiltViewModel<EditArtViewModel>().apply {
+        swipingInOutComposable(route = EditArt.route) {
+            EditArtViewDelegate(viewModel = hiltViewModel<EditArtViewModel>().apply {
                 LaunchedEffect(router) { attachRouter(router) }
             })
         }

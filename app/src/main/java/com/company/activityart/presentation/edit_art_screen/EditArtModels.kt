@@ -35,7 +35,10 @@ sealed interface EditArtViewEvent : ViewEvent {
 sealed interface EditArtViewState : ViewState {
     val pagerStateWrapper: PagerStateWrapper
 
-    data class Loading(override val pagerStateWrapper: PagerStateWrapper) : EditArtViewState
+    data class Loading(
+        override val pagerStateWrapper: PagerStateWrapper
+    ) : EditArtViewState
+
     data class Standby(
         val filterExcludeActivityTypes: Set<String>,
         val filterStateWrapper: FilterStateWrapper,
@@ -53,6 +56,7 @@ data class PagerStateWrapper(
 
 @Parcelize
 data class FilterStateWrapper(
+    val excludedActivityTypes: Set<String> = setOf(),
     val unixSecondSelectedStart: Long,
     val unixSecondSelectedEnd: Long
 ) : Parcelable

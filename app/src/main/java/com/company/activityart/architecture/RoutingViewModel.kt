@@ -21,5 +21,5 @@ interface RoutingViewModel<TypeOfDestination : Destination> {
     /**
      * Navigates to the given Destination if a Router is provided.
      */
-    fun routeTo(destination: TypeOfDestination)
+    suspend fun routeTo(destination: TypeOfDestination)
 }

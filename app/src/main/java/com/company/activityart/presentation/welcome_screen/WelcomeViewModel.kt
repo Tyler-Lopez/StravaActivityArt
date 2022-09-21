@@ -1,8 +1,8 @@
 package com.company.activityart.presentation.welcome_screen
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.models.fullName
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
@@ -15,7 +15,9 @@ import com.company.activityart.presentation.welcome_screen.WelcomeViewEvent.*
 import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Loading
 import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Standby
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,17 +29,17 @@ class WelcomeViewModel @Inject constructor(
 ) : BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
 
     init {
-        pushState(Loading)
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            pushState(Loading)
             getAccessToken()
         }
     }
-
+    
     private var athlete: Athlete? = null
     private var accessToken: String? = null
 
     override fun onEvent(event: WelcomeViewEvent) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             when (event) {
                 is ClickedAbout -> onClickedAbout()
                 is ClickedMakeArt -> onClickedMakeArt()
@@ -46,21 +48,20 @@ class WelcomeViewModel @Inject constructor(
         }
     }
 
-    private fun onClickedAbout() {
+    private suspend fun onClickedAbout() {
         routeTo(NavigateAbout)
     }
 
-    private fun onClickedMakeArt() {
-        val athleteId = athlete?.athleteId ?: error("AthleteID missing.")
-        val accessToken = accessToken ?: error("Access token missing.")
-
+    private suspend fun onClickedMakeArt() {
         /** Either route to screen where activities are loaded into RAM cache
          * or directly to Make Art if RAM cache is already present. */
         routeTo(
             if (getActivitiesFromCacheUseCase().isEmpty()) {
+                val athleteId = athlete?.athleteId ?: error("AthleteID missing.")
+                val accessToken = accessToken ?: error("Access token missing.")
                 NavigateLoadActivities(athleteId, accessToken)
             } else {
-                NavigateMakeArt(athleteId, accessToken)
+                NavigateEditArt(fromLoad = false)
             }
         )
     }

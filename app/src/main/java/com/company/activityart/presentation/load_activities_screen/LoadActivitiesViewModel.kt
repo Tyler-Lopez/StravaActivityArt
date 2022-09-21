@@ -55,7 +55,7 @@ class LoadActivitiesViewModel @Inject constructor(
 
     }
 
-    private fun onNavigateUpClicked() {
+    private suspend fun onNavigateUpClicked() {
         routeTo(NavigateUp)
     }
 
@@ -66,7 +66,7 @@ class LoadActivitiesViewModel @Inject constructor(
     override fun onRouterAttached() {
         /** Load activities only after [Router] is attached as
          * successful load results in automatic navigation to next screen */
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             loadActivities()
         }
     }
@@ -89,9 +89,6 @@ class LoadActivitiesViewModel @Inject constructor(
                 return@loadActivities
             }) is Success
         }
-        /** [routeTo] must be invoked from the Main thread **/
-        withContext(Dispatchers.Main) {
-            routeTo(NavigateMakeArt(athleteId, accessToken))
-        }
+        routeTo(NavigateEditArt(fromLoad = true))
     }
 }

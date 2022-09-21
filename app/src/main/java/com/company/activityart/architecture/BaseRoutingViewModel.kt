@@ -1,5 +1,8 @@
 package com.company.activityart.architecture
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 abstract class BaseRoutingViewModel<
         TypeOfViewState : ViewState,
         TypeOfViewEvent : ViewEvent,
@@ -17,7 +20,9 @@ abstract class BaseRoutingViewModel<
         // No-op unless implemented
     }
 
-    final override fun routeTo(destination: TypeOfDestination) {
-        router?.routeTo(destination)
+    final override suspend fun routeTo(destination: TypeOfDestination) {
+        withContext(Dispatchers.Main.immediate) {
+            router?.routeTo(destination)
+        }
     }
 }

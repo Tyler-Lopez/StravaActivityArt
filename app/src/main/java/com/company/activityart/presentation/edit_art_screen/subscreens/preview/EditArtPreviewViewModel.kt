@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.Size
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseChildViewModel
+import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.*
@@ -16,12 +17,14 @@ import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EditArtPreviewViewModel @Inject constructor(
-    private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
+    private val getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val imageSizeUtils: ImageSizeUtils,
     private val activityFilterUtils: ActivityFilterUtils,
 ) : BaseChildViewModel<
@@ -30,11 +33,8 @@ class EditArtPreviewViewModel @Inject constructor(
         EditArtViewEvent
         >() {
 
-    // Todo, this should be migrated to be its own use case without need for flatmap
-    val activities = activitiesFromCacheUseCase().flatMap { it.value }
-
     init {
-        pushState(Standby(null))
+        pushState(Loading)
     }
 
     override fun onEvent(event: EditArtPreviewViewEvent) {
@@ -51,13 +51,17 @@ class EditArtPreviewViewModel @Inject constructor(
                     maximumSize = Size(screenWidthPx.toInt(), screenHeightPx.toInt())
                 )
             }
+            /*
             val filteredActivities = activityFilterUtils.filterActivities(
                 activities = activities,
                 unixSecondsRange = event.run {
                     unixSecondSelectedStart..unixSecondSelectedEnd
-                }
+                },
+                excludeActivityTypes = event.excludeActivityTypes
             )
             val activityCount = filteredActivities.size
+
+             */
 
             pushState(
                 Standby(
@@ -78,7 +82,7 @@ class EditArtPreviewViewModel @Inject constructor(
                                 }
                             )
                             canvas.drawText(
-                                activityCount.toString(),
+                                5.toString(),
                                 0f,
                                 150f,
                                 Paint().also {
