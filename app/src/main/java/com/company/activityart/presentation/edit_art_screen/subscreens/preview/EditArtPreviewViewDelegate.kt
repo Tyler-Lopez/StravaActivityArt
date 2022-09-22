@@ -1,9 +1,9 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.preview
 
+import android.util.Size
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,37 +11,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import com.company.activityart.presentation.edit_art_screen.FilterStateWrapper
-import com.company.activityart.presentation.edit_art_screen.SizeWrapper
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersStandby
-import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.*
+import com.company.activityart.presentation.edit_art_screen.StyleWrapper
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.DrawArtRequested
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Loading
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Standby
 
 @Composable
 fun EditArtPreviewViewDelegate(
     filterStateWrapper: FilterStateWrapper,
-    sizeWrapper: SizeWrapper,
+    size: Size,
+    styleWrapper: StyleWrapper,
     viewModel: EditArtPreviewViewModel
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        LocalDensity.current.run {
+        LocalDensity.current.apply {
+            /** On any change to filters or size, redraw the
+             * bitmap */
             LaunchedEffect(
                 keys = arrayOf(
-                    filterStateWrapper.unixSecondSelectedEnd,
-                    filterStateWrapper.unixSecondSelectedStart,
-                    filterStateWrapper.excludedActivityTypes
+                    filterStateWrapper,
+                    size,
+                    styleWrapper
                 )
             ) {
                 viewModel.onEvent(
-                    EditArtPreviewViewEvent.DrawArtRequested(
-                        targetHeightPx = sizeWrapper.heightPx,
-                        targetWidthPx = sizeWrapper.widthPx,
-                        screenWidthPx = maxWidth.toPx(),
-                        screenHeightPx = maxHeight.toPx(),
-                        excludeActivityTypes = filterStateWrapper.excludedActivityTypes,
-                        unixSecondSelectedStart = filterStateWrapper.unixSecondSelectedStart,
-                        unixSecondSelectedEnd = filterStateWrapper.unixSecondSelectedEnd
+                    DrawArtRequested(
+                        targetSize = size,
+                        screenWidth = maxWidth.toPx().toInt(),
+                        screenHeight = maxHeight.toPx().toInt(),
+                        filterExcludedTypes = filterStateWrapper.excludedActivityTypes,
+                        filterUnixSecondStart = filterStateWrapper.unixSecondSelectedEnd,
+                        filterUnixSecondEnd = filterStateWrapper.unixSecondSelectedStart,
+                        styleBackground = styleWrapper.background
                     )
                 )
             }

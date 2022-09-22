@@ -11,7 +11,7 @@ import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.*
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.FilterSection
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
@@ -19,7 +19,7 @@ fun FilterSectionActivityType(
     typesWithSelectedFlag: Map<String, Boolean>,
     eventReceiver: EventReceiver<EditArtFiltersViewEvent>
 ) {
-    FilterSection(
+    Section(
         header = stringResource(R.string.edit_art_filters_activity_type_header),
         description = stringResource(R.string.edit_art_filters_activity_type_description),
     ) {

@@ -1,47 +1,53 @@
 package com.company.activityart.presentation.edit_art_screen
 
-import androidx.annotation.Px
-import androidx.lifecycle.SavedStateHandle
+import android.util.Size
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.MainDestination.NavigateUp
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
-import com.company.activityart.presentation.edit_art_screen.EditArtViewState.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeAdded
+import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Loading
+import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Standby
 import com.company.activityart.util.TimeUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import java.time.Year
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
-@OptIn(ExperimentalPagerApi::class, ExperimentalCoroutinesApi::class)
 class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val timeUtils: TimeUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        private const val INITIAL_HEIGHT_PX = 1080f
-        private const val INITIAL_PAGE_POSITION = 0
-        private const val INITIAL_WIDTH_PX = 1920f
-        private const val TRANSITION_DELAY_MS = 1000L
+        private const val FADE_LENGTH_MS = 1000
+        private const val INITIAL_BACKGROUND_ALPHA = 255
+        private const val INITIAL_BACKGROUND_BLUE = 0
+        private const val INITIAL_BACKGROUND_GREEN = 0
+        private const val INITIAL_BACKGROUND_RED = 0
+        private const val INITIAL_HEIGHT_PX = 1080
+        private const val INITIAL_WIDTH_PX = 1920
+        private const val TRANSITION_IN_DELAY_MS = 1000L
     }
 
-
     init {
+        /** On the Main thread, push a state containing the header asap **/
         val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
         val pagerState = PagerState(pagerHeaders.size)
         val pagerStateWrapper = PagerStateWrapper(
-            pagerHeaders,
-            pagerState,
-            INITIAL_PAGE_POSITION
+            pagerHeaders = pagerHeaders,
+            pagerState = pagerState,
+            fadeLengthMs = FADE_LENGTH_MS
         )
         pushState(Loading(pagerStateWrapper = pagerStateWrapper))
 
+        /** Compute state initializations **/
         viewModelScope.launch(Dispatchers.Default) {
             val activities = activitiesFromCacheUseCase().flatMap { it.value }
             val activitiesUnixSeconds =
@@ -57,9 +63,17 @@ class EditArtViewModel @Inject constructor(
                         unixSecondSelectedEnd = unixSecondLast
                     ),
                     pagerStateWrapper = pagerStateWrapper,
-                    sizeWrapper = SizeWrapper(
+                    size = Size(
                         INITIAL_WIDTH_PX,
                         INITIAL_HEIGHT_PX
+                    ),
+                    styleWrapper = StyleWrapper(
+                        background = ColorWrapper(
+                            INITIAL_BACKGROUND_ALPHA,
+                            INITIAL_BACKGROUND_BLUE,
+                            INITIAL_BACKGROUND_GREEN,
+                            INITIAL_BACKGROUND_RED
+                        )
                     )
                 )
             )
@@ -98,7 +112,7 @@ class EditArtViewModel @Inject constructor(
                         .excludedActivityTypes
                         .toMutableSet()
                         .apply {
-                            if (event is FilterTypeChanged.FilterTypeAdded) {
+                            if (event is FilterTypeAdded) {
                                 add(event.type)
                             } else {
                                 remove(event.type)
@@ -120,13 +134,11 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
-        (lastPushedState as? Standby)?.run {
-            copy(
-                pagerStateWrapper = pagerStateWrapper.copy(
-                    pagerNewPosition = event.position
-                )
-            )
-        }?.push()
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            (lastPushedState as? Standby)?.run {
+                pagerStateWrapper.pagerState.scrollToPage(event.position)
+            }
+        }
     }
 
     private fun onSaveClicked() {

@@ -30,11 +30,11 @@ class ImageSizeUtils {
          *
          * If it does - return that scaling, else return scaling
          * with respect to height. */
-        val heightWhenWidthScaled = maximumSize.width * widthHeightAspectRatio
+        val heightWhenWidthScaled = maximumSize.width / widthHeightAspectRatio
         return if (heightWhenWidthScaled <= maximumSize.height) {
             Size(maximumSize.width, heightWhenWidthScaled.toInt())
         } else {
-            val widthWhenHeightScaled = maximumSize.height / widthHeightAspectRatio
+            val widthWhenHeightScaled = maximumSize.height * widthHeightAspectRatio
             Size(widthWhenHeightScaled.toInt(), maximumSize.height)
         }
     }

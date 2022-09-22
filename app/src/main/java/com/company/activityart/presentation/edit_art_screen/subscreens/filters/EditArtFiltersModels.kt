@@ -24,9 +24,6 @@ sealed interface EditArtFiltersViewEvent : ViewEvent {
 
 sealed interface EditArtFiltersViewState : ViewState {
     object Loading : EditArtFiltersViewState
-
-    /**
-     */
     data class Standby(
         val dateMaxDateUnixMilliseconds: Long,
         val dateMinDateUnixMilliSeconds: Long,

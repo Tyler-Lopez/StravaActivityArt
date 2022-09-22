@@ -14,6 +14,7 @@ import com.company.activityart.presentation.ui.theme.White
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -22,6 +23,7 @@ fun EditArtTabLayout(
     pagerState: PagerState,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
+    val coroutineScope = rememberCoroutineScope()
     // on below line we are creating
     // a variable for the scope.
 //    val scope = rememberCoroutineScope()
@@ -58,8 +60,12 @@ fun EditArtTabLayout(
             Tab(
                 selected = pagerState.currentPage == index,
                 onClick = {
-                    // on below line we are specifying the scope.
                     eventReceiver.onEvent(PageHeaderClicked(position = index))
+
+               //     coroutineScope.launch {
+                     //  pagerState.scrollToPage(index)
+             //       }
+                    // on below line we are specifying the scope.
                 },
                 text = {
                     Text(

@@ -11,7 +11,7 @@ import com.company.activityart.presentation.common.type.TitleTwo
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
-fun FilterSection(
+fun Section(
     header: String,
     description: String,
     modifier: Modifier = Modifier,

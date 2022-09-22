@@ -2,7 +2,11 @@
 
 package com.company.activityart.presentation.edit_art_screen
 
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.os.Parcel
 import android.os.Parcelable
+import android.util.Size
 import androidx.annotation.Px
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
@@ -42,7 +46,8 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
-        val sizeWrapper: SizeWrapper
+        val size: Size,
+        val styleWrapper: StyleWrapper
     ) : EditArtViewState
 }
 
@@ -50,7 +55,7 @@ sealed interface EditArtViewState : ViewState {
 data class PagerStateWrapper(
     val pagerHeaders: List<EditArtHeaderType>,
     val pagerState: @RawValue PagerState, // Todo, evaluate whether RawValue works
-    val pagerNewPosition: Int,
+    val fadeLengthMs: Int,
 ) : Parcelable
 
 @Parcelize
@@ -61,7 +66,22 @@ data class FilterStateWrapper(
 ) : Parcelable
 
 @Parcelize
-data class SizeWrapper(
-    @Px val heightPx: Float,
-    @Px val widthPx: Float
+data class StyleWrapper(
+    val background: ColorWrapper
 ) : Parcelable
+
+@Parcelize
+data class ColorWrapper(
+    val alpha: Int,
+    val blue: Int,
+    val green: Int,
+    val red: Int
+) : Parcelable {
+
+    companion object {
+        private const val VALUE_NONE = 0
+        private const val VALUE_MAX = 255
+        val VALUE_RANGE = VALUE_NONE..VALUE_MAX
+    }
+
+}

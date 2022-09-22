@@ -11,7 +11,6 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.filters.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedAfter
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedBefore
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.TypeToggleFlipped
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Standby
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +31,6 @@ class EditArtFiltersViewModel @Inject constructor(
         >() {
 
     init {
-        pushState(Loading)
         initFilters()
     }
 

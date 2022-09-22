@@ -22,7 +22,6 @@ fun EditArtPreviewStandby(bitmap: Bitmap?) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
         bitmap?.let {
             Image(
                 bitmap = it.asImageBitmap(),

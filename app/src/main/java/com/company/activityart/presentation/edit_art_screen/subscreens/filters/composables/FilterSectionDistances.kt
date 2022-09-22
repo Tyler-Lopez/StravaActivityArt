@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.company.activityart.R
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.FilterSection
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FilterSectionDistances() {
-    FilterSection(
+    Section(
         header = stringResource(R.string.edit_art_filters_distance_header),
         description = stringResource(R.string.edit_art_filters_distance_description),
     ) {

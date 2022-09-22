@@ -10,15 +10,14 @@ import com.company.activityart.architecture.BaseChildViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
-import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.*
-import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.*
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.DrawArtRequested
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Loading
+import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Standby
 import com.company.activityart.util.ActivityFilterUtils
 import com.company.activityart.util.ImageSizeUtils
-import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,9 +32,8 @@ class EditArtPreviewViewModel @Inject constructor(
         EditArtViewEvent
         >() {
 
-    private val activities: List<Activity> by lazy {
-        getActivitiesFromCacheUseCase().flatMap { it.value }
-    }
+    private val activities: List<Activity> by lazy { getActivitiesFromCacheUseCase().flatMap { it.value } }
+    private var activityDrawJob: Job? = null
 
     init {
         pushState(Loading)
@@ -49,20 +47,23 @@ class EditArtPreviewViewModel @Inject constructor(
 
     private fun onDrawArtRequested(event: DrawArtRequested) {
         pushState(Loading)
-        viewModelScope.launch(Dispatchers.Default) {
+        activityDrawJob?.cancel()
+        activityDrawJob = viewModelScope.launch(Dispatchers.Default) {
+            println("scaling ${event.targetSize} to ${event.screenWidth} and ${event.screenHeight}")
             val sizeScaled = event.run {
                 imageSizeUtils.sizeToMaximumSize(
-                    actualSize = Size(targetWidthPx.toInt(), targetHeightPx.toInt()),
-                    maximumSize = Size(screenWidthPx.toInt(), screenHeightPx.toInt())
+                    actualSize = targetSize,
+                    maximumSize = Size(screenWidth, screenHeight)
                 )
             }
+            println("actually scaled to $sizeScaled")
 
             val filteredActivities = activityFilterUtils.filterActivities(
                 activities = activities,
                 unixSecondsRange = event.run {
-                    unixSecondSelectedStart..unixSecondSelectedEnd
+                    filterUnixSecondEnd..filterUnixSecondStart
                 },
-                excludeActivityTypes = event.excludeActivityTypes
+                excludeActivityTypes = event.filterExcludedTypes
             )
             val activityCount = filteredActivities.size
 
@@ -81,7 +82,9 @@ class EditArtPreviewViewModel @Inject constructor(
                                 canvas.width.toFloat(),
                                 canvas.height.toFloat(),
                                 Paint().also {
-                                    it.color = Color.CYAN
+                                    it.color = event.styleBackground.run {
+                                        Color.argb(alpha, red, green, blue)
+                                    }
                                 }
                             )
                             canvas.drawText(
