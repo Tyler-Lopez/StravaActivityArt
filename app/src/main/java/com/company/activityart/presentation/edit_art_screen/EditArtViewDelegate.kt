@@ -82,7 +82,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 PREVIEW -> EditArtPreviewViewDelegate(
                                     filterStateWrapper,
                                     size,
-                                    styleWrapper,
+                                    styleBackground,
                                     previewViewModel
                                 )
                                 FILTERS -> EditArtFiltersViewDelegate(filterViewModel)

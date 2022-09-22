@@ -27,10 +27,10 @@ class EditArtViewModel @Inject constructor(
 
     companion object {
         private const val FADE_LENGTH_MS = 1000
-        private const val INITIAL_BACKGROUND_ALPHA = 255
-        private const val INITIAL_BACKGROUND_BLUE = 0
-        private const val INITIAL_BACKGROUND_GREEN = 0
-        private const val INITIAL_BACKGROUND_RED = 0
+        private const val INITIAL_BACKGROUND_ALPHA = 1f
+        private const val INITIAL_BACKGROUND_BLUE = 0f
+        private const val INITIAL_BACKGROUND_GREEN = 0f
+        private const val INITIAL_BACKGROUND_RED = 0f
         private const val INITIAL_HEIGHT_PX = 1080
         private const val INITIAL_WIDTH_PX = 1920
         private const val TRANSITION_IN_DELAY_MS = 1000L
@@ -67,13 +67,11 @@ class EditArtViewModel @Inject constructor(
                         INITIAL_WIDTH_PX,
                         INITIAL_HEIGHT_PX
                     ),
-                    styleWrapper = StyleWrapper(
-                        background = ColorWrapper(
-                            INITIAL_BACKGROUND_ALPHA,
-                            INITIAL_BACKGROUND_BLUE,
-                            INITIAL_BACKGROUND_GREEN,
-                            INITIAL_BACKGROUND_RED
-                        )
+                    styleBackground = ColorWrapper(
+                        alpha = INITIAL_BACKGROUND_ALPHA,
+                        blue = INITIAL_BACKGROUND_BLUE,
+                        green = INITIAL_BACKGROUND_GREEN,
+                        red = INITIAL_BACKGROUND_RED
                     )
                 )
             )
@@ -90,6 +88,7 @@ class EditArtViewModel @Inject constructor(
             is SaveClicked -> onSaveClicked()
             is SelectFiltersClicked -> onSelectFiltersClicked()
             is SelectStylesClicked -> onSelectStylesClicked()
+            is StylesBackgroundChanged -> onStylesBackgroundChanged(event)
         }
     }
 
@@ -151,5 +150,9 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSelectStylesClicked() {
 
+    }
+
+    private fun onStylesBackgroundChanged(event: StylesBackgroundChanged) {
+        (lastPushedState as? Standby)?.copy(styleBackground = event.changedTo)?.push()
     }
 }

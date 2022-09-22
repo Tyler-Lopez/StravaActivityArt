@@ -6,11 +6,9 @@ import androidx.compose.runtime.collectAsState
 @Composable
 fun EditArtStyleViewDelegate(viewModel: EditArtStyleViewModel) {
     viewModel.viewState.collectAsState().value?.apply {
-        when (this) {
-            is EditArtStyleViewState.Standby -> EditArtStyleStandby(
-                colorBackground = colorBackground,
-                eventReceiver = viewModel
-            )
-        }
+        EditArtStyleStandby(
+            colorBackground = colorBackground,
+            eventReceiver = viewModel
+        )
     }
 }

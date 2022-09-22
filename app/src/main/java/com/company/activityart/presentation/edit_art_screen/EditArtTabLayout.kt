@@ -61,11 +61,6 @@ fun EditArtTabLayout(
                 selected = pagerState.currentPage == index,
                 onClick = {
                     eventReceiver.onEvent(PageHeaderClicked(position = index))
-
-               //     coroutineScope.launch {
-                     //  pagerState.scrollToPage(index)
-             //       }
-                    // on below line we are specifying the scope.
                 },
                 text = {
                     Text(

@@ -2,12 +2,8 @@
 
 package com.company.activityart.presentation.edit_art_screen
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.os.Parcel
 import android.os.Parcelable
 import android.util.Size
-import androidx.annotation.Px
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -34,6 +30,7 @@ sealed interface EditArtViewEvent : ViewEvent {
     object SaveClicked : EditArtViewEvent
     object SelectFiltersClicked : EditArtViewEvent
     object SelectStylesClicked : EditArtViewEvent
+    data class StylesBackgroundChanged(val changedTo: ColorWrapper) : EditArtViewEvent
 }
 
 sealed interface EditArtViewState : ViewState {
@@ -47,7 +44,7 @@ sealed interface EditArtViewState : ViewState {
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
         val size: Size,
-        val styleWrapper: StyleWrapper
+        val styleBackground: ColorWrapper
     ) : EditArtViewState
 }
 
@@ -66,22 +63,18 @@ data class FilterStateWrapper(
 ) : Parcelable
 
 @Parcelize
-data class StyleWrapper(
-    val background: ColorWrapper
-) : Parcelable
-
-@Parcelize
 data class ColorWrapper(
-    val alpha: Int,
-    val blue: Int,
-    val green: Int,
-    val red: Int
+    val alpha: Float,
+    val blue: Float,
+    val green: Float,
+    val red: Float
 ) : Parcelable {
 
     companion object {
-        private const val VALUE_NONE = 0
-        private const val VALUE_MAX = 255
+        private const val VALUE_NONE = 0f
+        private const val VALUE_MAX = 1f
         val VALUE_RANGE = VALUE_NONE..VALUE_MAX
+        val INITIAL_BG_COLOR =
+            ColorWrapper(VALUE_NONE, VALUE_NONE, VALUE_NONE, VALUE_NONE)
     }
-
 }

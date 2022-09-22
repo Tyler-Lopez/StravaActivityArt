@@ -119,4 +119,13 @@
     <string name="edit_art_filters_distance_description">
         Which range of distances should be used?
     </string>
+
+    <string name="edit_art_style_background_header">Background</string>
+    <string name="edit_art_style_background_description">
+        What color should the background of the art be?
+    </string>
+    <string name="edit_art_style_color_red">Red</string>
+    <string name="edit_art_style_color_green">Green</string>
+    <string name="edit_art_style_color_blue">Blue</string>
+
 </resources>
