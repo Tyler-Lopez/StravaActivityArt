@@ -6,17 +6,17 @@ import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
+import com.company.activityart.presentation.edit_art_screen.ColorType.*
 import com.company.activityart.presentation.edit_art_screen.ColorWrapper
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.StylesColorChanged
+import com.company.activityart.presentation.edit_art_screen.StyleType.*
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
-import com.company.activityart.presentation.edit_art_screen.subscreens.style.ColorType
-import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewEvent
-import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewEvent.*
-import com.company.activityart.presentation.edit_art_screen.subscreens.style.StyleType
 
 @Composable
 fun StyleSectionBackground(
     backgroundColor: ColorWrapper,
-    eventReceiver: EventReceiver<EditArtStyleViewEvent>
+    eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     Section(
         header = stringResource(R.string.edit_art_style_background_header),
@@ -29,9 +29,9 @@ fun StyleSectionBackground(
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = {
                 eventReceiver.onEvent(
-                    ColorChanged(
-                        styleType = StyleType.BACKGROUND,
-                        colorType = ColorType.RED,
+                    StylesColorChanged(
+                        styleType = BACKGROUND,
+                        colorType = RED,
                         changedTo = it
                     )
                 )
@@ -43,9 +43,9 @@ fun StyleSectionBackground(
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = {
                 eventReceiver.onEvent(
-                    ColorChanged(
-                        styleType = StyleType.BACKGROUND,
-                        colorType = ColorType.GREEN,
+                    StylesColorChanged(
+                        styleType = BACKGROUND,
+                        colorType = GREEN,
                         changedTo = it
                     )
                 )
@@ -57,9 +57,9 @@ fun StyleSectionBackground(
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = {
                 eventReceiver.onEvent(
-                    ColorChanged(
-                        styleType = StyleType.BACKGROUND,
-                        colorType = ColorType.BLUE,
+                    StylesColorChanged(
+                        styleType = BACKGROUND,
+                        colorType = BLUE,
                         changedTo = it
                     )
                 )

@@ -23,7 +23,6 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.preview.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewModel
 import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResize
 import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewDelegate
-import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewModel
 import com.company.activityart.presentation.edit_art_screen.subscreens.type.EditArtType
 import com.company.activityart.presentation.ui.theme.White
 import com.company.activityart.presentation.ui.theme.spacing
@@ -62,15 +61,14 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
         ) {
             ScreenBackground {
                 if (this@apply is EditArtViewState.Standby) {
+                    /* Todo, move these view models to the view model and then
+                    also invoke something like setting initial state of at least style */
                     val activeHeader =
                         EditArtHeaderType.fromOrdinal(pagerStateWrapper.pagerState.currentPage)
                     val previewViewModel = hiltViewModel<EditArtPreviewViewModel>().apply {
                         attachParent(viewModel)
                     }
                     val filterViewModel = hiltViewModel<EditArtFiltersViewModel>().apply {
-                        attachParent(viewModel)
-                    }
-                    val styleViewModel = hiltViewModel<EditArtStyleViewModel>().apply {
                         attachParent(viewModel)
                     }
                     Crossfade(
@@ -86,7 +84,10 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     previewViewModel
                                 )
                                 FILTERS -> EditArtFiltersViewDelegate(filterViewModel)
-                                STYLE -> EditArtStyleViewDelegate(styleViewModel)
+                                STYLE -> EditArtStyleViewDelegate(
+                                    styleBackground,
+                                    viewModel
+                                )
                                 TYPE -> EditArtType()
                                 RESIZE -> EditArtResize()
                                 null -> error("Invalid pagerState current page.")

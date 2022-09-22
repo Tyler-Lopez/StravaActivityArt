@@ -7,6 +7,8 @@ import com.company.activityart.domain.use_case.activities.GetActivitiesFromCache
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
+import com.company.activityart.presentation.edit_art_screen.ColorType.*
+import com.company.activityart.presentation.edit_art_screen.StyleType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeAdded
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Standby
@@ -33,7 +35,6 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_BACKGROUND_RED = 0f
         private const val INITIAL_HEIGHT_PX = 1080
         private const val INITIAL_WIDTH_PX = 1920
-        private const val TRANSITION_IN_DELAY_MS = 1000L
     }
 
     init {
@@ -88,7 +89,7 @@ class EditArtViewModel @Inject constructor(
             is SaveClicked -> onSaveClicked()
             is SelectFiltersClicked -> onSelectFiltersClicked()
             is SelectStylesClicked -> onSelectStylesClicked()
-            is StylesBackgroundChanged -> onStylesBackgroundChanged(event)
+            is StylesColorChanged -> onStylesColorChanged(event)
         }
     }
 
@@ -152,7 +153,27 @@ class EditArtViewModel @Inject constructor(
 
     }
 
-    private fun onStylesBackgroundChanged(event: StylesBackgroundChanged) {
-        (lastPushedState as? Standby)?.copy(styleBackground = event.changedTo)?.push()
+    private fun onStylesColorChanged(event: StylesColorChanged) {
+        (lastPushedState as? Standby)?.run {
+            event.run {
+                when (styleType) {
+                    BACKGROUND -> {
+                        copy(styleBackground = styleBackground.copyWithEvent(event))
+                    }
+                }
+            }
+        }?.push()
+    }
+
+    /** @return Copy of [ColorWrapper] which reflects a change in blue, green, or red values. **/
+    private fun ColorWrapper.copyWithEvent(event: StylesColorChanged): ColorWrapper {
+        return event.let {
+            when (it.colorType) {
+                ALPHA -> copy(alpha = it.changedTo)
+                BLUE -> copy(blue = it.changedTo)
+                GREEN -> copy(green = it.changedTo)
+                RED -> copy(red = it.changedTo)
+            }
+        }
     }
 }

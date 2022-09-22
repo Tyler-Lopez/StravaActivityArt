@@ -30,7 +30,11 @@ sealed interface EditArtViewEvent : ViewEvent {
     object SaveClicked : EditArtViewEvent
     object SelectFiltersClicked : EditArtViewEvent
     object SelectStylesClicked : EditArtViewEvent
-    data class StylesBackgroundChanged(val changedTo: ColorWrapper) : EditArtViewEvent
+    data class StylesColorChanged(
+        val styleType: StyleType,
+        val colorType: ColorType,
+        val changedTo: Float
+    ) : EditArtViewEvent
 }
 
 sealed interface EditArtViewState : ViewState {
@@ -77,4 +81,15 @@ data class ColorWrapper(
         val INITIAL_BG_COLOR =
             ColorWrapper(VALUE_NONE, VALUE_NONE, VALUE_NONE, VALUE_NONE)
     }
+}
+
+enum class StyleType {
+    BACKGROUND
+}
+
+enum class ColorType {
+    RED,
+    GREEN,
+    BLUE,
+    ALPHA
 }
