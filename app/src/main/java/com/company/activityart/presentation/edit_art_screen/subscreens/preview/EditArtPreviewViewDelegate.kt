@@ -20,6 +20,7 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.preview.E
 fun EditArtPreviewViewDelegate(
     filterStateWrapper: FilterStateWrapper,
     size: Size,
+    styleActivities: ColorWrapper,
     styleBackground: ColorWrapper,
     viewModel: EditArtPreviewViewModel
 ) {
@@ -34,6 +35,7 @@ fun EditArtPreviewViewDelegate(
                 keys = arrayOf(
                     filterStateWrapper,
                     size,
+                    styleActivities,
                     styleBackground
                 )
             ) {
@@ -45,6 +47,7 @@ fun EditArtPreviewViewDelegate(
                         filterExcludedTypes = filterStateWrapper.excludedActivityTypes,
                         filterUnixSecondStart = filterStateWrapper.unixSecondSelectedEnd,
                         filterUnixSecondEnd = filterStateWrapper.unixSecondSelectedStart,
+                        styleActivities = styleActivities,
                         styleBackground = styleBackground
                     )
                 )

@@ -92,7 +92,9 @@ class EditArtPreviewViewModel @Inject constructor(
                                 0f,
                                 150f,
                                 Paint().also {
-                                    it.color = Color.BLACK
+                                    it.color = event.styleActivities.run {
+                                        Color.argb(alpha, red, green, blue)
+                                    }
                                     it.textSize = 50f
                                 }
                             )

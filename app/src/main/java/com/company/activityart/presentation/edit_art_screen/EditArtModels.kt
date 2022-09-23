@@ -48,7 +48,8 @@ sealed interface EditArtViewState : ViewState {
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
         val size: Size,
-        val styleBackground: ColorWrapper
+        val styleActivities: ColorWrapper,
+        val styleBackground: ColorWrapper,
     ) : EditArtViewState
 }
 
@@ -84,7 +85,8 @@ data class ColorWrapper(
 }
 
 enum class StyleType {
-    BACKGROUND
+    BACKGROUND,
+    ACTIVITIES,
 }
 
 enum class ColorType {

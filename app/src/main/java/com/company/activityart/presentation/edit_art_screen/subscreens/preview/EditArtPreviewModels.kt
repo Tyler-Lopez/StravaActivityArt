@@ -16,6 +16,7 @@ sealed interface EditArtPreviewViewEvent : ViewEvent {
         val filterExcludedTypes: Set<String>,
         val filterUnixSecondEnd: Long,
         val filterUnixSecondStart: Long,
+        val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
         ) : EditArtPreviewViewEvent
 }

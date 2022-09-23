@@ -29,6 +29,10 @@ class EditArtViewModel @Inject constructor(
 
     companion object {
         private const val FADE_LENGTH_MS = 1000
+        private const val INITIAL_ACTIVITIES_ALPHA = 1f
+        private const val INITIAL_ACTIVITIES_BLUE = 0f
+        private const val INITIAL_ACTIVITIES_GREEN = 0f
+        private const val INITIAL_ACTIVITIES_RED = 0f
         private const val INITIAL_BACKGROUND_ALPHA = 1f
         private const val INITIAL_BACKGROUND_BLUE = 0f
         private const val INITIAL_BACKGROUND_GREEN = 0f
@@ -68,11 +72,17 @@ class EditArtViewModel @Inject constructor(
                         INITIAL_WIDTH_PX,
                         INITIAL_HEIGHT_PX
                     ),
+                    styleActivities = ColorWrapper(
+                        INITIAL_ACTIVITIES_ALPHA,
+                        INITIAL_ACTIVITIES_BLUE,
+                        INITIAL_ACTIVITIES_GREEN,
+                        INITIAL_ACTIVITIES_RED
+                    ),
                     styleBackground = ColorWrapper(
-                        alpha = INITIAL_BACKGROUND_ALPHA,
-                        blue = INITIAL_BACKGROUND_BLUE,
-                        green = INITIAL_BACKGROUND_GREEN,
-                        red = INITIAL_BACKGROUND_RED
+                        INITIAL_BACKGROUND_ALPHA,
+                        INITIAL_BACKGROUND_BLUE,
+                        INITIAL_BACKGROUND_GREEN,
+                        INITIAL_BACKGROUND_RED
                     )
                 )
             )
@@ -157,9 +167,8 @@ class EditArtViewModel @Inject constructor(
         (lastPushedState as? Standby)?.run {
             event.run {
                 when (styleType) {
-                    BACKGROUND -> {
-                        copy(styleBackground = styleBackground.copyWithEvent(event))
-                    }
+                    BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
+                    ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
                 }
             }
         }?.push()
