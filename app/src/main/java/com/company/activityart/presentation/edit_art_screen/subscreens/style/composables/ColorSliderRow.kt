@@ -19,6 +19,7 @@ import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.edit_art_screen.ColorType
 import com.company.activityart.presentation.edit_art_screen.ColorWrapper
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
 import com.company.activityart.presentation.edit_art_screen.StyleType
 import com.company.activityart.presentation.ui.theme.spacing
 
@@ -44,7 +45,7 @@ fun ColorSliderRow(
             onValueChange = {
                 val asNormalizedFloat = it.toFloatOrNull()?.div(255f)
                 eventReceiver.onEvent(
-                    EditArtViewEvent.StylesColorChanged(
+                    StylesColorChanged(
                         styleType = styleType,
                         colorType = colorType,
                         changedTo = asNormalizedFloat?.coerceIn(ColorWrapper.VALUE_RANGE) ?: 0f
@@ -63,7 +64,7 @@ fun ColorSliderRow(
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = {
                 eventReceiver.onEvent(
-                    EditArtViewEvent.StylesColorChanged(
+                    StylesColorChanged(
                         styleType = styleType,
                         colorType = colorType,
                         changedTo = it

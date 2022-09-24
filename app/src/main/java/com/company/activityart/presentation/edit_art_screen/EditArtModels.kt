@@ -2,8 +2,10 @@
 
 package com.company.activityart.presentation.edit_art_screen
 
+import android.graphics.Bitmap
 import android.os.Parcelable
 import android.util.Size
+import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -12,29 +14,34 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
 sealed interface EditArtViewEvent : ViewEvent {
-    data class FilterDateChanged(
-        val newUnixSecondStart: Long,
-        val newUnixSecondEnd: Long
-    ) : EditArtViewEvent
-
-    sealed interface FilterTypeChanged : EditArtViewEvent {
-        val type: String
-
-        data class FilterTypeAdded(override val type: String) : FilterTypeChanged
-        data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
-    }
 
     object MakeFullscreenClicked : EditArtViewEvent
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
-    object SelectFiltersClicked : EditArtViewEvent
-    object SelectStylesClicked : EditArtViewEvent
-    data class StylesColorChanged(
-        val styleType: StyleType,
-        val colorType: ColorType,
-        val changedTo: Float
-    ) : EditArtViewEvent
+
+    sealed interface ArtMutatingEvent : EditArtViewEvent {
+        data class FilterDateChanged(
+            val newUnixSecondStart: Long,
+            val newUnixSecondEnd: Long
+        ) : ArtMutatingEvent
+
+        sealed interface FilterTypeChanged : ArtMutatingEvent {
+            val type: String
+
+            data class FilterTypeAdded(override val type: String) : FilterTypeChanged
+            data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
+        }
+
+        data class ScreenMeasured(val width: Int, val height: Int) : ArtMutatingEvent
+        data class StylesColorChanged(
+            val styleType: StyleType,
+            val colorType: ColorType,
+            val changedTo: Float
+        ) : ArtMutatingEvent
+
+        data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
+    }
 }
 
 sealed interface EditArtViewState : ViewState {
@@ -45,11 +52,14 @@ sealed interface EditArtViewState : ViewState {
     ) : EditArtViewState
 
     data class Standby(
+        val bitmap: Bitmap?,
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
-        val size: Size,
+        val sizeActual: Size,
+        val sizeMaximum: Size,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
+        val styleStrokeWidthType: StrokeWidthType
     ) : EditArtViewState
 }
 
@@ -94,4 +104,10 @@ enum class ColorType {
     GREEN,
     BLUE,
     ALPHA
+}
+
+enum class StrokeWidthType(val headerId: Int) {
+    THIN(R.string.edit_art_style_stroke_thin),
+    MEDIUM(R.string.edit_art_style_stroke_medium),
+    THICK(R.string.edit_art_style_stroke_thick);
 }

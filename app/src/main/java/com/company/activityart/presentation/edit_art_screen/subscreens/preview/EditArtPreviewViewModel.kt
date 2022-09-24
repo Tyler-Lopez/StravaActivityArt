@@ -30,7 +30,7 @@ class EditArtPreviewViewModel @Inject constructor(
         EditArtViewEvent
         >() {
 
-    private val activities: List<Activity> by lazy { getActivitiesFromCacheUseCase().flatMap { it.value } }
+    private val activities: List<Activity> by lazy { getActivitiesFromCacheUseCase() }
     private var activityDrawJob: Job? = null
 
     init {
@@ -62,13 +62,17 @@ class EditArtPreviewViewModel @Inject constructor(
                 excludeActivityTypes = event.filterExcludedTypes
             )
 
+            /*
             pushState(Standby(visualizationUtils.createBitmap(
                 activities = filteredActivities,
                 bitmapSize = sizeScaled,
                 colorActivities = event.styleActivities,
                 colorBackground = event.styleBackground,
-                paddingFraction = 0.05f
+                paddingFraction = 0.05f,
+                strokeWidthType = event.styleStrokeWidthType
             )))
+
+             */
         }
     }
 }

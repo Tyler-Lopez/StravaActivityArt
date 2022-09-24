@@ -160,5 +160,5 @@ object AppModule {
     fun provideTimeUtils() = TimeUtils()
 
     @Provides
-    fun provideVisualizationUtils() = VisualizationUtils()
+    fun provideVisualizationUtils(imageSizeUtils: ImageSizeUtils) = VisualizationUtils(imageSizeUtils)
 }

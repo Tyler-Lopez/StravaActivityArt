@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetActivitiesFromCacheUseCase @Inject constructor(
     private val cache: ActivitiesCache
 ) {
-    operator fun invoke(): Map<Int, List<Activity>> {
-        return cache.cachedActivitiesByYear
+    operator fun invoke(): List<Activity> {
+        return cache.cachedActivitiesByYear.flatMap { it.value }
     }
 }

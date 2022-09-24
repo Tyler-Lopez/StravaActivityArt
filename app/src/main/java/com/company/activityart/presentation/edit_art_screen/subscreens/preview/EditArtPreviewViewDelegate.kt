@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import com.company.activityart.presentation.edit_art_screen.ColorWrapper
 import com.company.activityart.presentation.edit_art_screen.FilterStateWrapper
+import com.company.activityart.presentation.edit_art_screen.StrokeWidthType
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewEvent.DrawArtRequested
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Standby
@@ -22,6 +23,7 @@ fun EditArtPreviewViewDelegate(
     size: Size,
     styleActivities: ColorWrapper,
     styleBackground: ColorWrapper,
+    styleStrokeWidthType: StrokeWidthType,
     viewModel: EditArtPreviewViewModel
 ) {
     BoxWithConstraints(
@@ -36,7 +38,8 @@ fun EditArtPreviewViewDelegate(
                     filterStateWrapper,
                     size,
                     styleActivities,
-                    styleBackground
+                    styleBackground,
+                    styleStrokeWidthType,
                 )
             ) {
                 viewModel.onEvent(
@@ -48,7 +51,8 @@ fun EditArtPreviewViewDelegate(
                         filterUnixSecondStart = filterStateWrapper.unixSecondSelectedEnd,
                         filterUnixSecondEnd = filterStateWrapper.unixSecondSelectedStart,
                         styleActivities = styleActivities,
-                        styleBackground = styleBackground
+                        styleBackground = styleBackground,
+                        styleStrokeWidthType = styleStrokeWidthType
                     )
                 )
             }

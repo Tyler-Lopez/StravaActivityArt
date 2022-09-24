@@ -23,7 +23,6 @@ fun EditArtTabLayout(
     pagerState: PagerState,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    val coroutineScope = rememberCoroutineScope()
     // on below line we are creating
     // a variable for the scope.
 //    val scope = rememberCoroutineScope()

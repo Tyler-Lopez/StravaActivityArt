@@ -6,6 +6,7 @@ import androidx.annotation.Px
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.edit_art_screen.ColorWrapper
+import com.company.activityart.presentation.edit_art_screen.StrokeWidthType
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState
 
 sealed interface EditArtPreviewViewEvent : ViewEvent {
@@ -18,6 +19,7 @@ sealed interface EditArtPreviewViewEvent : ViewEvent {
         val filterUnixSecondStart: Long,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
+        val styleStrokeWidthType: StrokeWidthType
         ) : EditArtPreviewViewEvent
 }
 

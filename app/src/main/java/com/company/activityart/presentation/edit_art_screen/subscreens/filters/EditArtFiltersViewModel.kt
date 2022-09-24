@@ -1,12 +1,11 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.filters
 
-import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseChildViewModel
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterDateChanged
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeAdded
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeRemoved
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterDateChanged
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterTypeChanged.FilterTypeAdded
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterTypeChanged.FilterTypeRemoved
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedAfter
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.DateChangedBefore
@@ -14,10 +13,7 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.filters.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewState.Standby
 import com.company.activityart.util.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.MILLISECONDS
-import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 @HiltViewModel
@@ -86,6 +82,7 @@ class EditArtFiltersViewModel @Inject constructor(
 
 
     private fun initFilters() {
+/*
         viewModelScope.launch(Dispatchers.Default) {
             val activities = getActivitiesFromCacheUseCase().flatMap { it.value }
             timeUtils.apply {
@@ -112,5 +109,7 @@ class EditArtFiltersViewModel @Inject constructor(
                 )
             }
         }
+
+ */
     }
 }

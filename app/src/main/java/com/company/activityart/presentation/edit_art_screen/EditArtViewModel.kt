@@ -6,25 +6,29 @@ import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
+import com.company.activityart.presentation.edit_art_screen.StrokeWidthType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.ColorType.*
 import com.company.activityart.presentation.edit_art_screen.StyleType.*
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.FilterTypeChanged.FilterTypeAdded
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterTypeChanged.FilterTypeAdded
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Standby
+import com.company.activityart.util.Screen
 import com.company.activityart.util.TimeUtils
+import com.company.activityart.util.VisualizationUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
-    private val timeUtils: TimeUtils
+    private val timeUtils: TimeUtils,
+    private val visualizationUtils: VisualizationUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
@@ -41,66 +45,45 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_WIDTH_PX = 1920
     }
 
-    init {
-        /** On the Main thread, push a state containing the header asap **/
-        val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
-        val pagerState = PagerState(pagerHeaders.size)
-        val pagerStateWrapper = PagerStateWrapper(
-            pagerHeaders = pagerHeaders,
-            pagerState = pagerState,
-            fadeLengthMs = FADE_LENGTH_MS
-        )
-        pushState(Loading(pagerStateWrapper = pagerStateWrapper))
-
-        /** Compute state initializations **/
-        viewModelScope.launch(Dispatchers.Default) {
-            val activities = activitiesFromCacheUseCase().flatMap { it.value }
-            val activitiesUnixSeconds =
-                activities.map { timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate) }
-
-            val unixSecondFirst = activitiesUnixSeconds.min()
-            val unixSecondLast = activitiesUnixSeconds.max()
-
-            pushState(
-                Standby(
-                    filterStateWrapper = FilterStateWrapper(
-                        unixSecondSelectedStart = unixSecondFirst,
-                        unixSecondSelectedEnd = unixSecondLast
-                    ),
-                    pagerStateWrapper = pagerStateWrapper,
-                    size = Size(
-                        INITIAL_WIDTH_PX,
-                        INITIAL_HEIGHT_PX
-                    ),
-                    styleActivities = ColorWrapper(
-                        INITIAL_ACTIVITIES_ALPHA,
-                        INITIAL_ACTIVITIES_BLUE,
-                        INITIAL_ACTIVITIES_GREEN,
-                        INITIAL_ACTIVITIES_RED
-                    ),
-                    styleBackground = ColorWrapper(
-                        INITIAL_BACKGROUND_ALPHA,
-                        INITIAL_BACKGROUND_BLUE,
-                        INITIAL_BACKGROUND_GREEN,
-                        INITIAL_BACKGROUND_RED
-                    )
-                )
-            )
+    private var activityDrawJob: Job? = null
+    private val activities by lazy { activitiesFromCacheUseCase() }
+    private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
+    private val pagerState = PagerState(pagerHeaders.size)
+    private val pagerStateWrapper = PagerStateWrapper(
+        pagerHeaders = pagerHeaders,
+        pagerState = pagerState,
+        fadeLengthMs = FADE_LENGTH_MS
+    )
+    private val unixSeconds by lazy {
+        activities.map {
+            timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)
         }
+    }
+
+    init {
+        pushState(Loading(pagerStateWrapper = pagerStateWrapper))
     }
 
     override fun onEvent(event: EditArtViewEvent) {
         when (event) {
-            is FilterDateChanged -> onFilterDateChanged(event)
-            is FilterTypeChanged -> onFilterTypeChanged(event)
+            is ArtMutatingEvent -> onArtMutatingEvent(event)
             is MakeFullscreenClicked -> onMakeFullscreenClicked()
             is NavigateUpClicked -> onNavigateUpClicked()
-            is PageHeaderClicked -> onPageHeaderClicked(event)
             is SaveClicked -> onSaveClicked()
-            is SelectFiltersClicked -> onSelectFiltersClicked()
-            is SelectStylesClicked -> onSelectStylesClicked()
-            is StylesColorChanged -> onStylesColorChanged(event)
+            is PageHeaderClicked -> onPageHeaderClicked(event)
         }
+    }
+
+    private fun onArtMutatingEvent(event: ArtMutatingEvent) {
+        when (event) {
+            is FilterDateChanged -> onFilterDateChanged(event)
+            is FilterTypeChanged -> onFilterTypeChanged(event)
+            is ScreenMeasured -> onScreenMeasured(event)
+            is StylesColorChanged -> onStylesColorChanged(event)
+            is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
+        }
+        updateBitmap()
     }
 
     private fun onFilterDateChanged(event: FilterDateChanged) {
@@ -155,26 +138,56 @@ class EditArtViewModel @Inject constructor(
 
     }
 
-    private fun onSelectFiltersClicked() {
-
-    }
-
-    private fun onSelectStylesClicked() {
-
+    private fun onScreenMeasured(event: ScreenMeasured) {
+        pushState(
+            Standby(
+                bitmap = null,
+                filterStateWrapper = FilterStateWrapper(
+                    unixSecondSelectedStart = unixSeconds.first(),
+                    unixSecondSelectedEnd = unixSeconds.last()
+                ),
+                pagerStateWrapper = pagerStateWrapper,
+                sizeActual = Size(
+                    INITIAL_WIDTH_PX,
+                    INITIAL_HEIGHT_PX
+                ),
+                styleActivities = ColorWrapper(
+                    INITIAL_ACTIVITIES_ALPHA,
+                    INITIAL_ACTIVITIES_BLUE,
+                    INITIAL_ACTIVITIES_GREEN,
+                    INITIAL_ACTIVITIES_RED
+                ),
+                styleBackground = ColorWrapper(
+                    INITIAL_BACKGROUND_ALPHA,
+                    INITIAL_BACKGROUND_BLUE,
+                    INITIAL_BACKGROUND_GREEN,
+                    INITIAL_BACKGROUND_RED
+                ),
+                styleStrokeWidthType = MEDIUM,
+                sizeMaximum = Size(event.width, event.height)
+            )
+        )
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
-        (lastPushedState as? Standby)?.run {
+        withLastState {
             event.run {
                 when (styleType) {
                     BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
                     ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
                 }
-            }
+            }.push()
+        }
+    }
+
+    private fun onStylesStrokeWidthChanged(event: StylesStrokeWidthChanged) {
+        (lastPushedState as? Standby)?.run {
+            copy(styleStrokeWidthType = event.changedTo)
         }?.push()
     }
 
-    /** @return Copy of [ColorWrapper] which reflects a change in blue, green, or red values. **/
+    /** @return Copy of an reflecting a [StylesColorChanged] change event
+     *  to a [ColorWrapper]. **/
     private fun ColorWrapper.copyWithEvent(event: StylesColorChanged): ColorWrapper {
         return event.let {
             when (it.colorType) {
@@ -184,5 +197,27 @@ class EditArtViewModel @Inject constructor(
                 RED -> copy(red = it.changedTo)
             }
         }
+    }
+
+    private fun updateBitmap() {
+        imageProcessingDispatcher.cancelChildren()
+        viewModelScope.launch(imageProcessingDispatcher) {
+            withLastState {
+                val bitmap = visualizationUtils.createBitmap(
+                    activities = activities,
+                    colorActivities = styleActivities,
+                    colorBackground = styleBackground,
+                    paddingFraction = 0.05f,
+                    strokeWidthType = styleStrokeWidthType,
+                    sizeActual = sizeActual,
+                    sizeMaximum = sizeMaximum
+                )
+                withLastState { copy(bitmap = bitmap).push() }
+            }
+        }
+    }
+
+    private inline fun withLastState(block: Standby.() -> Unit) {
+        (lastPushedState as? Standby)?.run(block)
     }
 }

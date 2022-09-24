@@ -7,26 +7,34 @@ import androidx.compose.ui.graphics.Color.Companion.Cyan
 import androidx.core.graphics.withClip
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.presentation.edit_art_screen.ColorWrapper
+import com.company.activityart.presentation.edit_art_screen.StrokeWidthType
 import com.google.maps.android.PolyUtil
+import javax.inject.Inject
 import kotlin.math.*
 
-class VisualizationUtils {
+class VisualizationUtils @Inject constructor(
+    private val imageSizeUtils: ImageSizeUtils
+) {
 
     companion object {
         private const val ACTIVITY_SIZE_REDUCE_FRACTION = 0.85f
-        private const val ACTIVITY_STROKE_SMALL_REDUCE_FRACTION = 0.25f
+        private const val ACTIVITY_STROKE_SMALL_REDUCE_FRACTION = 0.15f
         private const val ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION = 0.35f
-        private const val ACTIVITY_STROKE_LARGE_REDUCE_FRACTION = 0.45f
+        private const val ACTIVITY_STROKE_LARGE_REDUCE_FRACTION = 0.60f
         private const val OFFSET_ZERO_PX = 0f
     }
 
     fun createBitmap(
         activities: List<Activity>,
-        @Px bitmapSize: Size,
         colorActivities: ColorWrapper,
         colorBackground: ColorWrapper,
         @Px paddingFraction: Float,
+        sizeActual: Size,
+        sizeMaximum: Size,
+        strokeWidthType: StrokeWidthType
     ): Bitmap {
+        /** Determine scaled size of bitmap from target AR & maximum possible **/
+        val bitmapSize = imageSizeUtils.sizeToMaximumSize(sizeActual, sizeMaximum)
         return Bitmap.createBitmap(
             bitmapSize.width,
             bitmapSize.height,
@@ -46,8 +54,10 @@ class VisualizationUtils {
 
                             PolyUtil.decode(activity.summaryPolyline).let { latLngList ->
 
-                                val xOffset = ((index % cols) * activitySize) + (activitySize / 2f) + (extraSpaceWidth / 2f) + clipBounds.left
-                                val yOffset = ((floor(index / cols.toFloat()) % rows) * activitySize) + (activitySize / 2f) + (extraSpaceHeight / 2f) + clipBounds.top
+                                val xOffset =
+                                    ((index % cols) * activitySize) + (activitySize / 2f) + (extraSpaceWidth / 2f) + clipBounds.left
+                                val yOffset =
+                                    ((floor(index / cols.toFloat()) % rows) * activitySize) + (activitySize / 2f) + (extraSpaceHeight / 2f) + clipBounds.top
 
                                 val left = latLngList.minOf { it.longitude }
                                 val right = latLngList.maxOf { it.longitude }
@@ -55,7 +65,8 @@ class VisualizationUtils {
                                 val bottom = latLngList.minOf { it.latitude }
 
                                 val largestSide = maxOf(top - bottom, right - left)
-                                val multiplier = (activitySize * ACTIVITY_SIZE_REDUCE_FRACTION) / largestSide
+                                val multiplier =
+                                    (activitySize * ACTIVITY_SIZE_REDUCE_FRACTION) / largestSide
 
                                 latLngList.map { latLng ->
                                     Pair(
@@ -85,7 +96,11 @@ class VisualizationUtils {
                                     }
                                     it.style = Paint.Style.STROKE
                                     it.strokeJoin = Paint.Join.ROUND
-                                    it.strokeWidth = sqrt(activitySize) * ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION
+                                    it.strokeWidth = sqrt(activitySize) * when (strokeWidthType) {
+                                        StrokeWidthType.THIN -> ACTIVITY_STROKE_SMALL_REDUCE_FRACTION
+                                        StrokeWidthType.MEDIUM -> ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION
+                                        StrokeWidthType.THICK -> ACTIVITY_STROKE_LARGE_REDUCE_FRACTION
+                                    }
                                     it.isAntiAlias = true
                                 })
                             }
