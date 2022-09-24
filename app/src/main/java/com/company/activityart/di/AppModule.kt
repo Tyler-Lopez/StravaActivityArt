@@ -8,11 +8,8 @@ import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.*
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.company.activityart.util.ActivityFilterUtils
-import com.company.activityart.util.ImageSizeUtils
+import com.company.activityart.util.*
 import com.company.activityart.util.constants.StringConstants.BASE_URL
-import com.company.activityart.util.TimeUtils
-import com.company.activityart.util.UriUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -161,4 +158,7 @@ object AppModule {
 
     @Provides
     fun provideTimeUtils() = TimeUtils()
+
+    @Provides
+    fun provideVisualizationUtils() = VisualizationUtils()
 }

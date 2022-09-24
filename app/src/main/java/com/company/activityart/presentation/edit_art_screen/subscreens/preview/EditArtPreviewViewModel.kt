@@ -1,9 +1,5 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.preview
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.util.Size
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseChildViewModel
@@ -15,6 +11,7 @@ import com.company.activityart.presentation.edit_art_screen.subscreens.preview.E
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewState.Standby
 import com.company.activityart.util.ActivityFilterUtils
 import com.company.activityart.util.ImageSizeUtils
+import com.company.activityart.util.VisualizationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,6 +23,7 @@ class EditArtPreviewViewModel @Inject constructor(
     private val getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val imageSizeUtils: ImageSizeUtils,
     private val activityFilterUtils: ActivityFilterUtils,
+    private val visualizationUtils: VisualizationUtils
 ) : BaseChildViewModel<
         EditArtPreviewViewState,
         EditArtPreviewViewEvent,
@@ -49,14 +47,12 @@ class EditArtPreviewViewModel @Inject constructor(
         pushState(Loading)
         activityDrawJob?.cancel()
         activityDrawJob = viewModelScope.launch(Dispatchers.Default) {
-            println("scaling ${event.targetSize} to ${event.screenWidth} and ${event.screenHeight}")
             val sizeScaled = event.run {
                 imageSizeUtils.sizeToMaximumSize(
                     actualSize = targetSize,
                     maximumSize = Size(screenWidth, screenHeight)
                 )
             }
-            println("actually scaled to $sizeScaled")
 
             val filteredActivities = activityFilterUtils.filterActivities(
                 activities = activities,
@@ -65,43 +61,14 @@ class EditArtPreviewViewModel @Inject constructor(
                 },
                 excludeActivityTypes = event.filterExcludedTypes
             )
-            val activityCount = filteredActivities.size
 
-            pushState(
-                Standby(
-                    // Create a bitmap which will be drawn on by canvas and return
-                    Bitmap.createBitmap(
-                        sizeScaled.width,
-                        sizeScaled.height,
-                        Bitmap.Config.ARGB_8888
-                    ).also { bitmap ->
-                        Canvas(bitmap).also { canvas ->
-                            canvas.drawRect(
-                                0f,
-                                0f,
-                                canvas.width.toFloat(),
-                                canvas.height.toFloat(),
-                                Paint().also {
-                                    it.color = event.styleBackground.run {
-                                        Color.argb(alpha, red, green, blue)
-                                    }
-                                }
-                            )
-                            canvas.drawText(
-                                activityCount.toString(),
-                                0f,
-                                150f,
-                                Paint().also {
-                                    it.color = event.styleActivities.run {
-                                        Color.argb(alpha, red, green, blue)
-                                    }
-                                    it.textSize = 50f
-                                }
-                            )
-                        }
-                    }
-                )
-            )
+            pushState(Standby(visualizationUtils.createBitmap(
+                activities = filteredActivities,
+                bitmapSize = sizeScaled,
+                colorActivities = event.styleActivities,
+                colorBackground = event.styleBackground,
+                paddingFraction = 0.05f
+            )))
         }
     }
 }

@@ -30,9 +30,9 @@ class EditArtViewModel @Inject constructor(
     companion object {
         private const val FADE_LENGTH_MS = 1000
         private const val INITIAL_ACTIVITIES_ALPHA = 1f
-        private const val INITIAL_ACTIVITIES_BLUE = 0f
-        private const val INITIAL_ACTIVITIES_GREEN = 0f
-        private const val INITIAL_ACTIVITIES_RED = 0f
+        private const val INITIAL_ACTIVITIES_BLUE = 1f
+        private const val INITIAL_ACTIVITIES_GREEN = 1f
+        private const val INITIAL_ACTIVITIES_RED = 1f
         private const val INITIAL_BACKGROUND_ALPHA = 1f
         private const val INITIAL_BACKGROUND_BLUE = 0f
         private const val INITIAL_BACKGROUND_GREEN = 0f
