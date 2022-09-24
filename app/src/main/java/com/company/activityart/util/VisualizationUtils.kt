@@ -40,7 +40,6 @@ class VisualizationUtils {
                         height = clipBounds.height(),
                         width = clipBounds.width()
                     ).apply {
-                        println("here drawing spec is $this")
                         activities.forEachIndexed { index, activity ->
                             // 0 % 1 = 0
                             // 0 * 606 = 0
@@ -86,25 +85,11 @@ class VisualizationUtils {
                                     }
                                     it.style = Paint.Style.STROKE
                                     it.strokeJoin = Paint.Join.ROUND
-                                    it.strokeWidth = sqrt(activitySize) * ACTIVITY_WIDTH_REDUCE_FRACTION
+                                    it.strokeWidth = sqrt(activitySize) * ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION
                                     it.isAntiAlias = true
                                 })
                             }
-
-                            /*
-                            drawRect(
-                                xOffset - (activitySize / 2f),
-                                yOffset - (activitySize / 2f),
-                                xOffset + (activitySize / 2f),
-                                yOffset + (activitySize / 2f),
-                                Paint().also {
-                                    it.color = Color.CYAN
-                                }
-                            )
-
-                             */
                         }
-                        // Convert List<LatLng> to List<Pair<Float, Float>>
                     }
                 }
             }
@@ -130,14 +115,7 @@ class VisualizationUtils {
         block: Canvas.() -> Unit
     ) {
         val padding = paddingFraction * minOf(width, height)
-        println("prev width was $width")
-        withClip(
-            padding,
-            padding,
-            width - padding,
-            height - padding
-        ) {
-            println("new width is $width")
+        withClip(padding, padding, width - padding, height - padding) {
             block()
         }
     }
@@ -156,10 +134,9 @@ class VisualizationUtils {
         width: Int
     ): DrawingSpecification {
 
-        println("here inputting n is $n height is $height width is $width ")
-        var ratio = width / height.toFloat()
-        var colsFloat = sqrt(n * ratio)
-        var rowsFloat = n / colsFloat
+        val ratio = width / height.toFloat()
+        val colsFloat = sqrt(n * ratio)
+        val rowsFloat = n / colsFloat
 
         var rows1 = ceil(rowsFloat)
         var cols1 = ceil(n / rows1)
@@ -167,7 +144,7 @@ class VisualizationUtils {
             rows1++
             cols1 = ceil(n / rows1)
         }
-        var cellsize1 = height / rows1
+        val cellsize1 = height / rows1
 
         var cols2 = ceil(colsFloat)
         var rows2 = ceil(n / cols2)
@@ -175,7 +152,7 @@ class VisualizationUtils {
             cols2++
             rows2 = ceil(n / cols2)
         }
-        var cellsize2 = width / cols2
+        val cellsize2 = width / cols2
 
         return if (cellsize1 < cellsize2) {
             DrawingSpecification(
@@ -194,100 +171,5 @@ class VisualizationUtils {
                 extraSpaceWidth = (width - (cols1 * cellsize1)).toInt()
             )
         }
-
-        /*
-        /** Example 1920x1080 w/ 50 activities **/
-        /** 1920 / 1080 == 1.78 **/
-        val widthHeightRatio = width / height.toFloat()
-        /** Minimum columns **/
-        /** sqrt(50 * 1.78) = 9.43 **/
-        val minColsFloat = sqrt(n * widthHeightRatio)
-        /** Minimum rows **/
-        /** 50 / 9.43 = 5.30 **/
-        val minRowsFloat = n / minColsFloat
-
-        /** To activate the remainder, determine whether its more efficient
-         * to add 1 column to [minColsFloat] or [minRowsFloat]. */
-        var rows1 = ceil(minRowsFloat)
-        var cols1 = ceil(n / rows1)
-        while (rows1 * widthHeightRatio < cols1) {
-            println("here rows bad")
-            rows1++
-            cols1 = ceil(n / rows1)
-        }
-        var size1 = height / rows1
-
-        var cols2 = ceil(minColsFloat)
-        var rows2 = ceil(n / cols2)
-        while (cols2 < rows2 * widthHeightRatio) {
-            println("here cols bad")
-            cols2++
-            rows2 = ceil(n / cols2)
-        }
-        var size2 = width / cols2
-
-        return if (size1 < size2) {
-            println("2 used")
-            DrawingSpecification(
-                size2,
-                cols2.toInt(),
-                rows2.toInt()
-            )
-        } else {
-            println("1 used")
-            DrawingSpecification(
-                size1,
-                cols1.toInt(),
-                rows1.toInt()
-            )
-        }
-
-        /*
-
-        val origTheoCols = ceil(sqrt(n * widthHeightRatio))
-
-        var theoCols = origTheoCols // 9.43 --> 10
-        var theoRowsFromTheoCols = ceil(n / theoCols)
-        while (theoCols < theoRowsFromTheoCols * widthHeightRatio) {
-            theoRowsFromTheoCols = ceil(n / ++theoCols)
-        }
-        var theoSizeFromTheoCols = width / theoCols
-
-        var theoRows = ceil(n / origTheoCols) // 5.30 --> 6
-        var theoColsFromTheoRows = ceil(n / theoRows)
-        while (theoRows * widthHeightRatio < theoColsFromTheoRows) {
-            println("here theorows before $theoRows")
-            theoColsFromTheoRows = ceil(n / ++theoRows)
-        }
-        var theoSizeFromTheoRows = height / theoRows
-
-        println("Rows from height is $theoRows")
-        println("Rows from height times whr is ${theoRows * widthHeightRatio}")
-        println("Columns from height is $theoColsFromTheoRows")
-        println("-------")
-        println("Columns from width is $theoCols")
-        println("rows width is $theoRowsFromTheoCols")
-        println("Rows from width whr is ${theoRowsFromTheoCols * widthHeightRatio}")
-        println("theo cols less than that?")
-
-        return if (theoSizeFromTheoCols > theoSizeFromTheoRows) {
-            println("TheoCols used")
-            DrawingSpecification(
-                theoSizeFromTheoCols,
-                theoCols.toInt(),
-                theoRowsFromTheoCols.toInt()
-            )
-        } else {
-            println("TheoRows used")
-            DrawingSpecification(
-                theoSizeFromTheoRows,
-                theoColsFromTheoRows.toInt(),
-                theoRows.toInt(),
-            )
-        }
-
-         */
-
-         */
     }
 }
