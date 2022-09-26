@@ -5,6 +5,7 @@ package com.company.activityart.presentation.edit_art_screen
 import android.graphics.Bitmap
 import android.os.Parcelable
 import android.util.Size
+import androidx.annotation.Px
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
@@ -33,7 +34,8 @@ sealed interface EditArtViewEvent : ViewEvent {
             data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
         }
 
-        data class ScreenMeasured(val width: Int, val height: Int) : ArtMutatingEvent
+        data class SizeChanged(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
+        data class ScreenMeasured(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
         data class StylesColorChanged(
             val styleType: StyleType,
             val colorType: ColorType,
@@ -56,7 +58,9 @@ sealed interface EditArtViewState : ViewState {
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
         val sizeActual: Size,
-        val sizeMaximum: Size,
+        val sizeScaledPreview: Size,
+        val sizeScaledEditSize: Size,
+        val sizeScreen: Size,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
         val styleStrokeWidthType: StrokeWidthType

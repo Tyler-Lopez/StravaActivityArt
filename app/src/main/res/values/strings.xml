@@ -138,5 +138,16 @@
     <string name="edit_art_style_stroke_thin">Thin</string>
     <string name="edit_art_style_stroke_medium">Medium</string>
     <string name="edit_art_style_stroke_thick">Thick</string>
+    <string name="edit_art_resize_header">Resize Art</string>
+    <string name="edit_art_resize_description">
+        Change the width and height pixel size of the art either from a preset
+        or by inputting your own values.
+    </string>
+    <string name="edit_art_resize_preview_text">PREVIEW</string>
+    <string name="edit_art_resize_option_computer_wallpaper">Computer Wallpaper</string>
+    <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
+    <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
+    <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
+    <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
 
 </resources>

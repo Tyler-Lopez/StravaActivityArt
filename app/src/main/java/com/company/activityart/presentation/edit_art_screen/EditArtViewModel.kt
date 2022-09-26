@@ -14,7 +14,7 @@ import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.Art
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterTypeChanged.FilterTypeAdded
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Standby
-import com.company.activityart.util.Screen
+import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.VisualizationUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -27,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
+    private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
     private val visualizationUtils: VisualizationUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
@@ -43,6 +44,7 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_BACKGROUND_RED = 0f
         private const val INITIAL_HEIGHT_PX = 1080
         private const val INITIAL_WIDTH_PX = 1920
+        private const val EDIT_SIZE_HEIGHT = 256
     }
 
     private var activityDrawJob: Job? = null
@@ -80,6 +82,7 @@ class EditArtViewModel @Inject constructor(
             is FilterDateChanged -> onFilterDateChanged(event)
             is FilterTypeChanged -> onFilterTypeChanged(event)
             is ScreenMeasured -> onScreenMeasured(event)
+            is SizeChanged -> onSizeChanged(event)
             is StylesColorChanged -> onStylesColorChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
         }
@@ -139,6 +142,12 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onScreenMeasured(event: ScreenMeasured) {
+        val sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX)
+        val sizeScreenPreview = Size(event.width, event.height)
+        val sizeEditSize = Size(sizeScreenPreview.width, EDIT_SIZE_HEIGHT)
+        val sizeScaledPreview = imageSizeUtils.sizeToMaximumSize(sizeActual, sizeScreenPreview)
+        val sizeScaledEditSize = imageSizeUtils.sizeToMaximumSize(sizeActual, sizeEditSize)
+
         pushState(
             Standby(
                 bitmap = null,
@@ -147,10 +156,9 @@ class EditArtViewModel @Inject constructor(
                     unixSecondSelectedEnd = unixSeconds.last()
                 ),
                 pagerStateWrapper = pagerStateWrapper,
-                sizeActual = Size(
-                    INITIAL_WIDTH_PX,
-                    INITIAL_HEIGHT_PX
-                ),
+                sizeActual = sizeActual,
+                sizeScaledPreview = sizeScaledPreview,
+                sizeScaledEditSize = sizeScaledEditSize,
                 styleActivities = ColorWrapper(
                     INITIAL_ACTIVITIES_ALPHA,
                     INITIAL_ACTIVITIES_BLUE,
@@ -164,9 +172,18 @@ class EditArtViewModel @Inject constructor(
                     INITIAL_BACKGROUND_RED
                 ),
                 styleStrokeWidthType = MEDIUM,
-                sizeMaximum = Size(event.width, event.height)
+                sizeScreen = sizeScreenPreview
             )
         )
+    }
+
+    private fun onSizeChanged(event: SizeChanged) {
+        val newSizeActual = event.run { Size(width, height) }
+        withLastState {
+            val newSizeScaled = imageSizeUtils.sizeToMaximumSize(newSizeActual, sizeScreen)
+            val newSizeResizeSize = imageSizeUtils.sizeToMaximumSize(newSizeActual, Size(sizeScreen.width, EDIT_SIZE_HEIGHT))
+            copy(sizeActual = newSizeActual, sizeScaledPreview = newSizeScaled, sizeScaledEditSize = newSizeResizeSize).push()
+        }
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
@@ -209,8 +226,7 @@ class EditArtViewModel @Inject constructor(
                     colorBackground = styleBackground,
                     paddingFraction = 0.05f,
                     strokeWidthType = styleStrokeWidthType,
-                    sizeActual = sizeActual,
-                    sizeMaximum = sizeMaximum
+                    bitmapSize = sizeScaledPreview
                 )
                 withLastState { copy(bitmap = bitmap).push() }
             }

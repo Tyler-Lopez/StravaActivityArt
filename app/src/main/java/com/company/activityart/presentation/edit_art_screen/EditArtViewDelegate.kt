@@ -13,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
@@ -21,11 +20,8 @@ import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.NavigateUpClicked
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewDelegate
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewModel
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreview
-import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreviewViewModel
-import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResize
+import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResizeScreen
 import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewDelegate
 import com.company.activityart.presentation.ui.theme.White
 import com.company.activityart.presentation.ui.theme.spacing
@@ -80,7 +76,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     styleStrokeWidthType,
                                     viewModel
                                 )
-                                RESIZE -> EditArtResize()
+                                RESIZE -> EditArtResizeScreen(sizeActual, viewModel)
                                 null -> error("Invalid pagerState current page.")
                             }
                         }

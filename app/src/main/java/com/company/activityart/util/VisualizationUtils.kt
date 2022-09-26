@@ -29,12 +29,9 @@ class VisualizationUtils @Inject constructor(
         colorActivities: ColorWrapper,
         colorBackground: ColorWrapper,
         @Px paddingFraction: Float,
-        sizeActual: Size,
-        sizeMaximum: Size,
+        bitmapSize: Size,
         strokeWidthType: StrokeWidthType
     ): Bitmap {
-        /** Determine scaled size of bitmap from target AR & maximum possible **/
-        val bitmapSize = imageSizeUtils.sizeToMaximumSize(sizeActual, sizeMaximum)
         return Bitmap.createBitmap(
             bitmapSize.width,
             bitmapSize.height,
