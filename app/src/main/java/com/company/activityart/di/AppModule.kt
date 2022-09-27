@@ -5,9 +5,11 @@ import androidx.room.Room
 import com.company.activityart.data.cache.ActivitiesCache
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
+import com.company.activityart.domain.models.ResolutionListFactory
 import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.*
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.company.activityart.presentation.edit_art_screen.subscreens.resize.ResolutionListFactoryImpl
 import com.company.activityart.util.*
 import com.company.activityart.util.constants.StringConstants.BASE_URL
 import dagger.Module
@@ -146,6 +148,9 @@ object AppModule {
     }
 
     @Provides
+    fun provideResolutionListFactory(): ResolutionListFactory = ResolutionListFactoryImpl()
+
+    @Provides
     fun provideActivityFilterUtils(timeUtils: TimeUtils) = ActivityFilterUtils(
         timeUtils
     )
@@ -160,5 +165,6 @@ object AppModule {
     fun provideTimeUtils() = TimeUtils()
 
     @Provides
-    fun provideVisualizationUtils(imageSizeUtils: ImageSizeUtils) = VisualizationUtils(imageSizeUtils)
+    fun provideVisualizationUtils(imageSizeUtils: ImageSizeUtils) =
+        VisualizationUtils(imageSizeUtils)
 }

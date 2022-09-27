@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.common.button
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
@@ -25,6 +27,7 @@ fun MediumEmphasisButton(
     size: ButtonSize,
     modifier: Modifier = Modifier,
     text: String? = null,
+    imageVector: ImageVector? = null,
     enabled: Boolean = true,
     onClick: () -> Unit
     ) {
@@ -66,6 +69,9 @@ fun MediumEmphasisButton(
                 },
                 style = MaterialTheme.typography.button
             )
+        }
+        imageVector?.let {
+            Icon(imageVector = imageVector, contentDescription = null)
         }
     }
 }

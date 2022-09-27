@@ -76,7 +76,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     styleStrokeWidthType,
                                     viewModel
                                 )
-                                RESIZE -> EditArtResizeScreen(sizeActual, viewModel)
+                                RESIZE -> EditArtResizeScreen(sizeResolutionList, sizeResolutionListSelectedIndex, viewModel)
                                 null -> error("Invalid pagerState current page.")
                             }
                         }

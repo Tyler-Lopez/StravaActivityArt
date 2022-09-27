@@ -3,24 +3,28 @@ package com.company.activityart.presentation.edit_art_screen
 import android.util.Size
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.domain.models.ResolutionListFactory
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateUp
-import com.company.activityart.presentation.edit_art_screen.StrokeWidthType.*
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.ColorType.*
-import com.company.activityart.presentation.edit_art_screen.StyleType.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterTypeChanged.FilterTypeAdded
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Standby
+import com.company.activityart.presentation.edit_art_screen.StrokeWidthType.MEDIUM
+import com.company.activityart.presentation.edit_art_screen.StyleType.ACTIVITIES
+import com.company.activityart.presentation.edit_art_screen.StyleType.BACKGROUND
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.VisualizationUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagerApi::class)
@@ -29,6 +33,7 @@ class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
+    private val resolutionListFactory: ResolutionListFactory,
     private val visualizationUtils: VisualizationUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
@@ -47,7 +52,6 @@ class EditArtViewModel @Inject constructor(
         private const val EDIT_SIZE_HEIGHT = 256
     }
 
-    private var activityDrawJob: Job? = null
     private val activities by lazy { activitiesFromCacheUseCase() }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
@@ -57,6 +61,8 @@ class EditArtViewModel @Inject constructor(
         pagerState = pagerState,
         fadeLengthMs = FADE_LENGTH_MS
     )
+    private lateinit var screenSize: Size
+    private val resolutionList by lazy { resolutionListFactory.create() }
     private val unixSeconds by lazy {
         activities.map {
             timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)
@@ -83,6 +89,7 @@ class EditArtViewModel @Inject constructor(
             is FilterTypeChanged -> onFilterTypeChanged(event)
             is ScreenMeasured -> onScreenMeasured(event)
             is SizeChanged -> onSizeChanged(event)
+            is SizeRotated -> onSizeRotated(event)
             is StylesColorChanged -> onStylesColorChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
         }
@@ -143,11 +150,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun onScreenMeasured(event: ScreenMeasured) {
         val sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX)
-        val sizeScreenPreview = Size(event.width, event.height)
-        val sizeEditSize = Size(sizeScreenPreview.width, EDIT_SIZE_HEIGHT)
-        val sizeScaledPreview = imageSizeUtils.sizeToMaximumSize(sizeActual, sizeScreenPreview)
-        val sizeScaledEditSize = imageSizeUtils.sizeToMaximumSize(sizeActual, sizeEditSize)
-
+        screenSize = Size(event.width, event.height)
         pushState(
             Standby(
                 bitmap = null,
@@ -157,8 +160,8 @@ class EditArtViewModel @Inject constructor(
                 ),
                 pagerStateWrapper = pagerStateWrapper,
                 sizeActual = sizeActual,
-                sizeScaledPreview = sizeScaledPreview,
-                sizeScaledEditSize = sizeScaledEditSize,
+                sizeResolutionList = resolutionList,
+                sizeResolutionListSelectedIndex = 0, // todo const
                 styleActivities = ColorWrapper(
                     INITIAL_ACTIVITIES_ALPHA,
                     INITIAL_ACTIVITIES_BLUE,
@@ -172,18 +175,24 @@ class EditArtViewModel @Inject constructor(
                     INITIAL_BACKGROUND_RED
                 ),
                 styleStrokeWidthType = MEDIUM,
-                sizeScreen = sizeScreenPreview
             )
         )
     }
 
     private fun onSizeChanged(event: SizeChanged) {
-        val newSizeActual = event.run { Size(width, height) }
+        val newSizeActual = resolutionList[event.selectedIndex].run { Size(widthPx, heightPx) }
         withLastState {
-            val newSizeScaled = imageSizeUtils.sizeToMaximumSize(newSizeActual, sizeScreen)
-            val newSizeResizeSize = imageSizeUtils.sizeToMaximumSize(newSizeActual, Size(sizeScreen.width, EDIT_SIZE_HEIGHT))
-            copy(sizeActual = newSizeActual, sizeScaledPreview = newSizeScaled, sizeScaledEditSize = newSizeResizeSize).push()
+            copy(
+                sizeActual = newSizeActual,
+                sizeResolutionListSelectedIndex = event.selectedIndex
+            ).push()
         }
+    }
+
+    private fun onSizeRotated(event: SizeRotated) {
+            (resolutionList[event.rotatedIndex] as Resolution.SwappableResolution).apply {
+                swapWidthWithHeight = !swapWidthWithHeight
+            }
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
@@ -226,7 +235,12 @@ class EditArtViewModel @Inject constructor(
                     colorBackground = styleBackground,
                     paddingFraction = 0.05f,
                     strokeWidthType = styleStrokeWidthType,
-                    bitmapSize = sizeScaledPreview
+                    bitmapSize = imageSizeUtils.sizeToMaximumSize(
+                        actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
+                            Size(widthPx, heightPx)
+                        },
+                        maximumSize = screenSize
+                    )
                 )
                 withLastState { copy(bitmap = bitmap).push() }
             }

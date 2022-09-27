@@ -6,6 +6,8 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 import android.util.Size
 import androidx.annotation.Px
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
@@ -34,7 +36,8 @@ sealed interface EditArtViewEvent : ViewEvent {
             data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
         }
 
-        data class SizeChanged(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
+        data class SizeChanged(val selectedIndex: Int) : ArtMutatingEvent
+        data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class ScreenMeasured(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
         data class StylesColorChanged(
             val styleType: StyleType,
@@ -58,9 +61,8 @@ sealed interface EditArtViewState : ViewState {
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
         val sizeActual: Size,
-        val sizeScaledPreview: Size,
-        val sizeScaledEditSize: Size,
-        val sizeScreen: Size,
+        val sizeResolutionList: List<Resolution>,
+        val sizeResolutionListSelectedIndex: Int,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
         val styleStrokeWidthType: StrokeWidthType
@@ -94,7 +96,7 @@ data class ColorWrapper(
         private const val VALUE_MAX = 1f
         val VALUE_RANGE = VALUE_NONE..VALUE_MAX
         val INITIAL_BG_COLOR =
-            ColorWrapper(VALUE_NONE, VALUE_NONE, VALUE_NONE, VALUE_NONE)
+            ColorWrapper(VALUE_MAX, VALUE_NONE, VALUE_NONE, VALUE_NONE)
     }
 }
 
@@ -114,4 +116,92 @@ enum class StrokeWidthType(val headerId: Int) {
     THIN(R.string.edit_art_style_stroke_thin),
     MEDIUM(R.string.edit_art_style_stroke_medium),
     THICK(R.string.edit_art_style_stroke_thick);
+}
+
+
+sealed interface Resolution {
+
+    val widthPx: Int
+    val heightPx: Int
+    val stringResourceId: Int
+
+    @Composable
+    fun displayTextResolution(): String
+
+    companion object {
+        private const val DEFAULT_CUSTOM_WIDTH_PX = 1000
+        private const val DEFAULT_CUSTOM_HEIGHT_PX = 1000
+    }
+
+    interface SwappableResolution : Resolution {
+        var swapWidthWithHeight: Boolean
+        val swappingChangesSize: Boolean
+            get() = widthPx != heightPx
+
+        @Composable
+        fun displayTextPixels(): String {
+            return stringResource(
+                R.string.edit_art_resize_pixels_placeholder,
+                if (swapWidthWithHeight) heightPx else widthPx,
+                if (swapWidthWithHeight) widthPx else heightPx,
+            )
+        }
+    }
+
+    data class ComputerResolution(
+        override val stringResourceId: Int,
+        override val widthPx: Int,
+        override val heightPx: Int,
+        override var swapWidthWithHeight: Boolean = false
+    ) : SwappableResolution {
+        @Composable
+        override fun displayTextResolution(): String {
+            return stringResource(stringResourceId)
+        }
+    }
+
+    data class PrintResolution(
+        override val widthPx: Int,
+        override val heightPx: Int,
+        val widthMeasurementValue: Int,
+        val heightMeasurementValue: Int,
+        override var swapWidthWithHeight: Boolean = false
+    ) : SwappableResolution {
+
+        companion object {
+            private const val MEASUREMENT_UNIT: String = "\""
+        }
+
+        @Composable
+        override fun displayTextResolution(): String {
+            return stringResource(
+                stringResourceId,
+                if (swapWidthWithHeight) heightMeasurementValue else widthMeasurementValue,
+                MEASUREMENT_UNIT,
+                if (swapWidthWithHeight) widthMeasurementValue else heightMeasurementValue,
+                MEASUREMENT_UNIT
+            )
+        }
+
+        override val stringResourceId: Int
+            get() = R.string.edit_art_resize_option_print
+
+
+    }
+
+    data class CustomResolution(
+        override val stringResourceId: Int,
+        var customWidthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
+        var customHeightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
+    ) : Resolution {
+        override val widthPx: Int
+            get() = customWidthPx
+        override val heightPx: Int
+            get() = customHeightPx
+
+        @Composable
+        override fun displayTextResolution(): String {
+            return stringResource(stringResourceId)
+        }
+    }
 }
