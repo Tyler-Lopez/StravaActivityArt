@@ -190,9 +190,9 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeRotated(event: SizeRotated) {
-            (resolutionList[event.rotatedIndex] as Resolution.SwappableResolution).apply {
-                swapWidthWithHeight = !swapWidthWithHeight
-            }
+        (resolutionList[event.rotatedIndex] as Resolution.SwappableResolution).apply {
+            swapWidthWithHeight = !swapWidthWithHeight
+        }
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
@@ -237,7 +237,19 @@ class EditArtViewModel @Inject constructor(
                     strokeWidthType = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
-                            Size(widthPx, heightPx)
+                            // Todo clean up logic
+                            Size(
+                                if (this is Resolution.SwappableResolution) {
+                                    if (swapWidthWithHeight) heightPx else widthPx
+                                } else {
+                                    widthPx
+                                },
+                                if (this is Resolution.SwappableResolution) {
+                                    if (swapWidthWithHeight) widthPx else heightPx
+                                } else {
+                                    heightPx
+                                }
+                            )
                         },
                         maximumSize = screenSize
                     )
