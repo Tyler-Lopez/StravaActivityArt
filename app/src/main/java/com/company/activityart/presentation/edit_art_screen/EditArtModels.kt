@@ -137,21 +137,29 @@ sealed interface Resolution {
         var swapWidthWithHeight: Boolean
         val swappingChangesSize: Boolean
             get() = widthPx != heightPx
+        val origWidthPx: Int
+        val origHeightPx: Int
+
+        override val heightPx: Int
+            get() = if (swapWidthWithHeight) origWidthPx else origHeightPx
+
+        override val widthPx: Int
+            get() = if (swapWidthWithHeight) origHeightPx else origWidthPx
 
         @Composable
         fun displayTextPixels(): String {
             return stringResource(
                 R.string.edit_art_resize_pixels_placeholder,
-                if (swapWidthWithHeight) heightPx else widthPx,
-                if (swapWidthWithHeight) widthPx else heightPx,
+                if (swapWidthWithHeight) origHeightPx else origWidthPx,
+                if (swapWidthWithHeight) origWidthPx else origHeightPx,
             )
         }
     }
 
     data class ComputerResolution(
         override val stringResourceId: Int,
-        override val widthPx: Int,
-        override val heightPx: Int,
+        override val origWidthPx: Int,
+        override val origHeightPx: Int,
         override var swapWidthWithHeight: Boolean = false
     ) : SwappableResolution {
         @Composable
@@ -161,8 +169,8 @@ sealed interface Resolution {
     }
 
     data class PrintResolution(
-        override val widthPx: Int,
-        override val heightPx: Int,
+        override val origWidthPx: Int,
+        override val origHeightPx: Int,
         val widthMeasurementValue: Int,
         val heightMeasurementValue: Int,
         override var swapWidthWithHeight: Boolean = false
@@ -185,8 +193,6 @@ sealed interface Resolution {
 
         override val stringResourceId: Int
             get() = R.string.edit_art_resize_option_print
-
-
     }
 
     data class CustomResolution(
