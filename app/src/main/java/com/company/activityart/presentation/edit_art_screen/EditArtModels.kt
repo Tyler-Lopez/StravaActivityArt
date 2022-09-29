@@ -107,9 +107,17 @@ data class ColorWrapper(
     companion object {
         private const val VALUE_NONE = 0f
         private const val VALUE_MAX = 1f
+        private const val EIGHT_BIT_CHANNEL_LIMIT = 255
         val VALUE_RANGE = VALUE_NONE..VALUE_MAX
-        val INITIAL_BG_COLOR =
-            ColorWrapper(VALUE_MAX, VALUE_NONE, VALUE_NONE, VALUE_NONE)
+    }
+
+    val redAsEightBit get() = red.toEightBitRepresentation()
+    val greenAsEightBit get() = green.toEightBitRepresentation()
+    val blueAsEightBit get() = blue.toEightBitRepresentation()
+    val alphaAsEightBit get() = alpha.toEightBitRepresentation()
+
+    private fun Float.toEightBitRepresentation(): Int {
+        return (this * EIGHT_BIT_CHANNEL_LIMIT).toInt()
     }
 }
 

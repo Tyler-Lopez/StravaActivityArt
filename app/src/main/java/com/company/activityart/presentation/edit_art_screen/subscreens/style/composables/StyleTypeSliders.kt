@@ -21,21 +21,21 @@ fun StyleTypeSliders(
     Section(header = header, description = description) {
         ColorPreview(colorWrapper = color)
         (ColorSlider(
-            colorName = stringResource(R.string.edit_art_style_color_red, (color.red * 255f).toInt()),
+            colorName = stringResource(R.string.edit_art_style_color_red, color.redAsEightBit),
             colorValue = color.red,
             colorType = RED,
             styleType = styleType,
             eventReceiver = eventReceiver
         ))
         (ColorSlider(
-            colorName = stringResource(R.string.edit_art_style_color_green, (color.green * 255f).toInt()),
+            colorName = stringResource(R.string.edit_art_style_color_green, color.greenAsEightBit),
             colorValue = color.green,
             colorType = GREEN,
             styleType = styleType,
             eventReceiver = eventReceiver
         ))
         (ColorSlider(
-            colorName = stringResource(R.string.edit_art_style_color_blue, (color.blue * 255f).toInt()),
+            colorName = stringResource(R.string.edit_art_style_color_blue, color.blueAsEightBit),
             colorValue = color.blue,
             colorType = BLUE,
             styleType = styleType,
