@@ -22,6 +22,12 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
+    sealed interface SizeCustomChanged : EditArtViewEvent {
+        val changedToPx: Int
+
+        data class HeightChanged(override val changedToPx: Int) : SizeCustomChanged
+        data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
+    }
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
         data class FilterDateChanged(
@@ -36,7 +42,12 @@ sealed interface EditArtViewEvent : ViewEvent {
             data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
         }
 
-        data class SizeChanged(val selectedIndex: Int) : ArtMutatingEvent
+        data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
+        sealed interface SizeCustomChangeDone : ArtMutatingEvent {
+            object HeightChanged : SizeCustomChangeDone
+            object WidthChanged : SizeCustomChangeDone
+        }
+
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class ScreenMeasured(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
         data class StylesColorChanged(
@@ -63,6 +74,9 @@ sealed interface EditArtViewState : ViewState {
         val sizeActual: Size,
         val sizeResolutionList: List<Resolution>,
         val sizeResolutionListSelectedIndex: Int,
+        val sizeCustomWidthPx: Int,
+        val sizeCustomHeightPx: Int,
+        val sizeCustomRangePx: IntRange,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
         val styleStrokeWidthType: StrokeWidthType

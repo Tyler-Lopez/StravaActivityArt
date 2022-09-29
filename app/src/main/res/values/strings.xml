@@ -128,9 +128,9 @@
     <string name="edit_art_style_activities_description">
         What color should the activities of the art be?
     </string>
-    <string name="edit_art_style_color_red">Red</string>
-    <string name="edit_art_style_color_green">Green</string>
-    <string name="edit_art_style_color_blue">Blue</string>
+    <string name="edit_art_style_color_red">Red:</string>
+    <string name="edit_art_style_color_green">Green:</string>
+    <string name="edit_art_style_color_blue">Blue:</string>
     <string name="edit_art_style_stroke_width_header">Activity Thickness</string>
     <string name="edit_art_style_stroke_width_description">
         How thick should the lines of each activity be?
@@ -148,6 +148,7 @@
     <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
     <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
     <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
+    <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
+    <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
-
 </resources>

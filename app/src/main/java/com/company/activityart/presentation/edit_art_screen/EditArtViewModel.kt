@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
@@ -38,6 +39,8 @@ class EditArtViewModel @Inject constructor(
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
+        private const val CUSTOM_SIZE_MINIMUM_PX = 100
+        private const val CUSTOM_SIZE_MAXIMUM_PX = 20000
         private const val FADE_LENGTH_MS = 1000
         private const val INITIAL_ACTIVITIES_ALPHA = 1f
         private const val INITIAL_ACTIVITIES_BLUE = 1f
@@ -79,6 +82,7 @@ class EditArtViewModel @Inject constructor(
             is MakeFullscreenClicked -> onMakeFullscreenClicked()
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
+            is SizeCustomChanged -> onSizeCustomChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
         }
     }
@@ -89,6 +93,7 @@ class EditArtViewModel @Inject constructor(
             is FilterTypeChanged -> onFilterTypeChanged(event)
             is ScreenMeasured -> onScreenMeasured(event)
             is SizeChanged -> onSizeChanged(event)
+            is SizeCustomChangeDone -> onSizeCustomChangeDone(event)
             is SizeRotated -> onSizeRotated(event)
             is StylesColorChanged -> onStylesColorChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
@@ -160,6 +165,9 @@ class EditArtViewModel @Inject constructor(
                 ),
                 pagerStateWrapper = pagerStateWrapper,
                 sizeActual = sizeActual,
+                sizeCustomHeightPx = resolutionList.last().heightPx,
+                sizeCustomWidthPx = resolutionList.last().widthPx,
+                sizeCustomRangePx = CUSTOM_SIZE_MINIMUM_PX..CUSTOM_SIZE_MAXIMUM_PX,
                 sizeResolutionList = resolutionList,
                 sizeResolutionListSelectedIndex = 0, // todo const
                 styleActivities = ColorWrapper(
@@ -180,12 +188,33 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeChanged(event: SizeChanged) {
-        val newSizeActual = resolutionList[event.selectedIndex].run { Size(widthPx, heightPx) }
+        val newSizeActual = resolutionList[event.changedIndex].run { Size(widthPx, heightPx) }
         withLastState {
             copy(
                 sizeActual = newSizeActual,
-                sizeResolutionListSelectedIndex = event.selectedIndex
+                sizeResolutionListSelectedIndex = event.changedIndex
             ).push()
+        }
+    }
+
+    private fun onSizeCustomChangeDone(event: SizeCustomChangeDone) {
+        withLastState {
+            (resolutionList.last() as Resolution.CustomResolution).apply {
+                if (event is SizeCustomChangeDone.WidthChanged) {
+                    customWidthPx = sizeCustomWidthPx
+                } else {
+                    customHeightPx = sizeCustomHeightPx
+                }
+            }
+        }
+    }
+
+    private fun onSizeCustomChanged(event: SizeCustomChanged) {
+        withLastState {
+            when (event) {
+                is SizeCustomChanged.HeightChanged -> copy(sizeCustomHeightPx = event.changedToPx)
+                is SizeCustomChanged.WidthChanged -> copy(sizeCustomWidthPx = event.changedToPx)
+            }.push()
         }
     }
 
@@ -193,6 +222,8 @@ class EditArtViewModel @Inject constructor(
         (resolutionList[event.rotatedIndex] as Resolution.SwappableResolution).apply {
             swapWidthWithHeight = !swapWidthWithHeight
         }
+        // Todo, believe this makes update immediate, kind of awkward looking hack, fix later
+        withLastState { copy(bitmap = null).push() }
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {

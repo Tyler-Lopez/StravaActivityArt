@@ -72,6 +72,5 @@ fun ColorSliderRow(
                 )
             }
         )
-
     }
 }
