@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 import android.util.Size
 import androidx.annotation.Px
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
@@ -71,6 +72,8 @@ sealed interface EditArtViewState : ViewState {
         val bitmap: Bitmap?,
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
+        val scrollStateStyle: ScrollState,
+        val scrollStateResize: ScrollState,
         val sizeActual: Size,
         val sizeResolutionList: List<Resolution>,
         val sizeResolutionListSelectedIndex: Int,

@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.resize
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -36,10 +37,11 @@ fun EditArtResizeScreen(
     customWidthPx: Int,
     customRangePx: IntRange,
     resolutionList: List<Resolution>,
+    scrollState: ScrollState,
     selectedResolutionIndex: Int,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    Column(Modifier.verticalScroll(rememberScrollState())) {
+    Column(Modifier.verticalScroll(scrollState)) {
         Section(
             header = stringResource(R.string.edit_art_resize_header),
             description = stringResource(R.string.edit_art_resize_description),
@@ -65,7 +67,8 @@ fun EditArtResizeScreen(
                                 is CustomResolution -> {
                                     SubheadHeavy(
                                         text = stringResource(
-                                            R.string.edit_art_resize_pixels_width, customWidthPx
+                                            R.string.edit_art_resize_pixels_width,
+                                            customWidthPx
                                         ),
                                         modifier = Modifier.padding(start = spacing.small)
                                     )

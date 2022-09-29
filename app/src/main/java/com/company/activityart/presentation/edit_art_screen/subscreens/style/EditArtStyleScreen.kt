@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.style
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,13 +29,12 @@ import com.company.activityart.presentation.ui.theme.spacing
 fun EditArtStyleViewDelegate(
     colorActivities: ColorWrapper,
     colorBackground: ColorWrapper,
+    scrollState: ScrollState,
     strokeWidthType: StrokeWidthType,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier = Modifier.verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
         StyleTypeSliders(

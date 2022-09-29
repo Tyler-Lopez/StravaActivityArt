@@ -1,6 +1,7 @@
 package com.company.activityart.presentation.edit_art_screen
 
 import android.util.Size
+import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.ResolutionListFactory
@@ -52,6 +53,8 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_BACKGROUND_RED = 0f
         private const val INITIAL_HEIGHT_PX = 1080
         private const val INITIAL_WIDTH_PX = 1920
+        private const val INITIAL_SCROLL_STATE = 0
+        private const val INITIAL_SELECTED_RES_INDEX = 0
         private const val EDIT_SIZE_HEIGHT = 256
     }
 
@@ -164,12 +167,14 @@ class EditArtViewModel @Inject constructor(
                     unixSecondSelectedEnd = unixSeconds.last()
                 ),
                 pagerStateWrapper = pagerStateWrapper,
+                scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
+                scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
                 sizeActual = sizeActual,
                 sizeCustomHeightPx = resolutionList.last().heightPx,
                 sizeCustomWidthPx = resolutionList.last().widthPx,
                 sizeCustomRangePx = CUSTOM_SIZE_MINIMUM_PX..CUSTOM_SIZE_MAXIMUM_PX,
                 sizeResolutionList = resolutionList,
-                sizeResolutionListSelectedIndex = 0, // todo const
+                sizeResolutionListSelectedIndex = INITIAL_SELECTED_RES_INDEX,
                 styleActivities = ColorWrapper(
                     INITIAL_ACTIVITIES_ALPHA,
                     INITIAL_ACTIVITIES_BLUE,
