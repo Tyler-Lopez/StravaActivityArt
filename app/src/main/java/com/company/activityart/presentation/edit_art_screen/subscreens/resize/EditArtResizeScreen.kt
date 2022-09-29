@@ -1,9 +1,6 @@
 package com.company.activityart.presentation.edit_art_screen.subscreens.resize
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.RadioButton
@@ -67,9 +64,10 @@ fun EditArtResizeScreen(
                             when (res) {
                                 is CustomResolution -> {
                                     SubheadHeavy(
-                                        stringResource(
+                                        text = stringResource(
                                             R.string.edit_art_resize_pixels_width, customWidthPx
-                                        )
+                                        ),
+                                        modifier = Modifier.padding(start = spacing.small)
                                     )
                                     CustomDimensionRangeSlider(
                                         eventReceiver = eventReceiver,
@@ -79,9 +77,10 @@ fun EditArtResizeScreen(
                                         valueRange = customRangePx
                                     )
                                     SubheadHeavy(
-                                        stringResource(
+                                        text = stringResource(
                                             R.string.edit_art_resize_pixels_height, customHeightPx
-                                        )
+                                        ),
+                                        modifier = Modifier.padding(start = spacing.small)
                                     )
                                     CustomDimensionRangeSlider(
                                         isEnabled = isSelected,
