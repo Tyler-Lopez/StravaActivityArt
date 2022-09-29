@@ -128,9 +128,9 @@
     <string name="edit_art_style_activities_description">
         What color should the activities of the art be?
     </string>
-    <string name="edit_art_style_color_red">Red:</string>
-    <string name="edit_art_style_color_green">Green:</string>
-    <string name="edit_art_style_color_blue">Blue:</string>
+    <string name="edit_art_style_color_red">Red: %d</string>
+    <string name="edit_art_style_color_green">Green: %d</string>
+    <string name="edit_art_style_color_blue">Blue: %d</string>
     <string name="edit_art_style_stroke_width_header">Activity Thickness</string>
     <string name="edit_art_style_stroke_width_description">
         How thick should the lines of each activity be?

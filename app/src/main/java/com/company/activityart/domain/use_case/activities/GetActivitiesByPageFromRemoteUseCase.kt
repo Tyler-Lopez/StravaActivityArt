@@ -3,6 +3,7 @@ package com.company.activityart.domain.use_case.activities
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.util.Resource
+import com.google.maps.android.PolyUtil
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
@@ -33,7 +34,11 @@ class GetActivitiesByPageFromRemoteUseCase @Inject constructor(
                 after = afterUnixSeconds
             )
                 .toList()
-                .filter { it.summaryPolyline != null })
+                .filter {
+                    it.summaryPolyline?.run {
+                        PolyUtil.decode(this).isNotEmpty()
+                    } == true
+                })
         } catch (e: Exception) {
             /* When using try catch in a suspend block,
             ensure we do not catch CancellationException */

@@ -40,7 +40,7 @@ class EditArtViewModel @Inject constructor(
 
     companion object {
         private const val CUSTOM_SIZE_MINIMUM_PX = 100
-        private const val CUSTOM_SIZE_MAXIMUM_PX = 20000
+        private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
         private const val FADE_LENGTH_MS = 1000
         private const val INITIAL_ACTIVITIES_ALPHA = 1f
         private const val INITIAL_ACTIVITIES_BLUE = 1f
