@@ -27,7 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
@@ -68,7 +67,12 @@ class EditArtViewModel @Inject constructor(
         fadeLengthMs = FADE_LENGTH_MS
     )
     private lateinit var screenSize: Size
-    private val resolutionList by lazy { resolutionListFactory.create() }
+    private val resolutionList by lazy {
+        resolutionListFactory.create().apply { add(Resolution.CustomResolution()) }
+    }
+    private val customResolution by lazy {
+        resolutionList.last() as? Resolution.CustomResolution ?: error("Missing custom resolution")
+    }
     private val unixSeconds by lazy {
         activities.map {
             timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)
@@ -96,7 +100,7 @@ class EditArtViewModel @Inject constructor(
             is FilterTypeChanged -> onFilterTypeChanged(event)
             is ScreenMeasured -> onScreenMeasured(event)
             is SizeChanged -> onSizeChanged(event)
-            is SizeCustomChangeDone -> onSizeCustomChangeDone(event)
+            is SizeCustomChangeDone -> onSizeCustomChangeDone()
             is SizeRotated -> onSizeRotated(event)
             is StylesColorChanged -> onStylesColorChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
@@ -170,8 +174,8 @@ class EditArtViewModel @Inject constructor(
                 scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
                 sizeActual = sizeActual,
-                sizeCustomHeightPx = resolutionList.last().heightPx,
-                sizeCustomWidthPx = resolutionList.last().widthPx,
+                sizeCustomHeightPx = customResolution.heightPx,
+                sizeCustomWidthPx = customResolution.widthPx,
                 sizeCustomRangePx = CUSTOM_SIZE_MINIMUM_PX..CUSTOM_SIZE_MAXIMUM_PX,
                 sizeResolutionList = resolutionList,
                 sizeResolutionListSelectedIndex = INITIAL_SELECTED_RES_INDEX,
@@ -198,20 +202,18 @@ class EditArtViewModel @Inject constructor(
             copy(
                 sizeActual = newSizeActual,
                 sizeResolutionListSelectedIndex = event.changedIndex
-            ).push()
-        }
+            )
+        }.push()
     }
 
-    private fun onSizeCustomChangeDone(event: SizeCustomChangeDone) {
+    private fun onSizeCustomChangeDone() {
         withLastState {
-            (resolutionList.last() as Resolution.CustomResolution).apply {
-                if (event is SizeCustomChangeDone.WidthChanged) {
-                    customWidthPx = sizeCustomWidthPx
-                } else {
-                    customHeightPx = sizeCustomHeightPx
-                }
-            }
-        }
+            resolutionList[resolutionList.lastIndex] = customResolution.copy(
+                customWidthPx = sizeCustomWidthPx,
+                customHeightPx = sizeCustomHeightPx
+            )
+            copy()
+        }.push()
     }
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
@@ -219,16 +221,17 @@ class EditArtViewModel @Inject constructor(
             when (event) {
                 is SizeCustomChanged.HeightChanged -> copy(sizeCustomHeightPx = event.changedToPx)
                 is SizeCustomChanged.WidthChanged -> copy(sizeCustomWidthPx = event.changedToPx)
-            }.push()
-        }
+            }
+        }.push()
     }
 
     private fun onSizeRotated(event: SizeRotated) {
-        (resolutionList[event.rotatedIndex] as Resolution.SwappableResolution).apply {
-            swapWidthWithHeight = !swapWidthWithHeight
+        event.apply {
+            resolutionList[rotatedIndex] =
+                (resolutionList[rotatedIndex] as Resolution.RotatingResolution).copyWithRotation()
         }
         // Todo, believe this makes update immediate, kind of awkward looking hack, fix later
-        withLastState { copy(bitmap = null).push() }
+        withLastState { copy() }.push()
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
@@ -238,8 +241,8 @@ class EditArtViewModel @Inject constructor(
                     BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
                     ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
                 }
-            }.push()
-        }
+            }
+        }.push()
     }
 
     private fun onStylesStrokeWidthChanged(event: StylesStrokeWidthChanged) {
@@ -278,12 +281,12 @@ class EditArtViewModel @Inject constructor(
                         maximumSize = screenSize
                     )
                 )
-                withLastState { copy(bitmap = bitmap).push() }
-            }
+                withLastState { copy(bitmap = bitmap) }
+            }.push()
         }
     }
 
-    private inline fun withLastState(block: Standby.() -> Unit) {
-        (lastPushedState as? Standby)?.run(block)
+    private inline fun withLastState(block: Standby.() -> Standby): Standby {
+        return (lastPushedState as? Standby)?.run(block) ?: error("Last state was not standby")
     }
 }

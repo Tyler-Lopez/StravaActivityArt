@@ -73,6 +73,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 STYLE -> EditArtStyleViewDelegate(
                                     styleActivities,
                                     styleBackground,
+                                    scrollStateStyle,
                                     styleStrokeWidthType,
                                     viewModel
                                 )
@@ -81,6 +82,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     sizeCustomWidthPx,
                                     sizeCustomRangePx,
                                     sizeResolutionList,
+                                    scrollStateStyle,
                                     sizeResolutionListSelectedIndex,
                                     viewModel
                                 )

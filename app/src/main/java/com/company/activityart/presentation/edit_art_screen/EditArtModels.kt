@@ -44,11 +44,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         }
 
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
-        sealed interface SizeCustomChangeDone : ArtMutatingEvent {
-            object HeightChanged : SizeCustomChangeDone
-            object WidthChanged : SizeCustomChangeDone
-        }
-
+        object SizeCustomChangeDone : ArtMutatingEvent
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class ScreenMeasured(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
         data class StylesColorChanged(
@@ -150,25 +146,27 @@ sealed interface Resolution {
         private const val DEFAULT_CUSTOM_HEIGHT_PX = 1000
     }
 
-    interface SwappableResolution : Resolution {
-        var swapWidthWithHeight: Boolean
+    interface RotatingResolution : Resolution {
+        val isRotated: Boolean
         val swappingChangesSize: Boolean
             get() = widthPx != heightPx
         val origWidthPx: Int
         val origHeightPx: Int
 
         override val heightPx: Int
-            get() = if (swapWidthWithHeight) origWidthPx else origHeightPx
+            get() = if (isRotated) origWidthPx else origHeightPx
 
         override val widthPx: Int
-            get() = if (swapWidthWithHeight) origHeightPx else origWidthPx
+            get() = if (isRotated) origHeightPx else origWidthPx
+
+        fun copyWithRotation(): RotatingResolution
 
         @Composable
         fun displayTextPixels(): String {
             return stringResource(
                 R.string.edit_art_resize_pixels_placeholder,
-                if (swapWidthWithHeight) origHeightPx else origWidthPx,
-                if (swapWidthWithHeight) origWidthPx else origHeightPx,
+                if (isRotated) origHeightPx else origWidthPx,
+                if (isRotated) origWidthPx else origHeightPx,
             )
         }
     }
@@ -177,11 +175,15 @@ sealed interface Resolution {
         override val stringResourceId: Int,
         override val origWidthPx: Int,
         override val origHeightPx: Int,
-        override var swapWidthWithHeight: Boolean = false
-    ) : SwappableResolution {
+        override val isRotated: Boolean = false
+    ) : RotatingResolution {
         @Composable
         override fun displayTextResolution(): String {
             return stringResource(stringResourceId)
+        }
+
+        override fun copyWithRotation(): RotatingResolution {
+            return copy(isRotated = !isRotated)
         }
     }
 
@@ -190,8 +192,8 @@ sealed interface Resolution {
         override val origHeightPx: Int,
         val widthMeasurementValue: Int,
         val heightMeasurementValue: Int,
-        override var swapWidthWithHeight: Boolean = false
-    ) : SwappableResolution {
+        override val isRotated: Boolean = false
+    ) : RotatingResolution {
 
         companion object {
             private const val MEASUREMENT_UNIT: String = "\""
@@ -201,11 +203,15 @@ sealed interface Resolution {
         override fun displayTextResolution(): String {
             return stringResource(
                 stringResourceId,
-                if (swapWidthWithHeight) heightMeasurementValue else widthMeasurementValue,
+                if (isRotated) heightMeasurementValue else widthMeasurementValue,
                 MEASUREMENT_UNIT,
-                if (swapWidthWithHeight) widthMeasurementValue else heightMeasurementValue,
+                if (isRotated) widthMeasurementValue else heightMeasurementValue,
                 MEASUREMENT_UNIT
             )
+        }
+
+        override fun copyWithRotation(): RotatingResolution {
+            return copy(isRotated = !isRotated)
         }
 
         override val stringResourceId: Int
@@ -213,10 +219,12 @@ sealed interface Resolution {
     }
 
     data class CustomResolution(
-        override val stringResourceId: Int,
-        var customWidthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
-        var customHeightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
+        val customWidthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
+        val customHeightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
     ) : Resolution {
+
+        override val stringResourceId: Int
+            get() = R.string.edit_art_resize_option_custom
         override val widthPx: Int
             get() = customWidthPx
         override val heightPx: Int

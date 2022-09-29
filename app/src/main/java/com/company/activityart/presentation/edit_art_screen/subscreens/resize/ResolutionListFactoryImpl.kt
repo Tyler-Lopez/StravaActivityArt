@@ -6,8 +6,8 @@ import com.company.activityart.presentation.edit_art_screen.Resolution
 
 class ResolutionListFactoryImpl : ResolutionListFactory {
 
-    override fun create(): List<Resolution> {
-        return listOf(
+    override fun create(): MutableList<Resolution> {
+        return mutableListOf(
             Resolution.ComputerResolution(
                 R.string.edit_art_resize_option_computer_wallpaper,
                 1920,
@@ -27,7 +27,6 @@ class ResolutionListFactoryImpl : ResolutionListFactory {
             Resolution.PrintResolution(6000, 6000, 20, 20),
             Resolution.PrintResolution(6000, 9000, 20, 30),
             Resolution.PrintResolution(6000, 12000, 20, 40),
-            Resolution.CustomResolution(R.string.edit_art_resize_option_custom)
         )
     }
 }

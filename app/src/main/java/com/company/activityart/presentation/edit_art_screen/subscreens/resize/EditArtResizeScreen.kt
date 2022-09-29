@@ -2,7 +2,6 @@ package com.company.activityart.presentation.edit_art_screen.subscreens.resize
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Slider
@@ -25,7 +24,7 @@ import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.Art
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.SizeCustomChanged
 import com.company.activityart.presentation.edit_art_screen.Resolution
 import com.company.activityart.presentation.edit_art_screen.Resolution.CustomResolution
-import com.company.activityart.presentation.edit_art_screen.Resolution.SwappableResolution
+import com.company.activityart.presentation.edit_art_screen.Resolution.RotatingResolution
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.ext.toFloatRange
@@ -93,11 +92,11 @@ fun EditArtResizeScreen(
                                         valueRange = customRangePx
                                     )
                                 }
-                                is SwappableResolution -> SubheadHeavy(text = res.displayTextPixels())
+                                is RotatingResolution -> SubheadHeavy(text = res.displayTextPixels())
                             }
                         }
 
-                        if (res is SwappableResolution && res.swappingChangesSize) {
+                        if (res is RotatingResolution && res.swappingChangesSize) {
                             MediumEmphasisButton(
                                 imageVector = Icons.Default.RotateRight,
                                 size = ButtonSize.MEDIUM,
@@ -138,14 +137,6 @@ private fun CustomDimensionRangeSlider(
                 }
             )
         },
-        onValueChangeFinished = {
-            eventReceiver.onEvent(
-                if (isWidth) {
-                    SizeCustomChangeDone.WidthChanged
-                } else {
-                    SizeCustomChangeDone.HeightChanged
-                }
-            )
-        }
+        onValueChangeFinished = { eventReceiver.onEvent(SizeCustomChangeDone) }
     )
 }
