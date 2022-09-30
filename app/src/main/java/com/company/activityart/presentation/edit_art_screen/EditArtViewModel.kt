@@ -137,8 +137,18 @@ class EditArtViewModel @Inject constructor(
     private fun onFilterDateChanged(event: FilterDateChanged) {
         (lastPushedState as? Standby)?.run {
             when (event) {
-                is FilterAfterChanged -> copy(filterDateMinDateSelectedYearMonthDay = event.changedTo)
-                is FilterBeforeChanged -> copy(filterDateMaxDateSelectedYearMonthDay = event.changedTo)
+                is FilterAfterChanged -> {
+                    val maxUnixMs = filterDateMaxDateSelectedYearMonthDay.unixMs
+                    val correctedUnixMs = event.changedTo.unixMs.coerceAtMost(maxUnixMs)
+                    val correctedDate = YearMonthDay.fromUnixMs(correctedUnixMs)
+                    copy(filterDateMinDateSelectedYearMonthDay = correctedDate)
+                }
+                is FilterBeforeChanged -> {
+                    val minUnixMs = filterDateMinDateSelectedYearMonthDay.unixMs
+                    val correctedUnixMs = event.changedTo.unixMs.coerceAtLeast(minUnixMs)
+                    val correctedDate = YearMonthDay.fromUnixMs(correctedUnixMs)
+                    copy(filterDateMaxDateSelectedYearMonthDay = correctedDate)
+                }
             }
         }?.push()
     }

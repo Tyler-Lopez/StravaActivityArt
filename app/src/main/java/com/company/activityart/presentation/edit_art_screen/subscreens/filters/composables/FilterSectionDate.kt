@@ -15,6 +15,7 @@ import com.company.activityart.presentation.common.button.ButtonSize
 import com.company.activityart.presentation.common.button.MediumEmphasisButton
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.*
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.*
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
@@ -26,47 +27,32 @@ fun FilterSectionDate(
     dateMinDateSelectedYearMonthDay: YearMonthDay,
     dateMaxDateTotalYearMonthDay: YearMonthDay,
     dateMinDateTotalYearMonthDay: YearMonthDay,
+
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val beforeDatePickerDialog = dateMaxDateSelectedYearMonthDay.run {
-        DatePickerDialog(
-            LocalContext.current,
-            { _, year, month, day ->
-                eventReceiver.onEvent(
-                    EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.FilterBeforeChanged(
-                        YearMonthDay(year, month, day)
-                    )
-                )
-            },
-            year,
-            month,
-            day
-        ).apply {
+        DatePickerDialog(LocalContext.current).apply {
+            datePicker.updateDate(year, month, day)
             setOnDismissListener {
                 // Force cancel to reset active date
                 datePicker.updateDate(year, month, day)
+            }
+            setOnDateSetListener { _, year, month, dayOfMonth ->
+                eventReceiver.onEvent(FilterBeforeChanged(YearMonthDay(year, month, dayOfMonth)))
             }
             datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
             datePicker.minDate = dateMinDateSelectedYearMonthDay.unixMs
         }
     }
     val afterDatePickerDialog = dateMinDateSelectedYearMonthDay.run {
-        DatePickerDialog(
-            LocalContext.current,
-            { _, year, month, day ->
-                eventReceiver.onEvent(
-                    EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.FilterAfterChanged(
-                        YearMonthDay(year, month, day)
-                    )
-                )
-            },
-            year,
-            month,
-            day
-        ).apply {
+        DatePickerDialog(LocalContext.current).apply {
+            datePicker.updateDate(year, month, day)
             setOnDismissListener {
                 // Force cancel to reset active date
                 datePicker.updateDate(year, month, day)
+            }
+            setOnDateSetListener { _, year, month, dayOfMonth ->
+                eventReceiver.onEvent(FilterAfterChanged(YearMonthDay(year, month, dayOfMonth)))
             }
             datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
             datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
