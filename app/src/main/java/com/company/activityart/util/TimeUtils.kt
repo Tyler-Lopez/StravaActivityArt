@@ -3,6 +3,7 @@ package com.company.activityart.util
 import com.company.activityart.util.classes.YearMonthDay
 import java.time.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 
@@ -44,6 +45,10 @@ class TimeUtils {
 
     fun iso8601StringToUnixSecond(value: String): Long {
         return Instant.parse(value).epochSecond
+    }
+
+    fun iso8601StringToUnixMillisecond(value: String): Long {
+        return TimeUnit.SECONDS.toMillis(Instant.parse(value).epochSecond)
     }
 
     /**

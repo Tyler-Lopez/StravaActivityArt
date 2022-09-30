@@ -16,14 +16,11 @@ enum class EditArtHeaderType(
         R.string.button_preview_cd,
         Icons.Default.Preview
     ),
-    /*
     FILTERS(
         R.string.button_filters_uppercase,
         R.string.button_filters_cd,
         Icons.Default.FilterAlt
     ),
-
-     */
     STYLE(
         R.string.buttons_style_uppercase,
         R.string.buttons_style_cd,

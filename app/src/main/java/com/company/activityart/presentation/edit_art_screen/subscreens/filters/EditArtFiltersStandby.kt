@@ -7,9 +7,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.FilterSectionActivityType
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.FilterSectionDate
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.FilterSectionDistances
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
@@ -23,6 +23,7 @@ fun EditArtFiltersStandby(
     typesWithSelectedFlag: Map<String, Boolean>,
     eventReceiver: EventReceiver<EditArtFiltersViewEvent>
 ) {
+    /*
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,4 +44,6 @@ fun EditArtFiltersStandby(
         FilterSectionDistances()
 
     }
+
+     */
 }

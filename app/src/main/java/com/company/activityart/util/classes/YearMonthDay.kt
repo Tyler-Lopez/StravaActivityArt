@@ -2,8 +2,10 @@ package com.company.activityart.util.classes
 
 import com.company.activityart.domain.use_case.activities.GetActivitiesByYearMonthFromLocalUseCase
 import com.company.activityart.util.TimeUtils
+import java.time.Month
 import java.time.YearMonth
 import java.util.*
+import java.util.Calendar.HOUR_OF_DAY
 
 /** @param month 0-indexed
  *
@@ -16,6 +18,23 @@ data class YearMonthDay(
     companion object {
         private const val MIN_LENGTH = 2
         private const val PADDING_CHAR = '0'
+        private const val HOUR_OF_DAY_FIRST = 0
+        private const val HOUR_OF_DAY_LAST = 23
+        private const val MINUTE_OF_HOUR_FIRST = 0
+        private const val MINUTE_OF_HOUR_LAST = 59
+        private const val SECOND_OF_MINUTE_FIRST = 0
+        private const val SECOND_OF_MINUTE_LAST = 0
+
+        fun fromUnixMs(ms: Long): YearMonthDay {
+            return Calendar.getInstance().run {
+                timeInMillis = ms
+                YearMonthDay(
+                    get(Calendar.YEAR),
+                    get(Calendar.MONTH),
+                    get(Calendar.DAY_OF_MONTH)
+                )
+            }
+        }
     }
 
     override fun toString(): String {
@@ -30,12 +49,50 @@ data class YearMonthDay(
         return "$paddedMonth / $paddedDay / $year"
     }
 
-    val unixMilliseconds: Long
+    /**
+     * @return Returns the UNIX millisecond corresponding to the [YearMonthDay]
+     * when hour, minute, and second are not specified.
+     */
+    val unixMs: Long
         get() {
-           return GregorianCalendar(
+            return GregorianCalendar(
                 year,
                 month,
                 day
+            ).timeInMillis
+        }
+
+    /**
+     * @return Returns explicitly the first UNIX millisecond corresponding to the
+     * [YearMonthDay] according to [HOUR_OF_DAY_FIRST], [MINUTE_OF_HOUR_FIRST], and
+     * [SECOND_OF_MINUTE_FIRST].
+     */
+    val unixMsFirst: Long
+        get() {
+            return GregorianCalendar(
+                year,
+                month,
+                day,
+                HOUR_OF_DAY_FIRST,
+                MINUTE_OF_HOUR_FIRST,
+                SECOND_OF_MINUTE_FIRST
+            ).timeInMillis
+        }
+
+    /**
+     * @return Returns explicitly the last UNIX millisecond corresponding to the
+     * [YearMonthDay] according to [HOUR_OF_DAY_LAST], [MINUTE_OF_HOUR_LAST], and
+     * [SECOND_OF_MINUTE_LAST].
+     */
+    val unixMsLast: Long
+        get() {
+            return GregorianCalendar(
+                year,
+                month,
+                day,
+                HOUR_OF_DAY_LAST,
+                MINUTE_OF_HOUR_LAST,
+                SECOND_OF_MINUTE_LAST
             ).timeInMillis
         }
 }

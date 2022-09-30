@@ -25,6 +25,7 @@ import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.NavigateUpClicked
 import com.company.activityart.presentation.edit_art_screen.composables.EditArtDialogNavigateUp
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersScreen
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreview
 import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResizeScreen
 import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewDelegate
@@ -74,7 +75,15 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         ScreenBackground {
                             when (it) {
                                 PREVIEW -> EditArtPreview(bitmap)
-                                //  FILTERS -> EditArtFiltersViewDelegate(filterViewModel)
+                                FILTERS -> EditArtFiltersScreen(
+                                    filterDateMaxDateSelectedYearMonthDay,
+                                    filterDateMinDateSelectedYearMonthDay,
+                                    filterDateMaxDateTotalYearMonthDay,
+                                    filterDateMinDateTotalYearMonthDay,
+                                    scrollStateFilter,
+                                    viewModel
+                                )
+                                //EditArtFiltersViewDelegate(filterViewModel)
                                 STYLE -> EditArtStyleViewDelegate(
                                     styleActivities,
                                     styleBackground,
@@ -87,7 +96,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     sizeCustomWidthPx,
                                     sizeCustomRangePx,
                                     sizeResolutionList,
-                                    scrollStateStyle,
+                                    scrollStateResize,
                                     sizeResolutionListSelectedIndex,
                                     viewModel
                                 )

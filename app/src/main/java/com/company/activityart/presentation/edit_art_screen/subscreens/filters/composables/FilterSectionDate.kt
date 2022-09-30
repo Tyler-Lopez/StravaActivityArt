@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.edit_art_screen.subscreens.filters
+package com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.Arrangement
@@ -14,23 +14,29 @@ import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize
 import com.company.activityart.presentation.common.button.MediumEmphasisButton
 import com.company.activityart.presentation.common.type.Subhead
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.DateChanged.*
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
 
 @Composable
 fun FilterSectionDate(
-    dateMaxDateUnixMilliseconds: Long,
-    dateMinDateUnixMilliSeconds: Long,
-    dateYearMonthDayAfter: YearMonthDay,
-    dateYearMonthDayBefore: YearMonthDay,
-    eventReceiver: EventReceiver<EditArtFiltersViewEvent>
+    dateMaxDateSelectedYearMonthDay: YearMonthDay,
+    dateMinDateSelectedYearMonthDay: YearMonthDay,
+    dateMaxDateTotalYearMonthDay: YearMonthDay,
+    dateMinDateTotalYearMonthDay: YearMonthDay,
+    eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    val beforeDatePickerDialog = dateYearMonthDayBefore.run {
+    val beforeDatePickerDialog = dateMaxDateSelectedYearMonthDay.run {
         DatePickerDialog(
             LocalContext.current,
             { _, year, month, day ->
-                eventReceiver.onEvent(DateChangedBefore(YearMonthDay(year, month, day)))
+                eventReceiver.onEvent(
+                    EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.FilterBeforeChanged(
+                        YearMonthDay(year, month, day)
+                    )
+                )
             },
             year,
             month,
@@ -40,15 +46,19 @@ fun FilterSectionDate(
                 // Force cancel to reset active date
                 datePicker.updateDate(year, month, day)
             }
-            datePicker.maxDate = dateMaxDateUnixMilliseconds
-            datePicker.minDate = dateYearMonthDayAfter.unixMilliseconds
+            datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
+            datePicker.minDate = dateMinDateSelectedYearMonthDay.unixMs
         }
     }
-    val afterDatePickerDialog = dateYearMonthDayAfter.run {
+    val afterDatePickerDialog = dateMinDateSelectedYearMonthDay.run {
         DatePickerDialog(
             LocalContext.current,
             { _, year, month, day ->
-                eventReceiver.onEvent(DateChangedAfter(YearMonthDay(year, month, day)))
+                eventReceiver.onEvent(
+                    EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.FilterAfterChanged(
+                        YearMonthDay(year, month, day)
+                    )
+                )
             },
             year,
             month,
@@ -58,8 +68,8 @@ fun FilterSectionDate(
                 // Force cancel to reset active date
                 datePicker.updateDate(year, month, day)
             }
-            datePicker.maxDate = dateYearMonthDayBefore.unixMilliseconds
-            datePicker.minDate = dateMinDateUnixMilliSeconds
+            datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
+            datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
         }
     }
     Section(
@@ -76,7 +86,7 @@ fun FilterSectionDate(
                 Subhead(text = stringResource(R.string.edit_art_filters_date_start))
                 MediumEmphasisButton(
                     size = ButtonSize.LARGE,
-                    text = "$dateYearMonthDayAfter"
+                    text = "$dateMinDateSelectedYearMonthDay"
                 ) {
                     afterDatePickerDialog.show()
                 }
@@ -87,7 +97,7 @@ fun FilterSectionDate(
                 Subhead(text = stringResource(R.string.edit_art_filters_date_end))
                 MediumEmphasisButton(
                     size = ButtonSize.LARGE,
-                    text = "$dateYearMonthDayBefore"
+                    text = "$dateMaxDateSelectedYearMonthDay"
                 ) {
                     beforeDatePickerDialog.show()
                 }

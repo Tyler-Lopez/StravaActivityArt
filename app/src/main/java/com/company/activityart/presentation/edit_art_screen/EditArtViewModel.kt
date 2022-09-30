@@ -4,6 +4,7 @@ import android.util.Size
 import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.ResolutionListFactory
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
@@ -11,7 +12,7 @@ import com.company.activityart.presentation.MainDestination.NavigateUp
 import com.company.activityart.presentation.edit_art_screen.ColorType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
-import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterTypeChanged.FilterTypeAdded
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Loading
 import com.company.activityart.presentation.edit_art_screen.EditArtViewState.Standby
 import com.company.activityart.presentation.edit_art_screen.StrokeWidthType.MEDIUM
@@ -20,6 +21,7 @@ import com.company.activityart.presentation.edit_art_screen.StyleType.BACKGROUND
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.VisualizationUtils
+import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -58,6 +61,18 @@ class EditArtViewModel @Inject constructor(
     }
 
     private val activities by lazy { activitiesFromCacheUseCase() }
+    private val activitiesFiltered: List<Activity>
+        get() {
+            return activities.filter {
+                withLastState {
+                    val unixMs = timeUtils.iso8601StringToUnixMillisecond(it.iso8601LocalDate)
+                    val unixSecondAfter = filterDateMinDateSelectedYearMonthDay.unixMsFirst
+                    val unixSecondBefore = filterDateMaxDateSelectedYearMonthDay.unixMsLast
+                    if (unixMs !in unixSecondAfter..unixSecondBefore) return@filter false
+                }
+                true
+            }
+        }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
     private val pagerState = PagerState(pagerHeaders.size)
@@ -73,10 +88,10 @@ class EditArtViewModel @Inject constructor(
     private val customResolution by lazy {
         resolutionList.last() as? Resolution.CustomResolution ?: error("Missing custom resolution")
     }
-    private val unixSeconds by lazy {
+    private val unixMsList by lazy {
         activities.map {
-            timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)
-        }
+            TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
+        }.sorted()
     }
 
     init {
@@ -111,26 +126,25 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onDialogNavigateUpCancelled() {
-        withLastState { copy(dialogNavigateUpActive = false) }.push()
+        copyLastState { copy(dialogNavigateUpActive = false) }.push()
     }
 
     private fun onDialogNavigateUpConfirmed() {
-        withLastState { copy(dialogNavigateUpActive = false) }.push()
+        copyLastState { copy(dialogNavigateUpActive = false) }.push()
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
     private fun onFilterDateChanged(event: FilterDateChanged) {
         (lastPushedState as? Standby)?.run {
-            copy(
-                filterStateWrapper = filterStateWrapper.copy(
-                    unixSecondSelectedStart = event.newUnixSecondStart,
-                    unixSecondSelectedEnd = event.newUnixSecondEnd
-                )
-            )
+            when (event) {
+                is FilterAfterChanged -> copy(filterDateMinDateSelectedYearMonthDay = event.changedTo)
+                is FilterBeforeChanged -> copy(filterDateMaxDateSelectedYearMonthDay = event.changedTo)
+            }
         }?.push()
     }
 
     private fun onFilterTypeChanged(event: FilterTypeChanged) {
+        /*
         (lastPushedState as? Standby)?.run {
             copy(
                 filterStateWrapper = filterStateWrapper.copy(
@@ -147,6 +161,8 @@ class EditArtViewModel @Inject constructor(
                 )
             )
         }?.push()
+
+         */
     }
 
     private fun onMakeFullscreenClicked() {
@@ -154,7 +170,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onNavigateUpClicked() {
-        withLastState { copy(dialogNavigateUpActive = true) }.push()
+        copyLastState { copy(dialogNavigateUpActive = true) }.push()
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -175,11 +191,12 @@ class EditArtViewModel @Inject constructor(
             Standby(
                 bitmap = null,
                 dialogNavigateUpActive = false,
-                filterStateWrapper = FilterStateWrapper(
-                    unixSecondSelectedStart = unixSeconds.first(),
-                    unixSecondSelectedEnd = unixSeconds.last()
-                ),
+                filterDateMaxDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.last()),
+                filterDateMinDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.first()),
+                filterDateMaxDateTotalYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.last()),
+                filterDateMinDateTotalYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.first()),
                 pagerStateWrapper = pagerStateWrapper,
+                scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
                 sizeActual = sizeActual,
@@ -207,7 +224,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSizeChanged(event: SizeChanged) {
         val newSizeActual = resolutionList[event.changedIndex].run { Size(widthPx, heightPx) }
-        withLastState {
+        copyLastState {
             copy(
                 sizeActual = newSizeActual,
                 sizeResolutionListSelectedIndex = event.changedIndex
@@ -216,7 +233,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeCustomChangeDone() {
-        withLastState {
+        copyLastState {
             resolutionList[resolutionList.lastIndex] = customResolution.copy(
                 customWidthPx = sizeCustomWidthPx,
                 customHeightPx = sizeCustomHeightPx
@@ -226,7 +243,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
-        withLastState {
+        copyLastState {
             when (event) {
                 is SizeCustomChanged.HeightChanged -> copy(sizeCustomHeightPx = event.changedToPx)
                 is SizeCustomChanged.WidthChanged -> copy(sizeCustomWidthPx = event.changedToPx)
@@ -240,11 +257,11 @@ class EditArtViewModel @Inject constructor(
                 (resolutionList[rotatedIndex] as Resolution.RotatingResolution).copyWithRotation()
         }
         // Todo, believe this makes update immediate, kind of awkward looking hack, fix later
-        withLastState { copy() }.push()
+        copyLastState { copy() }.push()
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
-        withLastState {
+        copyLastState {
             event.run {
                 when (styleType) {
                     BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
@@ -276,9 +293,9 @@ class EditArtViewModel @Inject constructor(
     private fun updateBitmap() {
         imageProcessingDispatcher.cancelChildren()
         viewModelScope.launch(imageProcessingDispatcher) {
-            withLastState {
+            copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
-                    activities = activities,
+                    activities = activitiesFiltered,
                     colorActivities = styleActivities,
                     colorBackground = styleBackground,
                     paddingFraction = 0.05f,
@@ -290,12 +307,17 @@ class EditArtViewModel @Inject constructor(
                         maximumSize = screenSize
                     )
                 )
-                withLastState { copy(bitmap = bitmap) }
+                copyLastState { copy(bitmap = bitmap) }
             }.push()
         }
     }
 
-    private inline fun withLastState(block: Standby.() -> Standby): Standby {
+    private inline fun copyLastState(block: Standby.() -> Standby): Standby {
         return (lastPushedState as? Standby)?.run(block) ?: error("Last state was not standby")
     }
+
+    private inline fun withLastState(block: Standby.() -> Unit) {
+        (lastPushedState as? Standby)?.run(block)
+    }
+
 }

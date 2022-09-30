@@ -38,6 +38,7 @@ class EditArtFiltersViewModel @Inject constructor(
     }
 
     private fun onDateChanged(event: DateChanged) {
+        /*
         (lastPushedState as? Standby)?.run {
             val newAfter = if (event is DateChangedAfter) {
                 event.changedTo
@@ -51,8 +52,8 @@ class EditArtFiltersViewModel @Inject constructor(
             }
             onParentEvent(
                 FilterDateChanged(
-                    MILLISECONDS.toSeconds(newAfter.unixMilliseconds),
-                    MILLISECONDS.toSeconds(newBefore.unixMilliseconds)
+                    MILLISECONDS.toSeconds(newAfter.unixMs),
+                    MILLISECONDS.toSeconds(newBefore.unixMs)
                 )
             )
             copy(
@@ -60,6 +61,8 @@ class EditArtFiltersViewModel @Inject constructor(
                 dateYearMonthDayAfter = newAfter
             )
         }?.push()
+
+         */
     }
 
     private fun onTypeToggleFlipped(event: TypeToggleFlipped) {

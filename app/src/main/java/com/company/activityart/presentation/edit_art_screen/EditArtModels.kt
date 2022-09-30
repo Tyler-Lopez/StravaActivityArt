@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
+import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.Parcelize
@@ -33,10 +34,12 @@ sealed interface EditArtViewEvent : ViewEvent {
     }
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
-        data class FilterDateChanged(
-            val newUnixSecondStart: Long,
-            val newUnixSecondEnd: Long
-        ) : ArtMutatingEvent
+        sealed interface FilterDateChanged : ArtMutatingEvent {
+            val changedTo: YearMonthDay
+
+            data class FilterAfterChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+            data class FilterBeforeChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+        }
 
         sealed interface FilterTypeChanged : ArtMutatingEvent {
             val type: String
@@ -72,8 +75,12 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         val bitmap: Bitmap?,
         override val dialogNavigateUpActive: Boolean,
-        val filterStateWrapper: FilterStateWrapper,
+        val filterDateMaxDateSelectedYearMonthDay: YearMonthDay,
+        val filterDateMinDateSelectedYearMonthDay: YearMonthDay,
+        val filterDateMaxDateTotalYearMonthDay: YearMonthDay,
+        val filterDateMinDateTotalYearMonthDay: YearMonthDay,
         override val pagerStateWrapper: PagerStateWrapper,
+        val scrollStateFilter: ScrollState,
         val scrollStateStyle: ScrollState,
         val scrollStateResize: ScrollState,
         val sizeActual: Size,
