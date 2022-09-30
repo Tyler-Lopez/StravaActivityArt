@@ -151,4 +151,7 @@
     <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
     <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
+    <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
+    <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
+    <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
 </resources>

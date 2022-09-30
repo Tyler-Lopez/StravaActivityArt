@@ -19,6 +19,8 @@ import kotlinx.parcelize.RawValue
 
 sealed interface EditArtViewEvent : ViewEvent {
 
+    object DialogNavigateUpCancelled : EditArtViewEvent
+    object DialogNavigateUpConfirmed : EditArtViewEvent
     object MakeFullscreenClicked : EditArtViewEvent
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
@@ -58,14 +60,18 @@ sealed interface EditArtViewEvent : ViewEvent {
 }
 
 sealed interface EditArtViewState : ViewState {
+
+    val dialogNavigateUpActive: Boolean
     val pagerStateWrapper: PagerStateWrapper
 
     data class Loading(
+        override val dialogNavigateUpActive: Boolean,
         override val pagerStateWrapper: PagerStateWrapper
     ) : EditArtViewState
 
     data class Standby(
         val bitmap: Bitmap?,
+        override val dialogNavigateUpActive: Boolean,
         val filterStateWrapper: FilterStateWrapper,
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateStyle: ScrollState,
