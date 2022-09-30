@@ -17,19 +17,19 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import com.company.activityart.R
 
+
 @Composable
-fun MediumEmphasisButton(
+fun LowEmphasisButton(
     size: ButtonSize,
     modifier: Modifier = Modifier,
     text: String? = null,
     imageVector: ImageVector? = null,
     enabled: Boolean = true,
     onClick: () -> Unit
-    ) {
+) {
     val cornerRadiusDp = dimensionResource(id = R.dimen.button_corner_radius)
-    val strokeWidthDp = dimensionResource(id = R.dimen.button_stroke_width)
 
-    OutlinedButton(
+    TextButton(
         onClick = onClick,
         shape = RoundedCornerShape(cornerRadiusDp),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -44,14 +44,6 @@ fun MediumEmphasisButton(
                 remember { MutableInteractionSource() },
                 rememberRipple(color = Color.Black)
             ),
-        border = BorderStroke(
-          width = strokeWidthDp,
-          color = if (enabled) {
-              colorResource(R.color.strava_orange)
-          } else {
-              colorResource(R.color.n30_silver)
-          }
-        ),
         enabled = enabled
     ) {
         text?.let {

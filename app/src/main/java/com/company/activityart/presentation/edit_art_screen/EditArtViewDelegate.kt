@@ -1,25 +1,30 @@
 package com.company.activityart.presentation.edit_art_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Card
 import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.common.button.ButtonSize
+import com.company.activityart.presentation.common.button.LowEmphasisButton
+import com.company.activityart.presentation.common.type.Body
 import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.NavigateUpClicked
+import com.company.activityart.presentation.edit_art_screen.composables.EditArtDialogNavigateUp
 import com.company.activityart.presentation.edit_art_screen.subscreens.preview.EditArtPreview
 import com.company.activityart.presentation.edit_art_screen.subscreens.resize.EditArtResizeScreen
 import com.company.activityart.presentation.edit_art_screen.subscreens.style.EditArtStyleViewDelegate
@@ -104,5 +109,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 }
             }
         }
+        EditArtDialogNavigateUp(eventReceiver = viewModel, isVisible = dialogNavigateUpActive)
     }
 }

@@ -24,11 +24,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
@@ -54,7 +55,6 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_WIDTH_PX = 1920
         private const val INITIAL_SCROLL_STATE = 0
         private const val INITIAL_SELECTED_RES_INDEX = 0
-        private const val EDIT_SIZE_HEIGHT = 256
     }
 
     private val activities by lazy { activitiesFromCacheUseCase() }
@@ -80,12 +80,14 @@ class EditArtViewModel @Inject constructor(
     }
 
     init {
-        pushState(Loading(pagerStateWrapper = pagerStateWrapper))
+        pushState(Loading(pagerStateWrapper = pagerStateWrapper, dialogNavigateUpActive = false))
     }
 
     override fun onEvent(event: EditArtViewEvent) {
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
+            is DialogNavigateUpCancelled -> onDialogNavigateUpCancelled()
+            is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is MakeFullscreenClicked -> onMakeFullscreenClicked()
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
@@ -106,6 +108,15 @@ class EditArtViewModel @Inject constructor(
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
         }
         updateBitmap()
+    }
+
+    private fun onDialogNavigateUpCancelled() {
+        withLastState { copy(dialogNavigateUpActive = false) }.push()
+    }
+
+    private fun onDialogNavigateUpConfirmed() {
+        withLastState { copy(dialogNavigateUpActive = false) }.push()
+        viewModelScope.launch { routeTo(NavigateUp) }
     }
 
     private fun onFilterDateChanged(event: FilterDateChanged) {
@@ -143,9 +154,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onNavigateUpClicked() {
-        viewModelScope.launch(Dispatchers.Default) {
-            routeTo(NavigateUp)
-        }
+        withLastState { copy(dialogNavigateUpActive = true) }.push()
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -157,7 +166,6 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSaveClicked() {
-
     }
 
     private fun onScreenMeasured(event: ScreenMeasured) {
@@ -166,6 +174,7 @@ class EditArtViewModel @Inject constructor(
         pushState(
             Standby(
                 bitmap = null,
+                dialogNavigateUpActive = false,
                 filterStateWrapper = FilterStateWrapper(
                     unixSecondSelectedStart = unixSeconds.first(),
                     unixSecondSelectedEnd = unixSeconds.last()
