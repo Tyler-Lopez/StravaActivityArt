@@ -53,7 +53,7 @@ fun EditArtStyleViewDelegate(
         )
         Section(
             header = stringResource(R.string.edit_art_style_stroke_width_header),
-            description = stringResource(R.string.edit_art_filters_activity_type_description)
+            description = stringResource(R.string.edit_art_style_stroke_width_description)
         ) {
             StrokeWidthType.values().forEach {
                 Row(
