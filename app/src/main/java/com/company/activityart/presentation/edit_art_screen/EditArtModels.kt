@@ -41,13 +41,7 @@ sealed interface EditArtViewEvent : ViewEvent {
             data class FilterBeforeChanged(override val changedTo: YearMonthDay) : FilterDateChanged
         }
 
-        sealed interface FilterTypeChanged : ArtMutatingEvent {
-            val type: String
-
-            data class FilterTypeAdded(override val type: String) : FilterTypeChanged
-            data class FilterTypeRemoved(override val type: String) : FilterTypeChanged
-        }
-
+        data class FilterTypeToggled(val type: String) : ArtMutatingEvent
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
         object SizeCustomChangeDone : ArtMutatingEvent
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
@@ -79,6 +73,7 @@ sealed interface EditArtViewState : ViewState {
         val filterDateMinDateSelectedYearMonthDay: YearMonthDay,
         val filterDateMaxDateTotalYearMonthDay: YearMonthDay,
         val filterDateMinDateTotalYearMonthDay: YearMonthDay,
+        val filterTypesWithSelections: Map<String, Boolean>,
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateFilter: ScrollState,
         val scrollStateStyle: ScrollState,

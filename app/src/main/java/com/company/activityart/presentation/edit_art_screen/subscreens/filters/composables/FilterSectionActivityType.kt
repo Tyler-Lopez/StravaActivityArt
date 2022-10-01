@@ -9,29 +9,32 @@ import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent
-import com.company.activityart.presentation.edit_art_screen.subscreens.filters.EditArtFiltersViewEvent.*
+import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
 fun FilterSectionActivityType(
     typesWithSelectedFlag: Map<String, Boolean>,
-    eventReceiver: EventReceiver<EditArtFiltersViewEvent>
+    eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     Section(
         header = stringResource(R.string.edit_art_filters_activity_type_header),
         description = stringResource(R.string.edit_art_filters_activity_type_description),
     ) {
-        typesWithSelectedFlag.forEach {
+        typesWithSelectedFlag.forEach { typeMap ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = it.value, onCheckedChange = { newBoolean ->
-                    eventReceiver.onEvent(TypeToggleFlipped(it.key))
-                })
-                Subhead(it.key)
+                Checkbox(
+                    checked = typeMap.value,
+                    onCheckedChange = {
+                        eventReceiver.onEvent(
+                            EditArtViewEvent.ArtMutatingEvent.FilterTypeToggled(typeMap.key)
+                        )
+                    })
+                Subhead(typeMap.key)
             }
         }
     }

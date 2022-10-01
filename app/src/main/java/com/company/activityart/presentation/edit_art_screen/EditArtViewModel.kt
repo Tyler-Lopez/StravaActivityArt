@@ -45,6 +45,7 @@ class EditArtViewModel @Inject constructor(
     companion object {
         private const val CUSTOM_SIZE_MINIMUM_PX = 100
         private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
+        private const val DEFAULT_ACTIVITY_TYPE_SELECTION = true
         private const val FADE_LENGTH_MS = 1000
         private const val INITIAL_ACTIVITIES_ALPHA = 1f
         private const val INITIAL_ACTIVITIES_BLUE = 1f
@@ -69,10 +70,22 @@ class EditArtViewModel @Inject constructor(
                     val unixSecondAfter = filterDateMinDateSelectedYearMonthDay.unixMsFirst
                     val unixSecondBefore = filterDateMaxDateSelectedYearMonthDay.unixMsLast
                     if (unixMs !in unixSecondAfter..unixSecondBefore) return@filter false
+                    if (activitiesTypesSelectionMap[it.type] != true) return@filter false
                 }
                 true
             }
         }
+    private val activitiesTypesSelectionMap by lazy {
+        activities
+            .map { it.type }
+            .associateWith { DEFAULT_ACTIVITY_TYPE_SELECTION }
+            .toMutableMap()
+    }
+    private val activitiesUnixMsList by lazy {
+        activities.map {
+            TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
+        }.sorted()
+    }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
     private val pagerState = PagerState(pagerHeaders.size)
@@ -88,11 +101,7 @@ class EditArtViewModel @Inject constructor(
     private val customResolution by lazy {
         resolutionList.last() as? Resolution.CustomResolution ?: error("Missing custom resolution")
     }
-    private val unixMsList by lazy {
-        activities.map {
-            TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
-        }.sorted()
-    }
+
 
     init {
         pushState(Loading(pagerStateWrapper = pagerStateWrapper, dialogNavigateUpActive = false))
@@ -114,7 +123,7 @@ class EditArtViewModel @Inject constructor(
     private fun onArtMutatingEvent(event: ArtMutatingEvent) {
         when (event) {
             is FilterDateChanged -> onFilterDateChanged(event)
-            is FilterTypeChanged -> onFilterTypeChanged(event)
+            is FilterTypeToggled -> onFilterTypeToggled(event)
             is ScreenMeasured -> onScreenMeasured(event)
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChangeDone -> onSizeCustomChangeDone()
@@ -153,26 +162,11 @@ class EditArtViewModel @Inject constructor(
         }?.push()
     }
 
-    private fun onFilterTypeChanged(event: FilterTypeChanged) {
-        /*
-        (lastPushedState as? Standby)?.run {
-            copy(
-                filterStateWrapper = filterStateWrapper.copy(
-                    excludedActivityTypes = filterStateWrapper
-                        .excludedActivityTypes
-                        .toMutableSet()
-                        .apply {
-                            if (event is FilterTypeAdded) {
-                                add(event.type)
-                            } else {
-                                remove(event.type)
-                            }
-                        }
-                )
-            )
-        }?.push()
-
-         */
+    private fun onFilterTypeToggled(event: FilterTypeToggled) {
+        activitiesTypesSelectionMap.let {
+            it[event.type] = !(it[event.type] ?: false)
+        }
+        copyLastState { copy(bitmap = null) }.push()
     }
 
     private fun onMakeFullscreenClicked() {
@@ -201,10 +195,11 @@ class EditArtViewModel @Inject constructor(
             Standby(
                 bitmap = null,
                 dialogNavigateUpActive = false,
-                filterDateMaxDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.last()),
-                filterDateMinDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.first()),
-                filterDateMaxDateTotalYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.last()),
-                filterDateMinDateTotalYearMonthDay = YearMonthDay.fromUnixMs(unixMsList.first()),
+                filterDateMaxDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.last()),
+                filterDateMinDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.first()),
+                filterDateMaxDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.last()),
+                filterDateMinDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.first()),
+                filterTypesWithSelections = activitiesTypesSelectionMap,
                 pagerStateWrapper = pagerStateWrapper,
                 scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
@@ -248,7 +243,7 @@ class EditArtViewModel @Inject constructor(
                 customWidthPx = sizeCustomWidthPx,
                 customHeightPx = sizeCustomHeightPx
             )
-            copy()
+            copy(bitmap = null)
         }.push()
     }
 
@@ -267,7 +262,9 @@ class EditArtViewModel @Inject constructor(
                 (resolutionList[rotatedIndex] as Resolution.RotatingResolution).copyWithRotation()
         }
         // Todo, believe this makes update immediate, kind of awkward looking hack, fix later
-        copyLastState { copy() }.push()
+        copyLastState {
+            copy(bitmap = null)
+        }.push()
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
