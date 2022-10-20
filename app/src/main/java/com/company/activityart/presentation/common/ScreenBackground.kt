@@ -1,35 +1,39 @@
-package com.company.activityart.presentation.common
+package com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Arrangement.spacedBy
+import androidx.compose.foundation.layout.Arrangement.Vertical
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Horizontal
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.company.activityart.presentation.ui.theme.White
 
 @Composable
-fun ScreenBackgroundLegacy(
-    spacedBy: Dp = 0.dp,
-    verticalAlignment: Alignment.Vertical = CenterVertically,
+fun ScreenBackground(
+    modifier: Modifier = Modifier,
+    horizontalAlignment: Horizontal = CenterHorizontally,
+    scrollState: ScrollState = rememberScrollState(),
+    verticalArrangement: Vertical = spacedBy(
+        space = 16.dp,
+        alignment = CenterVertically
+    ),
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier = Modifier
+        content = content,
+        horizontalAlignment = horizontalAlignment,
+        modifier = modifier
             .fillMaxSize()
-            .background(White),
-        horizontalAlignment = CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            space = spacedBy,
-            alignment = verticalAlignment
-        )
-    ) {
-        content()
-    }
+            .padding(16.dp)
+            .verticalScroll(scrollState),
+        verticalArrangement = verticalArrangement
+    )
 }
