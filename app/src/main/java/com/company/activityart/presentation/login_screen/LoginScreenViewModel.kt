@@ -5,7 +5,6 @@ import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.ConnectWithStrava
 import com.company.activityart.presentation.login_screen.LoginScreenViewEvent.ConnectWithStravaClicked
-import com.company.activityart.presentation.login_screen.LoginScreenViewState.Standby
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +18,7 @@ class LoginScreenViewModel @Inject constructor() : BaseRoutingViewModel<
         >() {
 
     init {
-        pushState(Standby)
+        LoginScreenViewState().push()
     }
 
     override fun onEvent(event: LoginScreenViewEvent) {

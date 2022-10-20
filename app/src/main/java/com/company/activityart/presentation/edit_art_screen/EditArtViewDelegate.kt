@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
-import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.common.ScreenBackgroundLegacy
 import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.edit_art_screen.EditArtHeaderType.*
 import com.company.activityart.presentation.edit_art_screen.EditArtViewEvent.ArtMutatingEvent.ScreenMeasured
@@ -60,7 +60,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 }
             }
         ) {
-            ScreenBackground {
+            ScreenBackgroundLegacy {
                 if (this@apply is EditArtViewState.Standby) {
                     val activeHeader =
                         EditArtHeaderType.fromOrdinal(pagerStateWrapper.pagerState.currentPage)
@@ -68,7 +68,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         targetState = activeHeader,
                         animationSpec = tween(500, easing = FastOutSlowInEasing)
                     ) {
-                        ScreenBackground {
+                        ScreenBackgroundLegacy {
                             when (it) {
                                 PREVIEW -> EditArtPreview(bitmap)
                                 FILTERS -> EditArtFiltersScreen(

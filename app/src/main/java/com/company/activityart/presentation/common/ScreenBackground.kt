@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.company.activityart.presentation.ui.theme.White
 
 @Composable
-fun ScreenBackground(
+fun ScreenBackgroundLegacy(
     spacedBy: Dp = 0.dp,
     verticalAlignment: Alignment.Vertical = CenterVertically,
     content: @Composable ColumnScope.() -> Unit

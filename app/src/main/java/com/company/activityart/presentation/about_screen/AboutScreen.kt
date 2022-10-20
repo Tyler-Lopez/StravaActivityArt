@@ -9,7 +9,7 @@ import com.company.activityart.presentation.about_screen.AboutViewEvent.Navigate
 import com.company.activityart.presentation.about_screen.AboutViewState.Standby
 import com.company.activityart.presentation.about_screen.composables.AboutScreenStandby
 import com.company.activityart.presentation.common.AppBarScaffold
-import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.common.ScreenBackgroundLegacy
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
@@ -20,7 +20,7 @@ fun AboutScreen(
         text = stringResource(R.string.action_bar_about_header),
         onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
     ) {
-        ScreenBackground(
+        ScreenBackgroundLegacy(
             spacedBy = spacing.medium,
             verticalAlignment = Top
         ) {

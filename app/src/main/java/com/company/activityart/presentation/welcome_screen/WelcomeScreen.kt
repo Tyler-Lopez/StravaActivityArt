@@ -3,7 +3,7 @@ package com.company.activityart.presentation.welcome_screen
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.company.activityart.presentation.common.ScreenBackground
+import com.company.activityart.presentation.common.ScreenBackgroundLegacy
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Loading
 import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Standby
@@ -21,7 +21,7 @@ https://developers.strava.com/guidelines/
 
 @Composable
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
-    ScreenBackground(spacedBy = spacing.medium) {
+    ScreenBackgroundLegacy(spacedBy = spacing.medium) {
         viewModel.viewState.collectAsState().value?.apply {
             when (this) {
                 is Loading -> CircularProgressIndicator()

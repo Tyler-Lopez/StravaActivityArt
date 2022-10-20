@@ -6,8 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.common.ScreenBackground
-import com.company.activityart.presentation.login_screen.LoginScreenViewState.Standby
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.ScreenBackground
 import com.company.activityart.presentation.login_screen.composables.LoginScreenStandby
 
 
@@ -26,9 +25,7 @@ fun LoginScreen(
     LaunchedEffect(router) { viewModel.attachRouter(router) }
     ScreenBackground {
         viewModel.viewState.collectAsState().value?.apply {
-            when (this) {
-                is Standby -> LoginScreenStandby(viewModel)
-            }
+            LoginScreenStandby(viewModel)
         }
     }
 }
