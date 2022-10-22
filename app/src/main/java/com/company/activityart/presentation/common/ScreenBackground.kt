@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
 fun ScreenBackground(
@@ -22,7 +23,7 @@ fun ScreenBackground(
     horizontalAlignment: Horizontal = CenterHorizontally,
     scrollState: ScrollState = rememberScrollState(),
     verticalArrangement: Vertical = spacedBy(
-        space = 16.dp,
+        space = spacing.medium,
         alignment = CenterVertically
     ),
     content: @Composable ColumnScope.() -> Unit
@@ -32,7 +33,7 @@ fun ScreenBackground(
         horizontalAlignment = horizontalAlignment,
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(spacing.medium)
             .verticalScroll(scrollState),
         verticalArrangement = verticalArrangement
     )

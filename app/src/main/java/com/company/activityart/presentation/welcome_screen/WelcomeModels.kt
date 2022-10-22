@@ -9,11 +9,7 @@ sealed interface WelcomeViewEvent : ViewEvent {
     object ClickedLogout : WelcomeViewEvent
 }
 
-sealed interface WelcomeViewState : ViewState {
-    data class LoadError(val message: String) : WelcomeViewState
-    object Loading : WelcomeViewState
-    data class Standby(
-        val athleteName: String,
-        val athleteImageUrl: String,
-    ) : WelcomeViewState
-}
+data class WelcomeViewState(
+    val athleteName: String,
+    val athleteImageUrl: String,
+) : ViewState

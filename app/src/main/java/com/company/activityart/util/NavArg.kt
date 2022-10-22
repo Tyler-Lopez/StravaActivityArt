@@ -22,6 +22,7 @@ sealed class NavArg(val navArg: NamedNavArgument) {
         type = NavType.StringType
     })
 
+    val argPlaceholder = "{${navArg.name}}"
     val key: String = navArg.name
     val route: String = "$key={$key}"
 }

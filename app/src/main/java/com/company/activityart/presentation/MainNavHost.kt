@@ -14,6 +14,7 @@ import com.company.activityart.presentation.load_activities_screen.LoadActivitie
 import com.company.activityart.presentation.login_screen.LoginScreen
 import com.company.activityart.presentation.edit_art_screen.EditArtViewDelegate
 import com.company.activityart.presentation.edit_art_screen.EditArtViewModel
+import com.company.activityart.presentation.login_screen.LoginViewModel
 import com.company.activityart.presentation.welcome_screen.WelcomeScreen
 import com.company.activityart.presentation.welcome_screen.WelcomeViewModel
 import com.company.activityart.util.NavArg.*
@@ -34,16 +35,18 @@ fun MainNavHost(
         startDestination = startRoute
     ) {
         swipingOutComposable(route = Login.route) {
-            LoginScreen(router)
+            LoginScreen(hiltViewModel<LoginViewModel>().apply {
+                attachRouter(router)
+            })
         }
         swipingOutComposable(route = Welcome.route) {
             WelcomeScreen(hiltViewModel<WelcomeViewModel>().apply {
-                LaunchedEffect(router) { attachRouter(router) }
+                attachRouter(router)
             })
         }
         swipingInOutComposable(route = About.route) {
             AboutScreen(hiltViewModel<AboutViewModel>().apply {
-                LaunchedEffect(router) { attachRouter(router) }
+                attachRouter(router)
             })
         }
         /** TODO, determine if activities have been Singleton cached and

@@ -55,7 +55,11 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
 
                     viewState.collectAsState().value?.let {
-                        val startScreen = if (it is Authenticated) Welcome.route else Login.route
+                        val startScreen = if (it is Authenticated) {
+                            Welcome.route
+                        } else {
+                            Login.route
+                        }
                         AthleteApiArtTheme {
                             MainNavHost(
                                 navController = navController,
@@ -99,7 +103,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = LoadActivities.withArgs(
                     args = arrayOf(
-                        NavArg.AthleteId.key to athleteId.toString(),
+                        NavArg.AthleteId.key to athleteId,
                         NavArg.AccessToken.key to accessToken
                     )
                 )
@@ -109,7 +113,10 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateLogin() {
         navController.navigate(route = Login.route) {
-            popUpTo(route = Welcome.route) {
+            popUpTo(
+                route = Welcome.route +
+                        "?${NavArg.AthleteId.route}&${NavArg.AccessToken.route}"
+            ) {
                 inclusive = true
             }
         }

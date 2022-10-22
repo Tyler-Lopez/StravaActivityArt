@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
-): BaseRoutingViewModel<
+) : BaseRoutingViewModel<
         MainViewState,
         MainViewEvent,
         MainDestination>() {
@@ -33,14 +33,17 @@ class MainViewModel @Inject constructor(
 
     private fun onLoadAuthentication(event: LoadAuthentication) {
         viewModelScope.launch {
-            pushState(when (val response = getAccessTokenUseCase(event.uri)) {
-                is Success -> {
-                    athleteId = response.data.athleteId
-                    accessToken = response.data.accessToken
-                    Authenticated
+            pushState(
+                when (val response = getAccessTokenUseCase(event.uri)) {
+                    is Success -> {
+                        Authenticated(
+                            athleteId = response.data.athleteId,
+                            accessToken = response.data.accessToken
+                        )
+                    }
+                    is Error -> Unauthenticated
                 }
-                is Error -> Unauthenticated
-            })
+            )
         }
     }
 }

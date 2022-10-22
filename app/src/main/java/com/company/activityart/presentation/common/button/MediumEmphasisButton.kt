@@ -20,7 +20,8 @@ import com.company.activityart.R
 @Composable
 fun MediumEmphasisButton(
     size: ButtonSize,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
+        .defaultMinSize(minWidth = dimensionResource(id = R.dimen.button_min_width)),
     text: String? = null,
     imageVector: ImageVector? = null,
     enabled: Boolean = true,

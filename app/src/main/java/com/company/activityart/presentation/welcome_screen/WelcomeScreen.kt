@@ -1,13 +1,34 @@
 package com.company.activityart.presentation.welcome_screen
 
-import androidx.compose.material.CircularProgressIndicator
+import androidx.annotation.Dimension
+import androidx.annotation.Px
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.company.activityart.presentation.common.ScreenBackgroundLegacy
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale.Companion.FillBounds
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.company.activityart.R
+import com.company.activityart.presentation.common.button.ButtonSize
+import com.company.activityart.presentation.common.button.HighEmphasisButton
+import com.company.activityart.presentation.common.button.MediumEmphasisButton
+import com.company.activityart.presentation.common.type.Subhead
+import com.company.activityart.presentation.common.type.TitleTwo
+import com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables.ScreenBackground
+import com.company.activityart.presentation.ui.theme.Silver
 import com.company.activityart.presentation.ui.theme.spacing
-import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Loading
-import com.company.activityart.presentation.welcome_screen.WelcomeViewState.Standby
-import com.company.activityart.presentation.welcome_screen.composables.WelcomeScreenStandby
 
 
 /*
@@ -21,17 +42,46 @@ https://developers.strava.com/guidelines/
 
 @Composable
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
-    ScreenBackgroundLegacy(spacedBy = spacing.medium) {
+    ScreenBackground {
         viewModel.viewState.collectAsState().value?.apply {
-            when (this) {
-                is Loading -> CircularProgressIndicator()
-                is Standby -> WelcomeScreenStandby(
-                    athleteImageUrl = athleteImageUrl,
-                    athleteName = athleteName,
-                    eventReceiver = viewModel
-                )
-                else -> {}
+            @Dimension val profilePictureSize = dimensionResource(id = R.dimen.profile_picture_size)
+            @Px val profilePictureSizePx = LocalDensity.current.run {
+                profilePictureSize.toPx().toInt()
             }
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(athleteImageUrl)
+                    .size(size = profilePictureSizePx)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.ic_avatar_profile),
+                error = painterResource(id = R.drawable.ic_avatar_profile),
+                fallback = painterResource(id = R.drawable.ic_avatar_profile),
+                contentScale = FillBounds,
+                contentDescription = stringResource(id = R.string.profile_picture_cd),
+                modifier = Modifier
+                    .size(profilePictureSize)
+                    .clip(CircleShape)
+                    .border(
+                        width = dimensionResource(id = R.dimen.rounded_picture_stroke_width),
+                        color = Silver,
+                        shape = CircleShape
+                    )
+            )
+            Subhead(text = stringResource(id = R.string.app_name))
+            TitleTwo(text = athleteName)
+            HighEmphasisButton(
+                size = ButtonSize.LARGE,
+                text = stringResource(id = R.string.welcome_button_make_art),
+            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedMakeArt) }
+            MediumEmphasisButton(
+                size = ButtonSize.LARGE,
+                text = stringResource(id = R.string.welcome_button_about),
+            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedAbout) }
+            MediumEmphasisButton(
+                size = ButtonSize.LARGE,
+                text = stringResource(id = R.string.welcome_button_logout),
+            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedLogout) }
         }
     }
 }

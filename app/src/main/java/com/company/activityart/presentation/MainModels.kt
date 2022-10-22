@@ -8,7 +8,10 @@ import com.company.activityart.architecture.ViewState
 sealed interface MainViewState : ViewState {
     object LoadingAuthentication : MainViewState
     object Unauthenticated : MainViewState
-    object Authenticated : MainViewState
+    data class Authenticated(
+        val athleteId: Long,
+        val accessToken: String
+    ) : MainViewState
 }
 
 sealed interface MainViewEvent : ViewEvent {
@@ -20,7 +23,7 @@ sealed interface MainDestination : Destination {
     object NavigateAbout : MainDestination
     object NavigateLogin : MainDestination
     data class NavigateLoadActivities(
-        val athleteId: Long,
+        val athleteId: String,
         val accessToken: String
     ) : MainDestination
 
