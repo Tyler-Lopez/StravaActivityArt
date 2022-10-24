@@ -2,7 +2,7 @@ package com.company.activityart.domain.use_case.authentication
 
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.models.OAuth2
-import com.company.activityart.util.Resource
+import com.company.activityart.util.Response
 import com.company.activityart.util.constants.TokenConstants.CLIENT_ID
 import com.company.activityart.util.constants.TokenConstants.CLIENT_SECRET
 import java.util.concurrent.CancellationException
@@ -17,9 +17,9 @@ class GetAccessTokenFromRemoteAuthCodeUseCase @Inject constructor(
 
     suspend operator fun invoke(
         authorizationCode: String
-    ): Resource<OAuth2> {
+    ): Response<OAuth2> {
         return try {
-            Resource.Success(
+            Response.Success(
                 api.getAccessToken(
                     clientId = CLIENT_ID,
                     clientSecret = CLIENT_SECRET,
@@ -32,7 +32,7 @@ class GetAccessTokenFromRemoteAuthCodeUseCase @Inject constructor(
             ensure we do not catch CancellationException */
             if (e is CancellationException) throw e
             e.printStackTrace()
-            Resource.Error(exception = e)
+            Response.Error(exception = e)
         }
     }
 }

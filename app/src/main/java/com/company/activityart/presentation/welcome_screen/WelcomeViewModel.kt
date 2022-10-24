@@ -11,6 +11,8 @@ import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseC
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.welcome_screen.WelcomeViewEvent.*
+import com.company.activityart.util.doOnError
+import com.company.activityart.util.doOnSuccess
 import com.company.activityart.util.ext.accessToken
 import com.company.activityart.util.ext.athleteId
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -5,7 +5,7 @@ import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
 import com.company.activityart.presentation.MainViewState.*
 import com.company.activityart.presentation.MainViewEvent.*
-import com.company.activityart.util.Resource.*
+import com.company.activityart.util.Response.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

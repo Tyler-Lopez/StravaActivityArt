@@ -5,8 +5,8 @@ import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.data.remote.responses.Bearer
 import com.company.activityart.domain.models.OAuth2
 import com.company.activityart.domain.models.requiresRefresh
-import com.company.activityart.util.Resource
-import com.company.activityart.util.Resource.*
+import com.company.activityart.util.Response
+import com.company.activityart.util.Response.*
 import com.company.activityart.util.constants.TokenConstants
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -23,7 +23,7 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
         private const val GRANT_TYPE = "refresh_token"
     }
 
-    suspend operator fun invoke(): Resource<OAuth2> {
+    suspend operator fun invoke(): Response<OAuth2> {
         getAccessTokenFromLocalUseCase().apply {
             return when {
                 this == null -> Error()
@@ -35,7 +35,7 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
     }
 
     private suspend fun onRequiresRefresh(refreshToken: String, athleteId: Long):
-            Resource<OAuth2> {
+            Response<OAuth2> {
         return try {
             Success(
                 athleteApi.getAccessTokenFromRefresh(

@@ -1,11 +1,11 @@
 package com.company.activityart.domain.use_case.athlete
 
 import com.company.activityart.domain.models.Athlete
-import com.company.activityart.domain.models.dataExpired
 import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.company.activityart.domain.use_case.authentication.GetAccessTokenUseCase
-import com.company.activityart.util.Resource
-import com.company.activityart.util.Resource.Success
+import com.company.activityart.util.Response
+import com.company.activityart.util.Response.Success
+import com.company.activityart.util.doOnError
+import com.company.activityart.util.doOnSuccess
 import javax.inject.Inject
 
 /**
@@ -29,7 +29,7 @@ class GetAthleteUseCase @Inject constructor(
     suspend operator fun invoke(
         athleteId: Long,
         accessToken: String
-    ): Resource<Athlete> {
+    ): Response<Athlete> {
         return getAthleteFromLocalUseCase(athleteId).run {
             when {
                 this == null -> getAthleteFromRemoteUseCase(accessToken)

@@ -1,8 +1,10 @@
 package com.company.activityart.domain.use_case.activities
 
 import com.company.activityart.domain.models.Activity
-import com.company.activityart.util.Resource
+import com.company.activityart.util.Response
 import com.company.activityart.util.TimeUtils
+import com.company.activityart.util.doOnError
+import com.company.activityart.util.doOnSuccess
 import javax.inject.Inject
 
 class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
@@ -24,7 +26,7 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
         accessToken: String,
         year: Int,
         startMonth: Int = FIRST_MONTH_OF_YEAR
-    ): Resource<List<Activity>> {
+    ): Response<List<Activity>> {
 
         var page = FIRST_PAGE
         var activitiesInLastPage = ACTIVITIES_PER_PAGE
@@ -55,6 +57,6 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
                 }
         }
 
-        return Resource.Success(activities)
+        return Response.Success(activities)
     }
 }

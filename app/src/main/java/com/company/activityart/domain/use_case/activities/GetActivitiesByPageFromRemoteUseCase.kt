@@ -2,7 +2,7 @@ package com.company.activityart.domain.use_case.activities
 
 import com.company.activityart.data.remote.AthleteApi
 import com.company.activityart.domain.models.Activity
-import com.company.activityart.util.Resource
+import com.company.activityart.util.Response
 import com.google.maps.android.PolyUtil
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -22,11 +22,11 @@ class GetActivitiesByPageFromRemoteUseCase @Inject constructor(
         activitiesPerPage: Int,
         beforeUnixSeconds: Int,
         afterUnixSeconds: Int
-    ): Resource<List<Activity>> {
+    ): Response<List<Activity>> {
         println("here before is $beforeUnixSeconds")
         println("here after is $afterUnixSeconds")
         return try {
-            Resource.Success(data = api.getActivities(
+            Response.Success(data = api.getActivities(
                 authHeader = "Bearer $code",
                 page = page,
                 perPage = activitiesPerPage,
@@ -44,7 +44,7 @@ class GetActivitiesByPageFromRemoteUseCase @Inject constructor(
             ensure we do not catch CancellationException */
             if (e is CancellationException) throw e
             e.printStackTrace()
-            Resource.Error(exception = e)
+            Response.Error(exception = e)
         }
     }
 }

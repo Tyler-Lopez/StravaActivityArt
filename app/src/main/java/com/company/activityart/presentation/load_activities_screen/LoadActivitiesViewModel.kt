@@ -9,8 +9,10 @@ import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewEvent.*
 import com.company.activityart.presentation.load_activities_screen.LoadActivitiesViewState.*
-import com.company.activityart.util.Resource
-import com.company.activityart.util.Resource.*
+import com.company.activityart.util.Response
+import com.company.activityart.util.Response.*
+import com.company.activityart.util.doOnError
+import com.company.activityart.util.doOnSuccess
 import com.company.activityart.util.ext.accessToken
 import com.company.activityart.util.ext.athleteId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,7 +75,7 @@ class LoadActivitiesViewModel @Inject constructor(
 
     private suspend fun loadActivities() {
         /** Load activities until complete or
-         * returned [Resource] is an [Error] **/
+         * returned [Response] is an [Error] **/
         (YEAR_NOW downTo YEAR_START).takeWhile { year ->
             (getActivitiesByYearUseCase(
                 accessToken = accessToken,

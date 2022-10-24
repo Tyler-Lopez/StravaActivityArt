@@ -3,9 +3,10 @@ package com.company.activityart.domain.use_case.activities
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.Athlete
 import com.company.activityart.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
-import com.company.activityart.util.Resource
-import com.company.activityart.util.Resource.Success
+import com.company.activityart.util.Response
+import com.company.activityart.util.Response.Success
 import com.company.activityart.util.TimeUtils
+import com.company.activityart.util.doOnSuccess
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -36,7 +37,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
         accessToken: String,
         athleteId: Long,
         year: Int,
-    ): Resource<List<Activity>> {
+    ): Response<List<Activity>> {
 
         /** If Singleton RAM cache has been populated for this year prev, return that **/
         getActivitiesFromCacheUseCase(year)?.apply { return Success(this) }

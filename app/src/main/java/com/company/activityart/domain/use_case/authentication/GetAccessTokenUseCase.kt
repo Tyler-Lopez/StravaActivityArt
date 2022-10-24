@@ -2,8 +2,10 @@ package com.company.activityart.domain.use_case.authentication
 
 import android.net.Uri
 import com.company.activityart.domain.models.OAuth2
-import com.company.activityart.util.Resource
+import com.company.activityart.util.Response
 import com.company.activityart.util.UriUtils
+import com.company.activityart.util.doOnError
+import com.company.activityart.util.doOnSuccess
 import javax.inject.Inject
 
 /**
@@ -16,7 +18,7 @@ class GetAccessTokenUseCase @Inject constructor(
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
     private val uriUtils: UriUtils
 ) {
-    suspend operator fun invoke(uri: Uri? = null): Resource<OAuth2> {
+    suspend operator fun invoke(uri: Uri? = null): Response<OAuth2> {
 
         /** If URI was provided, parse out authorization code **/
         val authCode: String? = uri?.let { uriUtils.parseUri(it) }
