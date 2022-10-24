@@ -99,6 +99,7 @@ fun EditArtResizeScreen(
                         if (res is RotatingResolution && res.swappingChangesSize) {
                             MediumEmphasisButton(
                                 imageVector = Icons.Default.RotateRight,
+                                modifier = Modifier,
                                 size = ButtonSize.MEDIUM,
                                 onClick = {
                                     eventReceiver.onEvent(

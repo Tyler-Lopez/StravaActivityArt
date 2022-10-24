@@ -27,7 +27,7 @@ fun FilterSectionDate(
     dateMinDateSelectedYearMonthDay: YearMonthDay,
     dateMaxDateTotalYearMonthDay: YearMonthDay,
     dateMinDateTotalYearMonthDay: YearMonthDay,
-
+    selectedActivities: Int,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val beforeDatePickerDialog = dateMaxDateSelectedYearMonthDay.run {
@@ -89,5 +89,6 @@ fun FilterSectionDate(
                 }
             }
         }
+        FilterActivityCount(activityCount = 5)
     }
 }

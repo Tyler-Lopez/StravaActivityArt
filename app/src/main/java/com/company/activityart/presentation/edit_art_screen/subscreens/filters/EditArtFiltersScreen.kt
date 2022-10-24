@@ -32,7 +32,8 @@ fun EditArtFiltersScreen(
             dateMinDateSelectedYearMonthDay = dateMinDateSelectedYearMonthDay,
             dateMaxDateTotalYearMonthDay = dateMaxDateTotalYearMonthDay,
             dateMinDateTotalYearMonthDay = dateMinDateTotalYearMonthDay,
-            eventReceiver = eventReceiver
+            eventReceiver = eventReceiver,
+            selectedActivities = 5
         )
         FilterSectionActivityType(
             typesWithSelectedFlag = typesWithSelectedFlag,
