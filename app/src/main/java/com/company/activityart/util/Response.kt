@@ -13,7 +13,6 @@ sealed interface Response<TypeOfData> {
         val exception: Exception? = null,
         val message: String? = null
     ) : Response<TypeOfData>
-
 }
 
 /**
