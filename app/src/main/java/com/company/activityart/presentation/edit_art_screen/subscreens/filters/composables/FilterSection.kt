@@ -8,8 +8,11 @@ import com.company.activityart.R
 import com.company.activityart.presentation.ui.theme.Typography
 
 @Composable
-fun FilterActivityCount(
-    activityCount: Int
-) {
-
+fun FilterSection() {
+    Text(
+        text = "Date window includes 200 activities",
+        style = Typography.subtitle1,
+        fontWeight = FontWeight.Bold,
+        color = colorResource(R.color.pumpkin)
+    )
 }
