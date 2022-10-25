@@ -106,6 +106,12 @@
     <string name="month_12_long">December</string>
     <string name="month_12_short">DEC</string>
 
+    <plurals name="edit_art_filters_activities_filtered">
+        <item quantity="zero">Oops! No activities for this %s</item>
+        <item quantity="one">%s includes %d activity</item>
+        <item quantity="other">%s includes %d activities</item>
+    </plurals>
+
     <string name="edit_art_filters_date_header">Date</string>
     <string name="edit_art_filters_date_description">
         Which window of time should activities be selected from?

@@ -58,7 +58,7 @@ fun FilterSectionDate(
             datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
         }
     }
-    Section(
+    FilterSection(
         header = stringResource(R.string.edit_art_filters_date_header),
         description = stringResource(R.string.edit_art_filters_date_description),
     ) {
@@ -89,6 +89,5 @@ fun FilterSectionDate(
                 }
             }
         }
-        FilterActivityCount(activityCount = 5)
     }
 }
