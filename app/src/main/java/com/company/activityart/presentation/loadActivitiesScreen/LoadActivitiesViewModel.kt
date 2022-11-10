@@ -39,10 +39,6 @@ class LoadActivitiesViewModel @Inject constructor(
         mutableListOf()
     private var activitiesCount = NO_ACTIVITIES_LOADED_COUNT
 
-    init {
-        Loading(activitiesCount).push()
-    }
-
     override fun onEvent(event: LoadActivitiesViewEvent) {
         viewModelScope.launch {
             when (event) {
@@ -66,10 +62,11 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     override fun onRouterAttached() {
-        /** Load activities only after [Router] is attached as
-         * successful load results in automatic navigation to next screen */
-        viewModelScope.launch(Dispatchers.IO) {
-            loadActivities()
+        if (lastPushedState == null) {
+            Loading().push()
+            viewModelScope.launch(Dispatchers.IO) {
+                loadActivities()
+            }
         }
     }
 

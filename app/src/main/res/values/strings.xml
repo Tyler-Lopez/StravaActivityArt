@@ -163,4 +163,6 @@
     <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
+
+    <string name="save_art_header">Save Art</string>
 </resources>
