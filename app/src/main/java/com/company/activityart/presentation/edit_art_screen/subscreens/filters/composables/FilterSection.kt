@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.company.activityart.R
 import com.company.activityart.presentation.edit_art_screen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.Typography
+import okhttp3.internal.format
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

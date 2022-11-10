@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.toLowerCase
 import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize
@@ -61,6 +62,9 @@ fun FilterSectionDate(
     FilterSection(
         header = stringResource(R.string.edit_art_filters_date_header),
         description = stringResource(R.string.edit_art_filters_date_description),
+        filteredActivityCount = selectedActivities,
+        // Todo, this isn't great.
+        filterType = stringResource(R.string.edit_art_filters_date_header).lowercase()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

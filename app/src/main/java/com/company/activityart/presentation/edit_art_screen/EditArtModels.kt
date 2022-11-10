@@ -66,6 +66,12 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper
     ) : EditArtViewState
 
+    /**
+     * @param filterDateSelectedActivitiesCount How many activities are selected
+     * after applying filter for date and any other preceding filters.
+     * @param filterTypesCount How many activities are selected after applying
+     * filter for type and any other preceding filters.
+     */
     data class Standby(
         val bitmap: Bitmap?,
         override val dialogNavigateUpActive: Boolean,
@@ -73,7 +79,9 @@ sealed interface EditArtViewState : ViewState {
         val filterDateMinDateSelectedYearMonthDay: YearMonthDay,
         val filterDateMaxDateTotalYearMonthDay: YearMonthDay,
         val filterDateMinDateTotalYearMonthDay: YearMonthDay,
+        val filterDateSelectedActivitiesCount: Int,
         val filterTypesWithSelections: Map<String, Boolean>,
+        val filterTypesCount: Int,
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateFilter: ScrollState,
         val scrollStateStyle: ScrollState,
