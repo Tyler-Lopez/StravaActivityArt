@@ -24,12 +24,7 @@ sealed class Screen(val route: String) {
     object About : Screen("About")
     object LoadActivities : Screen("LoadActivities")
     object EditArt : Screen("EditArt")
-
-    object FilterMonth : Screen("FilterMonth")
-    object FilterType : Screen("FilterType")
-    object FilterGear : Screen("FilterGear")
-    object FilterDistance : Screen("FilterDistance")
-    object VisualizeActivities : Screen("VisualizeActivities")
+    object SaveArt : Screen("SaveArt")
 
     fun withArgs(args: Array<Pair<String, String>>? = null): String {
         return buildString {

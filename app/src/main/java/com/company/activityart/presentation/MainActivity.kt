@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateLoadActivities -> navigateLoadActivities(destination)
             is NavigateLogin -> navigateLogin()
             is NavigateEditArt -> navigateMakeArt(destination)
+            is NavigateSaveArt -> navigateSaveArt()
             is NavigateUp -> navigateUp()
         }
     }
@@ -131,6 +132,10 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 ) { inclusive = true }
             }
         }
+    }
+
+    private fun navigateSaveArt() {
+        navController.navigate(SaveArt.route)
     }
 
     private fun navigateUp() {

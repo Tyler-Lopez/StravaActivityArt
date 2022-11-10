@@ -28,5 +28,6 @@ sealed interface MainDestination : Destination {
     ) : MainDestination
 
     data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
+    object NavigateSaveArt : MainDestination
     object NavigateUp : MainDestination
 }

@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.edit_art_screen.subscreens.filters.composables
+package com.company.activityart.presentation.editArtScreen.subscreens.filters.composables
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment.Horizontal
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable

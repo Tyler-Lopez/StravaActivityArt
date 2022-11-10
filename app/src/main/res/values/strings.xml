@@ -48,8 +48,8 @@
     <!-- Text shown on button which progresses to the next stage of making art when clicked -->
     <string name="button_continue">Continue</string>
 
-    <!-- Text shown on text button which saves an athlete's art to their phone's storage -->
-    <string name="button_save_uppercase">SAVE</string>
+    <!-- Text shown on text button which redirects athlete to the next step in creating art -->
+    <string name="button_continue_uppercase">CONTINUE</string>
 
     <!-- Text shown on button which opens art preview -->
     <string name="button_preview_uppercase">PREVIEW</string>

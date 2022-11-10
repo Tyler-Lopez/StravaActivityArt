@@ -3,11 +3,10 @@ package com.company.activityart.util
 import android.graphics.*
 import android.util.Size
 import androidx.annotation.Px
-import androidx.compose.ui.graphics.Color.Companion.Cyan
 import androidx.core.graphics.withClip
 import com.company.activityart.domain.models.Activity
-import com.company.activityart.presentation.edit_art_screen.ColorWrapper
-import com.company.activityart.presentation.edit_art_screen.StrokeWidthType
+import com.company.activityart.presentation.editArtScreen.ColorWrapper
+import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlin.math.*
