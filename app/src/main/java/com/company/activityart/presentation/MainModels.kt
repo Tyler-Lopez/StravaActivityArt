@@ -1,5 +1,6 @@
 package com.company.activityart.presentation
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.company.activityart.architecture.Destination
 import com.company.activityart.architecture.ViewEvent
@@ -28,6 +29,6 @@ sealed interface MainDestination : Destination {
     ) : MainDestination
 
     data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
-    object NavigateSaveArt : MainDestination
+    data class NavigateSaveArt(val bitmap: Bitmap) : MainDestination
     object NavigateUp : MainDestination
 }

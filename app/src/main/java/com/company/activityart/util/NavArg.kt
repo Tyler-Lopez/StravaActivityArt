@@ -1,5 +1,6 @@
 package com.company.activityart.util
 
+import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
@@ -13,6 +14,7 @@ sealed class NavArg(val navArg: NamedNavArgument) {
     companion object {
         private const val ATHLETE_ID_KEY = "athleteId"
         private const val ACCESS_TOKEN_KEY = "accessToken"
+        private const val BITMAP_KEY = "bitmap"
     }
 
     object AthleteId : NavArg(navArgument(name = ATHLETE_ID_KEY) {
@@ -22,7 +24,10 @@ sealed class NavArg(val navArg: NamedNavArgument) {
         type = NavType.StringType
     })
 
-    val argPlaceholder = "{${navArg.name}}"
+    object Bitmap : NavArg(navArgument(name = BITMAP_KEY) {
+        type = NavType.StringType
+    })
+
     val key: String = navArg.name
     val route: String = "$key={$key}"
 }

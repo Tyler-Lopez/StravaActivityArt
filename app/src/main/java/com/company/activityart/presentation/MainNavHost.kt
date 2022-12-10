@@ -3,7 +3,6 @@ package com.company.activityart.presentation
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.company.activityart.architecture.Router
@@ -19,6 +18,7 @@ import com.company.activityart.presentation.saveArtScreen.SaveArtViewDelegate
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewModel
 import com.company.activityart.presentation.welcomeScreen.WelcomeScreen
 import com.company.activityart.presentation.welcomeScreen.WelcomeViewModel
+import com.company.activityart.util.NavArg
 import com.company.activityart.util.NavArg.AccessToken
 import com.company.activityart.util.NavArg.AthleteId
 import com.company.activityart.util.Screen.*
@@ -56,8 +56,8 @@ fun MainNavHost(
          * if so skip this screen **/
         swipingInOutComposable(
             route = LoadActivities.route +
-                    "?${AthleteId.route}&${AccessToken.route}",
-            arguments = listOf(AthleteId.navArg, AccessToken.navArg)
+                    "?${NavArg.AthleteId.route}&${NavArg.AccessToken.route}",
+            arguments = listOf(NavArg.AthleteId.navArg, NavArg.AccessToken.navArg)
         ) {
             LoadActivitiesScreen(hiltViewModel<LoadActivitiesViewModel>().apply {
                 attachRouter(router)
@@ -68,7 +68,10 @@ fun MainNavHost(
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(route = SaveArt.route) {
+        swipingInOutComposable(
+            route = SaveArt.route + "/{${NavArg.Bitmap.key}}",
+            arguments = listOf(NavArg.Bitmap.navArg)
+        ) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
                 attachRouter(router)
             })

@@ -28,6 +28,7 @@ fun FilterSection(
         modifier = modifier
     ) {
         content()
+        /*
         Text(
             text = pluralStringResource(
                 id = R.plurals.edit_art_filters_activities_filtered,
@@ -38,5 +39,7 @@ fun FilterSection(
             fontWeight = FontWeight.Bold,
             color = colorResource(R.color.pumpkin)
         )
+
+         */
     }
 }

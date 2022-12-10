@@ -20,7 +20,6 @@ import kotlinx.parcelize.RawValue
 
 sealed interface EditArtViewEvent : ViewEvent {
 
-
     object DialogNavigateUpCancelled : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
     object MakeFullscreenClicked : EditArtViewEvent

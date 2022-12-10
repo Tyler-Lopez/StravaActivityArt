@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
@@ -22,6 +23,7 @@ import com.company.activityart.util.NavArg
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
@@ -85,7 +87,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateLoadActivities -> navigateLoadActivities(destination)
             is NavigateLogin -> navigateLogin()
             is NavigateEditArt -> navigateMakeArt(destination)
-            is NavigateSaveArt -> navigateSaveArt()
+            is NavigateSaveArt -> navigateSaveArt(destination)
             is NavigateUp -> navigateUp()
         }
     }
@@ -134,8 +136,12 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         }
     }
 
-    private fun navigateSaveArt() {
-        navController.navigate(SaveArt.route)
+    private fun navigateSaveArt(destination: NavigateSaveArt) {
+        navController.navigate(route = SaveArt.withRequiredArgs(
+            args = arrayOf(
+               Gson().toJson(destination.bitmap).toString()
+            )
+        ))
     }
 
     private fun navigateUp() {

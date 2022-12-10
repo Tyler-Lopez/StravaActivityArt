@@ -187,7 +187,9 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSaveClicked() {
         viewModelScope.launch {
-            routeTo(MainDestination.NavigateSaveArt)
+            (lastPushedState as? Standby)?.run {
+                routeTo(MainDestination.NavigateSaveArt(bitmap!!))
+            }
         }
     }
 
