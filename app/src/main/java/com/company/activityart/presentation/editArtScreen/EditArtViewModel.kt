@@ -1,5 +1,6 @@
 package com.company.activityart.presentation.editArtScreen
 
+import android.graphics.Bitmap
 import android.util.Size
 import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.viewModelScope
@@ -86,6 +87,7 @@ class EditArtViewModel @Inject constructor(
             TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
         }.sorted()
     }
+    private var bitmapFullSize: Bitmap? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
     private val pagerState = PagerState(pagerHeaders.size)
