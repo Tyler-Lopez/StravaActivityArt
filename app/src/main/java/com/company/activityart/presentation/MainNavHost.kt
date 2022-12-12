@@ -18,8 +18,9 @@ import com.company.activityart.presentation.saveArtScreen.SaveArtViewDelegate
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewModel
 import com.company.activityart.presentation.welcomeScreen.WelcomeScreen
 import com.company.activityart.presentation.welcomeScreen.WelcomeViewModel
-import com.company.activityart.util.NavArg
 import com.company.activityart.util.Screen.*
+import com.company.activityart.util.accessTokenNavSpec
+import com.company.activityart.util.athleteIdNavSpec
 import com.company.activityart.util.ext.swipingInOutComposable
 import com.company.activityart.util.ext.swipingOutComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -53,9 +54,14 @@ fun MainNavHost(
         /** TODO, determine if activities have been Singleton cached and
          * if so skip this screen **/
         swipingInOutComposable(
-            route = LoadActivities.route +
-                    "?${NavArg.athleteId.route}&${NavArg.accessToken.route}",
-            arguments = listOf(NavArg.athleteId.navArg, NavArg.accessToken.navArg)
+            route = LoadActivities.buildRoute(
+                athleteIdNavSpec,
+                accessTokenNavSpec
+            ),
+            arguments = listOf(
+                athleteIdNavSpec.navArg,
+                accessTokenNavSpec.navArg
+            )
         ) {
             LoadActivitiesScreen(hiltViewModel<LoadActivitiesViewModel>().apply {
                 attachRouter(router)

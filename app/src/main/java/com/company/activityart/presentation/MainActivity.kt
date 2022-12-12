@@ -12,18 +12,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
 import com.company.activityart.presentation.MainViewState.Authenticated
 import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
-import com.company.activityart.util.NavArg
 import com.company.activityart.util.Screen.*
+import com.company.activityart.util.accessTokenNavSpec
+import com.company.activityart.util.athleteIdNavSpec
 import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
@@ -106,8 +105,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = LoadActivities.withArgs(
                     args = arrayOf(
-                        NavArg.athleteId.key to athleteId,
-                        NavArg.accessToken.key to accessToken
+                        athleteIdNavSpec.key to athleteId,
+                        accessTokenNavSpec.key to accessToken
                     )
                 )
             )
@@ -118,7 +117,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         navController.navigate(route = Login.route) {
             popUpTo(
                 route = Welcome.route +
-                        "?${NavArg.athleteId.route}&${NavArg.accessToken.route}"
+                        "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
             ) {
                 inclusive = true
             }
@@ -130,18 +129,14 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             if (destination.fromLoad) {
                 popUpTo(
                     route = LoadActivities.route +
-                            "?${NavArg.athleteId.route}&${NavArg.accessToken.route}"
+                            "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
                 ) { inclusive = true }
             }
         }
     }
 
     private fun navigateSaveArt(destination: NavigateSaveArt) {
-        navController.navigate(route = SaveArt.withRequiredArgs(
-            args = arrayOf(
-               Gson().toJson(destination.bitmap).toString()
-            )
-        ))
+        navController.navigate(route = SaveArt.route)
     }
 
     private fun navigateUp() {

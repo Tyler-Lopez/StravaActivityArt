@@ -14,24 +14,29 @@ sealed class Screen(val route: String) {
     object EditArt : Screen("EditArt")
     object SaveArt : Screen("SaveArt")
 
-    fun withArgs(args: Array<Pair<String, String>>? = null): String {
+    fun buildRoute(
+        vararg navArgSpecifications: NavArgSpecification
+    ): String {
+        return buildString {
+            println("yo here")
+            append(route)
+            navArgSpecifications.forEachIndexed { index, spec ->
+                append(if (index == 0) '?' else '&')
+                    .append(spec.route)
+            }
+        }.also {
+            println("yo this is route $it")
+        }
+    }
+
+    fun withArgs(vararg args: Pair<String, String>): String {
         return buildString {
             append(route)
-            args?.forEachIndexed { index, pair ->
+            args.forEachIndexed { index, pair ->
                 append(if (index == 0) '?' else '&')
                     .append(pair.first)
                     .append('=')
                     .append(pair.second)
-            }
-        }
-    }
-
-    fun withRequiredArgs(args: Array<String>): String {
-        return buildString {
-            append(route)
-            args.forEach {
-                append('/')
-                    .append(it)
             }
         }
     }
