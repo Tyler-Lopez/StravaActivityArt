@@ -104,7 +104,6 @@ class EditArtViewModel @Inject constructor(
         resolutionList.last() as? Resolution.CustomResolution ?: error("Missing custom resolution")
     }
 
-
     init {
         pushState(Loading(pagerStateWrapper = pagerStateWrapper, dialogNavigateUpActive = false))
     }
