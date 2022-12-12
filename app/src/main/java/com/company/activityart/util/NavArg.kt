@@ -1,33 +1,35 @@
 package com.company.activityart.util
 
-import android.graphics.Bitmap
-import android.os.Parcelable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
+import androidx.navigation.NavType.Companion.LongType
+import androidx.navigation.NavType.Companion.StringType
 import androidx.navigation.navArgument
-import com.company.activityart.domain.models.Activity
-import com.google.gson.Gson
-import kotlinx.parcelize.Parcelize
 
-sealed class NavArg(val navArg: NamedNavArgument) {
+sealed interface NavArg {
 
     companion object {
         private const val ATHLETE_ID_KEY = "athleteId"
         private const val ACCESS_TOKEN_KEY = "accessToken"
-        private const val BITMAP_KEY = "bitmap"
+        private const val COLOR_ACTIVITIES_KEY = "colorActivities"
+        private const val COLOR_BACKGROUND_KEY = "colorBackground"
+
+        val athleteId = NavArgSpecification(ATHLETE_ID_KEY, LongType)
+        val accessToken = NavArgSpecification(ACCESS_TOKEN_KEY, StringType)
+        val colorActivities = NavArgSpecification(COLOR_ACTIVITIES_KEY, StringType)
+        val colorBackground = NavArgSpecification(COLOR_BACKGROUND_KEY, StringType)
     }
 
-    object AthleteId : NavArg(navArgument(name = ATHLETE_ID_KEY) {
-        type = NavType.LongType
-    })
-    object AccessToken : NavArg(navArgument(name = ACCESS_TOKEN_KEY) {
-        type = NavType.StringType
-    })
+    val navArg: NamedNavArgument
 
-    object Bitmap : NavArg(navArgument(name = BITMAP_KEY) {
-        type = NavType.StringType
-    })
+    data class NavArgSpecification(
+        val name: String,
+        val type: NavType<*>
+    ) : NavArg {
 
-    val key: String = navArg.name
-    val route: String = "$key={$key}"
+        override val navArg: NamedNavArgument = navArgument(name = name) { this.type = type }
+
+        val key: String = navArg.name
+        val route: String = "$key={$key}"
+    }
 }

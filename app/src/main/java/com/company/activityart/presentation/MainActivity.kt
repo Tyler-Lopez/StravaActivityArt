@@ -106,8 +106,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = LoadActivities.withArgs(
                     args = arrayOf(
-                        NavArg.AthleteId.key to athleteId,
-                        NavArg.AccessToken.key to accessToken
+                        NavArg.athleteId.key to athleteId,
+                        NavArg.accessToken.key to accessToken
                     )
                 )
             )
@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         navController.navigate(route = Login.route) {
             popUpTo(
                 route = Welcome.route +
-                        "?${NavArg.AthleteId.route}&${NavArg.AccessToken.route}"
+                        "?${NavArg.athleteId.route}&${NavArg.accessToken.route}"
             ) {
                 inclusive = true
             }
@@ -130,7 +130,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             if (destination.fromLoad) {
                 popUpTo(
                     route = LoadActivities.route +
-                            "?${NavArg.AthleteId.route}&${NavArg.AccessToken.route}"
+                            "?${NavArg.athleteId.route}&${NavArg.accessToken.route}"
                 ) { inclusive = true }
             }
         }

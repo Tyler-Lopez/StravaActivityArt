@@ -19,8 +19,6 @@ import com.company.activityart.presentation.saveArtScreen.SaveArtViewModel
 import com.company.activityart.presentation.welcomeScreen.WelcomeScreen
 import com.company.activityart.presentation.welcomeScreen.WelcomeViewModel
 import com.company.activityart.util.NavArg
-import com.company.activityart.util.NavArg.AccessToken
-import com.company.activityart.util.NavArg.AthleteId
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.ext.swipingInOutComposable
 import com.company.activityart.util.ext.swipingOutComposable
@@ -56,8 +54,8 @@ fun MainNavHost(
          * if so skip this screen **/
         swipingInOutComposable(
             route = LoadActivities.route +
-                    "?${NavArg.AthleteId.route}&${NavArg.AccessToken.route}",
-            arguments = listOf(NavArg.AthleteId.navArg, NavArg.AccessToken.navArg)
+                    "?${NavArg.athleteId.route}&${NavArg.accessToken.route}",
+            arguments = listOf(NavArg.athleteId.navArg, NavArg.accessToken.navArg)
         ) {
             LoadActivitiesScreen(hiltViewModel<LoadActivitiesViewModel>().apply {
                 attachRouter(router)
@@ -69,8 +67,7 @@ fun MainNavHost(
             })
         }
         swipingInOutComposable(
-            route = SaveArt.route + "/{${NavArg.Bitmap.key}}",
-            arguments = listOf(NavArg.Bitmap.navArg)
+            route = SaveArt.route,
         ) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
                 attachRouter(router)

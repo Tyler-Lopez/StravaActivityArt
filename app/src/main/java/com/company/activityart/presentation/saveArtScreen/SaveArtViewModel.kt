@@ -15,9 +15,9 @@ class SaveArtViewModel @Inject constructor(
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
 
     init {
-        val b: String? = savedStateHandle[NavArg.Bitmap.key]!!
-        val bitmap = Gson().fromJson(b, Bitmap::class.java)
-        println("yo here bitmap is $bitmap")
+      //  val b: String? = savedStateHandle[NavArg.Bitmap.key]!!
+       // val bitmap = Gson().fromJson(b, Bitmap::class.java)
+       // println("yo here bitmap is $bitmap")
     }
 
 
