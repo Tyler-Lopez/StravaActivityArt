@@ -18,9 +18,8 @@ import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
 import com.company.activityart.presentation.MainViewState.Authenticated
 import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
+import com.company.activityart.util.NavArgSpecification
 import com.company.activityart.util.Screen.*
-import com.company.activityart.util.accessTokenNavSpec
-import com.company.activityart.util.athleteIdNavSpec
 import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -105,8 +104,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = LoadActivities.withArgs(
                     args = arrayOf(
-                        athleteIdNavSpec.key to athleteId,
-                        accessTokenNavSpec.key to accessToken
+                        NavArgSpecification.AthleteId.key to athleteId,
+                        NavArgSpecification.AccessToken.key to accessToken
                     )
                 )
             )
@@ -116,8 +115,10 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     private fun navigateLogin() {
         navController.navigate(route = Login.route) {
             popUpTo(
-                route = Welcome.route +
-                        "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
+                route = Welcome.route
+                // todo identify what this was doing
+                //+
+                //     "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
             ) {
                 inclusive = true
             }
@@ -126,11 +127,17 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateMakeArt(destination: NavigateEditArt) {
         navController.navigate(EditArt.route) {
-            if (destination.fromLoad) {
-                popUpTo(
-                    route = LoadActivities.route +
-                            "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
-                ) { inclusive = true }
+            destination.apply {
+                if (fromLoad) {
+                    popUpTo(
+                        route = LoadActivities.buildRoute(
+                            listOf(
+                                NavArgSpecification.AthleteId,
+                                NavArgSpecification.AccessToken
+                            )
+                        )
+                    ) { inclusive = true }
+                }
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.company.activityart.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -18,14 +17,13 @@ import com.company.activityart.presentation.saveArtScreen.SaveArtViewDelegate
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewModel
 import com.company.activityart.presentation.welcomeScreen.WelcomeScreen
 import com.company.activityart.presentation.welcomeScreen.WelcomeViewModel
+import com.company.activityart.util.NavArgSpecification
 import com.company.activityart.util.Screen.*
-import com.company.activityart.util.accessTokenNavSpec
-import com.company.activityart.util.athleteIdNavSpec
 import com.company.activityart.util.ext.swipingInOutComposable
 import com.company.activityart.util.ext.swipingOutComposable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainNavHost(
     navController: NavHostController,
@@ -36,17 +34,17 @@ fun MainNavHost(
         navController = navController,
         startDestination = startRoute
     ) {
-        swipingOutComposable(route = Login.route) {
+        swipingOutComposable(Login) {
             LoginScreen(hiltViewModel<LoginViewModel>().apply {
                 attachRouter(router)
             })
         }
-        swipingOutComposable(route = Welcome.route) {
+        swipingOutComposable(Welcome) {
             WelcomeScreen(hiltViewModel<WelcomeViewModel>().apply {
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(route = About.route) {
+        swipingInOutComposable(About) {
             AboutScreen(hiltViewModel<AboutViewModel>().apply {
                 attachRouter(router)
             })
@@ -54,27 +52,22 @@ fun MainNavHost(
         /** TODO, determine if activities have been Singleton cached and
          * if so skip this screen **/
         swipingInOutComposable(
-            route = LoadActivities.buildRoute(
-                athleteIdNavSpec,
-                accessTokenNavSpec
-            ),
-            arguments = listOf(
-                athleteIdNavSpec.navArg,
-                accessTokenNavSpec.navArg
+            screen = LoadActivities,
+            navArgSpecifications = listOf(
+                NavArgSpecification.AthleteId,
+                NavArgSpecification.AccessToken
             )
         ) {
             LoadActivitiesScreen(hiltViewModel<LoadActivitiesViewModel>().apply {
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(route = EditArt.route) {
+        swipingInOutComposable(EditArt) {
             EditArtViewDelegate(viewModel = hiltViewModel<EditArtViewModel>().apply {
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(
-            route = SaveArt.route,
-        ) {
+        swipingInOutComposable(SaveArt) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
                 attachRouter(router)
             })

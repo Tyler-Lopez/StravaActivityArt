@@ -1,11 +1,8 @@
 package com.company.activityart.presentation.saveArtScreen
 
-import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.util.NavArg
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

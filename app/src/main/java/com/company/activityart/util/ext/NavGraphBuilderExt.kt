@@ -9,19 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
+import com.company.activityart.util.NavArgSpecification
+import com.company.activityart.util.Screen
 import com.google.accompanist.navigation.animation.composable
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.swipingInOutComposable(
-    route: String,
-    arguments: List<NamedNavArgument> = emptyList(),
+    screen: Screen,
+    navArgSpecifications: List<NavArgSpecification>? = null,
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ) {
     val animationDurationMs = 750
 
     composable(
-        route = route,
-        arguments = arguments,
+        route = screen.buildRoute(navArgSpecifications),
+        arguments = navArgSpecifications?.map { it.navArg } ?: emptyList(),
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentScope.SlideDirection.Start,
@@ -64,15 +66,15 @@ fun NavGraphBuilder.swipingInOutComposable(
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.swipingOutComposable(
-    route: String,
-    arguments: List<NamedNavArgument> = emptyList(),
+    screen: Screen,
+    navArgSpecifications: List<NavArgSpecification>? = null,
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ) {
     val animationDurationMs = 750
 
     composable(
-        route = route,
-        arguments = arguments,
+        route = screen.buildRoute(navArgSpecifications),
+        arguments = navArgSpecifications?.map { it.navArg } ?: emptyList(),
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentScope.SlideDirection.Start,

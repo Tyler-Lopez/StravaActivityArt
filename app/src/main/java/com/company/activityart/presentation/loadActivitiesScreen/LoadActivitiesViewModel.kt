@@ -6,17 +6,20 @@ import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.use_case.activities.GetActivitiesByYearUseCase
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.MainDestination.NavigateEditArt
+import com.company.activityart.presentation.MainDestination.NavigateUp
 import com.company.activityart.presentation.loadActivitiesScreen.LoadActivitiesViewEvent.*
-import com.company.activityart.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
+import com.company.activityart.presentation.loadActivitiesScreen.LoadActivitiesViewState.LoadError
+import com.company.activityart.presentation.loadActivitiesScreen.LoadActivitiesViewState.Loading
+import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.Response
-import com.company.activityart.util.Response.*
+import com.company.activityart.util.Response.Error
+import com.company.activityart.util.Response.Success
 import com.company.activityart.util.doOnError
 import com.company.activityart.util.doOnSuccess
-import com.company.activityart.util.ext.accessToken
-import com.company.activityart.util.ext.athleteId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.Year
 import javax.inject.Inject
 
@@ -32,8 +35,8 @@ class LoadActivitiesViewModel @Inject constructor(
         private val YEAR_NOW = Year.now().value
     }
 
-    private val athleteId: Long = savedStateHandle.athleteId
-    private val accessToken: String = savedStateHandle.accessToken
+    private val athleteId: Long = AthleteId.retrieveArg(savedStateHandle) as Long
+    private val accessToken: String = AccessToken.retrieveArg(savedStateHandle) as String
 
     private val activitiesByYear: MutableList<Pair<Int, List<Activity>>> =
         mutableListOf()
