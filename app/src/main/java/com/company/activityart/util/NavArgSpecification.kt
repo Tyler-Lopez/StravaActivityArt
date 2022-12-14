@@ -13,37 +13,54 @@ sealed interface NavArgSpecification {
         private const val ACCESS_TOKEN_KEY = "accessToken"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLOR_BACKGROUND_KEY = "colorBackground"
-        private const val STROKE_WIDTH_KEY = "strokeWidth"
-        private const val SIZE_WIDTH_KEY = "sizeWidth"
         private const val SIZE_HEIGHT_KEY = "sizeHeight"
+        private const val SIZE_WIDTH_KEY = "sizeWidth"
+        private const val STROKE_WIDTH_KEY = "strokeWidth"
 
         private const val ERROR_MISSING_KEY = "ERROR: Missing key [%s] in saved state handle."
     }
 
     val name: String
-    val navType: NavType<*>
 
     val key: String
         get() = navArg.name
 
     val navArg: NamedNavArgument
-        get() = navArgument(name = name) { type = navType }
+        get() = navArgument(name = name) { type = NavType.StringType }
 
     val route: String
         get() = "$key={$key}"
 
-    fun retrieveArg(handle: SavedStateHandle): Any {
+    fun retrieveArg(handle: SavedStateHandle): String {
         return handle[key] ?: error(ERROR_MISSING_KEY.format(key))
     }
 
     object AthleteId : NavArgSpecification {
         override val name = ATHLETE_ID_KEY
-        override val navType = NavType.LongType
     }
 
     object AccessToken : NavArgSpecification {
         override val name = ACCESS_TOKEN_KEY
-        override val navType = NavType.StringType
+    }
+
+    object ColorActivities : NavArgSpecification {
+        override val name = COLOR_ACTIVITIES_KEY
+    }
+
+    object ColorBackground : NavArgSpecification {
+        override val name = COLOR_BACKGROUND_KEY
+    }
+
+    object StrokeWidth : NavArgSpecification {
+        override val name = STROKE_WIDTH_KEY
+    }
+
+    object SizeHeight : NavArgSpecification {
+        override val name = SIZE_HEIGHT_KEY
+    }
+
+    object SizeWidth : NavArgSpecification {
+        override val name = SIZE_WIDTH_KEY
     }
 }
 

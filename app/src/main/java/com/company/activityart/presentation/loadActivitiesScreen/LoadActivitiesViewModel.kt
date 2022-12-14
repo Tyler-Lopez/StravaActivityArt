@@ -35,8 +35,8 @@ class LoadActivitiesViewModel @Inject constructor(
         private val YEAR_NOW = Year.now().value
     }
 
-    private val athleteId: Long = AthleteId.retrieveArg(savedStateHandle) as Long
-    private val accessToken: String = AccessToken.retrieveArg(savedStateHandle) as String
+    private val athleteId: Long = AthleteId.retrieveArg(savedStateHandle).toLong()
+    private val accessToken: String = AccessToken.retrieveArg(savedStateHandle)
 
     private val activitiesByYear: MutableList<Pair<Int, List<Activity>>> =
         mutableListOf()
