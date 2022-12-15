@@ -9,10 +9,13 @@ import androidx.navigation.navArgument
 sealed interface NavArgSpecification {
 
     companion object {
+        private const val ACTIVITY_TYPES_KEY = "activityTypes"
         private const val ATHLETE_ID_KEY = "athleteId"
         private const val ACCESS_TOKEN_KEY = "accessToken"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLOR_BACKGROUND_KEY = "colorBackground"
+        private const val FILTER_DATE_AFTER_MS_KEY = "filterDateBeforeMs"
+        private const val FILTER_DATE_BEFORE_MS_KEY = "filterDateBeforeMs"
         private const val SIZE_HEIGHT_KEY = "sizeHeight"
         private const val SIZE_WIDTH_KEY = "sizeWidth"
         private const val STROKE_WIDTH_KEY = "strokeWidth"
@@ -35,6 +38,10 @@ sealed interface NavArgSpecification {
         return handle[key] ?: error(ERROR_MISSING_KEY.format(key))
     }
 
+    object ActivityTypes : NavArgSpecification {
+        override val name = ACTIVITY_TYPES_KEY
+    }
+
     object AthleteId : NavArgSpecification {
         override val name = ATHLETE_ID_KEY
     }
@@ -49,6 +56,14 @@ sealed interface NavArgSpecification {
 
     object ColorBackground : NavArgSpecification {
         override val name = COLOR_BACKGROUND_KEY
+    }
+
+    object FilterDateAfterMs : NavArgSpecification {
+        override val name = FILTER_DATE_AFTER_MS_KEY
+    }
+
+    object FilterDateBeforeMs : NavArgSpecification {
+        override val name = FILTER_DATE_BEFORE_MS_KEY
     }
 
     object StrokeWidth : NavArgSpecification {

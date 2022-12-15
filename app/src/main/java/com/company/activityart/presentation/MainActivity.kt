@@ -19,6 +19,7 @@ import com.company.activityart.presentation.MainViewState.Authenticated
 import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.activityart.util.NavArgSpecification
+import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -104,8 +105,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = LoadActivities.withArgs(
                     args = arrayOf(
-                        NavArgSpecification.AthleteId.key to athleteId,
-                        NavArgSpecification.AccessToken.key to accessToken
+                        AthleteId to athleteId,
+                        AccessToken to accessToken
                     )
                 )
             )
@@ -132,8 +133,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     popUpTo(
                         route = LoadActivities.buildRoute(
                             listOf(
-                                NavArgSpecification.AthleteId,
-                                NavArgSpecification.AccessToken
+                                AthleteId,
+                                AccessToken
                             )
                         )
                     ) { inclusive = true }
@@ -143,7 +144,16 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     }
 
     private fun navigateSaveArt(destination: NavigateSaveArt) {
-        navController.navigate(route = SaveArt.route)
+        destination.apply {
+            navController.navigate(
+                route = SaveArt.withArgs(
+                    args = arrayOf(
+                        ColorActivities to colorActivities,
+                        ColorBackground to colorBackground
+                    )
+                )
+            )
+        }
     }
 
     private fun navigateUp() {

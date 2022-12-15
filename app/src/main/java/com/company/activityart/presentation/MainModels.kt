@@ -29,6 +29,16 @@ sealed interface MainDestination : Destination {
     ) : MainDestination
 
     data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
-    data class NavigateSaveArt(val bitmap: Bitmap) : MainDestination
+    data class NavigateSaveArt(
+        val activityTypes: List<String>,
+        val colorActivities: String,
+        val colorBackground: String,
+        val filterBeforeMs: Long,
+        val filterAfterMs: Long,
+        val sizeHeight: Int,
+        val sizeWidth: Int,
+        val strokeWidth: Int
+    ) : MainDestination
+
     object NavigateUp : MainDestination
 }

@@ -9,7 +9,7 @@ import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.ResolutionListFactory
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.NavigateUp
+import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.editArtScreen.ColorType.*
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.*
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
@@ -189,7 +189,18 @@ class EditArtViewModel @Inject constructor(
     private fun onSaveClicked() {
         viewModelScope.launch {
             (lastPushedState as? Standby)?.run {
-                routeTo(MainDestination.NavigateSaveArt(bitmap!!))
+                routeTo(
+                    NavigateSaveArt(
+                        activityTypes = listOf(),
+                        colorActivities = "blah",
+                        colorBackground = "blah",
+                        filterBeforeMs = 10L,
+                        filterAfterMs = 1L,
+                        sizeHeight = 10,
+                        strokeWidth = 20,
+                        sizeWidth = 10
+                    )
+                )
             }
         }
     }

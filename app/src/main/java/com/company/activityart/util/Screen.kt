@@ -24,12 +24,12 @@ sealed class Screen(val route: String) {
         }
     }
 
-    fun withArgs(vararg args: Pair<String, String>): String {
+    fun withArgs(vararg args: Pair<NavArgSpecification, String>): String {
         return buildString {
             append(route)
             args.forEachIndexed { index, pair ->
                 append(if (index == 0) '?' else '&')
-                    .append(pair.first)
+                    .append(pair.first.key)
                     .append('=')
                     .append(pair.second)
             }
