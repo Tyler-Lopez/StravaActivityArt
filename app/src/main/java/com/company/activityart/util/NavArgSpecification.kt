@@ -34,7 +34,7 @@ sealed interface NavArgSpecification {
     val route: String
         get() = "$key={$key}"
 
-    fun retrieveArg(handle: SavedStateHandle): String {
+    fun getArg(handle: SavedStateHandle): String {
         return handle[key] ?: error(ERROR_MISSING_KEY.format(key))
     }
 

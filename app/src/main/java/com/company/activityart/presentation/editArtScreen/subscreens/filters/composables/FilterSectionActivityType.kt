@@ -15,7 +15,7 @@ import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
 fun FilterSectionActivityType(
-    typesWithSelectedFlag: Map<String, Boolean>,
+    typesWithSelectedFlag: List<Pair<String, Boolean>>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     Section(
@@ -28,13 +28,13 @@ fun FilterSectionActivityType(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = typeMap.value,
+                    checked = typeMap.second,
                     onCheckedChange = {
                         eventReceiver.onEvent(
-                            EditArtViewEvent.ArtMutatingEvent.FilterTypeToggled(typeMap.key)
+                            EditArtViewEvent.ArtMutatingEvent.FilterTypeToggled(typeMap.first)
                         )
                     })
-                Subhead(typeMap.key)
+                Subhead(typeMap.first)
             }
         }
     }

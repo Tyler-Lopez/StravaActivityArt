@@ -19,7 +19,7 @@ fun EditArtFiltersScreen(
     dateMinDateSelectedYearMonthDay: YearMonthDay,
     dateMaxDateTotalYearMonthDay: YearMonthDay,
     dateMinDateTotalYearMonthDay: YearMonthDay,
-    typesWithSelectedFlag: Map<String, Boolean>,
+    typesWithSelectedFlag: List<Pair<String, Boolean>>,
     scrollState: ScrollState,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {

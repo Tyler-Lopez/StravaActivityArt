@@ -71,22 +71,19 @@ class EditArtViewModel @Inject constructor(
                     val unixSecondAfter = filterDateMinDateSelectedYearMonthDay.unixMsFirst
                     val unixSecondBefore = filterDateMaxDateSelectedYearMonthDay.unixMsLast
                     if (unixMs !in unixSecondAfter..unixSecondBefore) return@filter false
-                    if (activitiesTypesSelectionMap[it.type] != true) return@filter false
+                    if (activitiesTypesSelections.contains(it.type to false)) return@filter false
                 }
                 true
             }
         }
-    private val activitiesTypesSelectionMap by lazy {
-        activities
-            .map { it.type }
-            .associateWith { DEFAULT_ACTIVITY_TYPE_SELECTION }
-            .toMutableMap()
-    }
-    private val activitiesUnixMsList by lazy {
-        activities.map {
-            TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
-        }.sorted()
-    }
+    private var activitiesTypesSelections = activities
+        .distinctBy { it.type }
+        .map { it.type to DEFAULT_ACTIVITY_TYPE_SELECTION }
+
+    private val activitiesUnixMsList = activities.map {
+        TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
+    }.sorted()
+
     private var bitmapFullSize: Bitmap? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
@@ -105,7 +102,12 @@ class EditArtViewModel @Inject constructor(
     }
 
     init {
-        pushState(Loading(pagerStateWrapper = pagerStateWrapper, dialogNavigateUpActive = false))
+        pushState(
+            Loading(
+                pagerStateWrapper = pagerStateWrapper,
+                dialogNavigateUpActive = false
+            )
+        )
     }
 
     override fun onEvent(event: EditArtViewEvent) {
@@ -164,10 +166,15 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterTypeToggled(event: FilterTypeToggled) {
-        activitiesTypesSelectionMap.let {
-            it[event.type] = !(it[event.type] ?: false)
-        }
-        copyLastState { copy(bitmap = null) }.push()
+        activitiesTypesSelections = activitiesTypesSelections
+            .toMutableList()
+            .apply {
+                val toggledIndex = indexOfFirst { it.first == event.type }
+                set(toggledIndex, event.type to !get(toggledIndex).second)
+            }
+        copyLastState {
+            copy(filterTypesWithSelections = activitiesTypesSelections)
+        }.push()
     }
 
     private fun onMakeFullscreenClicked() {
@@ -191,9 +198,11 @@ class EditArtViewModel @Inject constructor(
             (lastPushedState as? Standby)?.run {
                 routeTo(
                     NavigateSaveArt(
-                        activityTypes = listOf(),
-                        colorActivities = "blah",
-                        colorBackground = "blah",
+                        activityTypes = filterTypesWithSelections
+                            .filter { it.second }
+                            .map { it.first },
+                        colorActivities = styleActivities.color.toString(),
+                        colorBackground = styleBackground.color.toString(),
                         filterBeforeMs = 10L,
                         filterAfterMs = 1L,
                         sizeHeight = 10,
@@ -217,7 +226,7 @@ class EditArtViewModel @Inject constructor(
                 filterDateMaxDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.last()),
                 filterDateMinDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.first()),
                 filterDateSelectedActivitiesCount = 0, // todo
-                filterTypesWithSelections = activitiesTypesSelectionMap,
+                filterTypesWithSelections = activitiesTypesSelections,
                 filterTypesCount = 0, // todo
                 pagerStateWrapper = pagerStateWrapper,
                 scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),

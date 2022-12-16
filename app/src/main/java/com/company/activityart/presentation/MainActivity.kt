@@ -23,6 +23,7 @@ import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
@@ -148,8 +149,14 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = SaveArt.withArgs(
                     args = arrayOf(
+                        ActivityTypes to Gson().toJson(activityTypes),
                         ColorActivities to colorActivities,
-                        ColorBackground to colorBackground
+                        ColorBackground to colorBackground,
+                        FilterDateAfterMs to filterAfterMs.toString(),
+                        FilterDateBeforeMs to filterBeforeMs.toString(),
+                        SizeHeight to sizeHeight.toString(),
+                        SizeWidth to sizeWidth.toString(),
+                        StrokeWidth to strokeWidth.toString()
                     )
                 )
             )

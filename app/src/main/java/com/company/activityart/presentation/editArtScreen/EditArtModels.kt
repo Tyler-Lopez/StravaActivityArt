@@ -8,6 +8,7 @@ import android.util.Size
 import androidx.annotation.Px
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
@@ -80,7 +81,7 @@ sealed interface EditArtViewState : ViewState {
         val filterDateMaxDateTotalYearMonthDay: YearMonthDay,
         val filterDateMinDateTotalYearMonthDay: YearMonthDay,
         val filterDateSelectedActivitiesCount: Int,
-        val filterTypesWithSelections: Map<String, Boolean>,
+        val filterTypesWithSelections: List<Pair<String, Boolean>>,
         val filterTypesCount: Int,
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateFilter: ScrollState,
@@ -127,6 +128,7 @@ data class ColorWrapper(
         val VALUE_RANGE = VALUE_NONE..VALUE_MAX
     }
 
+    val color get() = Color(red, green, blue, alpha)
     val redAsEightBit get() = red.toEightBitRepresentation()
     val greenAsEightBit get() = green.toEightBitRepresentation()
     val blueAsEightBit get() = blue.toEightBitRepresentation()

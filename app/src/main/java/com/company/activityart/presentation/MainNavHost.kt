@@ -67,7 +67,14 @@ fun MainNavHost(
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(SaveArt) {
+        swipingInOutComposable(
+            screen = SaveArt,
+            navArgSpecifications = listOf(
+                NavArgSpecification.ActivityTypes,
+                NavArgSpecification.ColorActivities,
+                NavArgSpecification.ColorBackground
+            )
+        ) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
                 attachRouter(router)
             })
