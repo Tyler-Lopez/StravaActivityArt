@@ -25,11 +25,11 @@ class VisualizationUtils @Inject constructor(
 
     fun createBitmap(
         activities: List<Activity>,
-        colorActivities: ColorWrapper,
-        colorBackground: ColorWrapper,
-        @Px paddingFraction: Float,
+        colorActivitiesArgb: Int,
+        colorBackgroundArgb: Int,
         bitmapSize: Size,
-        strokeWidthType: StrokeWidthType
+        strokeWidthType: StrokeWidthType,
+        @Px paddingFraction: Float = 0.05f
     ): Bitmap {
         return Bitmap.createBitmap(
             bitmapSize.width,
@@ -37,7 +37,7 @@ class VisualizationUtils @Inject constructor(
             Bitmap.Config.ARGB_8888
         ).also { bitmap ->
             Canvas(bitmap).apply {
-                drawBackground(colorBackground)
+                drawBackground(colorBackgroundArgb)
                 withPaddingClip(paddingFraction) {
                     computeDrawingSpecification(
                         n = activities.size,
@@ -87,9 +87,7 @@ class VisualizationUtils @Inject constructor(
                                 }
 
                                 drawPath(path, Paint().also {
-                                    it.color = colorActivities.run {
-                                        Color.argb(alpha, red, green, blue)
-                                    }
+                                    it.color = colorActivitiesArgb
                                     it.style = Paint.Style.STROKE
                                     it.strokeJoin = Paint.Join.ROUND
                                     it.strokeWidth = sqrt(activitySize) * when (strokeWidthType) {
@@ -107,17 +105,13 @@ class VisualizationUtils @Inject constructor(
         }
     }
 
-    private fun Canvas.drawBackground(color: ColorWrapper) {
+    private fun Canvas.drawBackground(argb: Int) {
         drawRect(
             OFFSET_ZERO_PX,
             OFFSET_ZERO_PX,
             width.toFloat(),
             height.toFloat(),
-            Paint().also {
-                it.color = color.run {
-                    Color.argb(alpha, red, green, blue)
-                }
-            }
+            Paint().apply { color = argb }
         )
     }
 

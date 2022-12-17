@@ -18,13 +18,13 @@ import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
 import com.company.activityart.presentation.MainViewState.Authenticated
 import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
-import com.company.activityart.util.NavArgSpecification
 import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -32,6 +32,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     lateinit var navController: NavHostController
+
+    @Inject
+    lateinit var gson: Gson
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Push event to ViewModel to determine authentication
@@ -149,14 +152,14 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = SaveArt.withArgs(
                     args = arrayOf(
-                        ActivityTypes to Gson().toJson(activityTypes),
-                        ColorActivities to colorActivities,
-                        ColorBackground to colorBackground,
+                        ActivityTypes to gson.toJson(activityTypes),
+                        ColorActivitiesArgb to colorActivitiesArgb.toString(),
+                        ColorBackgroundArgb to colorBackgroundArgb.toString(),
                         FilterDateAfterMs to filterAfterMs.toString(),
                         FilterDateBeforeMs to filterBeforeMs.toString(),
-                        SizeHeight to sizeHeight.toString(),
-                        SizeWidth to sizeWidth.toString(),
-                        StrokeWidth to strokeWidth.toString()
+                        SizeHeightPx to sizeHeightPx.toString(),
+                        SizeWidthPx to sizeWidthPx.toString(),
+                        StrokeWidth to strokeWidthType.toString()
                     )
                 )
             )

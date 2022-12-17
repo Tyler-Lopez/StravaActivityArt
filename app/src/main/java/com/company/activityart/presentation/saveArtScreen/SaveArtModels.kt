@@ -8,6 +8,6 @@ sealed interface SaveArtViewEvent : ViewEvent {
 }
 
 sealed interface SaveArtViewState : ViewState {
-
+    object Loading : SaveArtViewState
 }
 

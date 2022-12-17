@@ -9,8 +9,8 @@ interface ViewState
 interface StatePusher<TypeOfViewState: ViewState> {
 
     @Composable
-    fun collectedViewState(block: TypeOfViewState?.() -> Unit) {
-        viewState.collectAsState().value.apply { block(this) }
+    fun collectedViewState(block: TypeOfViewState.() -> Unit) {
+        viewState.collectAsState().value?.apply { block(this) }
     }
 
     val viewState: StateFlow<TypeOfViewState?>

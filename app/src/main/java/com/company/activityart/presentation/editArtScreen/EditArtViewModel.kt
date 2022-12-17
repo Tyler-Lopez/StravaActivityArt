@@ -3,6 +3,7 @@ package com.company.activityart.presentation.editArtScreen
 import android.graphics.Bitmap
 import android.util.Size
 import androidx.compose.foundation.ScrollState
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
@@ -201,13 +202,13 @@ class EditArtViewModel @Inject constructor(
                         activityTypes = filterTypesWithSelections
                             .filter { it.second }
                             .map { it.first },
-                        colorActivities = styleActivities.color.toString(),
-                        colorBackground = styleBackground.color.toString(),
-                        filterBeforeMs = 10L,
-                        filterAfterMs = 1L,
-                        sizeHeight = 10,
-                        strokeWidth = 20,
-                        sizeWidth = 10
+                        colorActivitiesArgb = styleActivities.color.toArgb(),
+                        colorBackgroundArgb = styleBackground.color.toArgb(),
+                        filterBeforeMs = filterDateMaxDateSelectedYearMonthDay.unixMs,
+                        filterAfterMs = filterDateMinDateSelectedYearMonthDay.unixMs,
+                        sizeHeightPx = sizeCustomHeightPx,
+                        sizeWidthPx = sizeCustomWidthPx,
+                        strokeWidthType = styleStrokeWidthType
                     )
                 )
             }
@@ -331,9 +332,8 @@ class EditArtViewModel @Inject constructor(
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered,
-                    colorActivities = styleActivities,
-                    colorBackground = styleBackground,
-                    paddingFraction = 0.05f,
+                    colorActivitiesArgb = styleActivities.color.toArgb(),
+                    colorBackgroundArgb = styleBackground.color.toArgb(),
                     strokeWidthType = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {

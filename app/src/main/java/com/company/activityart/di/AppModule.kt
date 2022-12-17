@@ -12,6 +12,7 @@ import com.company.activityart.domain.use_case.authentication.ClearAccessTokenUs
 import com.company.activityart.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.company.activityart.util.*
 import com.company.activityart.util.constants.StringConstants.BASE_URL
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -164,6 +165,9 @@ object AppModule {
     @Provides
     fun provideTimeUtils() = TimeUtils()
 
+    @Provides
+    fun provideGson() = Gson()
+    
     @Provides
     fun provideVisualizationUtils(imageSizeUtils: ImageSizeUtils) =
         VisualizationUtils(imageSizeUtils)

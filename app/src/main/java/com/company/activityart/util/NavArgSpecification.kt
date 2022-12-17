@@ -34,7 +34,7 @@ sealed interface NavArgSpecification {
     val route: String
         get() = "$key={$key}"
 
-    fun getArg(handle: SavedStateHandle): String {
+    fun rawArg(handle: SavedStateHandle): String {
         return handle[key] ?: error(ERROR_MISSING_KEY.format(key))
     }
 
@@ -50,11 +50,11 @@ sealed interface NavArgSpecification {
         override val name = ACCESS_TOKEN_KEY
     }
 
-    object ColorActivities : NavArgSpecification {
+    object ColorActivitiesArgb : NavArgSpecification {
         override val name = COLOR_ACTIVITIES_KEY
     }
 
-    object ColorBackground : NavArgSpecification {
+    object ColorBackgroundArgb : NavArgSpecification {
         override val name = COLOR_BACKGROUND_KEY
     }
 
@@ -70,11 +70,11 @@ sealed interface NavArgSpecification {
         override val name = STROKE_WIDTH_KEY
     }
 
-    object SizeHeight : NavArgSpecification {
+    object SizeHeightPx : NavArgSpecification {
         override val name = SIZE_HEIGHT_KEY
     }
 
-    object SizeWidth : NavArgSpecification {
+    object SizeWidthPx : NavArgSpecification {
         override val name = SIZE_WIDTH_KEY
     }
 }

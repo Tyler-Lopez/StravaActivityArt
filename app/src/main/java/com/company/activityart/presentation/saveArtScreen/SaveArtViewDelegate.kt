@@ -1,7 +1,9 @@
 package com.company.activityart.presentation.saveArtScreen
 
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.*
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
@@ -15,8 +17,10 @@ fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
         onNavigateUp = { viewModel.onEventDebounced(ClickedNavigateUp) },
     ) {
         ScreenBackground {
-            viewModel.collectedViewState {
-
+            viewModel.viewState.collectAsState().value?.apply {
+                when (this) {
+                    is Loading -> CircularProgressIndicator()
+                }
             }
         }
     }

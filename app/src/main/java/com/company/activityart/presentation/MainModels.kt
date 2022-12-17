@@ -5,6 +5,7 @@ import android.net.Uri
 import com.company.activityart.architecture.Destination
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
+import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 
 sealed interface MainViewState : ViewState {
     object LoadingAuthentication : MainViewState
@@ -31,13 +32,13 @@ sealed interface MainDestination : Destination {
     data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
     data class NavigateSaveArt(
         val activityTypes: List<String>,
-        val colorActivities: String,
-        val colorBackground: String,
+        val colorActivitiesArgb: Int,
+        val colorBackgroundArgb: Int,
         val filterBeforeMs: Long,
         val filterAfterMs: Long,
-        val sizeHeight: Int,
-        val sizeWidth: Int,
-        val strokeWidth: Int
+        val sizeHeightPx: Int,
+        val sizeWidthPx: Int,
+        val strokeWidthType: StrokeWidthType
     ) : MainDestination
 
     object NavigateUp : MainDestination

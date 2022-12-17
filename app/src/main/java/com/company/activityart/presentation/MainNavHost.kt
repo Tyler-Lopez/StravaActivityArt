@@ -17,7 +17,7 @@ import com.company.activityart.presentation.saveArtScreen.SaveArtViewDelegate
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewModel
 import com.company.activityart.presentation.welcomeScreen.WelcomeScreen
 import com.company.activityart.presentation.welcomeScreen.WelcomeViewModel
-import com.company.activityart.util.NavArgSpecification
+import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.Screen.*
 import com.company.activityart.util.ext.swipingInOutComposable
 import com.company.activityart.util.ext.swipingOutComposable
@@ -54,8 +54,8 @@ fun MainNavHost(
         swipingInOutComposable(
             screen = LoadActivities,
             navArgSpecifications = listOf(
-                NavArgSpecification.AthleteId,
-                NavArgSpecification.AccessToken
+                AthleteId,
+                AccessToken
             )
         ) {
             LoadActivitiesScreen(hiltViewModel<LoadActivitiesViewModel>().apply {
@@ -70,9 +70,14 @@ fun MainNavHost(
         swipingInOutComposable(
             screen = SaveArt,
             navArgSpecifications = listOf(
-                NavArgSpecification.ActivityTypes,
-                NavArgSpecification.ColorActivities,
-                NavArgSpecification.ColorBackground
+                ActivityTypes,
+                ColorActivitiesArgb,
+                ColorBackgroundArgb,
+                FilterDateAfterMs,
+                FilterDateAfterMs,
+                SizeHeightPx,
+                SizeWidthPx,
+                StrokeWidth
             )
         ) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
