@@ -85,7 +85,6 @@ class EditArtViewModel @Inject constructor(
         TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
     }.sorted()
 
-    private var bitmapFullSize: Bitmap? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
     private val pagerState = PagerState(pagerHeaders.size)
@@ -197,6 +196,7 @@ class EditArtViewModel @Inject constructor(
     private fun onSaveClicked() {
         viewModelScope.launch {
             (lastPushedState as? Standby)?.run {
+                val targetSize = sizeResolutionList[sizeResolutionListSelectedIndex]
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filterTypesWithSelections
@@ -206,8 +206,8 @@ class EditArtViewModel @Inject constructor(
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         filterBeforeMs = filterDateMaxDateSelectedYearMonthDay.unixMs,
                         filterAfterMs = filterDateMinDateSelectedYearMonthDay.unixMs,
-                        sizeHeightPx = sizeCustomHeightPx,
-                        sizeWidthPx = sizeCustomWidthPx,
+                        sizeHeightPx = targetSize.heightPx,
+                        sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType
                     )
                 )
