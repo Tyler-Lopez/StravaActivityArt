@@ -3,7 +3,6 @@ package com.company.activityart.presentation.saveArtScreen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import android.util.Size
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.scale
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
@@ -11,14 +10,14 @@ import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.*
-import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.ClickedNavigateUp
+import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.company.activityart.util.ImageSizeUtils
-import com.company.activityart.util.NavArgSpecification
 import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.VisualizationUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -67,7 +66,17 @@ class SaveArtViewModel @Inject constructor(
 
     override fun onEvent(event: SaveArtViewEvent) {
         when (event) {
+            is ClickedDownload -> onClickedDownload()
             is ClickedNavigateUp -> onClickedNavigateUp()
+            is ClickedShare -> onClickedShare()
+        }
+    }
+
+    private fun onClickedDownload() {
+        (lastPushedState as? Standby)?.copyDownloadStart()?.push()
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(3000)
+            (lastPushedState as? Standby)?.copyDownloadTerminate()?.push()
         }
     }
 
@@ -75,5 +84,9 @@ class SaveArtViewModel @Inject constructor(
         viewModelScope.launch {
             routeTo(NavigateUp)
         }
+    }
+
+    private fun onClickedShare() {
+
     }
 }

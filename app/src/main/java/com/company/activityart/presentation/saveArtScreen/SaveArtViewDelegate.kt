@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.ContentScale
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.*
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
+import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.button.ButtonSize
 import com.company.activityart.presentation.common.button.HighEmphasisButton
@@ -37,15 +38,18 @@ fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
                         )
                         Column {
                             HighEmphasisButton(
+                                enabled = buttonsEnabled,
                                 size = ButtonSize.MEDIUM,
                                 text = "Download"
                             ) {
+                                viewModel.onEventDebounced(ClickedDownload)
                             }
                             MediumEmphasisButton(
+                                enabled = buttonsEnabled,
                                 size = ButtonSize.MEDIUM,
                                 text = "Share"
                             ) {
-
+                                viewModel.onEventDebounced(ClickedShare)
                             }
                         }
                     }
