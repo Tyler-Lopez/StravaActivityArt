@@ -39,6 +39,7 @@ fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
                         Column {
                             HighEmphasisButton(
                                 enabled = buttonsEnabled,
+                                isLoading = downloadInProgress,
                                 size = ButtonSize.MEDIUM,
                                 text = "Download"
                             ) {
