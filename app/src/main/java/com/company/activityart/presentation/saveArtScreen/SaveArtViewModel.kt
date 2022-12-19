@@ -32,11 +32,11 @@ import javax.inject.Inject
 @HiltViewModel
 class SaveArtViewModel @Inject constructor(
     private val fileRepository: FileRepository,
+    private val visualizationUtils: VisualizationUtils,
     activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     gson: Gson,
     imageSizeUtils: ImageSizeUtils,
     ssh: SavedStateHandle,
-    visualizationUtils: VisualizationUtils
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
 
     private val activityTypes = gson.fromJson<List<String>>(
@@ -86,7 +86,13 @@ class SaveArtViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             (lastPushedState as? Standby)?.run {
-                fileRepository.saveBitmap(bitmap)
+                fileRepository.saveBitmap(visualizationUtils.createBitmap(
+                    activities = activities,
+                    colorActivitiesArgb = colorActivitiesArgb,
+                    colorBackgroundArgb = colorBackgroundArgb,
+                    bitmapSize = Size(10000, 10000),
+                    strokeWidthType = strokeWidthType
+                ))
             }
             delay(3000)
             (lastPushedState as? Standby)?.copyDownloadTerminate()?.push()
