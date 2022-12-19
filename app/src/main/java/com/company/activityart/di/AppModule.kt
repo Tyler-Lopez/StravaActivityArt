@@ -2,9 +2,11 @@ package com.company.activityart.di
 
 import android.content.Context
 import androidx.room.Room
+import com.company.activityart.data.FileRepositoryImpl
 import com.company.activityart.data.cache.ActivitiesCache
 import com.company.activityart.data.database.AthleteDatabase
 import com.company.activityart.data.remote.AthleteApi
+import com.company.activityart.domain.FileRepository
 import com.company.activityart.domain.models.ResolutionListFactory
 import com.company.activityart.domain.use_case.activities.*
 import com.company.activityart.domain.use_case.athlete.*
@@ -167,8 +169,12 @@ object AppModule {
 
     @Provides
     fun provideGson() = Gson()
-    
+
     @Provides
     fun provideVisualizationUtils(imageSizeUtils: ImageSizeUtils) =
         VisualizationUtils(imageSizeUtils)
+
+    @Provides
+    fun provideFileRepository(@ApplicationContext appContext: Context): FileRepository =
+        FileRepositoryImpl(appContext)
 }

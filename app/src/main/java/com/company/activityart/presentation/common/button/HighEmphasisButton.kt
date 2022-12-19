@@ -20,8 +20,7 @@ import com.company.activityart.R
 @Composable
 fun HighEmphasisButton(
     size: ButtonSize,
-    modifier: Modifier = Modifier
-        .defaultMinSize(minWidth = dimensionResource(id = R.dimen.button_min_width)),
+    modifier: Modifier = Modifier,
     text: String? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
@@ -41,7 +40,7 @@ fun HighEmphasisButton(
         ),
         modifier = modifier
             .defaultMinSize(
-                minWidth = Dp.Unspecified,
+                minWidth = dimensionResource(id = R.dimen.button_min_width),
                 minHeight = size.getMinHeight()
             )
             .indication(

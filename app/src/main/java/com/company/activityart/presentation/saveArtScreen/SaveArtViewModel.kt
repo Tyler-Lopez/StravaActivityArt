@@ -1,10 +1,16 @@
 package com.company.activityart.presentation.saveArtScreen
 
+import android.graphics.Bitmap
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import android.util.Size
 import androidx.core.graphics.scale
+import com.company.activityart.BuildConfig
 import com.company.activityart.architecture.BaseRoutingViewModel
+import com.company.activityart.domain.FileRepository
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
@@ -19,10 +25,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveArtViewModel @Inject constructor(
+    private val fileRepository: FileRepository,
     activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     gson: Gson,
     imageSizeUtils: ImageSizeUtils,
@@ -75,10 +84,16 @@ class SaveArtViewModel @Inject constructor(
     private fun onClickedDownload() {
         (lastPushedState as? Standby)?.copyDownloadStart()?.push()
         viewModelScope.launch(Dispatchers.IO) {
+
+            (lastPushedState as? Standby)?.run {
+                fileRepository.saveBitmap(bitmap)
+            }
             delay(3000)
             (lastPushedState as? Standby)?.copyDownloadTerminate()?.push()
         }
     }
+
+
 
     private fun onClickedNavigateUp() {
         viewModelScope.launch {
