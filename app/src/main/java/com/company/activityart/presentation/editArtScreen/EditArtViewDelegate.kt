@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -103,12 +104,14 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 } else {
                     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                         LocalDensity.current.run {
-                            viewModel.onEvent(
-                                ScreenMeasured(
-                                    maxWidth.toPx().toInt(),
-                                    maxHeight.toPx().toInt()
+                            SideEffect {
+                                viewModel.onEvent(
+                                    ScreenMeasured(
+                                        maxWidth.toPx().toInt(),
+                                        maxHeight.toPx().toInt()
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }

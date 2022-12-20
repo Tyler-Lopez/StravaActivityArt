@@ -19,6 +19,7 @@ import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.*
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.NavArgSpecification.*
+import com.company.activityart.util.Screen
 import com.company.activityart.util.VisualizationUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,10 +33,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SaveArtViewModel @Inject constructor(
     private val fileRepository: FileRepository,
+    private val imageSizeUtils: ImageSizeUtils,
     private val visualizationUtils: VisualizationUtils,
     activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     gson: Gson,
-    imageSizeUtils: ImageSizeUtils,
     ssh: SavedStateHandle,
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
 
@@ -52,7 +53,47 @@ class SaveArtViewModel @Inject constructor(
     private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
     private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
 
-    init {
+    override fun onEvent(event: SaveArtViewEvent) {
+        when (event) {
+            is ClickedDownload -> onClickedDownload()
+            is ClickedNavigateUp -> onClickedNavigateUp()
+            is ClickedShare -> onClickedShare()
+            is ScreenMeasured -> onScreenMeasured(event)
+        }
+    }
+
+    private fun onClickedDownload() {
+        (lastPushedState as? Standby)?.copyDownloadStart()?.push()
+        viewModelScope.launch(Dispatchers.IO) {
+
+            (lastPushedState as? Standby)?.run {
+                fileRepository.saveBitmap(
+                    visualizationUtils.createBitmap(
+                        activities = activities,
+                        colorActivitiesArgb = colorActivitiesArgb,
+                        colorBackgroundArgb = colorBackgroundArgb,
+                        bitmapSize = Size(10000, 10000),
+                        strokeWidthType = strokeWidthType
+                    )
+                )
+            }
+            delay(3000)
+            (lastPushedState as? Standby)?.copyDownloadTerminate()?.push()
+        }
+    }
+
+
+    private fun onClickedNavigateUp() {
+        viewModelScope.launch {
+            routeTo(NavigateUp)
+        }
+    }
+
+    private fun onClickedShare() {
+
+    }
+
+    private fun onScreenMeasured(event: ScreenMeasured) {
         Loading.push()
         viewModelScope.launch(Dispatchers.Default) {
             println("here, sizes are $sizeHeightPx, $sizeWidthPx")
@@ -68,46 +109,10 @@ class SaveArtViewModel @Inject constructor(
                 Size(1000, 1000),
             )
             val scaledBitmap = bitmap.scale(newSize.width, newSize.height)
-            Standby(scaledBitmap).push()
+            Standby(
+                bitmapDownloadSize = bitmap,
+                bitmapScreenSize = scaledBitmap
+            ).push()
         }
-    }
-
-
-    override fun onEvent(event: SaveArtViewEvent) {
-        when (event) {
-            is ClickedDownload -> onClickedDownload()
-            is ClickedNavigateUp -> onClickedNavigateUp()
-            is ClickedShare -> onClickedShare()
-        }
-    }
-
-    private fun onClickedDownload() {
-        (lastPushedState as? Standby)?.copyDownloadStart()?.push()
-        viewModelScope.launch(Dispatchers.IO) {
-
-            (lastPushedState as? Standby)?.run {
-                fileRepository.saveBitmap(visualizationUtils.createBitmap(
-                    activities = activities,
-                    colorActivitiesArgb = colorActivitiesArgb,
-                    colorBackgroundArgb = colorBackgroundArgb,
-                    bitmapSize = Size(10000, 10000),
-                    strokeWidthType = strokeWidthType
-                ))
-            }
-            delay(3000)
-            (lastPushedState as? Standby)?.copyDownloadTerminate()?.push()
-        }
-    }
-
-
-
-    private fun onClickedNavigateUp() {
-        viewModelScope.launch {
-            routeTo(NavigateUp)
-        }
-    }
-
-    private fun onClickedShare() {
-
     }
 }

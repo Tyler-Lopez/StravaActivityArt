@@ -216,6 +216,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onScreenMeasured(event: ScreenMeasured) {
+        println("Screen measured: ${event.height}")
         val sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX)
         screenSize = Size(event.width, event.height)
         pushState(
