@@ -63,22 +63,12 @@ class SaveArtViewModel @Inject constructor(
     }
 
     private fun onClickedDownload() {
-        (lastPushedState as? Standby)?.copyDownloadStart()?.push()
-        viewModelScope.launch(Dispatchers.IO) {
-
-            (lastPushedState as? Standby)?.run {
-                fileRepository.saveBitmap(
-                    visualizationUtils.createBitmap(
-                        activities = activities,
-                        colorActivitiesArgb = colorActivitiesArgb,
-                        colorBackgroundArgb = colorBackgroundArgb,
-                        bitmapSize = Size(10000, 10000),
-                        strokeWidthType = strokeWidthType
-                    )
-                )
+        withStandbyState {
+            copyDownloadStart().push()
+            viewModelScope.launch(Dispatchers.IO) {
+                fileRepository.saveBitmap(bitmapDownloadSize)
+                copyDownloadTerminate().push()
             }
-            delay(3000)
-            (lastPushedState as? Standby)?.copyDownloadTerminate()?.push()
         }
     }
 
@@ -96,9 +86,10 @@ class SaveArtViewModel @Inject constructor(
     private fun onScreenMeasured(event: ScreenMeasured) {
         Loading.push()
         viewModelScope.launch(Dispatchers.Default) {
-            println("here, sizes are $sizeHeightPx, $sizeWidthPx")
             val bitmap = visualizationUtils.createBitmap(
-                activities = activities,
+                activities = activities.filter {
+                    it.type in activityTypes
+                },
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
                 bitmapSize = Size(sizeWidthPx, sizeHeightPx),
@@ -106,7 +97,7 @@ class SaveArtViewModel @Inject constructor(
             )
             val newSize = imageSizeUtils.sizeToMaximumSize(
                 Size(sizeWidthPx, sizeHeightPx),
-                Size(1000, 1000),
+                event.size,
             )
             val scaledBitmap = bitmap.scale(newSize.width, newSize.height)
             Standby(
@@ -114,5 +105,9 @@ class SaveArtViewModel @Inject constructor(
                 bitmapScreenSize = scaledBitmap
             ).push()
         }
+    }
+
+    private fun withStandbyState(onState: Standby.() -> Unit) {
+        (lastPushedState as? Standby)?.apply(onState)
     }
 }
