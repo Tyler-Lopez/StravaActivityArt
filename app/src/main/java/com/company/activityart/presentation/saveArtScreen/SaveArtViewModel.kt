@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import android.util.Size
+import androidx.compose.material.SnackbarHostState
 import androidx.core.graphics.scale
 import com.company.activityart.BuildConfig
 import com.company.activityart.architecture.BaseRoutingViewModel
@@ -80,7 +81,11 @@ class SaveArtViewModel @Inject constructor(
     }
 
     private fun onClickedShare() {
-
+        withStandbyState {
+            viewModelScope.launch {
+                snackbarHostState.showSnackbar("Test")
+            }
+        }
     }
 
     private fun onScreenMeasured(event: ScreenMeasured) {
@@ -102,7 +107,8 @@ class SaveArtViewModel @Inject constructor(
             val scaledBitmap = bitmap.scale(newSize.width, newSize.height)
             Standby(
                 bitmapDownloadSize = bitmap,
-                bitmapScreenSize = scaledBitmap
+                bitmapScreenSize = scaledBitmap,
+                snackbarHostState = SnackbarHostState()
             ).push()
         }
     }

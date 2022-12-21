@@ -3,10 +3,7 @@ package com.company.activityart.presentation.common
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -22,9 +19,14 @@ fun AppBarScaffold(
     onNavigateUp: () -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
     tabLayout: @Composable () -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit,
+    snackbarHostState: SnackbarHostState? = null,
+    content: @Composable (PaddingValues) -> Unit
 ) {
+    val scaffoldState =
+        rememberScaffoldState(snackbarHostState = snackbarHostState ?: SnackbarHostState())
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             Column {
                 TopAppBar(

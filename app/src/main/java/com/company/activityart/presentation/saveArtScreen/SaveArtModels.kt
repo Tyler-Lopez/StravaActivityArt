@@ -3,6 +3,7 @@ package com.company.activityart.presentation.saveArtScreen
 import android.graphics.Bitmap
 import android.util.Size
 import androidx.annotation.Px
+import androidx.compose.material.SnackbarHostState
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
@@ -20,7 +21,8 @@ sealed interface SaveArtViewState : ViewState {
         val bitmapDownloadSize: Bitmap,
         val bitmapScreenSize: Bitmap,
         val buttonsEnabled: Boolean = true,
-        val downloadInProgress: Boolean = false
+        val downloadInProgress: Boolean = false,
+        val snackbarHostState: SnackbarHostState
     ) : SaveArtViewState {
 
         fun copyDownloadStart(): Standby {

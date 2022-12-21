@@ -21,6 +21,7 @@ fun ScreenBackground(
     modifier: Modifier = Modifier,
     horizontalAlignment: Horizontal = CenterHorizontally,
     scrollState: ScrollState = rememberScrollState(),
+    scrollingEnabled: Boolean = true,
     verticalArrangement: Vertical = spacedBy(
         space = spacing.medium,
         alignment = CenterVertically
@@ -33,7 +34,7 @@ fun ScreenBackground(
         modifier = modifier
             .fillMaxSize()
             .padding(spacing.medium)
-            .verticalScroll(scrollState),
+            .run { if (scrollingEnabled) verticalScroll(scrollState) else this },
         verticalArrangement = verticalArrangement
     )
 }
