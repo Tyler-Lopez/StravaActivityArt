@@ -68,18 +68,17 @@ class SaveArtViewModel @Inject constructor(
                 fileRepository
                     .saveBitmapToGallery(bitmapDownloadSize)
                     .doOnSuccess {
-                        copyDownloadTerminate().push()
                         snackbarHostState.showSnackbar("Downloaded successfully")
                     }
                     .doOnError {
                         println("Error was $exception")
-                        copyDownloadTerminate().push()
                         snackbarHostState.showSnackbar("Download failed")
                     }
+                    .also { copyDownloadTerminate().push() }
             }
         }
     }
-    
+
     private fun onClickedNavigateUp() {
         viewModelScope.launch {
             routeTo(NavigateUp)
