@@ -1,7 +1,7 @@
 package com.company.activityart.presentation
 
 import android.content.Intent
-import android.content.Intent.ACTION_VIEW
+import android.content.Intent.*
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -92,6 +92,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateEditArt -> navigateMakeArt(destination)
             is NavigateSaveArt -> navigateSaveArt(destination)
             is NavigateUp -> navigateUp()
+            is ShareFile -> shareFile(destination)
         }
     }
 
@@ -168,5 +169,14 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateUp() {
         navController.navigateUp()
+    }
+
+    private fun shareFile(shareFile: ShareFile) {
+        val intent = Intent(ACTION_SEND)
+        intent.putExtra(EXTRA_STREAM, shareFile.uri)
+        intent.putExtra(EXTRA_TEXT, "Sharing Image")
+        intent.putExtra(EXTRA_SUBJECT, "Subject Here")
+        intent.type = "image/png"
+        applicationContext.startActivity(createChooser(intent, "Share Via"))
     }
 }

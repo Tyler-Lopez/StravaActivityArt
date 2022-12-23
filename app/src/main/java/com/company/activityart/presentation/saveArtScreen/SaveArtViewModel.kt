@@ -1,15 +1,10 @@
 package com.company.activityart.presentation.saveArtScreen
 
-import android.graphics.Bitmap
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import android.util.Size
 import androidx.compose.material.SnackbarHostState
 import androidx.core.graphics.scale
-import com.company.activityart.BuildConfig
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.FileRepository
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
@@ -18,17 +13,12 @@ import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.*
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
-import com.company.activityart.util.ImageSizeUtils
+import com.company.activityart.util.*
 import com.company.activityart.util.NavArgSpecification.*
-import com.company.activityart.util.Screen
-import com.company.activityart.util.VisualizationUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -67,8 +57,17 @@ class SaveArtViewModel @Inject constructor(
         withStandbyState {
             copyDownloadStart().push()
             viewModelScope.launch(Dispatchers.IO) {
-                fileRepository.saveBitmap(bitmapDownloadSize)
-                copyDownloadTerminate().push()
+                fileRepository
+                    .saveBitmapToGallery(bitmapDownloadSize)
+                    .doOnSuccess {
+                        copyDownloadTerminate().push()
+                        snackbarHostState.showSnackbar("Downloaded successfully")
+                    }
+                    .doOnError {
+                        println("Error was $exception")
+                        copyDownloadTerminate().push()
+                        snackbarHostState.showSnackbar("Download failed")
+                    }
             }
         }
     }
@@ -83,7 +82,15 @@ class SaveArtViewModel @Inject constructor(
     private fun onClickedShare() {
         withStandbyState {
             viewModelScope.launch {
-                snackbarHostState.showSnackbar("Test")
+                fileRepository
+                    .saveBitmapToCache(bitmapDownloadSize)
+                    .doOnSuccess {
+                        routeTo(ShareFile(data))
+                    }
+                    .doOnError {
+                        println("Here, error $exception")
+                        snackbarHostState.showSnackbar("Sharing failed")
+                    }
             }
         }
     }

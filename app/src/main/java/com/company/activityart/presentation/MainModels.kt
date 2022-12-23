@@ -42,4 +42,5 @@ sealed interface MainDestination : Destination {
     ) : MainDestination
 
     object NavigateUp : MainDestination
+    data class ShareFile(val uri: Uri) : MainDestination
 }
