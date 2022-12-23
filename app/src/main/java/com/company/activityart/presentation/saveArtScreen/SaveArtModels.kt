@@ -9,6 +9,7 @@ import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
 
 sealed interface SaveArtViewEvent : ViewEvent {
+    object ActivityResumed : SaveArtViewEvent
     object ClickedDownload : SaveArtViewEvent
     object ClickedNavigateUp : SaveArtViewEvent
     object ClickedShare : SaveArtViewEvent
@@ -22,6 +23,7 @@ sealed interface SaveArtViewState : ViewState {
         val bitmapScreenSize: Bitmap,
         val buttonsEnabled: Boolean = true,
         val downloadInProgress: Boolean = false,
+        val shareInProgress: Boolean = false,
         val snackbarHostState: SnackbarHostState
     ) : SaveArtViewState {
 
@@ -36,6 +38,20 @@ sealed interface SaveArtViewState : ViewState {
             return copy(
                 buttonsEnabled = true,
                 downloadInProgress = false
+            )
+        }
+
+        fun copyShareStart(): Standby {
+            return copy(
+                buttonsEnabled = false,
+                shareInProgress = true
+            )
+        }
+
+        fun copyShareTerminate(): Standby {
+            return copy(
+                buttonsEnabled = true,
+                shareInProgress = false
             )
         }
     }

@@ -19,6 +19,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,10 +47,17 @@ class SaveArtViewModel @Inject constructor(
 
     override fun onEvent(event: SaveArtViewEvent) {
         when (event) {
+            is ActivityResumed -> onActivityResumed()
             is ClickedDownload -> onClickedDownload()
             is ClickedNavigateUp -> onClickedNavigateUp()
             is ClickedShare -> onClickedShare()
             is ScreenMeasured -> onScreenMeasured(event)
+        }
+    }
+
+    private fun onActivityResumed() {
+        withStandbyState {
+            copyShareTerminate().push()
         }
     }
 
@@ -71,8 +79,7 @@ class SaveArtViewModel @Inject constructor(
             }
         }
     }
-
-
+    
     private fun onClickedNavigateUp() {
         viewModelScope.launch {
             routeTo(NavigateUp)
@@ -81,14 +88,17 @@ class SaveArtViewModel @Inject constructor(
 
     private fun onClickedShare() {
         withStandbyState {
-            viewModelScope.launch {
+            copyShareStart().push()
+            viewModelScope.launch(Dispatchers.IO) {
                 fileRepository
                     .saveBitmapToCache(bitmapDownloadSize)
                     .doOnSuccess {
-                        routeTo(ShareFile(data))
+                        withContext(Dispatchers.Main) {
+                            routeTo(ShareFile(data))
+                        }
                     }
                     .doOnError {
-                        println("Here, error $exception")
+                        copyDownloadTerminate().push()
                         snackbarHostState.showSnackbar("Sharing failed")
                     }
             }

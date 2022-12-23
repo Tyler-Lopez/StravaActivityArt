@@ -27,6 +27,7 @@ fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
                         bitmapScreenSize = bitmapScreenSize,
                         buttonsEnabled = buttonsEnabled,
                         downloadInProgress = downloadInProgress,
+                        shareInProgress = shareInProgress,
                         eventReceiver = viewModel,
                         snackbarHostState = snackbarHostState
                     )

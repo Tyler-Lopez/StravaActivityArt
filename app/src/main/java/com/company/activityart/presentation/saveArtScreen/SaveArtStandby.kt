@@ -12,14 +12,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.company.activityart.BuildConfig
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize
@@ -37,11 +44,19 @@ fun SaveArtStandby(
     bitmapScreenSize: Bitmap,
     buttonsEnabled: Boolean,
     downloadInProgress: Boolean,
+    shareInProgress: Boolean,
     eventReceiver: EventReceiver<SaveArtViewEvent>,
     snackbarHostState: SnackbarHostState
 ) {
     val osGreaterThan10 = BuildConfig.VERSION_CODE > Build.VERSION_CODES.Q
     val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+    /** Activity resumes upon returning to foreground when share activity is closed **/
+    OnLifecycleEvent { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            eventReceiver.onEvent(ActivityResumed)
+        }
+    }
 
     Box {
         Column(
@@ -75,49 +90,18 @@ fun SaveArtStandby(
                                 permissionState.launchPermissionRequest()
                             }
                             else -> {
-                                println("perma denied")
+                                // TODO
+                                println("Permission is perma-denied. Handle this later.")
                             }
                         }
                     }
                 }
-                val context = LocalContext.current
                 MediumEmphasisButton(
                     enabled = buttonsEnabled,
                     size = ButtonSize.MEDIUM,
+                    isLoading = shareInProgress,
                     text = "Share"
-                ) {
-                    eventReceiver.onEventDebounced(SaveArtViewEvent.ClickedShare)
-                    /*
-                    val imagefolder = File(context.getCacheDir(), "images")
-                    var uri: Uri? = null
-                    try {
-                        imagefolder.mkdirs()
-                        val file = File(imagefolder, "shared_image.png")
-                        val outputStream = FileOutputStream(file)
-                        bitmapScreenSize.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                        outputStream.flush()
-                        outputStream.close()
-                        uri = FileProvider.getUriForFile(
-                            context,
-                            "com.company.activityart",
-                            file
-                        )
-                        println("Here, uri is $uri")
-                    } catch (e: Exception) {
-                        println("Caught exception $e")
-                     //   Toast.makeText(this, "" + e.message, Toast.LENGTH_LONG).show()
-                    }
-                  //  return uri
-                    val intent = Intent(ACTION_SEND)
-                    intent.putExtra(EXTRA_STREAM, uri)
-                    intent.putExtra(EXTRA_TEXT, "Sharing Image")
-                    intent.putExtra(EXTRA_SUBJECT, "Subject Here")
-                    intent.type = "image/png"
-                    context.startActivity(Intent.createChooser(intent, "Share Via"))
-                   // eventReceiver.onEventDebounced(SaveArtViewEvent.ClickedShare)
-
-                     */
-                }
+                ) { eventReceiver.onEventDebounced(ClickedShare) }
             }
         }
         SnackbarHost(
@@ -125,5 +109,23 @@ fun SaveArtStandby(
                 .align(Alignment.BottomCenter),
             hostState = snackbarHostState
         )
+    }
+}
+
+@Composable
+fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) -> Unit) {
+    val eventHandler = rememberUpdatedState(onEvent)
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+
+    DisposableEffect(lifecycleOwner.value) {
+        val lifecycle = lifecycleOwner.value.lifecycle
+        val observer = LifecycleEventObserver { owner, event ->
+            eventHandler.value(owner, event)
+        }
+
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
     }
 }
