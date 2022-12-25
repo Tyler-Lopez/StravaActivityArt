@@ -83,7 +83,7 @@ class EditArtViewModel @Inject constructor(
 
     private val activitiesUnixMsList = activities.map {
         TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
-    }.sorted()
+    }
 
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
@@ -204,8 +204,8 @@ class EditArtViewModel @Inject constructor(
                             .map { it.first },
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
-                        filterBeforeMs = filterDateMaxDateSelectedYearMonthDay.unixMs,
-                        filterAfterMs = filterDateMinDateSelectedYearMonthDay.unixMs,
+                        filterBeforeMs = filterDateMaxDateSelectedYearMonthDay.unixMsLast,
+                        filterAfterMs = filterDateMinDateSelectedYearMonthDay.unixMsFirst,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType
@@ -219,14 +219,16 @@ class EditArtViewModel @Inject constructor(
         println("Screen measured: ${event.height}")
         val sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX)
         screenSize = Size(event.width, event.height)
+        val yearMonthDayFirst = YearMonthDay.fromUnixMs(activitiesUnixMsList.min())
+        val yearMonthDayLast = YearMonthDay.fromUnixMs(activitiesUnixMsList.max())
         pushState(
             Standby(
                 bitmap = null,
                 dialogNavigateUpActive = false,
-                filterDateMaxDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.last()),
-                filterDateMinDateSelectedYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.first()),
-                filterDateMaxDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.last()),
-                filterDateMinDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.first()),
+                filterDateMaxDateSelectedYearMonthDay = yearMonthDayLast,
+                filterDateMinDateSelectedYearMonthDay = yearMonthDayFirst,
+                filterDateMaxDateTotalYearMonthDay = yearMonthDayLast,
+                filterDateMinDateTotalYearMonthDay = yearMonthDayFirst,
                 filterDateSelectedActivitiesCount = 0, // todo
                 filterTypesWithSelections = activitiesTypesSelections,
                 filterTypesCount = 0, // todo

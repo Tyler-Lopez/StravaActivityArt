@@ -74,7 +74,7 @@ fun MainNavHost(
                 ColorActivitiesArgb,
                 ColorBackgroundArgb,
                 FilterDateAfterMs,
-                FilterDateAfterMs,
+                FilterDateBeforeMs,
                 SizeHeightPx,
                 SizeWidthPx,
                 StrokeWidth

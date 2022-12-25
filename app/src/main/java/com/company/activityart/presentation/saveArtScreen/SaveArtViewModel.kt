@@ -20,10 +20,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.roundToLong
 
 @HiltViewModel
 class SaveArtViewModel @Inject constructor(
+    private val activityFilterUtils: ActivityFilterUtils,
     private val fileRepository: FileRepository,
     private val imageSizeUtils: ImageSizeUtils,
     private val visualizationUtils: VisualizationUtils,
@@ -107,10 +110,14 @@ class SaveArtViewModel @Inject constructor(
     private fun onScreenMeasured(event: ScreenMeasured) {
         Loading.push()
         viewModelScope.launch(Dispatchers.Default) {
+            val a = TimeUnit.MILLISECONDS.toSeconds(filterDateAfterMs)
+            val b = TimeUnit.MILLISECONDS.toSeconds(filterDateBeforeMs)
             val bitmap = visualizationUtils.createBitmap(
-                activities = activities.filter {
-                    it.type in activityTypes
-                },
+                activities = activityFilterUtils.filterActivities(
+                    activities = activities,
+                    includeActivityTypes = activityTypes.toSet(),
+                    unixSecondsRange = a..b
+                ),
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
                 bitmapSize = Size(sizeWidthPx, sizeHeightPx),

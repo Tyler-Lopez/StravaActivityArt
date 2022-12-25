@@ -14,7 +14,7 @@ sealed interface NavArgSpecification {
         private const val ACCESS_TOKEN_KEY = "accessToken"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLOR_BACKGROUND_KEY = "colorBackground"
-        private const val FILTER_DATE_AFTER_MS_KEY = "filterDateBeforeMs"
+        private const val FILTER_DATE_AFTER_MS_KEY = "filterDateAfterMs"
         private const val FILTER_DATE_BEFORE_MS_KEY = "filterDateBeforeMs"
         private const val SIZE_HEIGHT_KEY = "sizeHeight"
         private const val SIZE_WIDTH_KEY = "sizeWidth"
