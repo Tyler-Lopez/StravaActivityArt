@@ -64,6 +64,32 @@ class EditArtViewModel @Inject constructor(
     }
 
     private val activities by lazy { activitiesFromCacheUseCase() }
+
+    /** Each filter type is mapped to a list of activities which apply all previous filters
+     * by ordinal and that filter */
+    private val activitiesFilteredByFilterType: Map<EditArtFilterType, List<Activity>> by lazy {
+        EditArtFilterType.values().associateWith { filterType ->
+            val prevActivities = activitiesFilteredByFilterType[filterType.lastFilter] ?: activities
+            prevActivities.filter {
+                (lastPushedState as? Standby)?.run {
+                    when (filterType) {
+                        EditArtFilterType.DATE -> {
+                            val unixMs =
+                                timeUtils.iso8601StringToUnixMillisecond(it.iso8601LocalDate)
+                            val unixSecondAfter =
+                                filterDateMinDateSelectedYearMonthDay.unixMsFirst
+                            val unixSecondBefore =
+                                filterDateMaxDateSelectedYearMonthDay.unixMsLast
+                            unixMs in unixSecondAfter..unixSecondBefore
+                        }
+                        EditArtFilterType.TYPE -> activitiesTypesSelections.contains(it.type to true)
+                    }
+                } ?: true
+            }
+        }
+    }
+
+    // todo, this is being removed
     private val activitiesFiltered: List<Activity>
         get() {
             return activities.filter {

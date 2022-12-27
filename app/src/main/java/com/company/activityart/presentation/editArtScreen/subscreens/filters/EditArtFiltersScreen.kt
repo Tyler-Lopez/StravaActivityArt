@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.company.activityart.architecture.EventReceiver
+import com.company.activityart.presentation.editArtScreen.EditArtFilterType
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.composables.FilterSectionActivityType
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.composables.FilterSectionDate
@@ -27,17 +28,23 @@ fun EditArtFiltersScreen(
         modifier = Modifier.verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
-        FilterSectionDate(
-            dateMaxDateSelectedYearMonthDay = dateMaxDateSelectedYearMonthDay,
-            dateMinDateSelectedYearMonthDay = dateMinDateSelectedYearMonthDay,
-            dateMaxDateTotalYearMonthDay = dateMaxDateTotalYearMonthDay,
-            dateMinDateTotalYearMonthDay = dateMinDateTotalYearMonthDay,
-            eventReceiver = eventReceiver,
-            selectedActivities = 5
-        )
-        FilterSectionActivityType(
-            typesWithSelectedFlag = typesWithSelectedFlag,
-            eventReceiver = eventReceiver
-        )
+        EditArtFilterType.values().onEach {
+            when (it) {
+                EditArtFilterType.DATE -> FilterSectionDate(
+                    dateMaxDateSelectedYearMonthDay = dateMaxDateSelectedYearMonthDay,
+                    dateMinDateSelectedYearMonthDay = dateMinDateSelectedYearMonthDay,
+                    dateMaxDateTotalYearMonthDay = dateMaxDateTotalYearMonthDay,
+                    dateMinDateTotalYearMonthDay = dateMinDateTotalYearMonthDay,
+                    eventReceiver = eventReceiver,
+                    selectedActivities = 5
+                )
+                EditArtFilterType.TYPE -> FilterSectionActivityType(
+                    typesWithSelectedFlag = typesWithSelectedFlag,
+                    eventReceiver = eventReceiver
+                )
+            }
+        }
+
+
     }
 }
