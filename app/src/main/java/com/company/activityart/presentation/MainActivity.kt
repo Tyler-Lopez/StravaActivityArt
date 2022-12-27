@@ -174,7 +174,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     private fun shareFile(shareFile: ShareFile) {
         val intent = Intent(ACTION_SEND)
         intent.putExtra(EXTRA_STREAM, shareFile.uri)
-        intent.putExtra(EXTRA_TEXT, "Check out this art I made from my activities!")
+        intent.putExtra(EXTRA_TEXT, "I made this art from my activities with Activity Art!")
         intent.putExtra(EXTRA_SUBJECT, "Activity Art")
         intent.type = "image/png"
         applicationContext.startActivity(createChooser(intent, "Share Via"))
