@@ -15,8 +15,6 @@ import com.company.activityart.presentation.common.button.ButtonSize
 import com.company.activityart.presentation.common.button.MediumEmphasisButton
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.FilterAfterChanged
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.FilterBeforeChanged
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
 
@@ -37,7 +35,7 @@ fun FilterSectionDate(
                 datePicker.updateDate(year, month, day)
             }
             setOnDateSetListener { _, year, month, dayOfMonth ->
-                eventReceiver.onEvent(FilterBeforeChanged(YearMonthDay(year, month, dayOfMonth)))
+                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterBeforeChanged(YearMonthDay(year, month, dayOfMonth)))
             }
             datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
             datePicker.minDate = dateMinDateSelectedYearMonthDay.unixMs
@@ -51,7 +49,7 @@ fun FilterSectionDate(
                 datePicker.updateDate(year, month, day)
             }
             setOnDateSetListener { _, year, month, dayOfMonth ->
-                eventReceiver.onEvent(FilterAfterChanged(YearMonthDay(year, month, dayOfMonth)))
+                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterAfterChanged(YearMonthDay(year, month, dayOfMonth)))
             }
             datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
             datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs

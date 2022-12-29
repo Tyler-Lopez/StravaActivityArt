@@ -3,24 +3,20 @@ package com.company.activityart.presentation.editArtScreen
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenBackgroundLegacy
 import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.editArtScreen.EditArtHeaderType.*
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.ScreenMeasured
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.*
+import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
+import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.SaveClicked
 import com.company.activityart.presentation.editArtScreen.composables.EditArtDialogNavigateUp
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.company.activityart.presentation.editArtScreen.subscreens.preview.EditArtPreview
@@ -98,19 +94,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     viewModel
                                 )
                                 null -> error("Invalid pagerState current page.")
-                            }
-                        }
-                    }
-                } else {
-                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                        LocalDensity.current.run {
-                            SideEffect {
-                                viewModel.onEvent(
-                                    ScreenMeasured(
-                                        maxWidth.toPx().toInt(),
-                                        maxHeight.toPx().toInt()
-                                    )
-                                )
                             }
                         }
                     }

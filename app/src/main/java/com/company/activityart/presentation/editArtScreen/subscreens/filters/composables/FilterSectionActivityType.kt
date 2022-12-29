@@ -31,7 +31,7 @@ fun FilterSectionActivityType(
                     checked = typeMap.second,
                     onCheckedChange = {
                         eventReceiver.onEvent(
-                            EditArtViewEvent.ArtMutatingEvent.FilterTypeToggled(typeMap.first)
+                            EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterTypeToggled(typeMap.first)
                         )
                     })
                 Subhead(typeMap.first)

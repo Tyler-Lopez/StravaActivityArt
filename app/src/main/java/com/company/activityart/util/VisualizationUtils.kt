@@ -1,7 +1,11 @@
 package com.company.activityart.util
 
+import android.content.Context
 import android.graphics.*
+import android.util.DisplayMetrics
 import android.util.Size
+import android.view.Display
+import android.view.WindowManager
 import androidx.annotation.Px
 import androidx.core.graphics.withClip
 import com.company.activityart.domain.models.Activity

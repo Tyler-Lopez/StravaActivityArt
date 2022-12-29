@@ -1,6 +1,5 @@
 package com.company.activityart.presentation.editArtScreen
 
-import android.graphics.Bitmap
 import android.util.Size
 import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.graphics.toArgb
@@ -10,11 +9,12 @@ import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.ResolutionListFactory
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.MainDestination.NavigateSaveArt
+import com.company.activityart.presentation.MainDestination.NavigateUp
 import com.company.activityart.presentation.editArtScreen.ColorType.*
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.*
+import com.company.activityart.presentation.editArtScreen.EditArtFilterType.*
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterDateChanged.*
 import com.company.activityart.presentation.editArtScreen.EditArtViewState.Loading
 import com.company.activityart.presentation.editArtScreen.EditArtViewState.Standby
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType.MEDIUM
@@ -31,7 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -61,54 +61,49 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_WIDTH_PX = 1920
         private const val INITIAL_SCROLL_STATE = 0
         private const val INITIAL_SELECTED_RES_INDEX = 0
+        private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
+        private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
     }
 
-    private val activities by lazy { activitiesFromCacheUseCase() }
+    private lateinit var activities: List<Activity>
+    private lateinit var activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>>
+    private var activitiesTypesSelections: Map<String, Boolean> = mapOf()
+    private lateinit var activitiesUnixMsList: List<Long>
 
-    /** Each filter type is mapped to a list of activities which apply all previous filters
-     * by ordinal and that filter */
-    private val activitiesFilteredByFilterType: Map<EditArtFilterType, List<Activity>> by lazy {
-        EditArtFilterType.values().associateWith { filterType ->
-            val prevActivities = activitiesFilteredByFilterType[filterType.lastFilter] ?: activities
-            prevActivities.filter {
-                (lastPushedState as? Standby)?.run {
-                    when (filterType) {
-                        EditArtFilterType.DATE -> {
-                            val unixMs =
-                                timeUtils.iso8601StringToUnixMillisecond(it.iso8601LocalDate)
-                            val unixSecondAfter =
-                                filterDateMinDateSelectedYearMonthDay.unixMsFirst
-                            val unixSecondBefore =
-                                filterDateMaxDateSelectedYearMonthDay.unixMsLast
-                            unixMs in unixSecondAfter..unixSecondBefore
-                        }
-                        EditArtFilterType.TYPE -> activitiesTypesSelections.contains(it.type to true)
+    /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
+     * Designates which activities this particular filter type is in-charge of filtering. **/
+    private fun EditArtFilterType.updateFilteredActivities() {
+        val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
+        val filteredActivities = prevActivities.filter {
+            (lastPushedState as? Standby)?.run {
+                when (this@updateFilteredActivities) {
+                    DATE -> {
+                        val unixMs = timeUtils.iso8601StringToUnixMillisecond(it.iso8601LocalDate)
+                        val unixSecondAfter = filterDateMinDateSelectedYearMonthDay?.unixMsFirst ?: -1
+                        val unixSecondBefore = filterDateMaxDateSelectedYearMonthDay?.unixMsLast ?: -1
+                        unixMs in unixSecondAfter..unixSecondBefore
                     }
-                } ?: true
-            }
+                    TYPE -> activitiesTypesSelections[it.type]
+                }
+            } ?: true
         }
+        activitiesFilteredByFilterType[this] = filteredActivities
     }
 
-    // todo, this is being removed
-    private val activitiesFiltered: List<Activity>
-        get() {
-            return activities.filter {
-                withLastState {
-                    val unixMs = timeUtils.iso8601StringToUnixMillisecond(it.iso8601LocalDate)
-                    val unixSecondAfter = filterDateMinDateSelectedYearMonthDay.unixMsFirst
-                    val unixSecondBefore = filterDateMaxDateSelectedYearMonthDay.unixMsLast
-                    if (unixMs !in unixSecondAfter..unixSecondBefore) return@filter false
-                    if (activitiesTypesSelections.contains(it.type to false)) return@filter false
+    /** Sets [activitiesTypesSelections], [activitiesUnixMsList]: the filters which the
+     * user may control. Must not be invoked before [activities] is populated. **/
+    private fun EditArtFilterType.setFiltersOfFilteredActivities() {
+        val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
+        when (this) {
+            DATE -> activitiesUnixMsList = filteredActivities
+                .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
+            TYPE -> activitiesTypesSelections = filteredActivities
+                .distinctBy { it.type }
+                .map { it.type }
+                .associateWith {
+                    activitiesTypesSelections[it] ?: DEFAULT_ACTIVITY_TYPE_SELECTION
                 }
-                true
-            }
         }
-    private var activitiesTypesSelections = activities
-        .distinctBy { it.type }
-        .map { it.type to DEFAULT_ACTIVITY_TYPE_SELECTION }
-
-    private val activitiesUnixMsList = activities.map {
-        TimeUnit.SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
     }
 
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
@@ -119,7 +114,6 @@ class EditArtViewModel @Inject constructor(
         pagerState = pagerState,
         fadeLengthMs = FADE_LENGTH_MS
     )
-    private lateinit var screenSize: Size
     private val resolutionList by lazy {
         resolutionListFactory.create().apply { add(Resolution.CustomResolution()) }
     }
@@ -128,12 +122,54 @@ class EditArtViewModel @Inject constructor(
     }
 
     init {
-        pushState(
-            Loading(
+        Loading(pagerStateWrapper = pagerStateWrapper, dialogNavigateUpActive = false).push()
+        viewModelScope.launch {
+            activities = activitiesFromCacheUseCase()
+
+            EditArtFilterType.values().apply {
+                activitiesFilteredByFilterType = associateWith { activities }.toMutableMap()
+                forEach { it.setFiltersOfFilteredActivities() }
+            }
+
+            val sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX)
+            val yearMonthDayFirst = YearMonthDay.fromUnixMs(activitiesUnixMsList.min())
+            val yearMonthDayLast = YearMonthDay.fromUnixMs(activitiesUnixMsList.max())
+            Standby(
+                bitmap = null,
+                dialogNavigateUpActive = false,
+                filterDateMaxDateSelectedYearMonthDay = yearMonthDayLast,
+                filterDateMinDateSelectedYearMonthDay = yearMonthDayFirst,
+                filterDateMaxDateTotalYearMonthDay = yearMonthDayLast,
+                filterDateMinDateTotalYearMonthDay = yearMonthDayFirst,
+                filterDateSelectedActivitiesCount = 0, // todo
+                filterTypesWithSelections = activitiesTypesSelections.toList(),
+                filterTypesCount = 0, // todo
                 pagerStateWrapper = pagerStateWrapper,
-                dialogNavigateUpActive = false
-            )
-        )
+                scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
+                scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
+                scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
+                sizeActual = sizeActual,
+                sizeCustomHeightPx = customResolution.heightPx,
+                sizeCustomWidthPx = customResolution.widthPx,
+                sizeCustomRangePx = CUSTOM_SIZE_MINIMUM_PX..CUSTOM_SIZE_MAXIMUM_PX,
+                sizeResolutionList = resolutionList,
+                sizeResolutionListSelectedIndex = INITIAL_SELECTED_RES_INDEX,
+                styleActivities = ColorWrapper(
+                    INITIAL_ACTIVITIES_ALPHA,
+                    INITIAL_ACTIVITIES_BLUE,
+                    INITIAL_ACTIVITIES_GREEN,
+                    INITIAL_ACTIVITIES_RED
+                ),
+                styleBackground = ColorWrapper(
+                    INITIAL_BACKGROUND_ALPHA,
+                    INITIAL_BACKGROUND_BLUE,
+                    INITIAL_BACKGROUND_GREEN,
+                    INITIAL_BACKGROUND_RED
+                ),
+                styleStrokeWidthType = MEDIUM,
+            ).push()
+            updateBitmap()
+        }
     }
 
     override fun onEvent(event: EditArtViewEvent) {
@@ -151,9 +187,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun onArtMutatingEvent(event: ArtMutatingEvent) {
         when (event) {
-            is FilterDateChanged -> onFilterDateChanged(event)
-            is FilterTypeToggled -> onFilterTypeToggled(event)
-            is ScreenMeasured -> onScreenMeasured(event)
+            is FilterChanged -> onFilterChangeEvent(event)
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChangeDone -> onSizeCustomChangeDone()
             is SizeRotated -> onSizeRotated(event)
@@ -161,6 +195,50 @@ class EditArtViewModel @Inject constructor(
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
         }
         updateBitmap()
+    }
+
+    private fun onFilterChangeEvent(event: FilterChanged) {
+        when (event) {
+            is FilterChanged.FilterDateChanged -> onFilterDateChanged(event)
+            is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
+        }
+        event.filterType.apply {
+            updateFilteredActivities()
+            forEachNextFilterType {
+                it.updateFilteredActivities()
+                it.setFiltersOfFilteredActivities()
+                copyLastState {
+                    when (it) {
+                        DATE -> {
+                            val prevFirst = filterDateMinDateSelectedYearMonthDay?.unixMsFirst
+                            val prevLast = filterDateMaxDateSelectedYearMonthDay?.unixMsLast
+
+                            val newRange: LongRange? = try {
+                                val activitiesFirstSecond = activitiesUnixMsList.min()
+                                val activitiesLastSecond = activitiesUnixMsList.max()
+
+                                val range = activitiesFirstSecond..activitiesLastSecond
+                                val newFirst = prevFirst?.coerceIn(range) ?: activitiesFirstSecond
+                                val newLast = prevLast?.coerceIn(range) ?: activitiesLastSecond
+
+                                newFirst..newLast
+                            } catch (e: NoSuchElementException) { null }
+
+                            val yearMonthDayFirst = newRange?.run { YearMonthDay.fromUnixMs(first) }
+                            val yearMonthDayLast = newRange?.run { YearMonthDay.fromUnixMs(last) }
+
+                            copy(
+                                filterDateMaxDateSelectedYearMonthDay = yearMonthDayLast,
+                                filterDateMinDateSelectedYearMonthDay = yearMonthDayFirst,
+                                filterDateMaxDateTotalYearMonthDay = yearMonthDayLast,
+                                filterDateMinDateTotalYearMonthDay = yearMonthDayFirst,
+                            )
+                        }
+                        TYPE -> copy(filterTypesWithSelections = activitiesTypesSelections.toList())
+                    }
+                }.push()
+            }
+        }
     }
 
     private fun onDialogNavigateUpCancelled() {
@@ -172,17 +250,17 @@ class EditArtViewModel @Inject constructor(
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
-    private fun onFilterDateChanged(event: FilterDateChanged) {
+    private fun onFilterDateChanged(event: FilterChanged.FilterDateChanged) {
         (lastPushedState as? Standby)?.run {
             when (event) {
-                is FilterAfterChanged -> {
-                    val maxUnixMs = filterDateMaxDateSelectedYearMonthDay.unixMs
+                is FilterChanged.FilterDateChanged.FilterAfterChanged -> {
+                    val maxUnixMs = activitiesUnixMsList.max()
                     val correctedUnixMs = event.changedTo.unixMs.coerceAtMost(maxUnixMs)
                     val correctedDate = YearMonthDay.fromUnixMs(correctedUnixMs)
                     copy(filterDateMinDateSelectedYearMonthDay = correctedDate)
                 }
-                is FilterBeforeChanged -> {
-                    val minUnixMs = filterDateMinDateSelectedYearMonthDay.unixMs
+                is FilterChanged.FilterDateChanged.FilterBeforeChanged -> {
+                    val minUnixMs = activitiesUnixMsList.min()
                     val correctedUnixMs = event.changedTo.unixMs.coerceAtLeast(minUnixMs)
                     val correctedDate = YearMonthDay.fromUnixMs(correctedUnixMs)
                     copy(filterDateMaxDateSelectedYearMonthDay = correctedDate)
@@ -191,15 +269,14 @@ class EditArtViewModel @Inject constructor(
         }?.push()
     }
 
-    private fun onFilterTypeToggled(event: FilterTypeToggled) {
+    private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
         activitiesTypesSelections = activitiesTypesSelections
-            .toMutableList()
+            .toMutableMap()
             .apply {
-                val toggledIndex = indexOfFirst { it.first == event.type }
-                set(toggledIndex, event.type to !get(toggledIndex).second)
+                set(event.type, !get(event.type)!!)
             }
         copyLastState {
-            copy(filterTypesWithSelections = activitiesTypesSelections)
+            copy(filterTypesWithSelections = activitiesTypesSelections.toList())
         }.push()
     }
 
@@ -230,8 +307,8 @@ class EditArtViewModel @Inject constructor(
                             .map { it.first },
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
-                        filterBeforeMs = filterDateMaxDateSelectedYearMonthDay.unixMsLast,
-                        filterAfterMs = filterDateMinDateSelectedYearMonthDay.unixMsFirst,
+                        filterBeforeMs = filterDateMaxDateSelectedYearMonthDay!!.unixMsLast, // todo narly !!
+                        filterAfterMs = filterDateMinDateSelectedYearMonthDay!!.unixMsFirst,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType
@@ -239,50 +316,6 @@ class EditArtViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun onScreenMeasured(event: ScreenMeasured) {
-        println("Screen measured: ${event.height}")
-        val sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX)
-        screenSize = Size(event.width, event.height)
-        val yearMonthDayFirst = YearMonthDay.fromUnixMs(activitiesUnixMsList.min())
-        val yearMonthDayLast = YearMonthDay.fromUnixMs(activitiesUnixMsList.max())
-        pushState(
-            Standby(
-                bitmap = null,
-                dialogNavigateUpActive = false,
-                filterDateMaxDateSelectedYearMonthDay = yearMonthDayLast,
-                filterDateMinDateSelectedYearMonthDay = yearMonthDayFirst,
-                filterDateMaxDateTotalYearMonthDay = yearMonthDayLast,
-                filterDateMinDateTotalYearMonthDay = yearMonthDayFirst,
-                filterDateSelectedActivitiesCount = 0, // todo
-                filterTypesWithSelections = activitiesTypesSelections,
-                filterTypesCount = 0, // todo
-                pagerStateWrapper = pagerStateWrapper,
-                scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
-                scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
-                scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
-                sizeActual = sizeActual,
-                sizeCustomHeightPx = customResolution.heightPx,
-                sizeCustomWidthPx = customResolution.widthPx,
-                sizeCustomRangePx = CUSTOM_SIZE_MINIMUM_PX..CUSTOM_SIZE_MAXIMUM_PX,
-                sizeResolutionList = resolutionList,
-                sizeResolutionListSelectedIndex = INITIAL_SELECTED_RES_INDEX,
-                styleActivities = ColorWrapper(
-                    INITIAL_ACTIVITIES_ALPHA,
-                    INITIAL_ACTIVITIES_BLUE,
-                    INITIAL_ACTIVITIES_GREEN,
-                    INITIAL_ACTIVITIES_RED
-                ),
-                styleBackground = ColorWrapper(
-                    INITIAL_BACKGROUND_ALPHA,
-                    INITIAL_BACKGROUND_BLUE,
-                    INITIAL_BACKGROUND_GREEN,
-                    INITIAL_BACKGROUND_RED
-                ),
-                styleStrokeWidthType = MEDIUM,
-            )
-        )
     }
 
     private fun onSizeChanged(event: SizeChanged) {
@@ -360,7 +393,7 @@ class EditArtViewModel @Inject constructor(
         viewModelScope.launch(imageProcessingDispatcher) {
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFiltered,
+                    activities = activitiesFilteredByFilterType[EditArtFilterType.filterFinal]!!,
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorBackgroundArgb = styleBackground.color.toArgb(),
                     strokeWidthType = styleStrokeWidthType,
@@ -368,7 +401,10 @@ class EditArtViewModel @Inject constructor(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
                             Size(widthPx, heightPx)
                         },
-                        maximumSize = screenSize
+                        maximumSize = Size(
+                            PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX,
+                            PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
+                        )
                     )
                 )
                 copyLastState { copy(bitmap = bitmap) }

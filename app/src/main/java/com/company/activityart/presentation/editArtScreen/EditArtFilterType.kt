@@ -1,22 +1,20 @@
 package com.company.activityart.presentation.editArtScreen
 
 /**
- * Ordinal position 
+ * Ordinal position
  */
 enum class EditArtFilterType {
-    DATE, TYPE;
+    TYPE, DATE, ;
 
-    inline fun forEachFollowingFilterType(action: (EditArtFilterType) -> Unit) {
+    inline fun forEachNextFilterType(action: (EditArtFilterType) -> Unit) {
         values().onEach { if (it.ordinal > ordinal) action(it) }
     }
 
     val lastFilter: EditArtFilterType?
-        get() { return values[ordinal - 1].takeIf { it.ordinal > 0 } }
-
-    val nextFilter: EditArtFilterType?
-        get() { return values[ordinal + 1].takeIf { it.ordinal <= values.lastIndex } }
+        get() { return if (ordinal == 0) null else values[ordinal - 1] }
 
     companion object {
-        private val values = EditArtFilterType.values()
+        private val values = values()
+        val filterFinal = values.last()
     }
 }

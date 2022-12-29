@@ -13,11 +13,13 @@ import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
+import com.company.activityart.util.Screen
 import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import java.util.logging.Filter
 
 sealed interface EditArtViewEvent : ViewEvent {
 
@@ -35,18 +37,29 @@ sealed interface EditArtViewEvent : ViewEvent {
     }
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
-        sealed interface FilterDateChanged : ArtMutatingEvent {
-            val changedTo: YearMonthDay
 
-            data class FilterAfterChanged(override val changedTo: YearMonthDay) : FilterDateChanged
-            data class FilterBeforeChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+        sealed interface FilterChanged : ArtMutatingEvent {
+            val filterType: EditArtFilterType
+
+            sealed interface FilterDateChanged : FilterChanged {
+
+                val changedTo: YearMonthDay
+                override val filterType: EditArtFilterType
+                    get() = EditArtFilterType.DATE
+
+                data class FilterAfterChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+                data class FilterBeforeChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+            }
+
+            data class FilterTypeToggled(val type: String) : FilterChanged {
+                override val filterType: EditArtFilterType
+                    get() = EditArtFilterType.TYPE
+            }
         }
 
-        data class FilterTypeToggled(val type: String) : ArtMutatingEvent
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
         object SizeCustomChangeDone : ArtMutatingEvent
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
-        data class ScreenMeasured(@Px val width: Int, @Px val height: Int) : ArtMutatingEvent
         data class StylesColorChanged(
             val styleType: StyleType,
             val colorType: ColorType,
@@ -76,10 +89,10 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         val bitmap: Bitmap?,
         override val dialogNavigateUpActive: Boolean,
-        val filterDateMaxDateSelectedYearMonthDay: YearMonthDay,
-        val filterDateMinDateSelectedYearMonthDay: YearMonthDay,
-        val filterDateMaxDateTotalYearMonthDay: YearMonthDay,
-        val filterDateMinDateTotalYearMonthDay: YearMonthDay,
+        val filterDateMaxDateSelectedYearMonthDay: YearMonthDay?,
+        val filterDateMinDateSelectedYearMonthDay: YearMonthDay?,
+        val filterDateMaxDateTotalYearMonthDay: YearMonthDay?,
+        val filterDateMinDateTotalYearMonthDay: YearMonthDay?,
         val filterDateSelectedActivitiesCount: Int,
         val filterTypesWithSelections: List<Pair<String, Boolean>>,
         val filterTypesCount: Int,

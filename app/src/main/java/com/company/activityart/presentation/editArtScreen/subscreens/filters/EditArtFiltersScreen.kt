@@ -16,10 +16,10 @@ import com.company.activityart.util.classes.YearMonthDay
 
 @Composable
 fun EditArtFiltersScreen(
-    dateMaxDateSelectedYearMonthDay: YearMonthDay,
-    dateMinDateSelectedYearMonthDay: YearMonthDay,
-    dateMaxDateTotalYearMonthDay: YearMonthDay,
-    dateMinDateTotalYearMonthDay: YearMonthDay,
+    dateMaxDateSelectedYearMonthDay: YearMonthDay?,
+    dateMinDateSelectedYearMonthDay: YearMonthDay?,
+    dateMaxDateTotalYearMonthDay: YearMonthDay?,
+    dateMinDateTotalYearMonthDay: YearMonthDay?,
     typesWithSelectedFlag: List<Pair<String, Boolean>>,
     scrollState: ScrollState,
     eventReceiver: EventReceiver<EditArtViewEvent>
@@ -30,7 +30,12 @@ fun EditArtFiltersScreen(
     ) {
         EditArtFilterType.values().onEach {
             when (it) {
-                EditArtFilterType.DATE -> FilterSectionDate(
+                EditArtFilterType.DATE -> if (
+                    dateMaxDateSelectedYearMonthDay != null &&
+                    dateMinDateSelectedYearMonthDay != null &&
+                    dateMaxDateTotalYearMonthDay != null &&
+                    dateMinDateTotalYearMonthDay != null
+                ) FilterSectionDate(
                     dateMaxDateSelectedYearMonthDay = dateMaxDateSelectedYearMonthDay,
                     dateMinDateSelectedYearMonthDay = dateMinDateSelectedYearMonthDay,
                     dateMaxDateTotalYearMonthDay = dateMaxDateTotalYearMonthDay,
@@ -44,7 +49,5 @@ fun EditArtFiltersScreen(
                 )
             }
         }
-
-
     }
 }
