@@ -106,20 +106,16 @@ class EditArtViewModel @Inject constructor(
             DATE -> activitiesUnixMsList = filteredActivities
                 .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
             TYPE -> activitiesTypesSelectionsMap = filteredActivities
-                .distinctBy { it.type }
-                .map { it.type }
-                .associateWith {
-                    activitiesTypesSelectionsMap[it] ?: DEFAULT_SELECTION
-                }
+                .distinctlyMapAndAssociateWith(Activity::type, activitiesTypesSelectionsMap)
             DISTANCE -> activitiesDistancesList = filteredActivities
                 .map { it.distance }
         }
     }
 
     private fun List<Activity>.distinctlyMapAndAssociateWith(
-        property: KProperty1<Activity, String?>,
-        previousMap: Map<String?, Boolean>
-    ): Map<String?, Boolean> {
+        property: KProperty1<Activity, String>,
+        previousMap: Map<String, Boolean>
+    ): Map<String, Boolean> {
         return distinctBy(property)
             .map(property)
             .associateWith { previousMap[it] ?: DEFAULT_SELECTION }
