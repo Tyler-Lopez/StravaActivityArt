@@ -31,8 +31,6 @@ fun EditArtFiltersScreen(
         EditArtFilterType.values().onEach {
             when (it) {
                 EditArtFilterType.DATE -> if (
-                    dateMaxDateSelectedYearMonthDay != null &&
-                    dateMinDateSelectedYearMonthDay != null &&
                     dateMaxDateTotalYearMonthDay != null &&
                     dateMinDateTotalYearMonthDay != null
                 ) FilterSectionDate(
