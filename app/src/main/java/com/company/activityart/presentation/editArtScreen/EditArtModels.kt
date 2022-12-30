@@ -9,6 +9,7 @@ import androidx.annotation.Px
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
@@ -42,13 +43,17 @@ sealed interface EditArtViewEvent : ViewEvent {
             val filterType: EditArtFilterType
 
             sealed interface FilterDateChanged : FilterChanged {
-
                 val changedTo: YearMonthDay
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.DATE
 
                 data class FilterAfterChanged(override val changedTo: YearMonthDay) : FilterDateChanged
                 data class FilterBeforeChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+            }
+
+            data class FilterDistanceChanged(val changedTo: ClosedFloatingPointRange<Double>) : FilterChanged {
+                override val filterType: EditArtFilterType
+                    get() = EditArtFilterType.DISTANCE
             }
 
             data class FilterTypeToggled(val type: String) : FilterChanged {
@@ -94,6 +99,8 @@ sealed interface EditArtViewState : ViewState {
         val filterDateMaxDateTotalYearMonthDay: YearMonthDay?,
         val filterDateMinDateTotalYearMonthDay: YearMonthDay?,
         val filterDateSelectedActivitiesCount: Int,
+        val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
+        val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
         val filterTypesWithSelections: List<Pair<String, Boolean>>,
         val filterTypesCount: Int,
         override val pagerStateWrapper: PagerStateWrapper,

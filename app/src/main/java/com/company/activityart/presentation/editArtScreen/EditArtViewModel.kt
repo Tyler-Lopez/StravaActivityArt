@@ -31,9 +31,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
-import java.lang.Long.MAX_VALUE
-import java.lang.Long.MIN_VALUE
 import java.util.concurrent.TimeUnit.*
+import java.util.logging.Filter
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -69,44 +68,51 @@ class EditArtViewModel @Inject constructor(
 
     private lateinit var activities: List<Activity>
     private lateinit var activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>>
-    private var activitiesTypesSelections: Map<String, Boolean> = mapOf()
+    private var activitiesTypesSelectionsMap: Map<String, Boolean> = mapOf()
+    private lateinit var activitiesDistancesList: List<Double>
     private lateinit var activitiesUnixMsList: List<Long>
 
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
      * Designates which activities this particular filter type is in-charge of filtering. **/
     private fun EditArtFilterType.updateFilteredActivities() {
         val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
-        val filteredActivities = prevActivities.filter {
+        val filteredActivities = prevActivities.filter { activity ->
             (lastPushedState as? Standby)?.run {
                 when (this@updateFilteredActivities) {
                     DATE -> {
-                        val unixMs = timeUtils.iso8601StringToUnixMillisecond(it.iso8601LocalDate)
+                        val unixMs =
+                            timeUtils.iso8601StringToUnixMillisecond(activity.iso8601LocalDate)
                         val unixSecondAfter =
                             filterDateMinDateSelectedYearMonthDay?.unixMsFirst ?: Long.MIN_VALUE
                         val unixSecondBefore =
                             filterDateMaxDateSelectedYearMonthDay?.unixMsLast ?: Long.MAX_VALUE
                         unixMs in unixSecondAfter..unixSecondBefore
                     }
-                    TYPE -> activitiesTypesSelections[it.type]
+                    TYPE -> activitiesTypesSelectionsMap[activity.type]
+                    DISTANCE -> filterDistanceSelected?.let {
+                        activity.distance in it
+                    } ?: true
                 }
             } ?: true
         }
         activitiesFilteredByFilterType[this] = filteredActivities
     }
 
-    /** Sets [activitiesTypesSelections], [activitiesUnixMsList]: the filters which the
+    /** Sets [activitiesTypesSelectionsMap], [activitiesUnixMsList]: the filters which the
      * user may control. Must not be invoked before [activities] is populated. **/
     private fun EditArtFilterType.updateFilters() {
         val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
         when (this) {
             DATE -> activitiesUnixMsList = filteredActivities
                 .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
-            TYPE -> activitiesTypesSelections = filteredActivities
+            TYPE -> activitiesTypesSelectionsMap = filteredActivities
                 .distinctBy { it.type }
                 .map { it.type }
                 .associateWith {
-                    activitiesTypesSelections[it] ?: DEFAULT_ACTIVITY_TYPE_SELECTION
+                    activitiesTypesSelectionsMap[it] ?: DEFAULT_ACTIVITY_TYPE_SELECTION
                 }
+            DISTANCE -> activitiesDistancesList = filteredActivities
+                .map { it.distance }
         }
     }
 
@@ -138,7 +144,22 @@ class EditArtViewModel @Inject constructor(
                         }
                     )
                 }
-                TYPE -> copy(filterTypesWithSelections = activitiesTypesSelections.toList())
+                TYPE -> copy(filterTypesWithSelections = activitiesTypesSelectionsMap.toList())
+                DISTANCE -> {
+                    val distanceShortest = activitiesDistancesList.minOrNull()
+                    val distanceLongest = activitiesDistancesList.maxOrNull()
+
+                    copy(
+                        filterDistanceSelected = filterDistanceSelected?.run {
+                            val adjStart = start
+                                .takeIf { it >= (distanceShortest ?: Double.MAX_VALUE) }
+                            val adjEnd = endInclusive
+                                .takeIf { it <= (distanceLongest ?: Double.MIN_VALUE) }
+                            adjEnd?.let { adjStart?.rangeTo(it) }
+                        },
+                        filterDistanceTotal = distanceLongest?.let { distanceShortest?.rangeTo(it) }
+                    )
+                }
             }
         }.push()
     }
@@ -176,7 +197,11 @@ class EditArtViewModel @Inject constructor(
                 filterDateMaxDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.max()),
                 filterDateMinDateTotalYearMonthDay = YearMonthDay.fromUnixMs(activitiesUnixMsList.min()),
                 filterDateSelectedActivitiesCount = 0, // todo
-                filterTypesWithSelections = activitiesTypesSelections.toList(),
+                filterDistanceSelected = null,
+                filterDistanceTotal = activitiesDistancesList
+                    .takeIf { it.isNotEmpty() }
+                    ?.run { min()..max() },
+                filterTypesWithSelections = activitiesTypesSelectionsMap.toList(),
                 filterTypesCount = 0, // todo
                 pagerStateWrapper = pagerStateWrapper,
                 scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
@@ -234,6 +259,7 @@ class EditArtViewModel @Inject constructor(
     private fun onFilterChangeEvent(event: FilterChanged) {
         when (event) {
             is FilterChanged.FilterDateChanged -> onFilterDateChanged(event)
+            is FilterChanged.FilterDistanceChanged -> onFilterDistanceChanged(event)
             is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
         }
         event.filterType.apply {
@@ -274,14 +300,20 @@ class EditArtViewModel @Inject constructor(
         }?.push()
     }
 
+    private fun onFilterDistanceChanged(event: FilterChanged.FilterDistanceChanged) {
+        copyLastState {
+            copy(filterDistanceSelected = event.changedTo)
+        }.push()
+    }
+
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
-        activitiesTypesSelections = activitiesTypesSelections
+        activitiesTypesSelectionsMap = activitiesTypesSelectionsMap
             .toMutableMap()
             .apply {
                 set(event.type, !get(event.type)!!)
             }
         copyLastState {
-            copy(filterTypesWithSelections = activitiesTypesSelections.toList())
+            copy(filterTypesWithSelections = activitiesTypesSelectionsMap.toList())
         }.push()
     }
 
@@ -313,8 +345,10 @@ class EditArtViewModel @Inject constructor(
                             .map { it.first },
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
-                        filterBeforeMs = filterDateMinDateSelectedYearMonthDay?.unixMsLast ?: MAX_VALUE,
-                        filterAfterMs = filterDateMinDateSelectedYearMonthDay?.unixMsFirst ?: MIN_VALUE,
+                        filterBeforeMs = filterDateMinDateSelectedYearMonthDay?.unixMsLast
+                            ?: Long.MAX_VALUE,
+                        filterAfterMs = filterDateMinDateSelectedYearMonthDay?.unixMsFirst
+                            ?: Long.MIN_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType

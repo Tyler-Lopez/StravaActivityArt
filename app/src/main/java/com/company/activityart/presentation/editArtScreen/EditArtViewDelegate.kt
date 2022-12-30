@@ -73,6 +73,8 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     filterDateMinDateSelectedYearMonthDay,
                                     filterDateMaxDateTotalYearMonthDay,
                                     filterDateMinDateTotalYearMonthDay,
+                                    filterDistanceSelected,
+                                    filterDistanceTotal,
                                     filterTypesWithSelections,
                                     scrollStateFilter,
                                     viewModel

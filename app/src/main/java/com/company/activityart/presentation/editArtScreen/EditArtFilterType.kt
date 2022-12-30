@@ -4,7 +4,7 @@ package com.company.activityart.presentation.editArtScreen
  * Ordinal position
  */
 enum class EditArtFilterType {
-    TYPE, DATE, ;
+    DATE, TYPE, DISTANCE;
 
     inline fun forEachNextFilterType(action: (EditArtFilterType) -> Unit) {
         values().onEach { if (it.ordinal > ordinal) action(it) }
