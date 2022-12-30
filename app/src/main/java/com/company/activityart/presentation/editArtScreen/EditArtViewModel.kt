@@ -32,8 +32,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.*
-import java.util.logging.Filter
 import javax.inject.Inject
+import kotlin.reflect.KProperty1
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
@@ -48,7 +48,7 @@ class EditArtViewModel @Inject constructor(
     companion object {
         private const val CUSTOM_SIZE_MINIMUM_PX = 100
         private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
-        private const val DEFAULT_ACTIVITY_TYPE_SELECTION = true
+        private const val DEFAULT_SELECTION = true
         private const val FADE_LENGTH_MS = 1000
         private const val INITIAL_ACTIVITIES_ALPHA = 1f
         private const val INITIAL_ACTIVITIES_BLUE = 1f
@@ -109,11 +109,20 @@ class EditArtViewModel @Inject constructor(
                 .distinctBy { it.type }
                 .map { it.type }
                 .associateWith {
-                    activitiesTypesSelectionsMap[it] ?: DEFAULT_ACTIVITY_TYPE_SELECTION
+                    activitiesTypesSelectionsMap[it] ?: DEFAULT_SELECTION
                 }
             DISTANCE -> activitiesDistancesList = filteredActivities
                 .map { it.distance }
         }
+    }
+
+    private fun List<Activity>.distinctlyMapAndAssociateWith(
+        property: KProperty1<Activity, String?>,
+        previousMap: Map<String?, Boolean>
+    ): Map<String?, Boolean> {
+        return distinctBy(property)
+            .map(property)
+            .associateWith { previousMap[it] ?: DEFAULT_SELECTION }
     }
 
     /** Pushes updated filter information as set in [updateFilters] to the View **/
