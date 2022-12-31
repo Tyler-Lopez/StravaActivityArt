@@ -24,6 +24,7 @@ import com.company.activityart.presentation.editArtScreen.subscreens.resize.Edit
 import com.company.activityart.presentation.editArtScreen.subscreens.style.EditArtStyleViewDelegate
 import com.company.activityart.presentation.ui.theme.White
 import com.company.activityart.presentation.ui.theme.spacing
+import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 /**
@@ -68,17 +69,19 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         ScreenBackgroundLegacy {
                             when (it) {
                                 PREVIEW -> EditArtPreview(bitmap)
-                                FILTERS -> EditArtFiltersScreen(
-                                    filterDateMaxDateSelectedYearMonthDay,
-                                    filterDateMinDateSelectedYearMonthDay,
-                                    filterDateMaxDateTotalYearMonthDay,
-                                    filterDateMinDateTotalYearMonthDay,
-                                    filterDistanceSelected,
-                                    filterDistanceTotal,
-                                    filterTypesWithSelections,
-                                    scrollStateFilter,
-                                    viewModel
-                                )
+                                FILTERS -> YearMonthDay.run {
+                                    EditArtFiltersScreen(
+                                        filterDateSelected?.last?.let { fromUnixMs(it) },
+                                        filterDateSelected?.first?.let { fromUnixMs(it) },
+                                        filterDateTotal?.last?.let { fromUnixMs(it) },
+                                        filterDateTotal?.first?.let { fromUnixMs(it) },
+                                        filterDistanceSelected,
+                                        filterDistanceTotal,
+                                        filterTypes,
+                                        scrollStateFilter,
+                                        viewModel
+                                    )
+                                }
                                 STYLE -> EditArtStyleViewDelegate(
                                     styleActivities,
                                     styleBackground,

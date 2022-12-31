@@ -22,6 +22,8 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import java.util.logging.Filter
 
+annotation class UnixMS
+
 sealed interface EditArtViewEvent : ViewEvent {
 
     object DialogNavigateUpCancelled : EditArtViewEvent
@@ -43,12 +45,12 @@ sealed interface EditArtViewEvent : ViewEvent {
             val filterType: EditArtFilterType
 
             sealed interface FilterDateChanged : FilterChanged {
-                val changedTo: YearMonthDay
+                val changedTo: Long
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.DATE
 
-                data class FilterAfterChanged(override val changedTo: YearMonthDay) : FilterDateChanged
-                data class FilterBeforeChanged(override val changedTo: YearMonthDay) : FilterDateChanged
+                data class FilterAfterChanged(@UnixMS override val changedTo: Long) : FilterDateChanged
+                data class FilterBeforeChanged(@UnixMS override val changedTo: Long) : FilterDateChanged
             }
 
             data class FilterDistanceChanged(val changedTo: ClosedFloatingPointRange<Double>) : FilterChanged {
@@ -94,14 +96,12 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         val bitmap: Bitmap?,
         override val dialogNavigateUpActive: Boolean,
-        val filterDateMaxDateSelectedYearMonthDay: YearMonthDay?,
-        val filterDateMinDateSelectedYearMonthDay: YearMonthDay?,
-        val filterDateMaxDateTotalYearMonthDay: YearMonthDay?,
-        val filterDateMinDateTotalYearMonthDay: YearMonthDay?,
-        val filterDateSelectedActivitiesCount: Int,
+        @UnixMS val filterDateSelected: LongProgression?,
+        @UnixMS val filterDateTotal: LongProgression?,
+        val filterDateActivitiesCount: Int,
         val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
         val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
-        val filterTypesWithSelections: List<Pair<String, Boolean>>,
+        val filterTypes: List<Pair<String, Boolean>>,
         val filterTypesCount: Int,
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateFilter: ScrollState,
@@ -117,6 +117,7 @@ sealed interface EditArtViewState : ViewState {
         val styleBackground: ColorWrapper,
         val styleStrokeWidthType: StrokeWidthType
     ) : EditArtViewState
+
 }
 
 @Parcelize

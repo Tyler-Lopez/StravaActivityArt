@@ -39,7 +39,7 @@ fun FilterSectionDate(
                 datePicker.updateDate(year, month, day)
             }
             setOnDateSetListener { _, year, month, dayOfMonth ->
-                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterBeforeChanged(YearMonthDay(year, month, dayOfMonth)))
+                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterBeforeChanged(YearMonthDay(year, month, dayOfMonth).unixMsLast))
             }
             datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
             datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
@@ -53,7 +53,7 @@ fun FilterSectionDate(
                 datePicker.updateDate(year, month, day)
             }
             setOnDateSetListener { _, year, month, dayOfMonth ->
-                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterAfterChanged(YearMonthDay(year, month, dayOfMonth)))
+                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterAfterChanged(YearMonthDay(year, month, dayOfMonth).unixMsFirst))
             }
             datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
             datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
