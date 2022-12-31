@@ -87,6 +87,7 @@ class EditArtViewModel @Inject constructor(
                         }
                     TYPE -> activitiesTypesSelectionsMap[activity.type] ?: true
                     DISTANCE -> filterDistanceSelected?.let {
+                        println("Here, checking to see if ${activity.distance} is in $it")
                         activity.distance in it
                     } ?: true
                 }
@@ -124,11 +125,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private val EditArtFilterType.activitiesCount: Int
-        get() {
-            println("activities count invoked for $this")
-            println("found as ${activitiesFilteredByFilterType[this]?.size ?: 0}")
-            return activitiesFilteredByFilterType[this]?.size ?: 0
-        }
+        get() = activitiesFilteredByFilterType[this]?.size ?: 0
 
     private fun EditArtFilterType.pushUpdatedFilteredActivityCountToView() {
         copyLastState {
@@ -282,9 +279,9 @@ class EditArtViewModel @Inject constructor(
             updateFilteredActivities()
             pushUpdatedFilteredActivityCountToView()
             forEachNextFilterType {
-                it.updateFilteredActivities()
                 it.updateFilters()
                 it.pushUpdatedFiltersToView()
+                it.updateFilteredActivities()
                 it.pushUpdatedFilteredActivityCountToView()
             }
         }
