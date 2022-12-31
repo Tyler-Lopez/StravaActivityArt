@@ -106,10 +106,14 @@
     <string name="month_12_long">December</string>
     <string name="month_12_short">DEC</string>
 
+    <string name="edit_art_filters_activities_filtered_zero">
+        Oops! No activities for the selected filters
+    </string>
     <plurals name="edit_art_filters_activities_filtered">
-        <item quantity="zero">Oops! No activities for this %s</item>
-        <item quantity="one">%s includes %d activity</item>
-        <item quantity="other">%s includes %d activities</item>
+        <!-- Android ignores 'zero' and this must be implemented programmatically -->
+        <item quantity="zero">@string/edit_art_filters_activities_filtered_zero</item>
+        <item quantity="one">Includes %d activity</item>
+        <item quantity="other">Includes %d activities</item>
     </plurals>
 
     <string name="edit_art_filters_date_header">Date</string>

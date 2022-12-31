@@ -15,12 +15,14 @@ import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
 fun FilterSectionActivityType(
+    count: Int,
     typesWithSelectedFlag: List<Pair<String, Boolean>>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    Section(
-        header = stringResource(R.string.edit_art_filters_activity_type_header),
+    FilterSection(
+        count = count,
         description = stringResource(R.string.edit_art_filters_activity_type_description),
+        header = stringResource(R.string.edit_art_filters_activity_type_header)
     ) {
         typesWithSelectedFlag.forEach { typeMap ->
             Row(
@@ -31,7 +33,9 @@ fun FilterSectionActivityType(
                     checked = typeMap.second,
                     onCheckedChange = {
                         eventReceiver.onEvent(
-                            EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterTypeToggled(typeMap.first)
+                            EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterTypeToggled(
+                                typeMap.first
+                            )
                         )
                     })
                 Subhead(typeMap.first)

@@ -24,47 +24,55 @@ import com.company.activityart.util.classes.YearMonthDay
  */
 @Composable
 fun FilterSectionDate(
+    count: Int,
     dateMaxDateSelectedYearMonthDay: YearMonthDay?,
     dateMinDateSelectedYearMonthDay: YearMonthDay?,
     dateMaxDateTotalYearMonthDay: YearMonthDay,
     dateMinDateTotalYearMonthDay: YearMonthDay,
-    selectedActivities: Int,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    val beforeDatePickerDialog = (dateMaxDateSelectedYearMonthDay ?: dateMaxDateTotalYearMonthDay).run {
-        DatePickerDialog(LocalContext.current).apply {
-            datePicker.updateDate(year, month, day)
-            setOnDismissListener {
-                // Force cancel to reset active date
+    val beforeDatePickerDialog =
+        (dateMaxDateSelectedYearMonthDay ?: dateMaxDateTotalYearMonthDay).run {
+            DatePickerDialog(LocalContext.current).apply {
                 datePicker.updateDate(year, month, day)
+                setOnDismissListener {
+                    // Force cancel to reset active date
+                    datePicker.updateDate(year, month, day)
+                }
+                setOnDateSetListener { _, year, month, dayOfMonth ->
+                    eventReceiver.onEvent(
+                        EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterBeforeChanged(
+                            YearMonthDay(year, month, dayOfMonth).unixMsLast
+                        )
+                    )
+                }
+                datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
+                datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
             }
-            setOnDateSetListener { _, year, month, dayOfMonth ->
-                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterBeforeChanged(YearMonthDay(year, month, dayOfMonth).unixMsLast))
-            }
-            datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
-            datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
         }
-    }
-    val afterDatePickerDialog = (dateMinDateSelectedYearMonthDay ?: dateMinDateTotalYearMonthDay).run {
-        DatePickerDialog(LocalContext.current).apply {
-            datePicker.updateDate(year, month, day)
-            setOnDismissListener {
-                // Force cancel to reset active date
+    val afterDatePickerDialog =
+        (dateMinDateSelectedYearMonthDay ?: dateMinDateTotalYearMonthDay).run {
+            DatePickerDialog(LocalContext.current).apply {
                 datePicker.updateDate(year, month, day)
+                setOnDismissListener {
+                    // Force cancel to reset active date
+                    datePicker.updateDate(year, month, day)
+                }
+                setOnDateSetListener { _, year, month, dayOfMonth ->
+                    eventReceiver.onEvent(
+                        EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterAfterChanged(
+                            YearMonthDay(year, month, dayOfMonth).unixMsFirst
+                        )
+                    )
+                }
+                datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
+                datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
             }
-            setOnDateSetListener { _, year, month, dayOfMonth ->
-                eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterAfterChanged(YearMonthDay(year, month, dayOfMonth).unixMsFirst))
-            }
-            datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
-            datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
         }
-    }
     FilterSection(
+        count = count,
         header = stringResource(R.string.edit_art_filters_date_header),
         description = stringResource(R.string.edit_art_filters_date_description),
-        filteredActivityCount = selectedActivities,
-        // Todo, this isn't great.
-        filterType = stringResource(R.string.edit_art_filters_date_header).lowercase()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

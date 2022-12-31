@@ -79,12 +79,12 @@ class EditArtViewModel @Inject constructor(
             val filteredActivities = prevActivities.filter { activity ->
                 when (this@updateFilteredActivities) {
                     DATE -> timeUtils
-                            .iso8601StringToUnixMillisecond(activity.iso8601LocalDate)
-                            .let {
-                                val min = filterDateSelected?.first ?: Long.MIN_VALUE
-                                val max = filterDateSelected?.last ?: Long.MAX_VALUE
-                                it in min..max
-                            }
+                        .iso8601StringToUnixMillisecond(activity.iso8601LocalDate)
+                        .let {
+                            val min = filterDateSelected?.first ?: Long.MIN_VALUE
+                            val max = filterDateSelected?.last ?: Long.MAX_VALUE
+                            it in min..max
+                        }
                     TYPE -> activitiesTypesSelectionsMap[activity.type] ?: true
                     DISTANCE -> filterDistanceSelected?.let {
                         activity.distance in it
@@ -123,6 +123,22 @@ class EditArtViewModel @Inject constructor(
         return maxOrNull()?.let { max -> minOrNull()?.rangeTo(max) }
     }
 
+    private val EditArtFilterType.activitiesCount: Int
+        get() {
+            println("activities count invoked for $this")
+            println("found as ${activitiesFilteredByFilterType[this]?.size ?: 0}")
+            return activitiesFilteredByFilterType[this]?.size ?: 0
+        }
+
+    private fun EditArtFilterType.pushUpdatedFilteredActivityCountToView() {
+        copyLastState {
+            when (this@pushUpdatedFilteredActivityCountToView) {
+                DATE -> copy(filterActivitiesCountDate = DATE.activitiesCount)
+                DISTANCE -> copy(filterActivitiesCountDistance = DISTANCE.activitiesCount)
+                TYPE -> copy(filterActivitiesCountType = TYPE.activitiesCount)
+            }
+        }.push()
+    }
     /** Pushes updated filter information as set in [updateFilters] to the View **/
     private fun EditArtFilterType.pushUpdatedFiltersToView() {
         copyLastState {
@@ -191,9 +207,11 @@ class EditArtViewModel @Inject constructor(
             Standby(
                 bitmap = null,
                 dialogNavigateUpActive = false,
+                filterActivitiesCountDate = DATE.activitiesCount,
+                filterActivitiesCountDistance = DISTANCE.activitiesCount,
+                filterActivitiesCountType = TYPE.activitiesCount,
                 filterDateSelected = null,
                 filterDateTotal = activitiesUnixMsList.asRangeOrNullIfEmpty(),
-                filterDateActivitiesCount = activitiesFilteredByFilterType[DATE]?.size ?: 0,
                 filterDistanceSelected = null,
                 filterDistanceTotal = activitiesDistancesList
                     .takeIf { it.isNotEmpty() }
@@ -262,10 +280,12 @@ class EditArtViewModel @Inject constructor(
         }
         event.filterType.apply {
             updateFilteredActivities()
+            pushUpdatedFilteredActivityCountToView()
             forEachNextFilterType {
                 it.updateFilteredActivities()
                 it.updateFilters()
                 it.pushUpdatedFiltersToView()
+                it.pushUpdatedFilteredActivityCountToView()
             }
         }
     }
@@ -282,16 +302,18 @@ class EditArtViewModel @Inject constructor(
     private fun onFilterDateChanged(event: FilterChanged.FilterDateChanged) {
         withLastState {
             filterDateTotal?.let { totalRange ->
-                copy(filterDateSelected = when (event) {
-                    is FilterChanged.FilterDateChanged.FilterAfterChanged -> {
-                        event.changedTo.coerceAtMost(totalRange.last)
-                            .rangeTo(filterDateSelected?.last ?: totalRange.last)
+                copy(
+                    filterDateSelected = when (event) {
+                        is FilterChanged.FilterDateChanged.FilterAfterChanged -> {
+                            event.changedTo.coerceAtMost(totalRange.last)
+                                .rangeTo(filterDateSelected?.last ?: totalRange.last)
+                        }
+                        is FilterChanged.FilterDateChanged.FilterBeforeChanged -> {
+                            (filterDateSelected?.first ?: totalRange.first)
+                                .rangeTo(event.changedTo.coerceAtMost(totalRange.last))
+                        }
                     }
-                    is FilterChanged.FilterDateChanged.FilterBeforeChanged -> {
-                        (filterDateSelected?.first ?: totalRange.first)
-                            .rangeTo(event.changedTo.coerceAtMost(totalRange.last))
-                    }
-                }).push()
+                ).push()
             }
         }
     }

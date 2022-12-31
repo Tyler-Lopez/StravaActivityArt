@@ -71,6 +71,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 PREVIEW -> EditArtPreview(bitmap)
                                 FILTERS -> YearMonthDay.run {
                                     EditArtFiltersScreen(
+                                        filterActivitiesCountDate,
+                                        filterActivitiesCountDistance,
+                                        filterActivitiesCountType,
                                         filterDateSelected?.last?.let { fromUnixMs(it) },
                                         filterDateSelected?.first?.let { fromUnixMs(it) },
                                         filterDateTotal?.last?.let { fromUnixMs(it) },

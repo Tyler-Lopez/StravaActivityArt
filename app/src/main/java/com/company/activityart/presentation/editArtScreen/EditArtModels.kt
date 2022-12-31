@@ -96,9 +96,11 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         val bitmap: Bitmap?,
         override val dialogNavigateUpActive: Boolean,
+        val filterActivitiesCountDate: Int,
+        val filterActivitiesCountDistance: Int,
+        val filterActivitiesCountType: Int,
         @UnixMS val filterDateSelected: LongProgression?,
         @UnixMS val filterDateTotal: LongProgression?,
-        val filterDateActivitiesCount: Int,
         val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
         val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
         val filterTypes: List<Pair<String, Boolean>>,
@@ -117,7 +119,6 @@ sealed interface EditArtViewState : ViewState {
         val styleBackground: ColorWrapper,
         val styleStrokeWidthType: StrokeWidthType
     ) : EditArtViewState
-
 }
 
 @Parcelize
