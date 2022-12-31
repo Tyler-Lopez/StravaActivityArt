@@ -362,6 +362,8 @@ class EditArtViewModel @Inject constructor(
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         filterBeforeMs = filterDateSelected?.last ?: Long.MAX_VALUE,
                         filterAfterMs = filterDateSelected?.first ?: Long.MIN_VALUE,
+                        filterDistanceLessThan = filterDistanceSelected?.endInclusive ?: Double.MAX_VALUE,
+                        filterDistanceMoreThan = filterDistanceSelected?.start ?: Double.MAX_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType

@@ -158,6 +158,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         ColorBackgroundArgb to colorBackgroundArgb.toString(),
                         FilterDateAfterMs to filterAfterMs.toString(),
                         FilterDateBeforeMs to filterBeforeMs.toString(),
+                        FilterDistanceLessThan to filterDistanceLessThan.toString(),
+                        FilterDistanceMoreThan to filterDistanceMoreThan.toString(),
                         SizeHeightPx to sizeHeightPx.toString(),
                         SizeWidthPx to sizeWidthPx.toString(),
                         StrokeWidth to strokeWidthType.toString()

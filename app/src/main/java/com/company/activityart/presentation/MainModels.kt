@@ -36,6 +36,8 @@ sealed interface MainDestination : Destination {
         val colorBackgroundArgb: Int,
         val filterBeforeMs: Long,
         val filterAfterMs: Long,
+        val filterDistanceLessThan: Double,
+        val filterDistanceMoreThan: Double,
         val sizeHeightPx: Int,
         val sizeWidthPx: Int,
         val strokeWidthType: StrokeWidthType
