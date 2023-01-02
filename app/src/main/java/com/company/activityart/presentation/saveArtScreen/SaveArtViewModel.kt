@@ -49,7 +49,7 @@ class SaveArtViewModel @Inject constructor(
     private val sizeHeightPx = SizeHeightPx.rawArg(ssh).toInt()
     private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
     private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
-    
+
     override fun onEvent(event: SaveArtViewEvent) {
         when (event) {
             is ActivityResumed -> onActivityResumed()

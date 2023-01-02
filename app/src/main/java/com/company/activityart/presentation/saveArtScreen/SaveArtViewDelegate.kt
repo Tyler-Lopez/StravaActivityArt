@@ -1,8 +1,12 @@
 package com.company.activityart.presentation.saveArtScreen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
@@ -19,7 +23,10 @@ fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
         text = stringResource(id = R.string.save_art_header),
         onNavigateUp = { viewModel.onEventDebounced(ClickedNavigateUp) },
     ) {
-        ScreenBackground(scrollingEnabled = false) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             viewModel.viewState.collectAsState().value.apply {
                 when (this) {
                     is Loading -> CircularProgressIndicator()

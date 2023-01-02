@@ -48,14 +48,21 @@ class VisualizationUtils @Inject constructor(
                         height = clipBounds.height(),
                         width = clipBounds.width()
                     ).apply {
+                        val finalRowOffset = (activitySize * remainder) / 2f
                         activities.forEachIndexed { index, activity ->
                             // 0 % 1 = 0
                             // 0 * 606 = 0
-
                             PolyUtil.decode(activity.summaryPolyline).let { latLngList ->
 
+                                /** Zero-indexed row and column **/
+                                val col = index % cols
+                                val row = (floor(index / cols.toFloat()) % rows).toInt()
+
+                                /** Adjust for zero-index **/
+                                val isFinalRow = row == (rows - 1)
+
                                 val xOffset =
-                                    ((index % cols) * activitySize) + (activitySize / 2f) + (extraSpaceWidth / 2f) + clipBounds.left
+                                    ((index % cols) * activitySize) + (activitySize / 2f) + (extraSpaceWidth / 2f) + clipBounds.left + if (isFinalRow) finalRowOffset else 0f
                                 val yOffset =
                                     ((floor(index / cols.toFloat()) % rows) * activitySize) + (activitySize / 2f) + (extraSpaceHeight / 2f) + clipBounds.top
 
@@ -133,6 +140,7 @@ class VisualizationUtils @Inject constructor(
         val activitySize: Float,
         val cols: Int,
         val rows: Int,
+        val remainder: Int,
         val extraSpaceWidth: Int,
         val extraSpaceHeight: Int
     )
@@ -168,6 +176,7 @@ class VisualizationUtils @Inject constructor(
                 activitySize = cellsize2,
                 cols = cols2.toInt(),
                 rows = rows2.toInt(),
+                remainder = ((rows2 * cols2) - n).toInt(),
                 extraSpaceHeight = (height - (rows2 * cellsize2)).toInt(),
                 extraSpaceWidth = 0
             )
@@ -176,6 +185,7 @@ class VisualizationUtils @Inject constructor(
                 activitySize = cellsize1,
                 cols = cols1.toInt(),
                 rows = rows1.toInt(),
+                remainder = ((rows1 * cols1) - n).toInt(),
                 extraSpaceHeight = 0,
                 extraSpaceWidth = (width - (cols1 * cellsize1)).toInt()
             )
