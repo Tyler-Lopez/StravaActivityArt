@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Activity Art</string>
     <string name="app_description">
-        Celebrate your Strava activities with personalized art, customized exactly how you want it.
+        Celebrate your Strava activities with personalized art customized exactly to your specification
     </string>
     <!-- Content description for the button which connects this app with the
     athletes Strava account when clicked -->
