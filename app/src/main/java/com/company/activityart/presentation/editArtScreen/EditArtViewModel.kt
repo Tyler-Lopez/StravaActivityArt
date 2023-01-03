@@ -219,6 +219,7 @@ class EditArtViewModel @Inject constructor(
                 scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
+                scrollStateType = ScrollState(INITIAL_SCROLL_STATE),
                 sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX),
                 sizeCustomHeightPx = customResolution.heightPx,
                 sizeCustomWidthPx = customResolution.widthPx,

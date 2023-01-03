@@ -22,6 +22,8 @@ import com.company.activityart.presentation.editArtScreen.subscreens.filters.Edi
 import com.company.activityart.presentation.editArtScreen.subscreens.preview.EditArtPreview
 import com.company.activityart.presentation.editArtScreen.subscreens.resize.EditArtResizeScreen
 import com.company.activityart.presentation.editArtScreen.subscreens.style.EditArtStyleViewDelegate
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.presentation.ui.theme.White
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
@@ -90,6 +92,10 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     styleBackground,
                                     scrollStateStyle,
                                     styleStrokeWidthType,
+                                    viewModel
+                                )
+                                TYPE -> EditArtTypeScreen(
+                                    scrollStateStyle,
                                     viewModel
                                 )
                                 RESIZE -> EditArtResizeScreen(

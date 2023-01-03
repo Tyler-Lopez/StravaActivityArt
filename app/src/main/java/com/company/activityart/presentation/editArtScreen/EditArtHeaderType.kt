@@ -26,6 +26,11 @@ enum class EditArtHeaderType(
         R.string.buttons_style_cd,
         Icons.Default.Palette
     ),
+    TYPE(
+        R.string.buttons_type_uppercase,
+        R.string.buttons_type_cd,
+        Icons.Default.TextFields
+    ),
     RESIZE(
         R.string.buttons_resize_uppercase,
         R.string.buttons_style_cd,

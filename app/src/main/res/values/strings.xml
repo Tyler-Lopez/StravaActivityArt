@@ -151,6 +151,20 @@
     <string name="edit_art_style_stroke_thin">Thin</string>
     <string name="edit_art_style_stroke_medium">Medium</string>
     <string name="edit_art_style_stroke_thick">Thick</string>
+
+    <string name="edit_art_type_section_left_header">Left</string>
+    <string name="edit_art_type_section_left_description">What text should appear in the bottom-left of the art?</string>
+    <string name="edit_art_type_section_center_header">Center</string>
+    <string name="edit_art_type_section_center_description">What text should appear in the bottom-center of the art?</string>
+    <string name="edit_art_type_section_right_header">Right</string>
+    <string name="edit_art_type_section_right_description">What text should appear in the bottom-right of the art?</string>
+
+    <string name="edit_art_type_type_none">None</string>
+    <string name="edit_art_type_type_name">Your Name</string>
+    <string name="edit_art_type_type_distance_meters">Total Distance in Meters</string>
+    <string name="edit_art_type_type_distance_miles">Total Distance in Miles</string>
+    <string name="edit_art_type_type_custom">Custom</string>
+
     <string name="edit_art_resize_header">Resize Art</string>
     <string name="edit_art_resize_description">
         Change the width and height pixel size of the art either from a preset

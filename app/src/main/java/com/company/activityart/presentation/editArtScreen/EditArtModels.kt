@@ -108,6 +108,7 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateFilter: ScrollState,
         val scrollStateStyle: ScrollState,
+        val scrollStateType: ScrollState,
         val scrollStateResize: ScrollState,
         val sizeActual: Size,
         val sizeResolutionList: List<Resolution>,
