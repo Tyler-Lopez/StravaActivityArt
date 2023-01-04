@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.domain.models.Activity
 import com.company.activityart.domain.models.ResolutionListFactory
+import com.company.activityart.domain.models.fullName
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
+import com.company.activityart.domain.use_case.athlete.GetAthleteFromLocalUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.NavigateSaveArt
 import com.company.activityart.presentation.MainDestination.NavigateUp
@@ -40,6 +42,7 @@ import kotlin.reflect.KProperty1
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
+    private val athleteFromLocalUseCase: GetAthleteFromLocalUseCase,
     private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
@@ -249,6 +252,7 @@ class EditArtViewModel @Inject constructor(
                 typeActivitiesDistanceMetersSummed = activitiesFiltered
                     .sumOf { it.distance }
                     .roundToInt(),
+                typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
                 typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
                 typeLeftSelected = NONE,
                 typeLeftCustomText = INITIAL_TYPE_CUSTOM_TEXT,

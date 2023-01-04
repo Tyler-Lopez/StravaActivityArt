@@ -26,6 +26,7 @@ import kotlin.math.roundToInt
 @Composable
 fun EditArtTypeScreen(
     activitiesDistanceMetersSummed: Int,
+    athleteName: String,
     customTextCenter: String,
     customTextLeft: String,
     customTextRight: String,
@@ -73,7 +74,7 @@ fun EditArtTypeScreen(
                             Body(text = stringResource(type.header))
                             when (type) {
                                 EditArtTypeType.NONE -> {}
-                                EditArtTypeType.NAME -> SubheadHeavy(text = "Tyler Lopez")
+                                EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
                                 EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(
                                     text = activitiesDistanceMetersSummed.meterToMilesStr()
                                 )
