@@ -33,7 +33,7 @@ fun FilterSectionDistances(
             }
         )
         RangeSlider(
-            values = adjDistanceSelected ?: adjDistanceTotal,
+            value = adjDistanceSelected ?: adjDistanceTotal,
             modifier = Modifier.weight(2f, true),
             onValueChange = {
                 eventReceiver.onEvent(

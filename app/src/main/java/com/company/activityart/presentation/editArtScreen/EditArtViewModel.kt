@@ -23,7 +23,7 @@ import com.company.activityart.presentation.editArtScreen.StrokeWidthType.MEDIUM
 import com.company.activityart.presentation.editArtScreen.StyleType.ACTIVITIES
 import com.company.activityart.presentation.editArtScreen.StyleType.BACKGROUND
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
-import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.NONE
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.VisualizationUtils
@@ -511,7 +511,29 @@ class EditArtViewModel @Inject constructor(
                             PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX,
                             PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
                         )
-                    )
+                    ),
+                    // Todo, could clean all of this up to reduce code will be needed for navigation
+                    textLeft = when (typeLeftSelected) {
+                        NONE -> null
+                        NAME -> typeAthleteName
+                        DISTANCE_MILES -> "TODO" // todo
+                        DISTANCE_KILOMETERS -> "TODO" // todo
+                        CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
+                    },
+                    textCenter = when (typeCenterSelected) {
+                        NONE -> null
+                        NAME -> typeAthleteName
+                        DISTANCE_MILES -> "TODO" // todo
+                        DISTANCE_KILOMETERS -> "TODO" // todo
+                        CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
+                    },
+                    textRight = when (typeRightSelected) {
+                        NONE -> null
+                        NAME -> typeAthleteName
+                        DISTANCE_MILES -> "TODO" // todo
+                        DISTANCE_KILOMETERS -> "TODO" // todo
+                        CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
+                    }
                 )
                 copyLastState { copy(bitmap = bitmap) }
             }.push()

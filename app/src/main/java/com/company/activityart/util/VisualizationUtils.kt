@@ -33,8 +33,12 @@ class VisualizationUtils @Inject constructor(
         colorBackgroundArgb: Int,
         bitmapSize: Size,
         strokeWidthType: StrokeWidthType,
-        @Px paddingFraction: Float = 0.05f
+        @Px paddingFraction: Float = 0.05f,
+        textLeft: String? = null,
+        textCenter: String? = null,
+        textRight: String? = null
     ): Bitmap {
+
         return Bitmap.createBitmap(
             bitmapSize.width,
             bitmapSize.height,
@@ -48,6 +52,7 @@ class VisualizationUtils @Inject constructor(
                         height = clipBounds.height(),
                         width = clipBounds.width()
                     ).apply {
+
                         val finalRowOffset = (activitySize * remainder) / 2f
                         activities.forEachIndexed { index, activity ->
                             // 0 % 1 = 0

@@ -9,6 +9,7 @@ plugins {
     id 'com.google.devtools.ksp' version '1.6.10-1.0.2'
 }
 
+/*
 // https://github.com/raamcosta/compose-destinations
 kotlin {
     sourceSets {
@@ -21,13 +22,15 @@ kotlin {
     }
 }
 
+ */
+
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.company.activityart"
         minSdk 26
-        targetSdk 32
+        targetSdk 33
         versionCode 5
         versionName "1.0"
 
@@ -57,7 +60,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.3.1'
+        kotlinCompilerExtensionVersion '1.3.2'
         kotlinCompilerVersion compose_version
     }
     packagingOptions {
@@ -68,6 +71,48 @@ android {
 }
 
 dependencies {
+
+    def composeBom = platform('androidx.compose:compose-bom:2022.12.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    // Choose one of the following:
+    // Material Design 3
+  //  implementation 'androidx.compose.material3:material3'
+    // or Material Design 2
+    implementation 'androidx.compose.material:material'
+    // or skip Material Design and build directly on top of foundational components
+   //implementation 'androidx.compose.foundation:foundation'
+    // or only import the main APIs for the underlying toolkit systems,
+    // such as input and measurement/layout
+ //   implementation 'androidx.compose.ui:ui'
+
+    // Android Studio Preview support
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    // UI Tests
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    // Optional - Included automatically by material, only add when you need
+    // the icons but not the material library (e.g. when using Material3 or a
+    // custom design system based on Foundation)
+  //  implementation 'androidx.compose.material:material-icons-core'
+    // Optional - Add full set of material icons
+    implementation 'androidx.compose.material:material-icons-extended'
+    // Optional - Add window size utils
+    //implementation 'androidx.compose.material3:material3-window-size-class'
+
+    // Optional - Integration with activities
+   // implementation 'androidx.activity:activity-compose:1.5.1'
+    // Optional - Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    // Optional - Integration with LiveData
+    implementation 'androidx.compose.runtime:runtime-livedata'
+    // Optional - Integration with RxJava
+   // implementation 'androidx.compose.runtime:runtime-rxjava2'
+
     // Serialization
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
     // Retrofit
@@ -94,7 +139,7 @@ dependencies {
     implementation 'io.coil-kt:coil-compose:2.0.0-rc01'
 
     // ICONS
-    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+  //  implementation "androidx.compose.material:material-icons-extended"
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
@@ -113,7 +158,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1'
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.5.2")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
 
 
     // Navigation library
@@ -126,7 +171,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:20.0.0'
 
     // Live Data States (image)
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    //implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     // Accompanist Pager
     implementation 'com.google.accompanist:accompanist-pager:0.13.0'
@@ -145,17 +190,17 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'com.google.android.material:material:1.7.0'
+  //  implementation "androidx.compose.ui:ui:$compose_version"
+  //  implementation "androidx.compose.material:material:$compose_version"
+  //  implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.5.1'
     testImplementation 'junit:junit:+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+ //   androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+ //   debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
     // Splash Screen
     implementation "androidx.core:core-splashscreen:1.0.0"
