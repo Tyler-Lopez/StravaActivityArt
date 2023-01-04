@@ -34,6 +34,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlin.reflect.KProperty1
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -71,6 +72,7 @@ class EditArtViewModel @Inject constructor(
 
     private lateinit var activities: List<Activity>
     private lateinit var activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>>
+    private val activitiesFiltered: List<Activity> get() = activitiesFilteredByFilterType[EditArtFilterType.filterFinal]!!
     private var activitiesTypesSelectionsMap: Map<String, Boolean> = mapOf()
     private lateinit var activitiesDistancesList: List<Double>
     private lateinit var activitiesUnixMsList: List<Long>
@@ -244,6 +246,9 @@ class EditArtViewModel @Inject constructor(
                     INITIAL_BACKGROUND_RED
                 ),
                 styleStrokeWidthType = MEDIUM,
+                typeActivitiesDistanceMetersSummed = activitiesFiltered
+                    .sumOf { it.distance }
+                    .roundToInt(),
                 typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
                 typeLeftSelected = NONE,
                 typeLeftCustomText = INITIAL_TYPE_CUSTOM_TEXT,
@@ -300,6 +305,11 @@ class EditArtViewModel @Inject constructor(
                 it.pushUpdatedFilteredActivityCountToView()
             }
         }
+        copyLastState {
+            copy(typeActivitiesDistanceMetersSummed = activitiesFiltered
+                .sumOf { it.distance }
+                .roundToInt())
+        }.push()
     }
 
     private fun onDialogNavigateUpCancelled() {

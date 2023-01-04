@@ -134,6 +134,7 @@ sealed interface EditArtViewState : ViewState {
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
         val styleStrokeWidthType: StrokeWidthType,
+        val typeActivitiesDistanceMetersSummed: Int,
         val typeMaximumCustomTextLength: Int,
         val typeLeftSelected: EditArtTypeType,
         val typeLeftCustomText: String,

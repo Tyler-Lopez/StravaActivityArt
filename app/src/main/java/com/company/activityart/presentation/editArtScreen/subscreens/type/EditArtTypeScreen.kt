@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,10 +21,11 @@ import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
-import kotlin.text.Typography.section
+import kotlin.math.roundToInt
 
 @Composable
 fun EditArtTypeScreen(
+    activitiesDistanceMetersSummed: Int,
     customTextCenter: String,
     customTextLeft: String,
     customTextRight: String,
@@ -74,8 +74,12 @@ fun EditArtTypeScreen(
                             when (type) {
                                 EditArtTypeType.NONE -> {}
                                 EditArtTypeType.NAME -> SubheadHeavy(text = "Tyler Lopez")
-                                EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(text = "234 mi")
-                                EditArtTypeType.DISTANCE_KILOMETERS -> SubheadHeavy(text = "521 km")
+                                EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(
+                                    text = activitiesDistanceMetersSummed.meterToMilesStr()
+                                )
+                                EditArtTypeType.DISTANCE_KILOMETERS -> SubheadHeavy(
+                                    text = activitiesDistanceMetersSummed.meterToKilometerStr()
+                                )
                                 EditArtTypeType.CUSTOM -> {
                                     OutlinedTextField(
                                         value = when (section) {
@@ -126,3 +130,7 @@ fun EditArtTypeScreen(
         }
     }
 }
+
+private fun Int.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
+
+private fun Int.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"

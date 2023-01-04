@@ -161,7 +161,7 @@
 
     <string name="edit_art_type_type_none">None</string>
     <string name="edit_art_type_type_name">Your Name</string>
-    <string name="edit_art_type_type_distance_meters">Total Distance in Meters</string>
+    <string name="edit_art_type_type_distance_meters">Total Distance in Kilometers</string>
     <string name="edit_art_type_type_distance_miles">Total Distance in Miles</string>
     <string name="edit_art_type_type_custom">Custom</string>
 
