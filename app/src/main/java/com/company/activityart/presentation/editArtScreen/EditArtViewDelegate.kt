@@ -23,7 +23,6 @@ import com.company.activityart.presentation.editArtScreen.subscreens.preview.Edi
 import com.company.activityart.presentation.editArtScreen.subscreens.resize.EditArtResizeScreen
 import com.company.activityart.presentation.editArtScreen.subscreens.style.EditArtStyleViewDelegate
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
-import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.presentation.ui.theme.White
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
@@ -95,6 +94,13 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     viewModel
                                 )
                                 TYPE -> EditArtTypeScreen(
+                                    typeCenterCustomText,
+                                    typeLeftCustomText,
+                                    typeRightCustomText,
+                                    typeMaximumCustomTextLength,
+                                    typeCenterSelected,
+                                    typeLeftSelected,
+                                    typeRightSelected,
                                     scrollStateStyle,
                                     viewModel
                                 )

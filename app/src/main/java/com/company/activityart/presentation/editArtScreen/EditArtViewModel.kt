@@ -20,6 +20,8 @@ import com.company.activityart.presentation.editArtScreen.EditArtViewState.Stand
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType.MEDIUM
 import com.company.activityart.presentation.editArtScreen.StyleType.ACTIVITIES
 import com.company.activityart.presentation.editArtScreen.StyleType.BACKGROUND
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.NONE
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.VisualizationUtils
@@ -61,8 +63,10 @@ class EditArtViewModel @Inject constructor(
         private const val INITIAL_WIDTH_PX = 1920
         private const val INITIAL_SCROLL_STATE = 0
         private const val INITIAL_SELECTED_RES_INDEX = 0
+        private const val INITIAL_TYPE_CUSTOM_TEXT = ""
         private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
         private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
+        private const val CUSTOM_TEXT_MAXIMUM_LENGTH = 30
     }
 
     private lateinit var activities: List<Activity>
@@ -136,6 +140,7 @@ class EditArtViewModel @Inject constructor(
             }
         }.push()
     }
+
     /** Pushes updated filter information as set in [updateFilters] to the View **/
     private fun EditArtFilterType.pushUpdatedFiltersToView() {
         copyLastState {
@@ -239,6 +244,13 @@ class EditArtViewModel @Inject constructor(
                     INITIAL_BACKGROUND_RED
                 ),
                 styleStrokeWidthType = MEDIUM,
+                typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
+                typeLeftSelected = NONE,
+                typeLeftCustomText = INITIAL_TYPE_CUSTOM_TEXT,
+                typeCenterSelected = NONE,
+                typeCenterCustomText = INITIAL_TYPE_CUSTOM_TEXT,
+                typeRightSelected = NONE,
+                typeRightCustomText = INITIAL_TYPE_CUSTOM_TEXT
             ).push()
             updateBitmap()
         }
@@ -266,6 +278,8 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is StylesColorChanged -> onStylesColorChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
+            is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
+            is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         updateBitmap()
     }
@@ -363,7 +377,8 @@ class EditArtViewModel @Inject constructor(
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         filterBeforeMs = filterDateSelected?.last ?: Long.MAX_VALUE,
                         filterAfterMs = filterDateSelected?.first ?: Long.MIN_VALUE,
-                        filterDistanceLessThan = filterDistanceSelected?.endInclusive ?: Double.MAX_VALUE,
+                        filterDistanceLessThan = filterDistanceSelected?.endInclusive
+                            ?: Double.MAX_VALUE,
                         filterDistanceMoreThan = filterDistanceSelected?.start ?: Double.MIN_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
@@ -429,6 +444,27 @@ class EditArtViewModel @Inject constructor(
         (lastPushedState as? Standby)?.run {
             copy(styleStrokeWidthType = event.changedTo)
         }?.push()
+    }
+
+    private fun onTypeCustomTextChanged(event: TypeCustomTextChanged) {
+        val newText: String? = event.changedTo.takeIf { it.length <= CUSTOM_TEXT_MAXIMUM_LENGTH }
+        copyLastState {
+            when (event.section) {
+                LEFT -> copy(typeLeftCustomText = newText ?: typeLeftCustomText)
+                CENTER -> copy(typeCenterCustomText = newText ?: typeCenterCustomText)
+                RIGHT -> copy(typeRightCustomText = newText ?: typeRightCustomText)
+            }
+        }.push()
+    }
+
+    private fun onTypeSelectionChanged(event: TypeSelectionChanged) {
+        copyLastState {
+            when (event.section) {
+                LEFT -> copy(typeLeftSelected = event.typeSelected)
+                CENTER -> copy(typeCenterSelected = event.typeSelected)
+                RIGHT -> copy(typeRightSelected = event.typeSelected)
+            }
+        }.push()
     }
 
     /** @return Copy of an reflecting a [StylesColorChanged] change event

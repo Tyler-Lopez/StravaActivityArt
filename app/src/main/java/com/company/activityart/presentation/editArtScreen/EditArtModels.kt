@@ -14,6 +14,8 @@ import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.util.Screen
 import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -49,11 +51,15 @@ sealed interface EditArtViewEvent : ViewEvent {
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.DATE
 
-                data class FilterAfterChanged(@UnixMS override val changedTo: Long) : FilterDateChanged
-                data class FilterBeforeChanged(@UnixMS override val changedTo: Long) : FilterDateChanged
+                data class FilterAfterChanged(@UnixMS override val changedTo: Long) :
+                    FilterDateChanged
+
+                data class FilterBeforeChanged(@UnixMS override val changedTo: Long) :
+                    FilterDateChanged
             }
 
-            data class FilterDistanceChanged(val changedTo: ClosedFloatingPointRange<Double>) : FilterChanged {
+            data class FilterDistanceChanged(val changedTo: ClosedFloatingPointRange<Double>) :
+                FilterChanged {
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.DISTANCE
             }
@@ -74,6 +80,15 @@ sealed interface EditArtViewEvent : ViewEvent {
         ) : ArtMutatingEvent
 
         data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
+        data class TypeCustomTextChanged(
+            val section: EditArtTypeSection,
+            val changedTo: String
+        ) : ArtMutatingEvent
+
+        data class TypeSelectionChanged(
+            val section: EditArtTypeSection,
+            val typeSelected: EditArtTypeType
+        ) : ArtMutatingEvent
     }
 }
 
@@ -118,7 +133,14 @@ sealed interface EditArtViewState : ViewState {
         val sizeCustomRangePx: IntRange,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
-        val styleStrokeWidthType: StrokeWidthType
+        val styleStrokeWidthType: StrokeWidthType,
+        val typeMaximumCustomTextLength: Int,
+        val typeLeftSelected: EditArtTypeType,
+        val typeLeftCustomText: String,
+        val typeCenterSelected: EditArtTypeType,
+        val typeCenterCustomText: String,
+        val typeRightSelected: EditArtTypeType,
+        val typeRightCustomText: String,
     ) : EditArtViewState
 }
 
