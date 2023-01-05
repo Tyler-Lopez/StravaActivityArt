@@ -516,22 +516,22 @@ class EditArtViewModel @Inject constructor(
                     textLeft = when (typeLeftSelected) {
                         NONE -> null
                         NAME -> typeAthleteName
-                        DISTANCE_MILES -> "TODO" // todo
-                        DISTANCE_KILOMETERS -> "TODO" // todo
+                        DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }.meterToKilometerStr()
                         CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
                     },
                     textCenter = when (typeCenterSelected) {
                         NONE -> null
                         NAME -> typeAthleteName
-                        DISTANCE_MILES -> "TODO" // todo
-                        DISTANCE_KILOMETERS -> "TODO" // todo
+                        DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }.meterToKilometerStr()
                         CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
                     },
                     textRight = when (typeRightSelected) {
                         NONE -> null
                         NAME -> typeAthleteName
-                        DISTANCE_MILES -> "TODO" // todo
-                        DISTANCE_KILOMETERS -> "TODO" // todo
+                        DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }.meterToKilometerStr()
                         CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
                     }
                 )
@@ -548,4 +548,7 @@ class EditArtViewModel @Inject constructor(
         (lastPushedState as? Standby)?.run(block)
     }
 
+    private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
+
+    private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
 }
