@@ -1,19 +1,19 @@
 package com.company.activityart.util
 
-import android.content.Context
 import android.graphics.*
-import android.util.DisplayMetrics
 import android.util.Size
-import android.view.Display
-import android.view.WindowManager
 import androidx.annotation.Px
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextMeasurer
 import androidx.core.graphics.withClip
 import com.company.activityart.domain.models.Activity
-import com.company.activityart.presentation.editArtScreen.ColorWrapper
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
-import kotlin.math.*
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class VisualizationUtils @Inject constructor(
     private val imageSizeUtils: ImageSizeUtils
@@ -27,6 +27,14 @@ class VisualizationUtils @Inject constructor(
         private const val OFFSET_ZERO_PX = 0f
     }
 
+    private fun initTextPaint(color: Int, textSize: Float): Paint {
+        val textPaint = Paint()
+        textPaint.color = color
+        textPaint.textSize = textSize
+        textPaint.isAntiAlias = true
+        return textPaint
+    }
+
     fun createBitmap(
         activities: List<Activity>,
         colorActivitiesArgb: Int,
@@ -38,6 +46,23 @@ class VisualizationUtils @Inject constructor(
         textCenter: String? = null,
         textRight: String? = null
     ): Bitmap {
+        val textMeasurementLeft = Rect()
+        val textMeasurementCenter = Rect()
+        val textMeasurementRight = Rect()
+
+        val textSize = minOf(bitmapSize.height, bitmapSize.width) * 0.05f
+        val textPaintLeft = initTextPaint(colorActivitiesArgb, textSize)
+            .apply { textLeft?.let { getTextBounds(it, 0, it.length, textMeasurementLeft) } }
+        val textPaintCenter = initTextPaint(colorActivitiesArgb, textSize)
+            .apply { textCenter?.let { getTextBounds(it, 0, it.length, textMeasurementCenter) } }
+        val textPaintRight = initTextPaint(colorActivitiesArgb, textSize)
+            .apply { textRight?.let { getTextBounds(it, 0, it.length, textMeasurementRight) } }
+
+        val maxTextHeight = listOf(
+            textMeasurementLeft.height(),
+            textMeasurementCenter.height(),
+            textMeasurementRight.height()
+        ).max()
 
         return Bitmap.createBitmap(
             bitmapSize.width,
@@ -49,14 +74,46 @@ class VisualizationUtils @Inject constructor(
                 withPaddingClip(paddingFraction) {
                     computeDrawingSpecification(
                         n = activities.size,
-                        height = clipBounds.height(),
+                        height = clipBounds.height() - maxTextHeight -
+                                (maxTextHeight.takeIf { it > 0 }?.let { paddingFraction * bitmapSize.height } ?: 0f).roundToInt(),
                         width = clipBounds.width()
                     ).apply {
+
+                        textLeft?.let {
+                            drawText(
+                                it,
+                                (extraSpaceWidth / 2f) + clipBounds.left.toFloat(),
+                                bitmapSize.height - clipBounds.top.toFloat() - (maxTextHeight / 2f),
+                                textPaintLeft
+                            )
+                        }
+
+                        textCenter?.let {
+                            drawText(
+                                it,
+                                (bitmapSize.width / 2f) - (textMeasurementCenter.width() / 2f),
+                                bitmapSize.height - clipBounds.top.toFloat() - (maxTextHeight / 2f),
+                                textPaintCenter
+                            )
+                        }
+                        textRight?.let {
+                            drawText(
+                                it,
+                                bitmapSize.width - (extraSpaceWidth / 2f) - clipBounds.left.toFloat() - textMeasurementRight.width(),
+                                bitmapSize.height - clipBounds.top.toFloat() - (maxTextHeight / 2f),
+                                textPaintRight
+                            )
+                        }
+
+                        textRight?.let {
+
+                        }
 
                         val finalRowOffset = (activitySize * remainder) / 2f
                         activities.forEachIndexed { index, activity ->
                             // 0 % 1 = 0
                             // 0 * 606 = 0
+
                             PolyUtil.decode(activity.summaryPolyline).let { latLngList ->
 
                                 /** Zero-indexed row and column **/
