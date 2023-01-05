@@ -7,11 +7,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -21,6 +24,7 @@ import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
+import com.company.activityart.util.FontType
 import kotlin.math.roundToInt
 
 @Composable
@@ -30,6 +34,7 @@ fun EditArtTypeScreen(
     customTextCenter: String,
     customTextLeft: String,
     customTextRight: String,
+    fontSelected: FontType,
     maximumCustomTextLength: Int,
     selectedEditArtTypeTypeCenter: EditArtTypeType,
     selectedEditArtTypeTypeLeft: EditArtTypeType,
@@ -126,6 +131,37 @@ fun EditArtTypeScreen(
                             }
                         }
                     }
+                }
+            }
+        }
+        Section(
+            header = "Font",
+            description = "What font should any text be?"
+        ) {
+            FontType.values().forEach {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = it == fontSelected,
+                        onClick = {
+                            eventReceiver.onEvent(
+                                EditArtViewEvent.ArtMutatingEvent.TypeFontChanged(
+                                    it
+                                )
+                            )
+                        }
+                    )
+                    Text(
+                        text = stringResource(it.fontName),
+                        fontFamily = FontFamily(
+                            android.graphics.Typeface.createFromAsset(
+                                LocalContext.current.assets,
+                                it.assetFilepath
+                            )
+                        )
+                    )
                 }
             }
         }

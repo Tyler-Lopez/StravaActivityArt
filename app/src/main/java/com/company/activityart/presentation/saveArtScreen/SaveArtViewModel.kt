@@ -121,6 +121,7 @@ class SaveArtViewModel @Inject constructor(
                     unixSecondsRange = secondsAfter..secondsBefore,
                     distanceRange = filterDistanceMoreThan..filterDistanceLessThan
                 ),
+                fontType = FontType.BEBASNEUE, // todo
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
                 bitmapSize = Size(sizeWidthPx, sizeHeightPx),

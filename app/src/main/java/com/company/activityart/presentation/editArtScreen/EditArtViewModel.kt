@@ -24,6 +24,7 @@ import com.company.activityart.presentation.editArtScreen.StyleType.ACTIVITIES
 import com.company.activityart.presentation.editArtScreen.StyleType.BACKGROUND
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
+import com.company.activityart.util.FontType
 import com.company.activityart.util.ImageSizeUtils
 import com.company.activityart.util.TimeUtils
 import com.company.activityart.util.VisualizationUtils
@@ -253,6 +254,7 @@ class EditArtViewModel @Inject constructor(
                     .sumOf { it.distance }
                     .roundToInt(),
                 typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
+                typeFontSelected = FontType.BEBASNEUE,
                 typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
                 typeLeftSelected = NONE,
                 typeLeftCustomText = INITIAL_TYPE_CUSTOM_TEXT,
@@ -288,6 +290,7 @@ class EditArtViewModel @Inject constructor(
             is StylesColorChanged -> onStylesColorChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
+            is TypeFontChanged -> onTypeFontChanged(event)
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         updateBitmap()
@@ -471,6 +474,10 @@ class EditArtViewModel @Inject constructor(
         }.push()
     }
 
+    private fun onTypeFontChanged(event: TypeFontChanged) {
+        copyLastState { copy(typeFontSelected = event.changedTo) }.push()
+    }
+
     private fun onTypeSelectionChanged(event: TypeSelectionChanged) {
         copyLastState {
             when (event.section) {
@@ -512,6 +519,7 @@ class EditArtViewModel @Inject constructor(
                             PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
                         )
                     ),
+                    fontType = typeFontSelected,
                     // Todo, could clean all of this up to reduce code will be needed for navigation
                     textLeft = when (typeLeftSelected) {
                         NONE -> null

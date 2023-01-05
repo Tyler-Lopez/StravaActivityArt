@@ -171,8 +171,8 @@ object AppModule {
     fun provideGson() = Gson()
 
     @Provides
-    fun provideVisualizationUtils(imageSizeUtils: ImageSizeUtils) =
-        VisualizationUtils(imageSizeUtils)
+    fun provideVisualizationUtils(@ApplicationContext appContext: Context) =
+        VisualizationUtils(appContext)
 
     @Provides
     fun provideFileRepository(@ApplicationContext appContext: Context): FileRepository =

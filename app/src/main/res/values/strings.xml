@@ -165,6 +165,9 @@
     <string name="edit_art_type_type_distance_miles">Total Distance in Miles</string>
     <string name="edit_art_type_type_custom">Custom</string>
 
+    <string name="edit_art_type_font_header">Font</string>
+    <string name="edit_art_type_font_description">What font should be used with any text?</string>
+
     <string name="edit_art_resize_header">Resize Art</string>
     <string name="edit_art_resize_description">
         Change the width and height pixel size of the art either from a preset
@@ -182,5 +185,11 @@
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
 
+    <string name="font_bebasneue">BebasNeue</string>
+    <string name="font_roboto">Roboto</string>
+    <string name="font_roboto_condensed">Roboto Condensed</string>
+    <string name="font_lobster">Lobster</string>
+    <string name="font_lobster_two">Lobster Two</string>
+    <string name="font_oswald">Oswald</string>
     <string name="save_art_header">Save Art</string>
 </resources>

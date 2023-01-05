@@ -16,6 +16,7 @@ import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
+import com.company.activityart.util.FontType
 import com.company.activityart.util.Screen
 import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -85,6 +86,7 @@ sealed interface EditArtViewEvent : ViewEvent {
             val changedTo: String
         ) : ArtMutatingEvent
 
+        data class TypeFontChanged(val changedTo: FontType) : ArtMutatingEvent
         data class TypeSelectionChanged(
             val section: EditArtTypeSection,
             val typeSelected: EditArtTypeType
@@ -136,6 +138,7 @@ sealed interface EditArtViewState : ViewState {
         val styleStrokeWidthType: StrokeWidthType,
         val typeActivitiesDistanceMetersSummed: Int,
         val typeAthleteName: String,
+        val typeFontSelected: FontType,
         val typeMaximumCustomTextLength: Int,
         val typeLeftSelected: EditArtTypeType,
         val typeLeftCustomText: String,

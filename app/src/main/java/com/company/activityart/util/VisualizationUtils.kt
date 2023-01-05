@@ -1,5 +1,6 @@
 package com.company.activityart.util
 
+import android.content.Context
 import android.graphics.*
 import android.util.Size
 import androidx.annotation.Px
@@ -15,9 +16,7 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class VisualizationUtils @Inject constructor(
-    private val imageSizeUtils: ImageSizeUtils
-) {
+class VisualizationUtils @Inject constructor(private val context: Context) {
 
     companion object {
         private const val ACTIVITY_SIZE_REDUCE_FRACTION = 0.85f
@@ -27,11 +26,17 @@ class VisualizationUtils @Inject constructor(
         private const val OFFSET_ZERO_PX = 0f
     }
 
-    private fun initTextPaint(color: Int, textSize: Float): Paint {
+    private fun initTextPaint(color: Int, fontType: FontType, textSize: Float): Paint {
         val textPaint = Paint()
         textPaint.color = color
         textPaint.textSize = textSize
         textPaint.isAntiAlias = true
+        val typeface = Typeface.createFromAsset(
+            context.assets,
+            fontType.assetFilepath
+        )
+        println("typeface is $typeface")
+        textPaint.typeface = typeface
         return textPaint
     }
 
@@ -40,6 +45,7 @@ class VisualizationUtils @Inject constructor(
         colorActivitiesArgb: Int,
         colorBackgroundArgb: Int,
         bitmapSize: Size,
+        fontType: FontType,
         strokeWidthType: StrokeWidthType,
         @Px paddingFraction: Float = 0.05f,
         textLeft: String? = null,
@@ -51,11 +57,11 @@ class VisualizationUtils @Inject constructor(
         val textMeasurementRight = Rect()
 
         val textSize = minOf(bitmapSize.height, bitmapSize.width) * 0.05f
-        val textPaintLeft = initTextPaint(colorActivitiesArgb, textSize)
+        val textPaintLeft = initTextPaint(colorActivitiesArgb,  fontType, textSize)
             .apply { textLeft?.let { getTextBounds(it, 0, it.length, textMeasurementLeft) } }
-        val textPaintCenter = initTextPaint(colorActivitiesArgb, textSize)
+        val textPaintCenter = initTextPaint(colorActivitiesArgb, fontType, textSize)
             .apply { textCenter?.let { getTextBounds(it, 0, it.length, textMeasurementCenter) } }
-        val textPaintRight = initTextPaint(colorActivitiesArgb, textSize)
+        val textPaintRight = initTextPaint(colorActivitiesArgb, fontType, textSize)
             .apply { textRight?.let { getTextBounds(it, 0, it.length, textMeasurementRight) } }
 
         val maxTextHeight = listOf(
@@ -75,7 +81,9 @@ class VisualizationUtils @Inject constructor(
                     computeDrawingSpecification(
                         n = activities.size,
                         height = clipBounds.height() - maxTextHeight -
-                                (maxTextHeight.takeIf { it > 0 }?.let { paddingFraction * bitmapSize.height } ?: 0f).roundToInt(),
+                                (maxTextHeight.takeIf { it > 0 }
+                                    ?.let { paddingFraction * bitmapSize.height }
+                                    ?: 0f).roundToInt(),
                         width = clipBounds.width()
                     ).apply {
 
