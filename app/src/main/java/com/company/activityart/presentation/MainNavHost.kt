@@ -79,7 +79,12 @@ fun MainNavHost(
                 FilterDistanceMoreThan,
                 SizeHeightPx,
                 SizeWidthPx,
-                StrokeWidth
+                StrokeWidth,
+                TextLeft,
+                TextCenter,
+                TextRight,
+                TextFont,
+                TextFontSize
             )
         ) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {

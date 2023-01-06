@@ -6,6 +6,8 @@ import com.company.activityart.architecture.Destination
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType
+import com.company.activityart.util.FontSizeType
+import com.company.activityart.util.FontType
 
 sealed interface MainViewState : ViewState {
     object LoadingAuthentication : MainViewState
@@ -40,7 +42,12 @@ sealed interface MainDestination : Destination {
         val filterDistanceMoreThan: Double,
         val sizeHeightPx: Int,
         val sizeWidthPx: Int,
-        val strokeWidthType: StrokeWidthType
+        val strokeWidthType: StrokeWidthType,
+        val textLeft: String?,
+        val textCenter: String?,
+        val textRight: String?,
+        val textFont: FontType,
+        val textFontSize: FontSizeType
     ) : MainDestination
 
     object NavigateUp : MainDestination

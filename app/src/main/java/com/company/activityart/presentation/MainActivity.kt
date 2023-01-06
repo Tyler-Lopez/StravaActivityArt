@@ -162,7 +162,12 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         FilterDistanceMoreThan to filterDistanceMoreThan.toString(),
                         SizeHeightPx to sizeHeightPx.toString(),
                         SizeWidthPx to sizeWidthPx.toString(),
-                        StrokeWidth to strokeWidthType.toString()
+                        StrokeWidth to strokeWidthType.toString(),
+                        TextLeft to (textLeft ?: ""),
+                        TextCenter to (textCenter ?: ""),
+                        TextRight to (textRight ?: ""),
+                        TextFont to textFont.toString(),
+                        TextFontSize to textFontSize.toString()
                     )
                 )
             )

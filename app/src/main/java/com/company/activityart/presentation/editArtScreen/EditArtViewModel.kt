@@ -398,7 +398,34 @@ class EditArtViewModel @Inject constructor(
                         filterDistanceMoreThan = filterDistanceSelected?.start ?: Double.MIN_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
-                        strokeWidthType = styleStrokeWidthType
+                        strokeWidthType = styleStrokeWidthType,
+                        // Todo, need to clean all of these up
+                        textLeft = when (typeLeftSelected) {
+                            NONE -> null
+                            NAME -> typeAthleteName
+                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                            DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                                .meterToKilometerStr()
+                            CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
+                        },
+                        textCenter = when (typeCenterSelected) {
+                            NONE -> null
+                            NAME -> typeAthleteName
+                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                            DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                                .meterToKilometerStr()
+                            CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
+                        },
+                        textRight = when (typeRightSelected) {
+                            NONE -> null
+                            NAME -> typeAthleteName
+                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                            DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                                .meterToKilometerStr()
+                            CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
+                        },
+                        textFont = typeFontSelected,
+                        textFontSize = typeFontSizeSelected
                     )
                 )
             }

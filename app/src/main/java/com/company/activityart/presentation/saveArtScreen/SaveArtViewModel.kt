@@ -49,6 +49,11 @@ class SaveArtViewModel @Inject constructor(
     private val sizeHeightPx = SizeHeightPx.rawArg(ssh).toInt()
     private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
     private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
+    private val textLeft = TextLeft.rawArg(ssh).takeIf { it.isNotBlank() }
+    private val textCenter = TextCenter.rawArg(ssh).takeIf { it.isNotBlank() }
+    private val textRight = TextRight.rawArg(ssh).takeIf { it.isNotBlank() }
+    private val fontType = FontType.valueOf(TextFont.rawArg(ssh))
+    private val fontTypeSize = FontSizeType.valueOf(TextFontSize.rawArg(ssh))
 
     override fun onEvent(event: SaveArtViewEvent) {
         when (event) {
@@ -121,12 +126,15 @@ class SaveArtViewModel @Inject constructor(
                     unixSecondsRange = secondsAfter..secondsBefore,
                     distanceRange = filterDistanceMoreThan..filterDistanceLessThan
                 ),
-                fontType = FontType.BEBASNEUE, // todo
-                fontSizeType = FontSizeType.MEDIUM, // todo
+                fontType = fontType,
+                fontSizeType = fontTypeSize,
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
                 bitmapSize = Size(sizeWidthPx, sizeHeightPx),
-                strokeWidthType = strokeWidthType
+                strokeWidthType = strokeWidthType,
+                textLeft = textLeft,
+                textCenter = textCenter,
+                textRight = textRight,
             )
             val newSize = imageSizeUtils.sizeToMaximumSize(
                 Size(sizeWidthPx, sizeHeightPx),

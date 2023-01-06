@@ -21,6 +21,11 @@ sealed interface NavArgSpecification {
         private const val SIZE_HEIGHT_KEY = "sizeHeight"
         private const val SIZE_WIDTH_KEY = "sizeWidth"
         private const val STROKE_WIDTH_KEY = "strokeWidth"
+        private const val TEXT_LEFT_KEY = "textLeft"
+        private const val TEXT_CENTER_KEY = "textCenter"
+        private const val TEXT_RIGHT_KEY = "textRight"
+        private const val TEXT_FONT_KEY = "textFont"
+        private const val TEXT_FONT_SIZE_KEY = "textFontSize"
 
         private const val ERROR_MISSING_KEY = "ERROR: Missing key [%s] in saved state handle."
     }
@@ -86,6 +91,33 @@ sealed interface NavArgSpecification {
 
     object SizeWidthPx : NavArgSpecification {
         override val name = SIZE_WIDTH_KEY
+    }
+    /*
+            private const val TEXT_LEFT_KEY = "textLeft"
+        private const val TEXT_CENTER_KEY = "textCenter"
+        private const val TEXT_RIGHT_KEY = "textRight"
+        private const val TEXT_FONT_KEY = "textFont"
+        private const val TEXT_FONT_SIZE_KEY = "textFontSize"
+     */
+
+    object TextLeft : NavArgSpecification {
+        override val name: String = TEXT_LEFT_KEY
+    }
+
+    object TextCenter : NavArgSpecification {
+        override val name: String = TEXT_CENTER_KEY
+    }
+
+    object TextRight : NavArgSpecification {
+        override val name: String = TEXT_RIGHT_KEY
+    }
+
+    object TextFont: NavArgSpecification {
+        override val name: String = TEXT_FONT_KEY
+    }
+
+    object TextFontSize : NavArgSpecification {
+        override val name: String = TEXT_FONT_SIZE_KEY
     }
 }
 
