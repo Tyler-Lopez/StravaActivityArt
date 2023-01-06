@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Body
 import com.company.activityart.presentation.common.type.SubheadHeavy
@@ -135,8 +136,8 @@ fun EditArtTypeScreen(
             }
         }
         Section(
-            header = "Font",
-            description = "What font should any text be?"
+            header = stringResource(R.string.edit_art_type_font_header),
+            description = stringResource(R.string.edit_art_type_font_description)
         ) {
             FontType.values().forEach {
                 Row(
