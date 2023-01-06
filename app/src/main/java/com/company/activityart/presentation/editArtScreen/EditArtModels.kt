@@ -16,6 +16,7 @@ import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
+import com.company.activityart.util.FontSizeType
 import com.company.activityart.util.FontType
 import com.company.activityart.util.Screen
 import com.company.activityart.util.classes.YearMonthDay
@@ -87,6 +88,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         ) : ArtMutatingEvent
 
         data class TypeFontChanged(val changedTo: FontType) : ArtMutatingEvent
+        data class TypeFontSizeChanged(val changedTo: FontSizeType) : ArtMutatingEvent
         data class TypeSelectionChanged(
             val section: EditArtTypeSection,
             val typeSelected: EditArtTypeType
@@ -139,6 +141,7 @@ sealed interface EditArtViewState : ViewState {
         val typeActivitiesDistanceMetersSummed: Int,
         val typeAthleteName: String,
         val typeFontSelected: FontType,
+        val typeFontSizeSelected: FontSizeType,
         val typeMaximumCustomTextLength: Int,
         val typeLeftSelected: EditArtTypeType,
         val typeLeftCustomText: String,

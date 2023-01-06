@@ -46,6 +46,7 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
         colorBackgroundArgb: Int,
         bitmapSize: Size,
         fontType: FontType,
+        fontSizeType: FontSizeType,
         strokeWidthType: StrokeWidthType,
         @Px paddingFraction: Float = 0.05f,
         textLeft: String? = null,
@@ -56,8 +57,14 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
         val textMeasurementCenter = Rect()
         val textMeasurementRight = Rect()
 
-        val textSize = minOf(bitmapSize.height, bitmapSize.width) * 0.05f
-        val textPaintLeft = initTextPaint(colorActivitiesArgb,  fontType, textSize)
+        val textSize = minOf(bitmapSize.height, bitmapSize.width) * when (fontSizeType) {
+            FontSizeType.XS -> 0.025f
+            FontSizeType.SMALL -> 0.05f
+            FontSizeType.MEDIUM -> 0.075f
+            FontSizeType.LARGE -> 0.1f
+            FontSizeType.XL -> 0.125f
+        }
+        val textPaintLeft = initTextPaint(colorActivitiesArgb, fontType, textSize)
             .apply { textLeft?.let { getTextBounds(it, 0, it.length, textMeasurementLeft) } }
         val textPaintCenter = initTextPaint(colorActivitiesArgb, fontType, textSize)
             .apply { textCenter?.let { getTextBounds(it, 0, it.length, textMeasurementCenter) } }
@@ -82,7 +89,7 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
                         n = activities.size,
                         height = clipBounds.height() - maxTextHeight -
                                 (maxTextHeight.takeIf { it > 0 }
-                                    ?.let { paddingFraction * bitmapSize.height }
+                                    ?.let { clipBounds.top.toFloat() }
                                     ?: 0f).roundToInt(),
                         width = clipBounds.width()
                     ).apply {

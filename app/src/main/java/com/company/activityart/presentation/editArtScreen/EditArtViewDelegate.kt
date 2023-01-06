@@ -100,11 +100,12 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     typeLeftCustomText,
                                     typeRightCustomText,
                                     typeFontSelected,
+                                    typeFontSizeSelected,
                                     typeMaximumCustomTextLength,
                                     typeCenterSelected,
                                     typeLeftSelected,
                                     typeRightSelected,
-                                    scrollStateStyle,
+                                    scrollStateType,
                                     viewModel
                                 )
                                 RESIZE -> EditArtResizeScreen(

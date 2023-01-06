@@ -24,10 +24,7 @@ import com.company.activityart.presentation.editArtScreen.StyleType.ACTIVITIES
 import com.company.activityart.presentation.editArtScreen.StyleType.BACKGROUND
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
-import com.company.activityart.util.FontType
-import com.company.activityart.util.ImageSizeUtils
-import com.company.activityart.util.TimeUtils
-import com.company.activityart.util.VisualizationUtils
+import com.company.activityart.util.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -255,6 +252,7 @@ class EditArtViewModel @Inject constructor(
                     .roundToInt(),
                 typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
                 typeFontSelected = FontType.BEBASNEUE,
+                typeFontSizeSelected = FontSizeType.MEDIUM,
                 typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
                 typeLeftSelected = NONE,
                 typeLeftCustomText = INITIAL_TYPE_CUSTOM_TEXT,
@@ -291,6 +289,7 @@ class EditArtViewModel @Inject constructor(
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
             is TypeFontChanged -> onTypeFontChanged(event)
+            is TypeFontSizeChanged -> onTypeFontSizeChanged(event)
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         updateBitmap()
@@ -478,6 +477,10 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(typeFontSelected = event.changedTo) }.push()
     }
 
+    private fun onTypeFontSizeChanged(event: TypeFontSizeChanged) {
+        copyLastState { copy(typeFontSizeSelected = event.changedTo) }.push()
+    }
+
     private fun onTypeSelectionChanged(event: TypeSelectionChanged) {
         copyLastState {
             when (event.section) {
@@ -520,26 +523,30 @@ class EditArtViewModel @Inject constructor(
                         )
                     ),
                     fontType = typeFontSelected,
+                    fontSizeType = typeFontSizeSelected,
                     // Todo, could clean all of this up to reduce code will be needed for navigation
                     textLeft = when (typeLeftSelected) {
                         NONE -> null
                         NAME -> typeAthleteName
                         DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }.meterToKilometerStr()
+                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                            .meterToKilometerStr()
                         CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
                     },
                     textCenter = when (typeCenterSelected) {
                         NONE -> null
                         NAME -> typeAthleteName
                         DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }.meterToKilometerStr()
+                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                            .meterToKilometerStr()
                         CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
                     },
                     textRight = when (typeRightSelected) {
                         NONE -> null
                         NAME -> typeAthleteName
                         DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }.meterToKilometerStr()
+                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                            .meterToKilometerStr()
                         CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
                     }
                 )
