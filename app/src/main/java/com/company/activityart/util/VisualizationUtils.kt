@@ -89,7 +89,7 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
                         n = activities.size,
                         height = clipBounds.height() - maxTextHeight -
                                 (maxTextHeight.takeIf { it > 0 }
-                                    ?.let { clipBounds.top.toFloat() }
+                                    ?.let { paddingFraction * bitmapSize.height }
                                     ?: 0f).roundToInt(),
                         width = clipBounds.width()
                     ).apply {
