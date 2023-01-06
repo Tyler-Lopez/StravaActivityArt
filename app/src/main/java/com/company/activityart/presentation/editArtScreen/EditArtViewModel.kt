@@ -20,8 +20,7 @@ import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMu
 import com.company.activityart.presentation.editArtScreen.EditArtViewState.Loading
 import com.company.activityart.presentation.editArtScreen.EditArtViewState.Standby
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType.MEDIUM
-import com.company.activityart.presentation.editArtScreen.StyleType.ACTIVITIES
-import com.company.activityart.presentation.editArtScreen.StyleType.BACKGROUND
+import com.company.activityart.presentation.editArtScreen.StyleType.*
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.company.activityart.util.*
@@ -246,6 +245,7 @@ class EditArtViewModel @Inject constructor(
                     INITIAL_BACKGROUND_GREEN,
                     INITIAL_BACKGROUND_RED
                 ),
+                styleFont = null,
                 styleStrokeWidthType = MEDIUM,
                 typeActivitiesDistanceMetersSummed = activitiesFiltered
                     .sumOf { it.distance }
@@ -478,6 +478,7 @@ class EditArtViewModel @Inject constructor(
                 when (styleType) {
                     BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
                     ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
+                    FONT -> copy(styleActivities = styleActivities.copyWithEvent(event)) // todo
                 }
             }
         }.push()

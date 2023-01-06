@@ -21,8 +21,8 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
     companion object {
         private const val ACTIVITY_SIZE_REDUCE_FRACTION = 0.85f
         private const val ACTIVITY_STROKE_SMALL_REDUCE_FRACTION = 0.15f
-        private const val ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION = 0.35f
-        private const val ACTIVITY_STROKE_LARGE_REDUCE_FRACTION = 0.60f
+        private const val ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION = 0.25f
+        private const val ACTIVITY_STROKE_LARGE_REDUCE_FRACTION = 0.50f
         private const val OFFSET_ZERO_PX = 0f
     }
 
@@ -48,7 +48,7 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
         fontType: FontType,
         fontSizeType: FontSizeType,
         strokeWidthType: StrokeWidthType,
-        @Px paddingFraction: Float = 0.05f,
+        @Px paddingFraction: Float = 0.1f,
         textLeft: String? = null,
         textCenter: String? = null,
         textRight: String? = null

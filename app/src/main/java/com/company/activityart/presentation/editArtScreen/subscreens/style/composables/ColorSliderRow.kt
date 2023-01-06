@@ -19,6 +19,7 @@ fun ColorSlider(
     colorName: String,
     colorValue: Float,
     colorType: ColorType,
+    enabled: Boolean,
     styleType: StyleType,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
@@ -27,6 +28,7 @@ fun ColorSlider(
         Slider(
             modifier = Modifier.weight(1f, true),
             value = colorValue,
+            enabled = enabled,
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = {
                 eventReceiver.onEvent(

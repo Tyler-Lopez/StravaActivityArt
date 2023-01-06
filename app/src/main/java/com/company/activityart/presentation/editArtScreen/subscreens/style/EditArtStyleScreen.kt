@@ -10,22 +10,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
-import com.company.activityart.presentation.editArtScreen.ColorWrapper
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
-import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
-import com.company.activityart.presentation.editArtScreen.StrokeWidthType
+import com.company.activityart.presentation.editArtScreen.*
+import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StylesStrokeWidthChanged
 import com.company.activityart.presentation.editArtScreen.StyleType.*
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.Section
-import com.company.activityart.presentation.editArtScreen.subscreens.style.composables.StyleTypeSliders
+import com.company.activityart.presentation.editArtScreen.subscreens.style.composables.ColorPreview
+import com.company.activityart.presentation.editArtScreen.subscreens.style.composables.ColorSlider
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
 fun EditArtStyleViewDelegate(
     colorActivities: ColorWrapper,
     colorBackground: ColorWrapper,
+    colorFont: ColorWrapper?,
     scrollState: ScrollState,
     strokeWidthType: StrokeWidthType,
     eventReceiver: EventReceiver<EditArtViewEvent>
@@ -34,20 +35,84 @@ fun EditArtStyleViewDelegate(
         modifier = Modifier.verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
-        StyleTypeSliders(
-            header = stringResource(id = R.string.edit_art_style_background_header),
-            description = stringResource(id = R.string.edit_art_style_background_description),
-            styleType = BACKGROUND,
-            color = colorBackground,
-            eventReceiver = eventReceiver
-        )
-        StyleTypeSliders(
-            header = stringResource(id = R.string.edit_art_style_activities_header),
-            description = stringResource(id = R.string.edit_art_style_activities_description),
-            styleType = ACTIVITIES,
-            color = colorActivities,
-            eventReceiver = eventReceiver
-        )
+        StyleType.values().forEach { styleType ->
+            Section(
+                header = stringResource(styleType.headerStrRes),
+                description = stringResource(styleType.descriptionStrRes)
+            ) {
+                val color: ColorWrapper = when (styleType) {
+                    ACTIVITIES -> colorActivities
+                    BACKGROUND -> colorBackground
+                    FONT -> colorFont ?: colorActivities
+                }
+                ColorPreview(colorWrapper = color)
+                if (styleType == FONT) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = colorFont == null,
+                            onClick = {
+
+                            }
+                        )
+                        Subhead(text = "Use the same color as Activities")
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    if (styleType == FONT) {
+                        RadioButton(
+                            selected = colorFont != null,
+                            onClick = {
+
+                            }
+                        )
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        if (styleType == FONT) {
+                            Subhead(text = "Choose a different color")
+                        }
+                        (ColorSlider(
+                            colorName = stringResource(
+                                R.string.edit_art_style_color_red,
+                                color.redAsEightBit
+                            ),
+                            enabled = styleType != FONT || colorFont != null,
+                            colorValue = color.red,
+                            colorType = ColorType.RED,
+                            styleType = styleType,
+                            eventReceiver = eventReceiver
+                        ))
+                        (ColorSlider(
+                            colorName = stringResource(
+                                R.string.edit_art_style_color_green,
+                                color.greenAsEightBit
+                            ),
+                            enabled = styleType != FONT || colorFont != null,
+                            colorValue = color.green,
+                            colorType = ColorType.GREEN,
+                            styleType = styleType,
+                            eventReceiver = eventReceiver
+                        ))
+                        (ColorSlider(
+                            colorName = stringResource(
+                                R.string.edit_art_style_color_blue,
+                                color.blueAsEightBit
+                            ),
+                            enabled = styleType != FONT || colorFont != null,
+                            colorValue = color.blue,
+                            colorType = ColorType.BLUE,
+                            styleType = styleType,
+                            eventReceiver = eventReceiver
+                        ))
+                    }
+                }
+            }
+        }
         Section(
             header = stringResource(R.string.edit_art_style_stroke_width_header),
             description = stringResource(R.string.edit_art_style_stroke_width_description)

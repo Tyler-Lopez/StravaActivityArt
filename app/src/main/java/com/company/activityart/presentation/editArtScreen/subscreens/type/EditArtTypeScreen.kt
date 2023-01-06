@@ -81,7 +81,7 @@ fun EditArtTypeScreen(
 
                             })
                         Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                            Body(text = stringResource(type.header))
+                            Subhead(text = stringResource(type.header))
                             when (type) {
                                 EditArtTypeType.NONE -> {}
                                 EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)

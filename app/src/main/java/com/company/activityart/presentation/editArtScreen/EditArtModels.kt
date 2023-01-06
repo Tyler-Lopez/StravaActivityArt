@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 import android.util.Size
 import androidx.annotation.Px
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -137,6 +138,7 @@ sealed interface EditArtViewState : ViewState {
         val sizeCustomRangePx: IntRange,
         val styleActivities: ColorWrapper,
         val styleBackground: ColorWrapper,
+        val styleFont: ColorWrapper?, // Null when inheriting from activities
         val styleStrokeWidthType: StrokeWidthType,
         val typeActivitiesDistanceMetersSummed: Int,
         val typeAthleteName: String,
@@ -192,9 +194,22 @@ data class ColorWrapper(
     }
 }
 
-enum class StyleType {
-    BACKGROUND,
-    ACTIVITIES,
+enum class StyleType(
+    @StringRes val headerStrRes: Int,
+    @StringRes val descriptionStrRes: Int
+) {
+    BACKGROUND(
+        R.string.edit_art_style_background_header,
+        R.string.edit_art_style_background_description
+    ),
+    ACTIVITIES(
+        R.string.edit_art_style_activities_header,
+        R.string.edit_art_style_activities_description
+    ),
+    FONT(
+        R.string.edit_art_style_font_header,
+        R.string.edit_art_style_font_description
+    );
 }
 
 enum class ColorType {

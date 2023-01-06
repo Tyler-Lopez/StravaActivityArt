@@ -89,6 +89,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 STYLE -> EditArtStyleViewDelegate(
                                     styleActivities,
                                     styleBackground,
+                                    styleFont,
                                     scrollStateStyle,
                                     styleStrokeWidthType,
                                     viewModel

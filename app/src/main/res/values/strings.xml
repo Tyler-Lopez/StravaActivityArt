@@ -141,6 +141,10 @@
     <string name="edit_art_style_activities_description">
         What color should the activities of the art be?
     </string>
+    <string name="edit_art_style_font_header">Font</string>
+    <string name="edit_art_style_font_description">
+        What color should any text be?
+    </string>
     <string name="edit_art_style_color_red">Red: %d</string>
     <string name="edit_art_style_color_green">Green: %d</string>
     <string name="edit_art_style_color_blue">Blue: %d</string>
