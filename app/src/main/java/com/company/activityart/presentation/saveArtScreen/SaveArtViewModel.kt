@@ -10,6 +10,7 @@ import com.company.activityart.domain.FileRepository
 import com.company.activityart.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.company.activityart.presentation.MainDestination
 import com.company.activityart.presentation.MainDestination.*
+import com.company.activityart.presentation.editArtScreen.EditArtViewModel
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.*
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
@@ -34,6 +35,11 @@ class SaveArtViewModel @Inject constructor(
     gson: Gson,
     ssh: SavedStateHandle,
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
+
+    companion object {
+        private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
+        private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
+    }
 
     private val activityTypes = gson.fromJson<List<String>>(
         ActivityTypes.rawArg(ssh),
@@ -132,7 +138,13 @@ class SaveArtViewModel @Inject constructor(
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
                 colorFontArgb = colorFontArgb,
-                bitmapSize = Size(sizeWidthPx, sizeHeightPx),
+                bitmapSize = imageSizeUtils.sizeToMaximumSize(
+                    actualSize = Size(sizeWidthPx, sizeHeightPx),
+                    maximumSize = Size(
+                        PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX,
+                        PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
+                    )
+                ),
                 strokeWidthType = strokeWidthType,
                 textLeft = textLeft,
                 textCenter = textCenter,
