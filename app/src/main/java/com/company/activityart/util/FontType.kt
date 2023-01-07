@@ -27,6 +27,14 @@ enum class FontType(
         fontName = R.string.font_lobster_two,
         fileName = "lobstertwo_regular"
     ),
+    NEWSREADER(
+        fontName = R.string.font_newsreader,
+        fileName = "newsreader_regular"
+    ),
+    NEWSREADER_LIGHT(
+        fontName = R.string.font_newsreader_light,
+        fileName = "newsreader_light"
+    ),
     OSWALD(
         fontName = R.string.font_oswald,
         fileName = "oswald_regular"

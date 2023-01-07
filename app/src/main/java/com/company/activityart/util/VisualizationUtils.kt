@@ -44,6 +44,7 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
         activities: List<Activity>,
         colorActivitiesArgb: Int,
         colorBackgroundArgb: Int,
+        colorFontArgb: Int,
         bitmapSize: Size,
         fontType: FontType,
         fontSizeType: FontSizeType,
@@ -64,11 +65,11 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
             FontSizeType.LARGE -> 0.1f
             FontSizeType.XL -> 0.125f
         }
-        val textPaintLeft = initTextPaint(colorActivitiesArgb, fontType, textSize)
+        val textPaintLeft = initTextPaint(colorFontArgb, fontType, textSize)
             .apply { textLeft?.let { getTextBounds(it, 0, it.length, textMeasurementLeft) } }
-        val textPaintCenter = initTextPaint(colorActivitiesArgb, fontType, textSize)
+        val textPaintCenter = initTextPaint(colorFontArgb, fontType, textSize)
             .apply { textCenter?.let { getTextBounds(it, 0, it.length, textMeasurementCenter) } }
-        val textPaintRight = initTextPaint(colorActivitiesArgb, fontType, textSize)
+        val textPaintRight = initTextPaint(colorFontArgb, fontType, textSize)
             .apply { textRight?.let { getTextBounds(it, 0, it.length, textMeasurementRight) } }
 
         val maxTextHeight = listOf(
@@ -89,8 +90,8 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
                         n = activities.size,
                         height = clipBounds.height() - maxTextHeight -
                                 (maxTextHeight.takeIf { it > 0 }
-                                    ?.let { paddingFraction * bitmapSize.height }
-                                    ?: 0f).roundToInt(),
+                                    ?.coerceAtMost((paddingFraction * bitmapSize.height).toInt())
+                                    ?.toFloat() ?: 0f).toInt(),
                         width = clipBounds.width()
                     ).apply {
 

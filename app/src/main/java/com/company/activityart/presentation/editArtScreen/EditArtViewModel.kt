@@ -286,6 +286,7 @@ class EditArtViewModel @Inject constructor(
             is SizeCustomChangeDone -> onSizeCustomChangeDone()
             is SizeRotated -> onSizeRotated(event)
             is StylesColorChanged -> onStylesColorChanged(event)
+            is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
             is TypeFontChanged -> onTypeFontChanged(event)
@@ -391,6 +392,7 @@ class EditArtViewModel @Inject constructor(
                             .map { it.first },
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
+                        colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                         filterBeforeMs = filterDateSelected?.last ?: Long.MAX_VALUE,
                         filterAfterMs = filterDateSelected?.first ?: Long.MIN_VALUE,
                         filterDistanceLessThan = filterDistanceSelected?.endInclusive
@@ -403,7 +405,8 @@ class EditArtViewModel @Inject constructor(
                         textLeft = when (typeLeftSelected) {
                             NONE -> null
                             NAME -> typeAthleteName
-                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }
+                                .meterToMilesStr()
                             DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
                                 .meterToKilometerStr()
                             CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
@@ -411,7 +414,8 @@ class EditArtViewModel @Inject constructor(
                         textCenter = when (typeCenterSelected) {
                             NONE -> null
                             NAME -> typeAthleteName
-                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }
+                                .meterToMilesStr()
                             DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
                                 .meterToKilometerStr()
                             CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
@@ -419,7 +423,8 @@ class EditArtViewModel @Inject constructor(
                         textRight = when (typeRightSelected) {
                             NONE -> null
                             NAME -> typeAthleteName
-                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }
+                                .meterToMilesStr()
                             DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
                                 .meterToKilometerStr()
                             CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
@@ -478,9 +483,15 @@ class EditArtViewModel @Inject constructor(
                 when (styleType) {
                     BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
                     ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
-                    FONT -> copy(styleActivities = styleActivities.copyWithEvent(event)) // todo
+                    FONT -> copy(styleFont = (styleFont ?: styleActivities).copyWithEvent(event))
                 }
             }
+        }.push()
+    }
+
+    private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
+        copyLastState {
+            copy(styleFont = if (event.useCustom) styleFont ?: styleActivities else null)
         }.push()
     }
 
@@ -540,6 +551,7 @@ class EditArtViewModel @Inject constructor(
                     activities = activitiesFilteredByFilterType[EditArtFilterType.filterFinal]!!,
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorBackgroundArgb = styleBackground.color.toArgb(),
+                    colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                     strokeWidthType = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {

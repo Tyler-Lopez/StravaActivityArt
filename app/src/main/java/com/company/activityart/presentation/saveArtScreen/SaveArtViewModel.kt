@@ -42,6 +42,7 @@ class SaveArtViewModel @Inject constructor(
     private val activities = activitiesFromCacheUseCase()
     private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
     private val colorBackgroundArgb = ColorBackgroundArgb.rawArg(ssh).toInt()
+    private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()
     private val filterDateAfterMs = FilterDateAfterMs.rawArg(ssh).toLong()
     private val filterDateBeforeMs = FilterDateBeforeMs.rawArg(ssh).toLong()
     private val filterDistanceLessThan = FilterDistanceLessThan.rawArg(ssh).toDouble()
@@ -130,6 +131,7 @@ class SaveArtViewModel @Inject constructor(
                 fontSizeType = fontTypeSize,
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
+                colorFontArgb = colorFontArgb,
                 bitmapSize = Size(sizeWidthPx, sizeHeightPx),
                 strokeWidthType = strokeWidthType,
                 textLeft = textLeft,

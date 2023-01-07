@@ -197,6 +197,8 @@
     <string name="font_roboto_condensed">Roboto Condensed</string>
     <string name="font_lobster">Lobster</string>
     <string name="font_lobster_two">Lobster Two</string>
+    <string name="font_newsreader_light">Newsreader Light</string>
+    <string name="font_newsreader">Newsreader</string>
     <string name="font_oswald">Oswald</string>
     <string name="save_art_header">Save Art</string>
 

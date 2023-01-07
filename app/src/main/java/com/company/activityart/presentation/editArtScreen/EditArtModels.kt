@@ -76,6 +76,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
         object SizeCustomChangeDone : ArtMutatingEvent
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
+        data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
         data class StylesColorChanged(
             val styleType: StyleType,
             val colorType: ColorType,

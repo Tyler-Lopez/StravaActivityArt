@@ -54,7 +54,9 @@ fun EditArtStyleViewDelegate(
                         RadioButton(
                             selected = colorFont == null,
                             onClick = {
-
+                                eventReceiver.onEvent(
+                                    EditArtViewEvent.ArtMutatingEvent.StyleColorFontUseCustomChanged(false)
+                                )
                             }
                         )
                         Subhead(text = "Use the same color as Activities")
@@ -68,7 +70,9 @@ fun EditArtStyleViewDelegate(
                         RadioButton(
                             selected = colorFont != null,
                             onClick = {
-
+                                eventReceiver.onEvent(
+                                    EditArtViewEvent.ArtMutatingEvent.StyleColorFontUseCustomChanged(true)
+                                )
                             }
                         )
                     }

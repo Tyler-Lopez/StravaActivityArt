@@ -14,6 +14,7 @@ sealed interface NavArgSpecification {
         private const val ACCESS_TOKEN_KEY = "accessToken"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLOR_BACKGROUND_KEY = "colorBackground"
+        private const val COLOR_FONT_KEY = "colorFont"
         private const val FILTER_DATE_AFTER_MS_KEY = "filterDateAfterMs"
         private const val FILTER_DATE_BEFORE_MS_KEY = "filterDateBeforeMs"
         private const val FILTER_DISTANCE_LESS_THAN_KEY = "filterDistanceLessThan"
@@ -65,6 +66,10 @@ sealed interface NavArgSpecification {
         override val name = COLOR_BACKGROUND_KEY
     }
 
+    object ColorFontArgb : NavArgSpecification {
+        override val name: String = COLOR_FONT_KEY
+    }
+
     object FilterDateAfterMs : NavArgSpecification {
         override val name = FILTER_DATE_AFTER_MS_KEY
     }
@@ -92,13 +97,6 @@ sealed interface NavArgSpecification {
     object SizeWidthPx : NavArgSpecification {
         override val name = SIZE_WIDTH_KEY
     }
-    /*
-            private const val TEXT_LEFT_KEY = "textLeft"
-        private const val TEXT_CENTER_KEY = "textCenter"
-        private const val TEXT_RIGHT_KEY = "textRight"
-        private const val TEXT_FONT_KEY = "textFont"
-        private const val TEXT_FONT_SIZE_KEY = "textFontSize"
-     */
 
     object TextLeft : NavArgSpecification {
         override val name: String = TEXT_LEFT_KEY
@@ -112,7 +110,7 @@ sealed interface NavArgSpecification {
         override val name: String = TEXT_RIGHT_KEY
     }
 
-    object TextFont: NavArgSpecification {
+    object TextFont : NavArgSpecification {
         override val name: String = TEXT_FONT_KEY
     }
 

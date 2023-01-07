@@ -36,6 +36,7 @@ sealed interface MainDestination : Destination {
         val activityTypes: List<String>,
         val colorActivitiesArgb: Int,
         val colorBackgroundArgb: Int,
+        val colorFontArgb: Int,
         val filterBeforeMs: Long,
         val filterAfterMs: Long,
         val filterDistanceLessThan: Double,

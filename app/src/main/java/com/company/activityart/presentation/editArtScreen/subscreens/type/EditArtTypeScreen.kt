@@ -78,7 +78,6 @@ fun EditArtTypeScreen(
                                         typeSelected = type
                                     )
                                 )
-
                             })
                         Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
                             Subhead(text = stringResource(type.header))
