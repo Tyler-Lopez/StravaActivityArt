@@ -185,6 +185,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         intent.putExtra(EXTRA_TEXT, "I made this art from my activities with Activity Art!")
         intent.putExtra(EXTRA_SUBJECT, "Activity Art")
         intent.type = "image/png"
-        applicationContext.startActivity(createChooser(intent, "Share Via"))
+        val chooserIntent = createChooser(intent, "Share Via")
+        chooserIntent.addFlags(FLAG_ACTIVITY_NEW_TASK) // Allows running this on Android 11 outside of Activity
+        applicationContext.startActivity(chooserIntent)
     }
 }

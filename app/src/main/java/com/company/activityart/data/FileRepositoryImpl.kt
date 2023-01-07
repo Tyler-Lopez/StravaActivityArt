@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
@@ -27,20 +28,22 @@ class FileRepositoryImpl @Inject constructor(
             val resolver = context.contentResolver
 
             val uri: Uri? = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                println("Here saving to gallery when Build is > Q")
                 /**
                  * https://stackoverflow.com/questions/8560501/android-save-image-into-gallery
                  * https://stackoverflow.com/questions/57726896/mediastore-images-media-insertimage-deprecated
                  */
                 resolver.insert(
-                    MediaStore.Files.getContentUri("external"),
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI,
                     initializeContentValues(fileName).apply {
                         put(
                             MediaStore.MediaColumns.RELATIVE_PATH,
-                            context.getExternalFilesDir(DIRECTORY_PICTURES)!!.absolutePath
+                            DIRECTORY_DOWNLOADS
                         )
                     }
                 )
             } else {
+                println("Here saving to gallery when Build is < Q")
                 val file = File(
                     Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES),
                     fileName
@@ -70,13 +73,16 @@ class FileRepositoryImpl @Inject constructor(
     override suspend fun saveBitmapToCache(bitmap: Bitmap): Response<Uri> {
         return try {
             val imageFolder = File(context.cacheDir, "images")
-            val file = File(imageFolder, "shared_image.png")
+            imageFolder.mkdirs()
+            println("Image folder made")
+            val file = File(imageFolder, "cached_image.png")
             FileOutputStream(file).apply {
                 bitmap.compressAsPng(outputStream = this)
                 flushAndClose()
             }
             Response.Success(FileProvider.getUriForFile(context, "com.company.activityart", file))
         } catch (e: Exception) {
+            println("Here exception caught saving to cache, $e")
             Response.Error(exception = e)
         }
     }
