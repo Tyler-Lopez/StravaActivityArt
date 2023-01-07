@@ -199,7 +199,18 @@
     <string name="font_lobster_two">Lobster Two</string>
     <string name="font_newsreader_light">Newsreader Light</string>
     <string name="font_newsreader">Newsreader</string>
+    <string name="font_cinzel">Cinzel</string>
+    <string name="font_satisfy">Satisfy</string>
     <string name="font_oswald">Oswald</string>
+    <string name="font_quicksand_bold">Quicksand Bold</string>
+    <string name="font_quicksand_regular">Quicksand</string>
+    <string name="font_quicksand_light">Quicksand Light</string>
+    <string name="font_josefin_sans_bold">Josefin Sans Bold</string>
+    <string name="font_josefin_sans_bold_italic">Josefin Sans Bold Italic</string>
+    <string name="font_josefin_sans_regular">Josefin Sans</string>
+    <string name="font_josefin_sans_light">Josefin Sans Light</string>
+    <string name="font_josefin_sans_light_italic">Josefin Sans Light Italic</string>
+
     <string name="save_art_header">Save Art</string>
 
     <string name="font_size_type_xs">XS</string>
