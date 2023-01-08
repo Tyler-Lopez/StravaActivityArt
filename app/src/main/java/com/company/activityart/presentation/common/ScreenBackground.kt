@@ -1,4 +1,4 @@
-package com.company.activityart.presentation.editArtScreen.subscreens.filters.composables
+package com.company.activityart.presentation.common
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement.spacedBy

@@ -11,8 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.company.activityart.R
 import com.company.activityart.presentation.common.type.Subhead
-import com.company.activityart.presentation.common.type.TitleOne
-import com.company.activityart.presentation.editArtScreen.subscreens.filters.composables.ScreenBackground
+import com.company.activityart.presentation.common.ScreenBackground
 
 /**
  * When the athlete is determined as unauthenticated,

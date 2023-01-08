@@ -7,6 +7,4 @@ sealed class AboutViewEvent : ViewEvent {
     object NavigateUpClicked : AboutViewEvent()
 }
 
-sealed class AboutViewState : ViewState {
-    object Standby : AboutViewState()
-}
+object AboutViewState : ViewState

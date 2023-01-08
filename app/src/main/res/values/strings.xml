@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Activity Art</string>
+    <string name="app_logo_content_description">Activity Art Logo</string>
+    <string name="app_version">Version 1.0</string>
     <string name="app_description">
         Celebrate your Strava activities with personalized art customized exactly to your specification
     </string>
@@ -23,13 +25,7 @@
     <!-- Content shown on the about screen describing the app -->
     <string-array name="about_screen_content">
         <item>
-        This app lets athletes create digital pictures of their Strava activities at a very high resolution appropriate for printing and framing.
-        </item>
-        <item>
-        As an athlete might have thousands of activities, they can choose which to make art from based on the activity date, type, gear, and distance.
-        </item>
-        <item>
-        Activity Art is still in development; please send suggestions or any bugs found to bunsendevelopment@gmail.com
+        Activity Art lets athletes create digital artwork of their Strava activities at a high resolution appropriate for printing and framing.
         </item>
     </string-array>
 

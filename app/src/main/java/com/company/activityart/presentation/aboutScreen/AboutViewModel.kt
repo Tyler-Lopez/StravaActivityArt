@@ -3,9 +3,8 @@ package com.company.activityart.presentation.aboutScreen
 import androidx.lifecycle.viewModelScope
 import com.company.activityart.architecture.BaseRoutingViewModel
 import com.company.activityart.presentation.MainDestination
-import com.company.activityart.presentation.MainDestination.*
-import com.company.activityart.presentation.aboutScreen.AboutViewState.*
-import com.company.activityart.presentation.aboutScreen.AboutViewEvent.*
+import com.company.activityart.presentation.MainDestination.NavigateUp
+import com.company.activityart.presentation.aboutScreen.AboutViewEvent.NavigateUpClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +19,7 @@ class AboutViewModel @Inject constructor(
         >() {
 
     init {
-        pushState(Standby)
+        pushState(AboutViewState)
     }
 
     override fun onEvent(event: AboutViewEvent) {

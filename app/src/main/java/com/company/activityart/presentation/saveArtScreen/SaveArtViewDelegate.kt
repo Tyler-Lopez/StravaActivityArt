@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.presentation.common.AppBarScaffold
 import com.company.activityart.presentation.common.ScreenMeasurer
-import com.company.activityart.presentation.editArtScreen.subscreens.filters.composables.ScreenBackground
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.ClickedNavigateUp
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.ScreenMeasured
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewState.Loading
