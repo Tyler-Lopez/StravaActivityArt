@@ -75,6 +75,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                         filterActivitiesCountDate,
                                         filterActivitiesCountDistance,
                                         filterActivitiesCountType,
+                                        filterDateSelections,
                                         filterDateSelected?.last?.let { fromUnixMs(it) },
                                         filterDateSelected?.first?.let { fromUnixMs(it) },
                                         filterDateTotal?.last?.let { fromUnixMs(it) },

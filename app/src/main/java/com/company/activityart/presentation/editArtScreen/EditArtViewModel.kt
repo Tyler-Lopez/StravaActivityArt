@@ -79,6 +79,7 @@ class EditArtViewModel @Inject constructor(
     private var activitiesTypesSelectionsMap: Map<String, Boolean> = mapOf()
     private lateinit var activitiesDistancesList: List<Double>
     private lateinit var activitiesUnixMsList: List<Long>
+    private lateinit var activitiesYears: List<Int>
 
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
      * Designates which activities this particular filter type is in-charge of filtering. **/
@@ -110,8 +111,14 @@ class EditArtViewModel @Inject constructor(
     private fun EditArtFilterType.updateFilters() {
         val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
         when (this) {
-            DATE -> activitiesUnixMsList = filteredActivities
-                .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
+            DATE -> {
+                activitiesUnixMsList = filteredActivities.map {
+                    SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
+                }
+                activitiesYears = filteredActivities
+                    .map { timeUtils.iso8601StringToYearMonth(it.iso8601LocalDate).first }
+                    .distinct()
+            }
             TYPE -> activitiesTypesSelectionsMap = filteredActivities
                 .distinctlyMapAndAssociateWith(Activity::type, activitiesTypesSelectionsMap)
             DISTANCE -> activitiesDistancesList = filteredActivities
@@ -154,6 +161,7 @@ class EditArtViewModel @Inject constructor(
                     val newRange = activitiesUnixMsList.asRangeOrNullIfEmpty()
 
                     copy(
+                        filterDateYearsList = activitiesYears,
                         filterDateSelected = filterDateSelected?.run {
                             last
                                 .takeIf { it >= (newRange?.first ?: Long.MAX_VALUE) }
@@ -217,6 +225,13 @@ class EditArtViewModel @Inject constructor(
                 filterActivitiesCountDate = DATE.activitiesCount,
                 filterActivitiesCountDistance = DISTANCE.activitiesCount,
                 filterActivitiesCountType = TYPE.activitiesCount,
+                filterDateSelections = activitiesYears
+                    .map { DateSelection.Year(it) }
+                    .toMutableList<DateSelection>()
+                    .apply {
+                        add(DateSelection.Custom(null, activitiesUnixMsList.asRangeOrNullIfEmpty()))
+                    },
+                filterDateYearsList = activitiesYears,
                 filterDateSelected = null,
                 filterDateTotal = activitiesUnixMsList.asRangeOrNullIfEmpty(),
                 filterDistanceSelected = null,

@@ -120,6 +120,8 @@ sealed interface EditArtViewState : ViewState {
         val filterActivitiesCountDate: Int,
         val filterActivitiesCountDistance: Int,
         val filterActivitiesCountType: Int,
+        val filterDateSelections: List<DateSelection>,
+        val filterDateYearsList: List<Int>,
         @UnixMS val filterDateSelected: LongProgression?,
         @UnixMS val filterDateTotal: LongProgression?,
         val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
@@ -193,6 +195,14 @@ data class ColorWrapper(
     private fun Float.toEightBitRepresentation(): Int {
         return (this * EIGHT_BIT_CHANNEL_LIMIT).toInt()
     }
+}
+
+sealed interface DateSelection {
+    data class Year(val year: Int) : DateSelection
+    data class Custom(
+        @UnixMS val dateSelected: LongProgression?,
+        @UnixMS val dateTotal: LongProgression?
+    ) : DateSelection
 }
 
 enum class StyleType(
