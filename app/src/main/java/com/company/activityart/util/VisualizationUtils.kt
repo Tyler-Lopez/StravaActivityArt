@@ -85,108 +85,112 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
         ).also { bitmap ->
             Canvas(bitmap).apply {
                 drawBackground(colorBackgroundArgb)
-                withPaddingClip(paddingFraction) {
-                    computeDrawingSpecification(
-                        n = activities.size,
-                        height = clipBounds.height() - maxTextHeight -
-                                (maxTextHeight.takeIf { it > 0 }
-                                    ?.coerceAtMost((paddingFraction * bitmapSize.height).toInt())
-                                    ?.toFloat() ?: 0f).toInt(),
-                        width = clipBounds.width()
-                    ).apply {
 
-                        textLeft?.let {
-                            drawText(
-                                it,
-                                (extraSpaceWidth / 2f) + clipBounds.left.toFloat(),
-                                bitmapSize.height - clipBounds.top.toFloat() - (maxTextHeight / 2f),
-                                textPaintLeft
-                            )
-                        }
+                val padding = paddingFraction * minOf(width, height)
+                val paddingOnEachSide = (padding * 2f).toInt()
 
-                        textCenter?.let {
-                            drawText(
-                                it,
-                                (bitmapSize.width / 2f) - (textMeasurementCenter.width() / 2f),
-                                bitmapSize.height - clipBounds.top.toFloat() - (maxTextHeight / 2f),
-                                textPaintCenter
-                            )
-                        }
-                        textRight?.let {
-                            drawText(
-                                it,
-                                bitmapSize.width - (extraSpaceWidth / 2f) - clipBounds.left.toFloat() - textMeasurementRight.width(),
-                                bitmapSize.height - clipBounds.top.toFloat() - (maxTextHeight / 2f),
-                                textPaintRight
-                            )
-                        }
+                val height = bitmapSize.height
+                val width = bitmapSize.width
+                val centerX = width / 2f
 
-                        textRight?.let {
+                computeDrawingSpecification(
+                    n = activities.size,
+                    height = height - paddingOnEachSide - maxTextHeight -
+                            (maxTextHeight.takeIf { it > 0 }
+                                ?.coerceAtMost((paddingFraction * bitmapSize.height).toInt())
+                                ?.toFloat() ?: 0f).toInt(),
+                    width = width - paddingOnEachSide
+                ).apply {
 
-                        }
+                    val extraSpaceEachSideWidth = extraSpaceWidth / 2f
 
-                        val finalRowOffset = (activitySize * remainder) / 2f
-                        activities.forEachIndexed { index, activity ->
-                            // 0 % 1 = 0
-                            // 0 * 606 = 0
+                    textLeft?.let {
+                        drawText(
+                            it,
+                            extraSpaceEachSideWidth + padding,
+                            height - padding - (maxTextHeight / 2f),
+                            textPaintLeft
+                        )
+                    }
 
-                            PolyUtil.decode(activity.summaryPolyline).let { latLngList ->
+                    textCenter?.let {
+                        drawText(
+                            it,
+                            centerX - (textMeasurementCenter.width() / 2f),
+                            height - padding - (maxTextHeight / 2f),
+                            textPaintCenter
+                        )
+                    }
+                    textRight?.let {
+                        drawText(
+                            it,
+                            width - extraSpaceEachSideWidth - padding - textMeasurementRight.width(),
+                            height - padding - (maxTextHeight / 2f),
+                            textPaintRight
+                        )
+                    }
 
-                                /** Zero-indexed row and column **/
-                                val col = index % cols
-                                val row = (floor(index / cols.toFloat()) % rows).toInt()
+                    val finalRowOffset = (activitySize * remainder) / 2f
+                    activities.forEachIndexed { index, activity ->
+                        // 0 % 1 = 0
+                        // 0 * 606 = 0
 
-                                /** Adjust for zero-index **/
-                                val isFinalRow = row == (rows - 1)
+                        PolyUtil.decode(activity.summaryPolyline).let { latLngList ->
 
-                                val xOffset =
-                                    ((index % cols) * activitySize) + (activitySize / 2f) + (extraSpaceWidth / 2f) + clipBounds.left + if (isFinalRow) finalRowOffset else 0f
-                                val yOffset =
-                                    ((floor(index / cols.toFloat()) % rows) * activitySize) + (activitySize / 2f) + (extraSpaceHeight / 2f) + clipBounds.top
+                            /** Zero-indexed row and column **/
+                            val col = index % cols
+                            val row = (floor(index / cols.toFloat()) % rows).toInt()
 
-                                val left = latLngList.minOf { it.longitude }
-                                val right = latLngList.maxOf { it.longitude }
-                                val top = latLngList.maxOf { it.latitude }
-                                val bottom = latLngList.minOf { it.latitude }
+                            /** Adjust for zero-index **/
+                            val isFinalRow = row == (rows - 1)
 
-                                val largestSide = maxOf(top - bottom, right - left)
-                                val multiplier =
-                                    (activitySize * ACTIVITY_SIZE_REDUCE_FRACTION) / largestSide
+                            val xOffset =
+                                ((index % cols) * activitySize) + (activitySize / 2f) + (extraSpaceWidth / 2f) + padding + if (isFinalRow) finalRowOffset else 0f
+                            val yOffset =
+                                ((floor(index / cols.toFloat()) % rows) * activitySize) + (activitySize / 2f) + (extraSpaceHeight / 2f) + padding
 
-                                latLngList.map { latLng ->
-                                    Pair(
-                                        first = (((latLng.longitude - ((
-                                                left + right
-                                                ) / 2f)) * multiplier) + xOffset).toFloat(),
-                                        second = (((latLng.latitude - ((
-                                                top + bottom
-                                                ) / 2f)) * -1f * multiplier) + yOffset).toFloat()
-                                    )
-                                }
+                            val left = latLngList.minOf { it.longitude }
+                            val right = latLngList.maxOf { it.longitude }
+                            val top = latLngList.maxOf { it.latitude }
+                            val bottom = latLngList.minOf { it.latitude }
 
-                                // Reduce List<LatLng> to Path
-                            }.let { floatList ->
-                                val path = Path().also { path ->
-                                    floatList.forEachIndexed { fIndex, pair ->
-                                        if (fIndex == 0)
-                                            path.setLastPoint(pair.first, pair.second)
-                                        else
-                                            path.lineTo(pair.first, pair.second)
-                                    }
-                                }
+                            val largestSide = maxOf(top - bottom, right - left)
+                            val multiplier =
+                                (activitySize * ACTIVITY_SIZE_REDUCE_FRACTION) / largestSide
 
-                                drawPath(path, Paint().also {
-                                    it.color = colorActivitiesArgb
-                                    it.style = Paint.Style.STROKE
-                                    it.strokeJoin = Paint.Join.ROUND
-                                    it.strokeWidth = sqrt(activitySize) * when (strokeWidthType) {
-                                        StrokeWidthType.THIN -> ACTIVITY_STROKE_SMALL_REDUCE_FRACTION
-                                        StrokeWidthType.MEDIUM -> ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION
-                                        StrokeWidthType.THICK -> ACTIVITY_STROKE_LARGE_REDUCE_FRACTION
-                                    }
-                                    it.isAntiAlias = true
-                                })
+                            latLngList.map { latLng ->
+                                Pair(
+                                    first = (((latLng.longitude - ((
+                                            left + right
+                                            ) / 2f)) * multiplier) + xOffset).toFloat(),
+                                    second = (((latLng.latitude - ((
+                                            top + bottom
+                                            ) / 2f)) * -1f * multiplier) + yOffset).toFloat()
+                                )
                             }
+
+                            // Reduce List<LatLng> to Path
+                        }.let { floatList ->
+                            val path = Path().also { path ->
+                                floatList.forEachIndexed { fIndex, pair ->
+                                    if (fIndex == 0)
+                                        path.setLastPoint(pair.first, pair.second)
+                                    else
+                                        path.lineTo(pair.first, pair.second)
+                                }
+                            }
+
+                            drawPath(path, Paint().also {
+                                it.color = colorActivitiesArgb
+                                it.style = Paint.Style.STROKE
+                                it.strokeJoin = Paint.Join.ROUND
+                                it.strokeWidth = sqrt(activitySize) * when (strokeWidthType) {
+                                    StrokeWidthType.THIN -> ACTIVITY_STROKE_SMALL_REDUCE_FRACTION
+                                    StrokeWidthType.MEDIUM -> ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION
+                                    StrokeWidthType.THICK -> ACTIVITY_STROKE_LARGE_REDUCE_FRACTION
+                                }
+                                it.isAntiAlias = true
+                            })
                         }
                     }
                 }
@@ -202,16 +206,6 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
             height.toFloat(),
             Paint().apply { color = argb }
         )
-    }
-
-    private inline fun Canvas.withPaddingClip(
-        paddingFraction: Float,
-        block: Canvas.() -> Unit
-    ) {
-        val padding = paddingFraction * minOf(width, height)
-        withClip(padding, padding, width - padding, height - padding) {
-            block()
-        }
     }
 
     private data class DrawingSpecification(
