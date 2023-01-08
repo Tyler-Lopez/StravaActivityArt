@@ -21,7 +21,9 @@ import com.company.activityart.presentation.editArtScreen.EditArtViewState.Loadi
 import com.company.activityart.presentation.editArtScreen.EditArtViewState.Standby
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType.MEDIUM
 import com.company.activityart.presentation.editArtScreen.StyleType.*
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
+import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.company.activityart.util.*
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -71,8 +73,9 @@ class EditArtViewModel @Inject constructor(
     }
 
     private lateinit var activities: List<Activity>
-    private lateinit var activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>>
     private val activitiesFiltered: List<Activity> get() = activitiesFilteredByFilterType[EditArtFilterType.filterFinal]!!
+    private lateinit var activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>>
+    private val activitiesFilteredSumDistance: Double get() = activitiesFiltered.sumOf { it.distance }
     private var activitiesTypesSelectionsMap: Map<String, Boolean> = mapOf()
     private lateinit var activitiesDistancesList: List<Double>
     private lateinit var activitiesUnixMsList: List<Long>
@@ -401,34 +404,9 @@ class EditArtViewModel @Inject constructor(
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType,
-                        // Todo, need to clean all of these up
-                        textLeft = when (typeLeftSelected) {
-                            NONE -> null
-                            NAME -> typeAthleteName
-                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }
-                                .meterToMilesStr()
-                            DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                                .meterToKilometerStr()
-                            CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
-                        },
-                        textCenter = when (typeCenterSelected) {
-                            NONE -> null
-                            NAME -> typeAthleteName
-                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }
-                                .meterToMilesStr()
-                            DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                                .meterToKilometerStr()
-                            CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
-                        },
-                        textRight = when (typeRightSelected) {
-                            NONE -> null
-                            NAME -> typeAthleteName
-                            DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }
-                                .meterToMilesStr()
-                            DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                                .meterToKilometerStr()
-                            CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
-                        },
+                        textLeft = LEFT.text,
+                        textCenter = CENTER.text,
+                        textRight = RIGHT.text,
                         textFont = typeFontSelected,
                         textFontSize = typeFontSizeSelected
                     )
@@ -564,31 +542,9 @@ class EditArtViewModel @Inject constructor(
                     ),
                     fontType = typeFontSelected,
                     fontSizeType = typeFontSizeSelected,
-                    // Todo, could clean all of this up to reduce code will be needed for navigation
-                    textLeft = when (typeLeftSelected) {
-                        NONE -> null
-                        NAME -> typeAthleteName
-                        DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                            .meterToKilometerStr()
-                        CUSTOM -> typeLeftCustomText.takeIf { it.isNotBlank() }
-                    },
-                    textCenter = when (typeCenterSelected) {
-                        NONE -> null
-                        NAME -> typeAthleteName
-                        DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                            .meterToKilometerStr()
-                        CUSTOM -> typeCenterCustomText.takeIf { it.isNotBlank() }
-                    },
-                    textRight = when (typeRightSelected) {
-                        NONE -> null
-                        NAME -> typeAthleteName
-                        DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                        DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                            .meterToKilometerStr()
-                        CUSTOM -> typeRightCustomText.takeIf { it.isNotBlank() }
-                    }
+                    textLeft = LEFT.text,
+                    textCenter = CENTER.text,
+                    textRight = RIGHT.text
                 )
                 copyLastState { copy(bitmap = bitmap) }
             }.push()
@@ -603,7 +559,28 @@ class EditArtViewModel @Inject constructor(
         (lastPushedState as? Standby)?.run(block)
     }
 
-    private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
+    private fun getStandbyState() =
+        lastPushedState as? Standby ?: error("Last pushed state was not standby")
 
+    private val EditArtTypeSection.text: String?
+        get() {
+            return getStandbyState().run {
+                val typeCustomText: Pair<EditArtTypeType, String> = when (this@text) {
+                    CENTER -> Pair(typeCenterSelected, typeCenterCustomText)
+                    LEFT -> Pair(typeLeftSelected, typeLeftCustomText)
+                    RIGHT -> Pair(typeRightSelected, typeRightCustomText)
+                }
+
+                when (typeCustomText.first) {
+                    NONE -> null
+                    NAME -> typeAthleteName
+                    DISTANCE_MILES -> activitiesFilteredSumDistance.meterToMilesStr()
+                    DISTANCE_KILOMETERS -> activitiesFilteredSumDistance.meterToKilometerStr()
+                    CUSTOM -> typeCustomText.second.takeIf { it.isNotBlank() }
+                }
+            }
+        }
+
+    private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
 }
