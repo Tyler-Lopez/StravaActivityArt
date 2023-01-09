@@ -5,12 +5,10 @@ package com.company.activityart.presentation.editArtScreen
 import android.graphics.Bitmap
 import android.os.Parcelable
 import android.util.Size
-import androidx.annotation.Px
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.res.stringResource
 import com.company.activityart.R
 import com.company.activityart.architecture.ViewEvent
@@ -19,13 +17,10 @@ import com.company.activityart.presentation.editArtScreen.subscreens.type.EditAr
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.util.FontSizeType
 import com.company.activityart.util.FontType
-import com.company.activityart.util.Screen
-import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
-import java.util.logging.Filter
 
 annotation class UnixMS
 
@@ -49,16 +44,21 @@ sealed interface EditArtViewEvent : ViewEvent {
         sealed interface FilterChanged : ArtMutatingEvent {
             val filterType: EditArtFilterType
 
-            sealed interface FilterDateChanged : FilterChanged {
+            data class FilterDateSelectionChanged(val index: Int) : FilterChanged {
+                override val filterType: EditArtFilterType
+                    get() = EditArtFilterType.DATE
+            }
+
+            sealed interface FilterDateCustomChanged : FilterChanged {
                 val changedTo: Long
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.DATE
 
                 data class FilterAfterChanged(@UnixMS override val changedTo: Long) :
-                    FilterDateChanged
+                    FilterDateCustomChanged
 
                 data class FilterBeforeChanged(@UnixMS override val changedTo: Long) :
-                    FilterDateChanged
+                    FilterDateCustomChanged
             }
 
             data class FilterDistanceChanged(val changedTo: ClosedFloatingPointRange<Double>) :
@@ -120,10 +120,11 @@ sealed interface EditArtViewState : ViewState {
         val filterActivitiesCountDate: Int,
         val filterActivitiesCountDistance: Int,
         val filterActivitiesCountType: Int,
-        val filterDateSelections: List<DateSelection>,
-        val filterDateYearsList: List<Int>,
-        @UnixMS val filterDateSelected: LongProgression?,
-        @UnixMS val filterDateTotal: LongProgression?,
+        val filterDateSelections: List<DateSelection>?,
+        val filterDateSelectionIndex: Int,
+      //  val filterDateYearsList: List<Int>,
+    //    @UnixMS val filterDateSelected: LongProgression?,
+    //    @UnixMS val filterDateTotal: LongProgression?,
         val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
         val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
         val filterTypes: List<Pair<String, Boolean>>,
@@ -198,10 +199,11 @@ data class ColorWrapper(
 }
 
 sealed interface DateSelection {
+    object All : DateSelection
     data class Year(val year: Int) : DateSelection
     data class Custom(
         @UnixMS val dateSelected: LongProgression?,
-        @UnixMS val dateTotal: LongProgression?
+        @UnixMS val dateTotal: LongProgression
     ) : DateSelection
 }
 

@@ -19,6 +19,7 @@ class TimeUtils {
         private const val LAST_HOUR_OF_DAY = 23
         private const val LAST_MINUTE_OF_HOUR = 59
         private const val LAST_SECOND_OF_MINUTE = 59
+        private const val LAST_DAY_OF_LAST_MONTH = 31
 
         private const val MONTHS_IN_YEAR = 12
     }
@@ -129,6 +130,28 @@ class TimeUtils {
         } else {
             MONTHS_IN_YEAR
         }
+    }
+
+    fun firstUnixMsOfYear(year: Int): Long {
+        return GregorianCalendar(
+            year,
+            FIRST_MONTH_OF_YEAR,
+            FIRST_DAY_OF_MONTH,
+            FIRST_HOUR_OF_DAY,
+            FIRST_MINUTE_OF_HOUR,
+            FIRST_SECOND_OF_MINUTE
+        ).timeInMillis
+    }
+
+    fun lastUnixMsOfYear(year: Int): Long {
+        return GregorianCalendar(
+            year,
+            LAST_MONTH_OF_YEAR,
+            LAST_DAY_OF_LAST_MONTH,
+            LAST_HOUR_OF_DAY,
+            LAST_MINUTE_OF_HOUR,
+            LAST_SECOND_OF_MINUTE
+        ).timeInMillis
     }
 }
 /*

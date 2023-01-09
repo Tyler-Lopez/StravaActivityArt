@@ -1,26 +1,27 @@
 package com.company.activityart.presentation.editArtScreen.subscreens.filters.composables
 
 import android.app.DatePickerDialog
-import android.graphics.Typeface
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize
 import com.company.activityart.presentation.common.button.MediumEmphasisButton
 import com.company.activityart.presentation.common.type.Subhead
+import com.company.activityart.presentation.common.type.SubheadHeavy
 import com.company.activityart.presentation.editArtScreen.DateSelection
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
+import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterChanged.*
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.classes.YearMonthDay
 
@@ -32,108 +33,142 @@ import com.company.activityart.util.classes.YearMonthDay
 fun FilterSectionDate(
     count: Int,
     dateSelections: List<DateSelection>,
-    dateMaxDateSelectedYearMonthDay: YearMonthDay?,
-    dateMinDateSelectedYearMonthDay: YearMonthDay?,
-    dateMaxDateTotalYearMonthDay: YearMonthDay,
-    dateMinDateTotalYearMonthDay: YearMonthDay,
+    dateSelectionSelectedIndex: Int,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    val beforeDatePickerDialog =
-        (dateMaxDateSelectedYearMonthDay ?: dateMaxDateTotalYearMonthDay).run {
-            DatePickerDialog(LocalContext.current).apply {
-                datePicker.updateDate(year, month, day)
-                setOnDismissListener {
-                    // Force cancel to reset active date
-                    datePicker.updateDate(year, month, day)
-                }
-                setOnDateSetListener { _, year, month, dayOfMonth ->
-                    eventReceiver.onEvent(
-                        EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterBeforeChanged(
-                            YearMonthDay(year, month, dayOfMonth).unixMsLast
-                        )
+    val customDateSelection = dateSelections
+        .firstOrNull { it is DateSelection.Custom } as? DateSelection.Custom
+        ?: error("Missing DateSelection.Custom from dateSelections.")
+
+    val rangeSelected = customDateSelection.dateSelected
+    val rangeTotal = customDateSelection.dateTotal
+
+    val ymdTotalStart = YearMonthDay.fromUnixMs(rangeTotal.first)
+    val ymdTotalEnd = YearMonthDay.fromUnixMs(rangeTotal.last)
+
+    val ymdSelectedStart = rangeSelected?.run { YearMonthDay.fromUnixMs(first) } ?: ymdTotalStart
+    val ymdSelectedEnd = rangeSelected?.run { YearMonthDay.fromUnixMs(last) } ?: ymdTotalEnd
+
+    val context = LocalContext.current
+
+    val startDialog = ymdSelectedStart.run {
+        DatePickerDialog(LocalContext.current).apply {
+            datePicker.updateDate(year, month, day)
+            // Force cancel to reset active date
+            setOnDismissListener { datePicker.updateDate(year, month, day) }
+            setOnDateSetListener { _, year, month, dayOfMonth ->
+                eventReceiver.onEvent(
+                    FilterDateCustomChanged.FilterAfterChanged(
+                        changedTo = YearMonthDay(
+                            year,
+                            month,
+                            dayOfMonth
+                        ).unixMsFirst
                     )
-                }
-                datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
-                datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
+                )
             }
+            datePicker.maxDate = ymdSelectedEnd.unixMs
+            datePicker.minDate = ymdTotalStart.unixMs
         }
-    val afterDatePickerDialog =
-        (dateMinDateSelectedYearMonthDay ?: dateMinDateTotalYearMonthDay).run {
-            DatePickerDialog(LocalContext.current).apply {
-                datePicker.updateDate(year, month, day)
-                setOnDismissListener {
-                    // Force cancel to reset active date
-                    datePicker.updateDate(year, month, day)
-                }
-                setOnDateSetListener { _, year, month, dayOfMonth ->
-                    eventReceiver.onEvent(
-                        EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateChanged.FilterAfterChanged(
-                            YearMonthDay(year, month, dayOfMonth).unixMsFirst
-                        )
+    }
+
+    val endDialog = ymdSelectedEnd.run {
+        DatePickerDialog(context).apply {
+            datePicker.updateDate(year, month, day)
+            // Force cancel to reset active date
+            setOnDismissListener { datePicker.updateDate(year, month, day) }
+            setOnDateSetListener { _, year, month, dayOfMonth ->
+                eventReceiver.onEvent(
+                    FilterDateCustomChanged.FilterBeforeChanged(
+                        changedTo = YearMonthDay(
+                            year,
+                            month,
+                            dayOfMonth
+                        ).unixMsLast
                     )
-                }
-                datePicker.maxDate = dateMaxDateTotalYearMonthDay.unixMs
-                datePicker.minDate = dateMinDateTotalYearMonthDay.unixMs
+                )
             }
+            datePicker.maxDate = ymdTotalEnd.unixMs
+            datePicker.minDate = ymdSelectedStart.unixMs
         }
+    }
+
     FilterSection(
         count = count,
         header = stringResource(R.string.edit_art_filters_date_header),
         description = stringResource(R.string.edit_art_filters_date_description),
     ) {
-        dateSelections.forEach {
+        dateSelections.forEachIndexed { index, selection ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
+                var heightRadioButton by remember { mutableStateOf(0.dp) }
+                val localDensity = LocalDensity.current
                 RadioButton(
-                    selected = false,
+                    selected = index == dateSelectionSelectedIndex,
                     onClick = {
-                    }
+                        eventReceiver.onEvent(
+                            EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDateSelectionChanged(
+                                index
+                            )
+                        )
+                    },
+                    modifier = Modifier
+                        .onGloballyPositioned {
+                            heightRadioButton = localDensity.run { it.size.height.toDp() }
+                        }
                 )
-                when (it) {
-                    is DateSelection.Year -> Subhead(text = "${it.year}")
-                    is DateSelection.Custom -> {}
-                }
-            }
-        }
-        /*
-        dateYears.forEach {
+                println("Here, height radio button is $heightRadioButton")
+                Column(
+                    modifier = Modifier.defaultMinSize(minHeight = heightRadioButton),
+                    verticalArrangement = Arrangement.spacedBy(
+                        spacing.medium,
+                        Alignment.CenterVertically
+                    )
+                ) {
+                    when (selection) {
+                        is DateSelection.All -> Subhead(text = stringResource(R.string.edit_art_filters_date_include_all))
+                        is DateSelection.Year -> Subhead(text = "${selection.year}")
+                        is DateSelection.Custom -> {
+                            val enabled = index == dateSelectionSelectedIndex
 
-                RadioButton(
-                    selected = false,
-                    onClick = {
+                            Subhead(text = stringResource(R.string.edit_art_filters_date_custom_range))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                selection.apply {
+                                    Column(
+                                        modifier = Modifier.weight(1f),
+                                        verticalArrangement = Arrangement.spacedBy(spacing.small)
+                                    ) {
+                                        SubheadHeavy(text = stringResource(R.string.edit_art_filters_date_start))
+                                        MediumEmphasisButton(
+                                            size = ButtonSize.LARGE,
+                                            enabled = enabled,
+                                            text = "$ymdSelectedStart"
+                                        ) {
+                                            startDialog.show()
+                                        }
+                                    }
+                                    Column(
+                                        modifier = Modifier.weight(1f),
+                                        verticalArrangement = Arrangement.spacedBy(spacing.small)
+                                    ) {
+                                        SubheadHeavy(text = stringResource(R.string.edit_art_filters_date_end))
+                                        MediumEmphasisButton(
+                                            size = ButtonSize.LARGE,
+                                            enabled = enabled,
+                                            text = "$ymdSelectedEnd"
+                                        ) {
+                                            endDialog.show()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                )
-
-            }
-        }
-
-         */
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(spacing.medium)
-            ) {
-                Subhead(text = stringResource(R.string.edit_art_filters_date_start))
-                MediumEmphasisButton(
-                    size = ButtonSize.LARGE,
-                    text = "${dateMinDateSelectedYearMonthDay ?: dateMinDateTotalYearMonthDay}"
-                ) {
-                    afterDatePickerDialog.show()
-                }
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(spacing.medium)
-            ) {
-                Subhead(text = stringResource(R.string.edit_art_filters_date_end))
-                MediumEmphasisButton(
-                    size = ButtonSize.LARGE,
-                    text = "${dateMaxDateSelectedYearMonthDay ?: dateMaxDateTotalYearMonthDay}"
-                ) {
-                    beforeDatePickerDialog.show()
                 }
             }
         }

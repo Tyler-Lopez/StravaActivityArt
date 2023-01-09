@@ -30,11 +30,8 @@ fun EditArtFiltersScreen(
     activitiesCountDate: Int,
     activitiesCountDistance: Int,
     activitiesCountType: Int,
-    filterDateSelections: List<DateSelection>,
-    dateMaxDateSelectedYearMonthDay: YearMonthDay?,
-    dateMinDateSelectedYearMonthDay: YearMonthDay?,
-    dateMaxDateTotalYearMonthDay: YearMonthDay?,
-    dateMinDateTotalYearMonthDay: YearMonthDay?,
+    filterDateSelections: List<DateSelection>?,
+    filterDateSelectionIndex: Int,
     distanceSelected: ClosedFloatingPointRange<Double>?,
     distanceTotal: ClosedFloatingPointRange<Double>?,
     typesWithSelectedFlag: List<Pair<String, Boolean>>,
@@ -47,18 +44,13 @@ fun EditArtFiltersScreen(
     ) {
         EditArtFilterType.values().onEach {
             when (it) {
-                DATE -> if (
-                    dateMaxDateTotalYearMonthDay != null &&
-                    dateMinDateTotalYearMonthDay != null
-                ) FilterSectionDate(
-                    count = activitiesCountDate,
-                    dateSelections = filterDateSelections,
-                    dateMaxDateSelectedYearMonthDay = dateMaxDateSelectedYearMonthDay,
-                    dateMinDateSelectedYearMonthDay = dateMinDateSelectedYearMonthDay,
-                    dateMaxDateTotalYearMonthDay = dateMaxDateTotalYearMonthDay,
-                    dateMinDateTotalYearMonthDay = dateMinDateTotalYearMonthDay,
-                    eventReceiver = eventReceiver
-                )
+                DATE -> if (filterDateSelections != null)
+                    FilterSectionDate(
+                        count = activitiesCountDate,
+                        dateSelections = filterDateSelections,
+                        dateSelectionSelectedIndex = filterDateSelectionIndex,
+                        eventReceiver = eventReceiver
+                    )
                 TYPE -> FilterSectionActivityType(
                     count = activitiesCountType,
                     typesWithSelectedFlag = typesWithSelectedFlag,

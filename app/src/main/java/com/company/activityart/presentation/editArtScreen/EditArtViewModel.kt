@@ -26,6 +26,7 @@ import com.company.activityart.presentation.editArtScreen.subscreens.type.EditAr
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.company.activityart.util.*
+import com.company.activityart.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -78,26 +79,44 @@ class EditArtViewModel @Inject constructor(
     private val activitiesFilteredSumDistance: Double get() = activitiesFiltered.sumOf { it.distance }
     private var activitiesTypesSelectionsMap: Map<String, Boolean> = mapOf()
     private lateinit var activitiesDistancesList: List<Double>
-    private lateinit var activitiesUnixMsList: List<Long>
-    private lateinit var activitiesYears: List<Int>
+    private var activitiesDateSelections: List<DateSelection>? = null
+
+    /** Determine current start and end MS of selected Date filters  **/
+    private val activitiesDateRangeUnixMs: LongProgression?
+        get() = activitiesDateSelections?.let { selections ->
+            val index = (lastPushedState as? Standby)?.filterDateSelectionIndex
+                ?: error("Attempted to compute date range when not in Standby state.")
+
+            selections[index].run {
+                when (this) {
+                    is DateSelection.All -> Long.MIN_VALUE..Long.MAX_VALUE
+                    is DateSelection.Year -> timeUtils
+                        .firstUnixMsOfYear(year)
+                        .rangeTo(timeUtils.lastUnixMsOfYear(year))
+                    is DateSelection.Custom -> (dateSelected ?: dateTotal)
+                        .run { first.rangeTo(last) }
+                }
+            }
+        }
+
 
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
      * Designates which activities this particular filter type is in-charge of filtering. **/
     private fun EditArtFilterType.updateFilteredActivities() {
         withLastState {
             val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
+            val activitiesDateRangeUnixMs = activitiesDateRangeUnixMs
             val filteredActivities = prevActivities.filter { activity ->
                 when (this@updateFilteredActivities) {
                     DATE -> timeUtils
                         .iso8601StringToUnixMillisecond(activity.iso8601LocalDate)
                         .let {
-                            val min = filterDateSelected?.first ?: Long.MIN_VALUE
-                            val max = filterDateSelected?.last ?: Long.MAX_VALUE
-                            it in min..max
+                            activitiesDateRangeUnixMs?.let { range ->
+                                it >= range.first && it <= range.last
+                            } ?: true
                         }
                     TYPE -> activitiesTypesSelectionsMap[activity.type] ?: true
                     DISTANCE -> filterDistanceSelected?.let {
-                        println("Here, checking to see if ${activity.distance} is in $it")
                         activity.distance in it
                     } ?: true
                 }
@@ -112,12 +131,27 @@ class EditArtViewModel @Inject constructor(
         val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
         when (this) {
             DATE -> {
-                activitiesUnixMsList = filteredActivities.map {
-                    SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate))
-                }
-                activitiesYears = filteredActivities
-                    .map { timeUtils.iso8601StringToYearMonth(it.iso8601LocalDate).first }
-                    .distinct()
+                filteredActivities
+                    .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
+                    .asRangeOrNullIfEmpty()
+                    ?.let {
+                        activitiesDateSelections = mutableListOf<DateSelection>(DateSelection.All)
+                            .apply {
+                                addAll(filteredActivities
+                                    .map { timeUtils.iso8601StringToYearMonth(it.iso8601LocalDate).first }
+                                    .distinct()
+                                    .map { DateSelection.Year(it) }
+                                    .toMutableList<DateSelection>()
+                                    .apply {
+                                        add(
+                                            DateSelection.Custom(
+                                                dateSelected = null,
+                                                dateTotal = it
+                                            )
+                                        )
+                                    })
+                            }
+                    }
             }
             TYPE -> activitiesTypesSelectionsMap = filteredActivities
                 .distinctlyMapAndAssociateWith(Activity::type, activitiesTypesSelectionsMap)
@@ -158,20 +192,23 @@ class EditArtViewModel @Inject constructor(
         copyLastState {
             when (this@pushUpdatedFiltersToView) {
                 DATE -> {
-                    val newRange = activitiesUnixMsList.asRangeOrNullIfEmpty()
-
                     copy(
-                        filterDateYearsList = activitiesYears,
-                        filterDateSelected = filterDateSelected?.run {
-                            last
-                                .takeIf { it >= (newRange?.first ?: Long.MAX_VALUE) }
-                                ?.let { adjEnd ->
-                                    first
-                                        .takeIf { it <= (newRange?.last ?: Long.MIN_VALUE) }
-                                        ?.rangeTo(adjEnd)
-                                }
-                        },
-                        filterDateTotal = newRange
+                        filterDateSelections = activitiesDateSelections
+                        // dont really know what this was doing, investigate
+                        /*
+                filterDateYearsList = activitiesYears,
+                filterDateSelected = filterDateSelected?.run {
+                    last
+                        .takeIf { it >= (newRange?.first ?: Long.MAX_VALUE) }
+                        ?.let { adjEnd ->
+                            first
+                                .takeIf { it <= (newRange?.last ?: Long.MIN_VALUE) }
+                                ?.rangeTo(adjEnd)
+                        }
+                },
+                filterDateTotal = newRange
+
+                         */
                     )
                 }
                 TYPE -> copy(filterTypes = activitiesTypesSelectionsMap.toList())
@@ -225,15 +262,9 @@ class EditArtViewModel @Inject constructor(
                 filterActivitiesCountDate = DATE.activitiesCount,
                 filterActivitiesCountDistance = DISTANCE.activitiesCount,
                 filterActivitiesCountType = TYPE.activitiesCount,
-                filterDateSelections = activitiesYears
-                    .map { DateSelection.Year(it) }
-                    .toMutableList<DateSelection>()
-                    .apply {
-                        add(DateSelection.Custom(null, activitiesUnixMsList.asRangeOrNullIfEmpty()))
-                    },
-                filterDateYearsList = activitiesYears,
-                filterDateSelected = null,
-                filterDateTotal = activitiesUnixMsList.asRangeOrNullIfEmpty(),
+                filterDateSelections = activitiesDateSelections,
+                filterDateSelectionIndex = activitiesDateSelections?.indexOfFirst { it is DateSelection.All }
+                    ?: -1,
                 filterDistanceSelected = null,
                 filterDistanceTotal = activitiesDistancesList
                     .takeIf { it.isNotEmpty() }
@@ -316,7 +347,8 @@ class EditArtViewModel @Inject constructor(
 
     private fun onFilterChangeEvent(event: FilterChanged) {
         when (event) {
-            is FilterChanged.FilterDateChanged -> onFilterDateChanged(event)
+            is FilterChanged.FilterDateSelectionChanged -> onFilterDateSelectionChanged(event)
+            is FilterChanged.FilterDateCustomChanged -> onFilterDateCustomChanged(event)
             is FilterChanged.FilterDistanceChanged -> onFilterDistanceChanged(event)
             is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
         }
@@ -346,22 +378,39 @@ class EditArtViewModel @Inject constructor(
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
-    private fun onFilterDateChanged(event: FilterChanged.FilterDateChanged) {
+    private fun onFilterDateSelectionChanged(event: FilterChanged.FilterDateSelectionChanged) {
+        copyLastState { copy(filterDateSelectionIndex = event.index) }.push()
+    }
+
+    private fun onFilterDateCustomChanged(event: FilterChanged.FilterDateCustomChanged) {
         withLastState {
-            filterDateTotal?.let { totalRange ->
-                copy(
-                    filterDateSelected = when (event) {
-                        is FilterChanged.FilterDateChanged.FilterAfterChanged -> {
-                            event.changedTo.coerceAtMost(totalRange.last)
-                                .rangeTo(filterDateSelected?.last ?: totalRange.last)
+            val replacementCustom = (activitiesDateSelections
+                ?.get(filterDateSelectionIndex) as? DateSelection.Custom
+                ?: error("Error retrieving DateSelection as Custom from selected index."))
+                .run {
+                    val selectedEnd = dateSelected?.last ?: dateTotal.last
+                    val selectedStart = dateSelected?.first ?: dateTotal.first
+                    val totalEnd = dateTotal.last
+
+                    copy(
+                        dateSelected = when (event) {
+                            is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
+                                event.changedTo.coerceAtMost(totalEnd).rangeTo(selectedEnd)
+                            }
+                            is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
+                                selectedStart.rangeTo(event.changedTo.coerceAtMost(totalEnd))
+                            }
                         }
-                        is FilterChanged.FilterDateChanged.FilterBeforeChanged -> {
-                            (filterDateSelected?.first ?: totalRange.first)
-                                .rangeTo(event.changedTo.coerceAtMost(totalRange.last))
-                        }
-                    }
-                ).push()
-            }
+                    )
+                }
+
+            activitiesDateSelections = activitiesDateSelections
+                ?.toMutableList()
+                ?.apply {
+                    set(filterDateSelectionIndex, replacementCustom)
+                }
+
+            copy(filterDateSelections = activitiesDateSelections).push()
         }
     }
 
@@ -403,6 +452,7 @@ class EditArtViewModel @Inject constructor(
             // Todo, determine how to handle when no activities are selected
             (lastPushedState as? Standby)?.run {
                 val targetSize = sizeResolutionList[sizeResolutionListSelectedIndex]
+                val filterRange = activitiesDateRangeUnixMs
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filterTypes
@@ -411,8 +461,8 @@ class EditArtViewModel @Inject constructor(
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
-                        filterBeforeMs = filterDateSelected?.last ?: Long.MAX_VALUE,
-                        filterAfterMs = filterDateSelected?.first ?: Long.MIN_VALUE,
+                        filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
+                        filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
                         filterDistanceLessThan = filterDistanceSelected?.endInclusive
                             ?: Double.MAX_VALUE,
                         filterDistanceMoreThan = filterDistanceSelected?.start ?: Double.MIN_VALUE,

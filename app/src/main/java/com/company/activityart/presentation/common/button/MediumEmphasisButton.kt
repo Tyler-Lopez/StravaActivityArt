@@ -41,7 +41,6 @@ fun MediumEmphasisButton(
         ),
         modifier = modifier
             .defaultMinSize(
-                minWidth = Dp.Unspecified,
                 minHeight = size.getMinHeight()
             )
             .indication(

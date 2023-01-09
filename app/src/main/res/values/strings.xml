@@ -112,6 +112,8 @@
         <item quantity="other">Includes %d activities</item>
     </plurals>
 
+    <string name="edit_art_filters_date_include_all">Include all activities</string>
+    <string name="edit_art_filters_date_custom_range">Choose a custom date range</string>
     <string name="edit_art_filters_date_header">Date</string>
     <string name="edit_art_filters_date_description">
         Which window of time should activities be selected from?
