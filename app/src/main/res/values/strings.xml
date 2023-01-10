@@ -168,10 +168,15 @@
     <string name="edit_art_type_type_custom">Custom</string>
 
     <string name="edit_art_type_font_header">Font</string>
-    <string name="edit_art_type_font_description">What font should be used with any text?</string>
+    <string name="edit_art_type_font_description">What typeface should be used?</string>
 
     <string name="edit_art_type_font_weight_header">Font Weight</string>
     <string name="edit_art_type_font_weight_description">How thick should the font be?</string>
+
+    <string name="edit_art_type_font_italic_header">Italicize</string>
+    <string name="edit_art_type_font_italic_description">Should the text be slanted?</string>
+    <string name="edit_art_type_font_italic_enabled">Yes</string>
+    <string name="edit_art_type_font_italic_disabled">No</string>
 
     <string name="edit_art_type_size_header">Font Size</string>
     <string name="edit_art_type_size_description">How large should any text be?</string>

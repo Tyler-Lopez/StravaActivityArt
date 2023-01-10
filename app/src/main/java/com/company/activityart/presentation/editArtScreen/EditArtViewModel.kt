@@ -303,7 +303,7 @@ class EditArtViewModel @Inject constructor(
                 typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
                 typeFontSelected = FontType.QUICKSAND,
                 typeFontWeightSelected = FontWeightType.REGULAR,
-                typeFontStylesSelected = listOf(),
+                typeFontItalicized = false,
                 typeFontSizeSelected = FontSizeType.MEDIUM,
                 typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
                 typeLeftSelected = NONE,
@@ -344,6 +344,7 @@ class EditArtViewModel @Inject constructor(
             is TypeFontChanged -> onTypeFontChanged(event)
             is TypeFontSizeChanged -> onTypeFontSizeChanged(event)
             is TypeFontWeightChanged -> onTypeFontWeightChanged(event)
+            is TypeFontItalicChanged -> onTypeFontItalicChanged(event)
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         updateBitmap()
@@ -476,8 +477,10 @@ class EditArtViewModel @Inject constructor(
                         textLeft = LEFT.text,
                         textCenter = CENTER.text,
                         textRight = RIGHT.text,
-                        // todo, handle italics case
-                        textFontAssetPath = typeFontSelected.getAssetPath(typeFontWeightSelected),
+                        textFontAssetPath = typeFontSelected.getAssetPath(
+                            typeFontWeightSelected,
+                            typeFontItalicized
+                        ),
                         textFontSize = typeFontSizeSelected
                     )
                 )
@@ -562,18 +565,17 @@ class EditArtViewModel @Inject constructor(
 
     private fun onTypeFontChanged(event: TypeFontChanged) {
         copyLastState {
-            copy(
-                typeFontSelected = event.changedTo,
-                // todo make not ugly
-                typeFontWeightSelected = if (event.changedTo.fontWeightTypes.contains(
+            event.changedTo.run {
+                copy(
+                    typeFontItalicized = typeFontItalicized && isItalic,
+                    typeFontSelected = this,
+                    typeFontWeightSelected = if (fontWeightTypes.contains(typeFontWeightSelected)) {
                         typeFontWeightSelected
-                    )
-                ) {
-                    typeFontWeightSelected
-                } else {
-                    FontWeightType.REGULAR
-                }
-            )
+                    } else {
+                        FontWeightType.REGULAR
+                    },
+                )
+            }
         }.push()
     }
 
@@ -593,6 +595,10 @@ class EditArtViewModel @Inject constructor(
 
     private fun onTypeFontWeightChanged(event: TypeFontWeightChanged) {
         copyLastState { copy(typeFontWeightSelected = event.changedTo) }.push()
+    }
+
+    private fun onTypeFontItalicChanged(event: TypeFontItalicChanged) {
+        copyLastState { copy(typeFontItalicized = event.changedTo) }.push()
     }
 
     /** @return Copy of an reflecting a [StylesColorChanged] change event
@@ -627,8 +633,10 @@ class EditArtViewModel @Inject constructor(
                             PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
                         )
                     ),
-                    // todo italics, prob make this property of standby
-                    fontAssetPath = typeFontSelected.getAssetPath(typeFontWeightSelected),
+                    fontAssetPath = typeFontSelected.getAssetPath(
+                        fontWeightType = typeFontWeightSelected,
+                        italicized = typeFontItalicized
+                    ),
                     fontSize = typeFontSizeSelected,
                     textLeft = LEFT.text,
                     textCenter = CENTER.text,

@@ -100,7 +100,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     typeRightCustomText,
                                     typeFontSelected,
                                     typeFontWeightSelected,
-                                    typeFontStylesSelected,
+                                    typeFontItalicized,
                                     typeFontSizeSelected,
                                     typeMaximumCustomTextLength,
                                     typeCenterSelected,

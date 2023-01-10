@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.company.activityart.R
+import com.company.activityart.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.common.type.SubheadHeavy
@@ -27,7 +29,6 @@ import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
 import com.company.activityart.presentation.editArtScreen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 import com.company.activityart.util.FontSizeType
-import com.company.activityart.util.enums.FontStyleType
 import com.company.activityart.util.enums.FontType
 import com.company.activityart.util.enums.FontWeightType
 import kotlin.math.roundToInt
@@ -41,7 +42,7 @@ fun EditArtTypeScreen(
     customTextRight: String,
     fontSelected: FontType,
     fontWeightSelected: FontWeightType,
-    fontStylesSelected: List<FontStyleType>,
+    fontItalicized: Boolean,
     fontSizeSelected: FontSizeType,
     maximumCustomTextLength: Int,
     selectedEditArtTypeTypeCenter: EditArtTypeType,
@@ -77,7 +78,7 @@ fun EditArtTypeScreen(
                             },
                             onClick = {
                                 eventReceiver.onEvent(
-                                    EditArtViewEvent.ArtMutatingEvent.TypeSelectionChanged(
+                                    TypeSelectionChanged(
                                         section = section,
                                         typeSelected = type
                                     )
@@ -103,7 +104,7 @@ fun EditArtTypeScreen(
                                         },
                                         onValueChange = {
                                             eventReceiver.onEvent(
-                                                EditArtViewEvent.ArtMutatingEvent.TypeCustomTextChanged(
+                                                TypeCustomTextChanged(
                                                     section = section,
                                                     changedTo = it
                                                 )
@@ -153,13 +154,7 @@ fun EditArtTypeScreen(
                 ) {
                     RadioButton(
                         selected = it == fontSelected,
-                        onClick = {
-                            eventReceiver.onEvent(
-                                EditArtViewEvent.ArtMutatingEvent.TypeFontChanged(
-                                    it
-                                )
-                            )
-                        }
+                        onClick = { eventReceiver.onEvent(TypeFontChanged(changedTo = it)) }
                     )
                     Text(
                         text = stringResource(it.strRes),
@@ -176,30 +171,59 @@ fun EditArtTypeScreen(
                 }
             }
         }
-        Section(
-            header = stringResource(R.string.edit_art_type_font_weight_header),
-            description = stringResource(R.string.edit_art_type_font_weight_description)
-        ) {
-            fontSelected.fontWeightTypes.forEach {
+        if (fontSelected.fontWeightTypes.containsMultipleTypes) {
+            Section(
+                header = stringResource(R.string.edit_art_type_font_weight_header),
+                description = stringResource(R.string.edit_art_type_font_weight_description)
+            ) {
+                fontSelected.fontWeightTypes.forEach {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = fontWeightSelected == it,
+                            onClick = { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
+                        )
+                        Text(
+                            text = stringResource(it.stringRes),
+                            fontFamily = FontFamily(
+                                Typeface.createFromAsset(
+                                    context.assets,
+                                    fontSelected.getAssetPath(it)
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        if (fontSelected.isItalic) {
+            Section(
+                header = stringResource(R.string.edit_art_type_font_italic_header),
+                description = stringResource(R.string.edit_art_type_font_italic_description)
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(
-                        selected = fontWeightSelected == it,
-                        onClick = {
-                            eventReceiver.onEvent(
-                                EditArtViewEvent.ArtMutatingEvent.TypeFontWeightChanged(it)
-                            )
-
-                        }
-                    )
+                    Switch(checked = fontItalicized, onCheckedChange = {
+                        eventReceiver.onEvent(TypeFontItalicChanged(changedTo = it))
+                    })
                     Text(
-                        text = stringResource(it.stringRes),
-                        fontFamily = FontFamily(Typeface.createFromAsset(
-                            context.assets,
-                            fontSelected.getAssetPath(it)
-                        ))
+                        text = stringResource(
+                            if (fontItalicized) {
+                                R.string.edit_art_type_font_italic_enabled
+                            } else {
+                                R.string.edit_art_type_font_italic_disabled
+                            }
+                        ),
+                        fontFamily = FontFamily(
+                            Typeface.createFromAsset(
+                                context.assets,
+                                fontSelected.getAssetPath(fontWeightSelected, fontItalicized)
+                            )
+                        )
                     )
                 }
             }
@@ -233,3 +257,6 @@ fun EditArtTypeScreen(
 private fun Int.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
 
 private fun Int.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
+
+private const val SINGLE_ITEM_SIZE = 1
+private val List<FontWeightType>.containsMultipleTypes get() = size > SINGLE_ITEM_SIZE

@@ -5,13 +5,12 @@ import com.company.activityart.R
 
 enum class FontType(
     private val baseFileName: String,
+    val fontWeightTypes: List<FontWeightType>,
+    val isItalic: Boolean,
     @StringRes val strRes: Int,
-    val fontStyleTypes: List<FontStyleType> = listOf(),
-    val fontWeightTypes: List<FontWeightType> = listOf(),
 ) {
     JOSEFIN_SANS(
         baseFileName = "josefinsans",
-        strRes = R.string.font_josefinsans,
         fontWeightTypes = listOf(
             FontWeightType.BOLD,
             FontWeightType.SEMIBOLD,
@@ -21,14 +20,11 @@ enum class FontType(
             FontWeightType.EXTRA_LIGHT,
             FontWeightType.THIN
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_josefinsans,
     ),
     JOSEFIN_SLAB(
         baseFileName = "josefinslab",
-        strRes = R.string.font_josefinslab,
         fontWeightTypes = listOf(
             FontWeightType.BOLD,
             FontWeightType.SEMIBOLD,
@@ -38,14 +34,11 @@ enum class FontType(
             FontWeightType.EXTRA_LIGHT,
             FontWeightType.THIN
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_josefinslab,
     ),
     QUICKSAND(
         baseFileName = "quicksand",
-        strRes = R.string.font_quicksand,
         fontWeightTypes = listOf(
             FontWeightType.BOLD,
             FontWeightType.SEMIBOLD,
@@ -53,40 +46,31 @@ enum class FontType(
             FontWeightType.REGULAR,
             FontWeightType.LIGHT
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = false,
+        strRes = R.string.font_quicksand
     ),
     MERRIWEATHER(
         baseFileName = "merriweather",
-        strRes = R.string.font_merriweather,
         fontWeightTypes = listOf(
             FontWeightType.BLACK,
             FontWeightType.BOLD,
             FontWeightType.REGULAR,
             FontWeightType.LIGHT
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_merriweather
     ),
     LOBSTER_TWO(
         baseFileName = "lobster_two",
-        strRes = R.string.font_lobster_two,
         fontWeightTypes = listOf(
             FontWeightType.BOLD,
             FontWeightType.REGULAR
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_lobster_two
     ),
     OSWALD(
         baseFileName = "oswald",
-        strRes = R.string.font_oswald,
         fontWeightTypes = listOf(
             FontWeightType.BOLD,
             FontWeightType.SEMIBOLD,
@@ -94,11 +78,12 @@ enum class FontType(
             FontWeightType.REGULAR,
             FontWeightType.LIGHT,
             FontWeightType.EXTRA_LIGHT
-        )
+        ),
+        isItalic = false,
+        strRes = R.string.font_oswald
     ),
     PLAYFAIR_DISPLAY(
         baseFileName = "playfair_display",
-        strRes = R.string.font_playfair_display,
         fontWeightTypes = listOf(
             FontWeightType.BLACK,
             FontWeightType.EXTRA_BOLD,
@@ -106,26 +91,21 @@ enum class FontType(
             FontWeightType.MEDIUM,
             FontWeightType.REGULAR
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_playfair_display
     ),
     PLAYFAIR_DISPLAY_SC(
         baseFileName = "playfair_display_sc",
-        strRes = R.string.font_playfair_display_sc,
         fontWeightTypes = listOf(
             FontWeightType.BLACK,
             FontWeightType.BOLD,
             FontWeightType.REGULAR
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC
-        )
+        isItalic = true,
+        strRes = R.string.font_playfair_display_sc
     ),
     ROBOTO(
         baseFileName = "roboto",
-        strRes = R.string.font_roboto,
         fontWeightTypes = listOf(
             FontWeightType.BLACK,
             FontWeightType.BOLD,
@@ -133,14 +113,11 @@ enum class FontType(
             FontWeightType.REGULAR,
             FontWeightType.THIN
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_roboto
     ),
     ALEGREYA(
         baseFileName = "alegreya",
-        strRes = R.string.font_alegreya,
         fontWeightTypes = listOf(
             FontWeightType.BLACK,
             FontWeightType.EXTRA_BOLD,
@@ -149,10 +126,8 @@ enum class FontType(
             FontWeightType.MEDIUM,
             FontWeightType.REGULAR
         ),
-        fontStyleTypes = listOf(
-            FontStyleType.ITALIC,
-            FontStyleType.CAPITALIZE
-        )
+        isItalic = true,
+        strRes = R.string.font_alegreya
     );
 
     companion object {
