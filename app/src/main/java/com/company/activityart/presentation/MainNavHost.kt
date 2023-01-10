@@ -84,7 +84,7 @@ fun MainNavHost(
                 TextLeft,
                 TextCenter,
                 TextRight,
-                TextFont,
+                TextFontAssetPath,
                 TextFontSize
             )
         ) {

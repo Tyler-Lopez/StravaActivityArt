@@ -59,7 +59,7 @@ class SaveArtViewModel @Inject constructor(
     private val textLeft = TextLeft.rawArg(ssh).takeIf { it.isNotBlank() }
     private val textCenter = TextCenter.rawArg(ssh).takeIf { it.isNotBlank() }
     private val textRight = TextRight.rawArg(ssh).takeIf { it.isNotBlank() }
-    private val fontType = FontType.valueOf(TextFont.rawArg(ssh))
+    private val fontAssetPath = TextFontAssetPath.rawArg(ssh)
     private val fontTypeSize = FontSizeType.valueOf(TextFontSize.rawArg(ssh))
 
     override fun onEvent(event: SaveArtViewEvent) {
@@ -133,8 +133,8 @@ class SaveArtViewModel @Inject constructor(
                     unixSecondsRange = secondsAfter..secondsBefore,
                     distanceRange = filterDistanceMoreThan..filterDistanceLessThan
                 ),
-                fontType = fontType,
-                fontSizeType = fontTypeSize,
+                fontAssetPath = fontAssetPath,
+                fontSize = fontTypeSize,
                 colorActivitiesArgb = colorActivitiesArgb,
                 colorBackgroundArgb = colorBackgroundArgb,
                 colorFontArgb = colorFontArgb,
@@ -145,7 +145,7 @@ class SaveArtViewModel @Inject constructor(
                         PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
                     )
                 ),
-                strokeWidthType = strokeWidthType,
+                strokeWidth = strokeWidthType,
                 textLeft = textLeft,
                 textCenter = textCenter,
                 textRight = textRight,

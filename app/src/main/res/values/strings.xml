@@ -170,6 +170,9 @@
     <string name="edit_art_type_font_header">Font</string>
     <string name="edit_art_type_font_description">What font should be used with any text?</string>
 
+    <string name="edit_art_type_font_weight_header">Font Weight</string>
+    <string name="edit_art_type_font_weight_description">How thick should the font be?</string>
+
     <string name="edit_art_type_size_header">Font Size</string>
     <string name="edit_art_type_size_description">How large should any text be?</string>
 
@@ -190,24 +193,18 @@
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
 
-    <string name="font_bebasneue">BebasNeue</string>
-    <string name="font_roboto">Roboto</string>
-    <string name="font_roboto_condensed">Roboto Condensed</string>
-    <string name="font_lobster">Lobster</string>
-    <string name="font_lobster_two">Lobster Two</string>
-    <string name="font_newsreader_light">Newsreader Light</string>
-    <string name="font_newsreader">Newsreader</string>
-    <string name="font_cinzel">Cinzel</string>
-    <string name="font_satisfy">Satisfy</string>
-    <string name="font_oswald">Oswald</string>
-    <string name="font_quicksand_bold">Quicksand Bold</string>
-    <string name="font_quicksand_regular">Quicksand</string>
-    <string name="font_quicksand_light">Quicksand Light</string>
-    <string name="font_josefin_sans_bold">Josefin Sans Bold</string>
-    <string name="font_josefin_sans_bold_italic">Josefin Sans Bold Italic</string>
-    <string name="font_josefin_sans_regular">Josefin Sans</string>
-    <string name="font_josefin_sans_light">Josefin Sans Light</string>
-    <string name="font_josefin_sans_light_italic">Josefin Sans Light Italic</string>
+    <string name="font_josefinsans">Josefin Sans</string>
+    <string name="font_josefinslab">Josefin Slab</string>
+    <string name="font_quicksand">Quicksand</string>
+
+    <string name="font_weight_type_black">Black</string>
+    <string name="font_weight_type_bold">Bold</string>
+    <string name="font_weight_type_semibold">Semi-bold</string>
+    <string name="font_weight_type_medium">Medium</string>
+    <string name="font_weight_type_regular">Regular</string>
+    <string name="font_weight_type_light">Light</string>
+    <string name="font_weight_type_extra_light">Extra-light</string>
+    <string name="font_weight_type_thin">Thin</string>
 
     <string name="save_art_header">Save Art</string>
 

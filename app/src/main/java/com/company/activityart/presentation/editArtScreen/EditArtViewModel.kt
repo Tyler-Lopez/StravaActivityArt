@@ -26,7 +26,8 @@ import com.company.activityart.presentation.editArtScreen.subscreens.type.EditAr
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.company.activityart.util.*
-import com.company.activityart.util.classes.YearMonthDay
+import com.company.activityart.util.enums.FontType
+import com.company.activityart.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -300,7 +301,9 @@ class EditArtViewModel @Inject constructor(
                     .sumOf { it.distance }
                     .roundToInt(),
                 typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
-                typeFontSelected = FontType.BEBASNEUE,
+                typeFontSelected = FontType.QUICKSAND,
+                typeFontWeightSelected = FontWeightType.REGULAR,
+                typeFontStylesSelected = listOf(),
                 typeFontSizeSelected = FontSizeType.MEDIUM,
                 typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
                 typeLeftSelected = NONE,
@@ -340,6 +343,7 @@ class EditArtViewModel @Inject constructor(
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
             is TypeFontChanged -> onTypeFontChanged(event)
             is TypeFontSizeChanged -> onTypeFontSizeChanged(event)
+            is TypeFontWeightChanged -> onTypeFontWeightChanged(event)
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         updateBitmap()
@@ -472,7 +476,8 @@ class EditArtViewModel @Inject constructor(
                         textLeft = LEFT.text,
                         textCenter = CENTER.text,
                         textRight = RIGHT.text,
-                        textFont = typeFontSelected,
+                        // todo, handle italics case
+                        textFontAssetPath = typeFontSelected.getAssetPath(typeFontWeightSelected),
                         textFontSize = typeFontSizeSelected
                     )
                 )
@@ -556,7 +561,20 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onTypeFontChanged(event: TypeFontChanged) {
-        copyLastState { copy(typeFontSelected = event.changedTo) }.push()
+        copyLastState {
+            copy(
+                typeFontSelected = event.changedTo,
+                // todo make not ugly
+                typeFontWeightSelected = if (event.changedTo.fontWeightTypes.contains(
+                        typeFontWeightSelected
+                    )
+                ) {
+                    typeFontWeightSelected
+                } else {
+                    FontWeightType.REGULAR
+                }
+            )
+        }.push()
     }
 
     private fun onTypeFontSizeChanged(event: TypeFontSizeChanged) {
@@ -571,6 +589,10 @@ class EditArtViewModel @Inject constructor(
                 RIGHT -> copy(typeRightSelected = event.typeSelected)
             }
         }.push()
+    }
+
+    private fun onTypeFontWeightChanged(event: TypeFontWeightChanged) {
+        copyLastState { copy(typeFontWeightSelected = event.changedTo) }.push()
     }
 
     /** @return Copy of an reflecting a [StylesColorChanged] change event
@@ -595,7 +617,7 @@ class EditArtViewModel @Inject constructor(
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorBackgroundArgb = styleBackground.color.toArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
-                    strokeWidthType = styleStrokeWidthType,
+                    strokeWidth = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
                             Size(widthPx, heightPx)
@@ -605,8 +627,9 @@ class EditArtViewModel @Inject constructor(
                             PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
                         )
                     ),
-                    fontType = typeFontSelected,
-                    fontSizeType = typeFontSizeSelected,
+                    // todo italics, prob make this property of standby
+                    fontAssetPath = typeFontSelected.getAssetPath(typeFontWeightSelected),
+                    fontSize = typeFontSizeSelected,
                     textLeft = LEFT.text,
                     textCenter = CENTER.text,
                     textRight = RIGHT.text

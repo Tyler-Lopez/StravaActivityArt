@@ -16,7 +16,9 @@ import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.company.activityart.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.company.activityart.util.FontSizeType
-import com.company.activityart.util.FontType
+import com.company.activityart.util.enums.FontStyleType
+import com.company.activityart.util.enums.FontType
+import com.company.activityart.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.Parcelize
@@ -90,6 +92,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         ) : ArtMutatingEvent
 
         data class TypeFontChanged(val changedTo: FontType) : ArtMutatingEvent
+        data class TypeFontWeightChanged(val changedTo: FontWeightType) : ArtMutatingEvent
         data class TypeFontSizeChanged(val changedTo: FontSizeType) : ArtMutatingEvent
         data class TypeSelectionChanged(
             val section: EditArtTypeSection,
@@ -122,9 +125,6 @@ sealed interface EditArtViewState : ViewState {
         val filterActivitiesCountType: Int,
         val filterDateSelections: List<DateSelection>?,
         val filterDateSelectionIndex: Int,
-      //  val filterDateYearsList: List<Int>,
-    //    @UnixMS val filterDateSelected: LongProgression?,
-    //    @UnixMS val filterDateTotal: LongProgression?,
         val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
         val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
         val filterTypes: List<Pair<String, Boolean>>,
@@ -147,6 +147,8 @@ sealed interface EditArtViewState : ViewState {
         val typeActivitiesDistanceMetersSummed: Int,
         val typeAthleteName: String,
         val typeFontSelected: FontType,
+        val typeFontWeightSelected: FontWeightType,
+        val typeFontStylesSelected: List<FontStyleType>,
         val typeFontSizeSelected: FontSizeType,
         val typeMaximumCustomTextLength: Int,
         val typeLeftSelected: EditArtTypeType,

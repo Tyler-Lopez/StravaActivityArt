@@ -25,7 +25,7 @@ sealed interface NavArgSpecification {
         private const val TEXT_LEFT_KEY = "textLeft"
         private const val TEXT_CENTER_KEY = "textCenter"
         private const val TEXT_RIGHT_KEY = "textRight"
-        private const val TEXT_FONT_KEY = "textFont"
+        private const val TEXT_FONT_ASSET_PATH_KEY = "textFontAssetPath"
         private const val TEXT_FONT_SIZE_KEY = "textFontSize"
 
         private const val ERROR_MISSING_KEY = "ERROR: Missing key [%s] in saved state handle."
@@ -110,8 +110,8 @@ sealed interface NavArgSpecification {
         override val name: String = TEXT_RIGHT_KEY
     }
 
-    object TextFont : NavArgSpecification {
-        override val name: String = TEXT_FONT_KEY
+    object TextFontAssetPath : NavArgSpecification {
+        override val name: String = TEXT_FONT_ASSET_PATH_KEY
     }
 
     object TextFontSize : NavArgSpecification {

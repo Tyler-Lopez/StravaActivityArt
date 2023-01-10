@@ -1,13 +1,11 @@
 package com.company.activityart.presentation
 
-import android.graphics.Bitmap
 import android.net.Uri
 import com.company.activityart.architecture.Destination
 import com.company.activityart.architecture.ViewEvent
 import com.company.activityart.architecture.ViewState
 import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.company.activityart.util.FontSizeType
-import com.company.activityart.util.FontType
 
 sealed interface MainViewState : ViewState {
     object LoadingAuthentication : MainViewState
@@ -47,7 +45,7 @@ sealed interface MainDestination : Destination {
         val textLeft: String?,
         val textCenter: String?,
         val textRight: String?,
-        val textFont: FontType,
+        val textFontAssetPath: String,
         val textFontSize: FontSizeType
     ) : MainDestination
 

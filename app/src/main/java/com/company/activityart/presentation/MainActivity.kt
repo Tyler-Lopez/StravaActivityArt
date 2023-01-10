@@ -167,7 +167,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         TextLeft to (textLeft ?: ""),
                         TextCenter to (textCenter ?: ""),
                         TextRight to (textRight ?: ""),
-                        TextFont to textFont.toString(),
+                        TextFontAssetPath to textFontAssetPath,
                         TextFontSize to textFontSize.toString()
                     )
                 )
