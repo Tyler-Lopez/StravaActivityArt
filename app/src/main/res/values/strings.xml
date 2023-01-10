@@ -200,6 +200,8 @@
     <string name="font_lobster_two">Lobster Two</string>
     <string name="font_merriweather">Merriweather</string>
     <string name="font_playfair_display">Playfair Display</string>
+    <!-- SC is short for small caps -->
+    <string name="font_playfair_display_sc">Playfair Display SC</string>
     <string name="font_roboto">Roboto</string>
     <string name="font_alegreya">Alegreya</string>
 

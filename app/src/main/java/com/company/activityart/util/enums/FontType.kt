@@ -105,6 +105,22 @@ enum class FontType(
             FontWeightType.BOLD,
             FontWeightType.MEDIUM,
             FontWeightType.REGULAR
+        ),
+        fontStyleTypes = listOf(
+            FontStyleType.ITALIC,
+            FontStyleType.CAPITALIZE
+        )
+    ),
+    PLAYFAIR_DISPLAY_SC(
+        baseFileName = "playfair_display_sc",
+        strRes = R.string.font_playfair_display_sc,
+        fontWeightTypes = listOf(
+            FontWeightType.BLACK,
+            FontWeightType.BOLD,
+            FontWeightType.REGULAR
+        ),
+        fontStyleTypes = listOf(
+            FontStyleType.ITALIC
         )
     ),
     ROBOTO(
