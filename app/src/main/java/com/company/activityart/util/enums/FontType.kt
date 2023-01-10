@@ -57,6 +57,86 @@ enum class FontType(
             FontStyleType.ITALIC,
             FontStyleType.CAPITALIZE
         )
+    ),
+    MERRIWEATHER(
+        baseFileName = "merriweather",
+        strRes = R.string.font_merriweather,
+        fontWeightTypes = listOf(
+            FontWeightType.BLACK,
+            FontWeightType.BOLD,
+            FontWeightType.REGULAR,
+            FontWeightType.LIGHT
+        ),
+        fontStyleTypes = listOf(
+            FontStyleType.ITALIC,
+            FontStyleType.CAPITALIZE
+        )
+    ),
+    LOBSTER_TWO(
+        baseFileName = "lobster_two",
+        strRes = R.string.font_lobster_two,
+        fontWeightTypes = listOf(
+            FontWeightType.BOLD,
+            FontWeightType.REGULAR
+        ),
+        fontStyleTypes = listOf(
+            FontStyleType.ITALIC,
+            FontStyleType.CAPITALIZE
+        )
+    ),
+    OSWALD(
+        baseFileName = "oswald",
+        strRes = R.string.font_oswald,
+        fontWeightTypes = listOf(
+            FontWeightType.BOLD,
+            FontWeightType.SEMIBOLD,
+            FontWeightType.MEDIUM,
+            FontWeightType.REGULAR,
+            FontWeightType.LIGHT,
+            FontWeightType.EXTRA_LIGHT
+        )
+    ),
+    PLAYFAIR_DISPLAY(
+        baseFileName = "playfair_display",
+        strRes = R.string.font_playfair_display,
+        fontWeightTypes = listOf(
+            FontWeightType.BLACK,
+            FontWeightType.EXTRA_BOLD,
+            FontWeightType.BOLD,
+            FontWeightType.MEDIUM,
+            FontWeightType.REGULAR
+        )
+    ),
+    ROBOTO(
+        baseFileName = "roboto",
+        strRes = R.string.font_roboto,
+        fontWeightTypes = listOf(
+            FontWeightType.BLACK,
+            FontWeightType.BOLD,
+            FontWeightType.MEDIUM,
+            FontWeightType.REGULAR,
+            FontWeightType.THIN
+        ),
+        fontStyleTypes = listOf(
+            FontStyleType.ITALIC,
+            FontStyleType.CAPITALIZE
+        )
+    ),
+    ALEGREYA(
+        baseFileName = "alegreya",
+        strRes = R.string.font_alegreya,
+        fontWeightTypes = listOf(
+            FontWeightType.BLACK,
+            FontWeightType.EXTRA_BOLD,
+            FontWeightType.BOLD,
+            FontWeightType.SEMIBOLD,
+            FontWeightType.MEDIUM,
+            FontWeightType.REGULAR
+        ),
+        fontStyleTypes = listOf(
+            FontStyleType.ITALIC,
+            FontStyleType.CAPITALIZE
+        )
     );
 
     companion object {
@@ -80,6 +160,7 @@ enum class FontType(
         append(
             when (fontWeightType) {
                 FontWeightType.BLACK -> "black"
+                FontWeightType.EXTRA_BOLD -> "extrabold"
                 FontWeightType.BOLD -> "bold"
                 FontWeightType.SEMIBOLD -> "semibold"
                 FontWeightType.MEDIUM -> "medium"

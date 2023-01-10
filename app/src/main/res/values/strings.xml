@@ -196,8 +196,15 @@
     <string name="font_josefinsans">Josefin Sans</string>
     <string name="font_josefinslab">Josefin Slab</string>
     <string name="font_quicksand">Quicksand</string>
+    <string name="font_oswald">Oswald</string>
+    <string name="font_lobster_two">Lobster Two</string>
+    <string name="font_merriweather">Merriweather</string>
+    <string name="font_playfair_display">Playfair Display</string>
+    <string name="font_roboto">Roboto</string>
+    <string name="font_alegreya">Alegreya</string>
 
     <string name="font_weight_type_black">Black</string>
+    <string name="font_weight_type_extra_bold">Extra-bold</string>
     <string name="font_weight_type_bold">Bold</string>
     <string name="font_weight_type_semibold">Semi-bold</string>
     <string name="font_weight_type_medium">Medium</string>
