@@ -28,7 +28,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.company.activityart"
+        applicationId "com.activityartapp"
         minSdk 26
         targetSdk 33
         versionCode 5

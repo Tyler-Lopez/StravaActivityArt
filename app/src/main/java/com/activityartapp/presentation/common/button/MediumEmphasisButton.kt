@@ -1,0 +1,82 @@
+package com.activityartapp.presentation.common.button
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
+import com.activityartapp.R
+
+@Composable
+fun MediumEmphasisButton(
+    size: ButtonSize,
+    modifier: Modifier = Modifier
+        .defaultMinSize(minWidth = dimensionResource(id = R.dimen.button_min_width)),
+    text: String? = null,
+    imageVector: ImageVector? = null,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    onClick: () -> Unit
+    ) {
+    val cornerRadiusDp = dimensionResource(id = R.dimen.button_corner_radius)
+    val strokeWidthDp = dimensionResource(id = R.dimen.button_stroke_width)
+
+    OutlinedButton(
+        onClick = onClick,
+        shape = RoundedCornerShape(cornerRadiusDp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            backgroundColor = colorResource(R.color.transparent)
+        ),
+        modifier = modifier
+            .defaultMinSize(
+                minHeight = size.getMinHeight()
+            )
+            .indication(
+                remember { MutableInteractionSource() },
+                rememberRipple(color = Color.Black)
+            ),
+        border = BorderStroke(
+          width = strokeWidthDp,
+          color = if (enabled) {
+              colorResource(R.color.strava_orange)
+          } else {
+              colorResource(R.color.n30_silver)
+          }
+        ),
+        enabled = enabled
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = colorResource(id = R.color.n80_asphalt),
+                modifier = Modifier.size(16.dp),
+                strokeWidth = 2.dp
+            )
+        } else {
+            text?.let {
+                Text(
+                    text = it,
+                    color = if (enabled) {
+                        colorResource(id = R.color.strava_orange)
+                    } else {
+                        colorResource(id = R.color.n80_asphalt)
+                    },
+                    style = MaterialTheme.typography.button
+                )
+            }
+        }
+        imageVector?.let {
+            Icon(imageVector = imageVector, contentDescription = null)
+        }
+    }
+}
