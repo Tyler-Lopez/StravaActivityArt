@@ -10,7 +10,6 @@ import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.type.Subhead
 import com.company.activityart.presentation.editArtScreen.EditArtViewEvent
-import com.company.activityart.presentation.editArtScreen.subscreens.filters.Section
 import com.company.activityart.presentation.ui.theme.spacing
 
 @Composable
