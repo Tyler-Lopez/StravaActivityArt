@@ -1,106 +1,75 @@
 <resources>
+    <!-- LOGIN SCREEN -->
+    <!-- Application name -->
     <string name="app_name">Activity Art</string>
+    <!-- Content description of the image of the app logo -->
     <string name="app_logo_content_description">Activity Art Logo</string>
+    <!-- The current version of the application -->
     <string name="app_version">Version 1.0</string>
+    <!-- A brief description of the application presented to the athlete -->
     <string name="app_description">
         Celebrate your Strava activities with personalized art customized exactly to your specification
     </string>
-    <!-- Content description for the button which connects this app with the
-    athletes Strava account when clicked -->
+    <!-- Content description of the image button which connects the app with an
+    athlete's Strava account when clicked -->
     <string name="connect_with_strava_button_cd">Connect with Strava</string>
-    <!-- Content description for the athlete's profile picture -->
+
+    <!-- Content description of the image of the athlete's profile picture -->
     <string name="profile_picture_cd">Profile Picture</string>
-    <!-- Content description for the button that navigates to previous screen -->
+    <!-- Content description of the image button that navigates to the previous screen -->
     <string name="navigate_up_cd">Navigate Up</string>
 
-    <!-- Text shown on a button which directs athlete to being making activity art -->
+    <!-- WELCOME SCREEN -->
+    <!-- Text is shown on a button that directs athletes to being making artwork -->
     <string name="welcome_button_make_art">Make Art</string>
-    <!-- Text shown on a button which directs athlete to information about app -->
+    <!-- Text is shown on a button that directs athlete to information about the app -->
     <string name="welcome_button_about">About</string>
-    <!-- Text shown on a button which directs athletes to logout -->
+    <!-- Text is shown on a button that directs athletes to logout -->
     <string name="welcome_button_logout">Logout</string>
 
-    <!-- Text shown on action bar for the page which shows app information -->
+    <!-- ABOUT SCREEN -->
+    <!-- Text is shown on the action bar for the page which shows app information -->
     <string name="action_bar_about_header">About</string>
-    <!-- Content shown on the about screen describing the app -->
+    <!-- Content describes the app in detail -->
     <string-array name="about_screen_content">
         <item>
         Activity Art lets athletes create digital artwork of their Strava activities at a high resolution appropriate for printing and framing.
         </item>
     </string-array>
 
-    <!-- Text shown on action bar for the page which loads activities from remote -->
-    <string name="action_bar_load_activities_header">Loading Activities</string>
-
-    <!-- Text shown on action bar for the page which an athlete may customize their art -->
-    <string name="action_bar_edit_art_header">Edit Art</string>
-
-    <!-- Content description for a button which directs athlete to select filters for their activities -->
-    <string name="select_filters_cd">Select Filters</string>
-
-    <!-- Content description for a button which directs athlete to select styles for their activities -->
-    <string name="select_styles_cd">Select Styles</string>
-
-    <!-- Text shown on button which progresses to the next stage of making art when clicked -->
-    <string name="button_continue">Continue</string>
-
-    <!-- Text shown on text button which redirects athlete to the next step in creating art -->
-    <string name="button_continue_uppercase">CONTINUE</string>
-
-    <!-- Text shown on button which opens art preview -->
-    <string name="button_preview_uppercase">PREVIEW</string>
-
-    <!-- Content description for preview button -->
-    <string name="button_preview_cd">Preview Art</string>
-
-    <!-- Text shown on button which opens art filters, to select which activities will be shown -->
-    <string name="button_filters_uppercase">FILTERS</string>
-
-    <string name="button_filters_cd">Select Filters</string>
-
-    <string name="buttons_style_uppercase">STYLE</string>
-
-    <string name="buttons_style_cd">Style Art</string>
-
-    <string name="buttons_type_uppercase">TYPE</string>
-
-    <string name="buttons_type_cd">Typography</string>
-
-    <string name="buttons_resize_uppercase">RESIZE</string>
-
-    <string name="buttons_resize_cd">Resize Art</string>
-
-    <!-- Text shown on screen which loads activities from remote and local data sources -->
+    <!-- LOADING ACTIVITIES SCREEN -->
+    <!-- Text informs the athlete how many activities have been loaded -->
+    <!-- Todo, this is not an appropriate way to handle the zero case -->
     <plurals name="loading_activities_count">
         <item quantity="zero">Loading Activities</item>
         <item quantity="one">%d Activity Loaded</item>
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
 
-    <string name="month_1_long">January</string>
-    <string name="month_1_short">JAN</string>
-    <string name="month_2_long">February</string>
-    <string name="month_2_short">FEB</string>
-    <string name="month_3_long">March</string>
-    <string name="month_3_short">MAR</string>
-    <string name="month_4_long">April</string>
-    <string name="month_4_short">APR</string>
-    <string name="month_5_long">May</string>
-    <string name="month_5_short">MAY</string>
-    <string name="month_6_long">June</string>
-    <string name="month_6_short">JUN</string>
-    <string name="month_7_long">July</string>
-    <string name="month_7_short">JUL</string>
-    <string name="month_8_long">August</string>
-    <string name="month_8_short">AUG</string>
-    <string name="month_9_long">September</string>
-    <string name="month_9_short">SEP</string>
-    <string name="month_10_long">October</string>
-    <string name="month_10_short">OCT</string>
-    <string name="month_11_long">November</string>
-    <string name="month_11_short">NOV</string>
-    <string name="month_12_long">December</string>
-    <string name="month_12_short">DEC</string>
+    <!-- EDIT ART SCREEN -->
+    <!-- Text is shown on the action bar for the page where an athlete may customize their art -->
+    <string name="action_bar_edit_art_header">Edit Art</string>
+    <!-- Content description for a text button that directs athlete to select filters which may narrow down many activities into a few -->
+    <string name="select_filters_cd">Select Filters</string>
+    <!-- Content description for a text button that directs athletes to customize their art style -->
+    <string name="select_styles_cd">Select Styles</string>
+    <!-- Text is shown on the button which directs the athlete from editing to saving their art -->
+    <string name="button_continue">Continue</string>
+    <!-- Text is shown on the button which directs the athlete from editing to saving their art -->
+    <string name="button_continue_uppercase">CONTINUE</string>
+    <!-- Text is shown on the button which opens art preview -->
+    <string name="button_preview_uppercase">PREVIEW</string>
+    <!-- Content description for preview button -->
+    <string name="button_preview_cd">Preview Art</string>
+    <!-- Text shown on the button which opens art filters, to select which activities will be shown -->
+    <string name="button_filters_uppercase">FILTERS</string>
+    <string name="button_filters_cd">Select Filters</string>
+    <string name="buttons_style_uppercase">STYLE</string>
+    <string name="buttons_style_cd">Style Art</string>
+    <string name="buttons_type_uppercase">TYPE</string>
+    <string name="buttons_type_cd">Typography</string>
+    <string name="buttons_resize_uppercase">RESIZE</string>
+    <string name="buttons_resize_cd">Resize Art</string>
 
     <string name="edit_art_filters_activities_filtered_zero">
         Oops! No activities for the selected filters
@@ -184,8 +153,9 @@
     <string name="edit_art_resize_header">Resize Art</string>
     <string name="edit_art_resize_description">
         Change the width and height pixel size of the art either from a preset
-        or by inputting your own values.
+        or by inputting custom values.
     </string>
+
     <string name="edit_art_resize_preview_text">PREVIEW</string>
     <string name="edit_art_resize_option_computer_wallpaper">Computer Wallpaper</string>
     <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
@@ -198,6 +168,12 @@
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
 
+    <!-- SAVE ART SCREEN -->
+    <string name="save_art_header">Save Art</string>
+    <string name="save_art_download_art">Download</string>
+    <string name="save_art_share_art">Share</string>
+
+    <!-- FONT TYPES -->
     <string name="font_josefinsans">Josefin Sans</string>
     <string name="font_josefinslab">Josefin Slab</string>
     <string name="font_quicksand">Quicksand</string>
@@ -210,6 +186,7 @@
     <string name="font_roboto">Roboto</string>
     <string name="font_alegreya">Alegreya</string>
 
+    <!-- FONT WEIGHT TYPES -->
     <string name="font_weight_type_black">Black</string>
     <string name="font_weight_type_extra_bold">Extra-bold</string>
     <string name="font_weight_type_bold">Bold</string>
@@ -220,12 +197,13 @@
     <string name="font_weight_type_extra_light">Extra-light</string>
     <string name="font_weight_type_thin">Thin</string>
 
-    <string name="save_art_header">Save Art</string>
 
+    <!-- FONT SIZE TYPES -->
+    <!-- XS is short for extra-small -->
     <string name="font_size_type_xs">XS</string>
     <string name="font_size_type_small">Small</string>
     <string name="font_size_type_medium">Medium</string>
     <string name="font_size_type_large">Large</string>
+    <!-- XL is short for extra-large -->
     <string name="font_size_type_xl">XL</string>
-
 </resources>

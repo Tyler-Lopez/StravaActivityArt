@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
@@ -28,6 +29,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.company.activityart.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.company.activityart.BuildConfig
+import com.company.activityart.R
 import com.company.activityart.architecture.EventReceiver
 import com.company.activityart.presentation.common.button.ButtonSize
 import com.company.activityart.presentation.common.button.HighEmphasisButton
@@ -78,7 +80,7 @@ fun SaveArtStandby(
                     enabled = buttonsEnabled,
                     isLoading = downloadInProgress,
                     size = ButtonSize.MEDIUM,
-                    text = "Download"
+                    text = stringResource(R.string.save_art_download_art)
                 ) {
                     /** For Android <= 10, permission must be requested **/
                     permissionState.apply {
@@ -100,7 +102,7 @@ fun SaveArtStandby(
                     enabled = buttonsEnabled,
                     size = ButtonSize.MEDIUM,
                     isLoading = shareInProgress,
-                    text = "Share"
+                    text = stringResource(R.string.save_art_share_art)
                 ) { eventReceiver.onEventDebounced(ClickedShare) }
             }
         }
