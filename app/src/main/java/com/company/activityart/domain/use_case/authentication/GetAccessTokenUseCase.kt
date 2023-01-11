@@ -35,6 +35,8 @@ class GetAccessTokenUseCase @Inject constructor(
                 println("here $data")
                 insertAccessTokenUseCase(data)
             }
-            .doOnError { clearAccessTokenUseCase() }
+            .doOnError {
+                clearAccessTokenUseCase()
+            }
     }
 }

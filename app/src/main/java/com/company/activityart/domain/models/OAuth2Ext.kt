@@ -6,6 +6,9 @@ private const val EXPIRE_BUFFER_SECONDS = 1800
 
 val OAuth2.requiresRefresh: Boolean
     get() {
-        val currSeconds = TimeUnit.SECONDS.toMillis(System.currentTimeMillis())
+        println("Determining if access token $this requires refresh.")
+        val currSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+        println("--> currSeconds: $currSeconds")
+        println("--> expiresAtUnixSeconds: $expiresAtUnixSeconds")
         return expiresAtUnixSeconds < currSeconds + EXPIRE_BUFFER_SECONDS
     }

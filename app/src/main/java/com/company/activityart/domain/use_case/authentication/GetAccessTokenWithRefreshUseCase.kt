@@ -25,11 +25,21 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
 
     suspend operator fun invoke(): Response<OAuth2> {
         getAccessTokenFromLocalUseCase().apply {
+            println("getAccessTokenFromLocalUseCase invoked...")
             return when {
-                this == null -> Error()
+                this == null -> {
+                    println("RESULT: NULL")
+                    Error()
+                }
                 /** On refresh, pass in local athlete id as refresh does not incl Athlete **/
-                requiresRefresh -> onRequiresRefresh(refreshToken, athleteId)
-                else -> Success(this)
+                requiresRefresh -> {
+                    println("RESULT: REQUIRES REFRESH")
+                    onRequiresRefresh(refreshToken, athleteId)
+                }
+                else -> {
+                    println("RESULT: SUCCESS")
+                    Success(this)
+                }
             }
         }
     }
