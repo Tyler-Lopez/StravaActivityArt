@@ -8,12 +8,8 @@ import com.company.activityart.presentation.editArtScreen.StrokeWidthType
 import com.company.activityart.util.FontSizeType
 
 sealed interface MainViewState : ViewState {
-    object LoadingAuthentication : MainViewState
     object Unauthenticated : MainViewState
-    data class Authenticated(
-        val athleteId: Long,
-        val accessToken: String
-    ) : MainViewState
+    object Authenticated : MainViewState
 }
 
 sealed interface MainViewEvent : ViewEvent {

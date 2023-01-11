@@ -8,6 +8,7 @@ import com.company.activityart.presentation.MainViewEvent.*
 import com.company.activityart.util.Response.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,10 +18,6 @@ class MainViewModel @Inject constructor(
         MainViewState,
         MainViewEvent,
         MainDestination>() {
-
-    init {
-        pushState(LoadingAuthentication)
-    }
 
     var athleteId: Long? = null
     var accessToken: String? = null
@@ -35,13 +32,12 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             pushState(
                 when (val response = getAccessTokenUseCase(event.uri)) {
-                    is Success -> {
-                        Authenticated(
-                            athleteId = response.data.athleteId,
-                            accessToken = response.data.accessToken
-                        )
+                    is Success -> Authenticated
+                    is Error -> if (response.exception is UnknownHostException) {
+                        Authenticated
+                    } else {
+                        Unauthenticated
                     }
-                    is Error -> Unauthenticated
                 }
             )
         }

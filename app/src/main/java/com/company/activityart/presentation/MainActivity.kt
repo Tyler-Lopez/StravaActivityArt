@@ -16,7 +16,6 @@ import com.company.activityart.architecture.Router
 import com.company.activityart.presentation.MainDestination.*
 import com.company.activityart.presentation.MainViewEvent.LoadAuthentication
 import com.company.activityart.presentation.MainViewState.Authenticated
-import com.company.activityart.presentation.MainViewState.LoadingAuthentication
 import com.company.activityart.presentation.ui.theme.AthleteApiArtTheme
 import com.company.activityart.util.NavArgSpecification.*
 import com.company.activityart.util.Screen.*
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 viewModel.apply {
                     /** Set splash screen to on while loading authentication **/
                     splashScreen.setKeepOnScreenCondition {
-                        viewState.value is LoadingAuthentication
+                        viewState.value == null
                     }
                     /** Push event to [MainViewModel] to determine authentication **/
                     LaunchedEffect(key1 = intentUri) {

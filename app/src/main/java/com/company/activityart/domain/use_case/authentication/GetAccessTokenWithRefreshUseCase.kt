@@ -8,6 +8,7 @@ import com.company.activityart.domain.models.requiresRefresh
 import com.company.activityart.util.Response
 import com.company.activityart.util.Response.*
 import com.company.activityart.util.constants.TokenConstants
+import java.net.UnknownHostException
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 

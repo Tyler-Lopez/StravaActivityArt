@@ -29,6 +29,8 @@ import com.company.activityart.presentation.common.button.MediumEmphasisButton
 import com.company.activityart.presentation.common.type.*
 import com.company.activityart.presentation.common.ScreenBackground
 import com.company.activityart.presentation.ui.theme.Silver
+import com.company.activityart.presentation.welcomeScreen.composables.WelcomeNoInternet
+import com.company.activityart.presentation.welcomeScreen.composables.WelcomeStandby
 
 
 /*
@@ -43,55 +45,20 @@ https://developers.strava.com/guidelines/
 @Composable
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
     ScreenBackground {
+        AppLogo()
         viewModel.viewState.collectAsState().value?.apply {
-            @Dimension val profilePictureSize = dimensionResource(id = R.dimen.profile_picture_size)
-            @Px val profilePictureSizePx = LocalDensity.current.run {
-                profilePictureSize.toPx().toInt()
+            when (this) {
+                is WelcomeViewState.Standby -> WelcomeStandby(
+                    athleteName = athleteName,
+                    athleteImageUrl = athleteImageUrl,
+                    eventReceiver = viewModel
+                )
+                is WelcomeViewState.NoInternet -> WelcomeNoInternet(
+                    retrying = retrying,
+                    eventReceiver = viewModel
+                )
             }
-
-            AppLogo()
-            Card(backgroundColor = colorResource(R.color.n20_icicle)) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(athleteImageUrl)
-                            .size(size = profilePictureSizePx)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.ic_avatar_profile),
-                        error = painterResource(id = R.drawable.ic_avatar_profile),
-                        fallback = painterResource(id = R.drawable.ic_avatar_profile),
-                        contentScale = FillBounds,
-                        contentDescription = stringResource(id = R.string.profile_picture_cd),
-                        modifier = Modifier
-                            .size(profilePictureSize)
-                            .clip(CircleShape)
-                            .border(
-                                width = dimensionResource(id = R.dimen.rounded_picture_stroke_width),
-                                color = Silver,
-                                shape = CircleShape
-                            )
-                    )
-                    Subhead(text = athleteName)
-                }
-            }
-            HighEmphasisButton(
-                size = ButtonSize.LARGE,
-                text = stringResource(id = R.string.welcome_button_make_art),
-            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedMakeArt) }
-            MediumEmphasisButton(
-                size = ButtonSize.LARGE,
-                text = stringResource(id = R.string.welcome_button_about),
-            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedAbout) }
-            MediumEmphasisButton(
-                size = ButtonSize.LARGE,
-                text = stringResource(id = R.string.welcome_button_logout),
-            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedLogout) }
         }
+
     }
 }

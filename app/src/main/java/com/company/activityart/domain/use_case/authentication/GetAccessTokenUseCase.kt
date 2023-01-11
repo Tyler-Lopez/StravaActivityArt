@@ -6,6 +6,7 @@ import com.company.activityart.util.Response
 import com.company.activityart.util.UriUtils
 import com.company.activityart.util.doOnError
 import com.company.activityart.util.doOnSuccess
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 /**
@@ -36,7 +37,11 @@ class GetAccessTokenUseCase @Inject constructor(
                 insertAccessTokenUseCase(data)
             }
             .doOnError {
-                clearAccessTokenUseCase()
+                println("Here, error $exception")
+                /** If the issue isn't because of internet, clear local cache **/
+                if (exception !is UnknownHostException) {
+                    clearAccessTokenUseCase()
+                }
             }
     }
 }

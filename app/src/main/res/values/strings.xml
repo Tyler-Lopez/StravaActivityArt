@@ -26,6 +26,9 @@
     <string name="welcome_button_about">About</string>
     <!-- Text is shown on a button that directs athletes to logout -->
     <string name="welcome_button_logout">Logout</string>
+    <string name="welcome_no_internet_header">Internet is Unavailable</string>
+    <string name="welcome_no_internet_description">Check your connection and try again</string>
+    <string name="welcome_no_internet_retry_button">Retry</string>
 
     <!-- ABOUT SCREEN -->
     <!-- Text is shown on the action bar for the page which shows app information -->
