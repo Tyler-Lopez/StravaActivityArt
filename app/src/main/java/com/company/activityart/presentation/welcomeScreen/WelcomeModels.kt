@@ -10,8 +10,6 @@ sealed interface WelcomeViewEvent : ViewEvent {
 }
 
 data class WelcomeViewState(
-    val athleteNameFirst: String?,
-    val athleteNameLast: String?,
     val athleteName: String,
     val athleteImageUrl: String,
 ) : ViewState

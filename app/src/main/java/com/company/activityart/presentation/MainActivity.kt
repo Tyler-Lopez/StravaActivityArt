@@ -31,7 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), Router<MainDestination> {
 
-    lateinit var navController: NavHostController
+    private lateinit var navController: NavHostController
 
     @Inject
     lateinit var gson: Gson

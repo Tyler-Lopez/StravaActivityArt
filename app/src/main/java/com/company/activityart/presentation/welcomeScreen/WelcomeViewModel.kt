@@ -72,8 +72,6 @@ class WelcomeViewModel @Inject constructor(
                     getAthleteUseCase(data.athleteId, accessToken)
                         .doOnSuccess {
                             WelcomeViewState(
-                                athleteNameFirst = data.firstName.takeIf { it.isNotBlank() },
-                                athleteNameLast = data.lastName.takeIf { it.isNotBlank() },
                                 athleteName = data.fullName,
                                 athleteImageUrl = data.profilePictureLarge
                             ).push()
