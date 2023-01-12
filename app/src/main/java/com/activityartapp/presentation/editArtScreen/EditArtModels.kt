@@ -128,7 +128,6 @@ sealed interface EditArtViewState : ViewState {
         val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
         val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
         val filterTypes: List<Pair<String, Boolean>>,
-        val filterTypesCount: Int,
         override val pagerStateWrapper: PagerStateWrapper,
         val scrollStateFilter: ScrollState,
         val scrollStateStyle: ScrollState,
@@ -157,7 +156,18 @@ sealed interface EditArtViewState : ViewState {
         val typeCenterCustomText: String,
         val typeRightSelected: EditArtTypeType,
         val typeRightCustomText: String,
-    ) : EditArtViewState
+    ) : EditArtViewState {
+
+        companion object {
+            private const val NO_ACTIVITIES_COUNT = 0
+        }
+
+        val atLeastOneActivitySelected = minOf(
+            filterActivitiesCountDate,
+            filterActivitiesCountDistance,
+            filterActivitiesCountType
+        ) != NO_ACTIVITIES_COUNT
+    }
 }
 
 @Parcelize

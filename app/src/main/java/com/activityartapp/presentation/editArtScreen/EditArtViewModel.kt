@@ -276,7 +276,6 @@ class EditArtViewModel @Inject constructor(
                     .takeIf { it.isNotEmpty() }
                     ?.run { min()..max() }, // todo rewrite this with the asrange ext
                 filterTypes = activitiesTypesSelectionsMap.toList(),
-                filterTypesCount = 0, // todo
                 pagerStateWrapper = pagerStateWrapper,
                 scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
                 scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),

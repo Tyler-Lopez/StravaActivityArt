@@ -9,6 +9,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.presentation.common.AppBarScaffold
@@ -28,6 +29,9 @@ import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
 import com.google.accompanist.pager.ExperimentalPagerApi
 
+private const val DISABLED_ALPHA = 0.5f
+private const val ENABLED_ALPHA = 1.0f
+
 /**
  * A complex screen featuring [EditArtTabLayout]
  */
@@ -35,16 +39,26 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 @Composable
 fun EditArtViewDelegate(viewModel: EditArtViewModel) {
     viewModel.viewState.collectAsState().value?.apply {
+        val continueEnabled = (this@apply as? EditArtViewState.Standby)?.atLeastOneActivitySelected
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) },
             actions = {
-                IconButton(onClick = { viewModel.onEventDebounced(SaveClicked) }) {
+                IconButton(
+                    onClick = { viewModel.onEventDebounced(SaveClicked) },
+                    enabled = continueEnabled ?: false
+                ) {
                     SubheadHeavy(
                         text = stringResource(
                             R.string.button_continue_uppercase
                         ),
-                        textColor = White
+                        textColor = White.copy(
+                            alpha = if (continueEnabled == true) {
+                                DISABLED_ALPHA
+                            } else {
+                                ENABLED_ALPHA
+                            }
+                        )
                     )
                 }
                 Spacer(modifier = Modifier.width(spacing.medium))
@@ -69,7 +83,10 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                     ) {
                         ScreenBackgroundLegacy {
                             when (it) {
-                                PREVIEW -> EditArtPreview(bitmap)
+                                PREVIEW -> EditArtPreview(
+                                    atLeastOneActivitySelected,
+                                    bitmap
+                                )
                                 FILTERS -> YearMonthDay.run {
                                     EditArtFiltersScreen(
                                         filterActivitiesCountDate,
