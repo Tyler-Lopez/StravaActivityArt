@@ -52,6 +52,7 @@
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
     <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
+    <string name="loading_activities_error_header">Oops! An Error Occurred</string>
     <!-- If there was no internet connection while loading activities, present the user a prompt
     depending on how many activities were loaded to either continue with the partial load or to retry -->
     <string name="loading_activities_no_internet_prompt_zero_count">Check your connection and try again</string>

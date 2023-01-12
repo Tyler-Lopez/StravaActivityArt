@@ -37,7 +37,7 @@ fun LoadActivitiesLoadError(
     eventReceiver: EventReceiver<LoadActivitiesViewEvent>,
 ) {
 
-    TitleTwo("Oops! An error occurred")
+    TitleTwo(text = stringResource(R.string.loading_activities_error_header))
     Card(
         backgroundColor = colorResource(R.color.n20_icicle),
     ) {

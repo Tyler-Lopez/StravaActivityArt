@@ -20,6 +20,7 @@ import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import java.time.Year
@@ -33,6 +34,8 @@ class LoadActivitiesViewModel @Inject constructor(
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
+        /** Artificial delay to make the RETRY button feel better when pressed **/
+        private const val DELAY_MS = 500L
         private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
     }
@@ -57,7 +60,10 @@ class LoadActivitiesViewModel @Inject constructor(
 
     private fun onClickedRetry() {
         (lastPushedState as? LoadErrorNoInternet)?.copy(retrying = true)?.push()
-        viewModelScope.launch(Dispatchers.IO) { loadActivities() }
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(DELAY_MS)
+            loadActivities()
+        }
     }
 
     private fun onClickedReturn() {
