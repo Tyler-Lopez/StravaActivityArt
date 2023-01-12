@@ -48,6 +48,11 @@
         <item quantity="one">%d Activity Loaded</item>
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
+    <string name="loading_activities_error_loading_header">Error Loading Activities</string>
+    <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
+    <string name="loading_activities_no_internet_description">Check your connection and try again</string>
+    <string name="loading_activities_no_internet_retry_button">Retry</string>
+    <string name="loading_activities_no_internet_return_button">Return</string>
 
     <!-- EDIT ART SCREEN -->
     <!-- Text is shown on the action bar for the page where an athlete may customize their art -->

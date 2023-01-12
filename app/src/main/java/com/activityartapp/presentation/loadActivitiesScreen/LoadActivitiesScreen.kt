@@ -26,8 +26,8 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
         ScreenBackgroundLegacy(spacedBy = spacing.medium) {
             viewState.collectAsState().value?.apply {
                 when (this) {
-                    is LoadError -> LoadActivitiesLoadError(
-                        activitiesLoaded = totalActivitiesLoaded,
+                    is LoadErrorNoInternet -> LoadActivitiesLoadError(
+                        retrying = retrying,
                         eventReceiver = viewModel
                     )
                     is Loading -> LoadActivitiesLoading(totalActivitiesLoaded)

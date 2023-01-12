@@ -6,6 +6,7 @@ import com.activityartapp.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Success
 import com.activityartapp.util.TimeUtils
+import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -56,6 +57,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
         /** If any months of this year were not in ROOM storage cache,
          * receive from remote */
         if (lastCachedMonth != LAST_MONTH_OF_YEAR) {
+            println("Last cached month: $lastCachedMonth")
             getActivitiesByYearFromRemoteUseCase(
                 accessToken = accessToken,
                 year = year,
@@ -89,10 +91,14 @@ class GetActivitiesByYearUseCase @Inject constructor(
                     }
 
             }
+                .doOnError {
+                    println("Here, error $exception")
+                    return Response.Error(
+                        data = toReturn,
+                        exception = exception
+                    )
+                }
         }
-
-        /** Add data to Singleton cache for future access **/
-        insertActivitiesIntoCacheUseCase(year, toReturn)
 
         /** Return successful result **/
         return Success(toReturn)
