@@ -41,18 +41,28 @@
     </string-array>
 
     <!-- LOADING ACTIVITIES SCREEN -->
+    <string name="loading_activities_zero_count">
+        Loading Activities
+    </string>
     <!-- Text informs the athlete how many activities have been loaded -->
     <!-- Todo, this is not an appropriate way to handle the zero case -->
     <plurals name="loading_activities_count">
-        <item quantity="zero">Loading Activities</item>
+        <item quantity="zero">@string/loading_activities_zero_count</item>
         <item quantity="one">%d Activity Loaded</item>
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
-    <string name="loading_activities_error_loading_header">Error Loading Activities</string>
     <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
-    <string name="loading_activities_no_internet_description">Check your connection and try again</string>
+    <!-- If there was no internet connection while loading activities, present the user a prompt
+    depending on how many activities were loaded to either continue with the partial load or to retry -->
+    <string name="loading_activities_no_internet_prompt_zero_count">Check your connection and try again</string>
+    <plurals name="loading_activities_no_internet_prompt">
+        <item quantity="zero">@string/loading_activities_no_internet_prompt_zero_count</item>
+        <item quantity="one">Check your connection and try again or continue with the activity which was successfully loaded</item>
+        <item quantity="other">Check your connection and try again or continue with the %d activities which were successfully loaded</item>
+    </plurals>
+    <string name="loading_activities_no_internet_continue_button">Continue</string>
     <string name="loading_activities_no_internet_retry_button">Retry</string>
-    <string name="loading_activities_no_internet_return_button">Return</string>
+    <string name="loading_activities_no_internet_return_button">Go Back</string>
 
     <!-- EDIT ART SCREEN -->
     <!-- Text is shown on the action bar for the page where an athlete may customize their art -->

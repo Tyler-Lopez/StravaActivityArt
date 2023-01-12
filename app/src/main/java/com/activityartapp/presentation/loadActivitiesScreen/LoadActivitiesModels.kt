@@ -4,12 +4,17 @@ import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 
 sealed interface LoadActivitiesViewEvent : ViewEvent {
-    object ContinueClicked : LoadActivitiesViewEvent
-    object TryAgainClicked : LoadActivitiesViewEvent
-    object NavigateUpClicked : LoadActivitiesViewEvent
+    object ClickedContinue : LoadActivitiesViewEvent
+    object ClickedRetry : LoadActivitiesViewEvent
+    object ClickedReturn : LoadActivitiesViewEvent
 }
 
 sealed interface LoadActivitiesViewState : ViewState {
-    data class Loading(val totalActivitiesLoaded: Int = 0) : LoadActivitiesViewState
-    data class LoadErrorNoInternet(val retrying: Boolean = false) : LoadActivitiesViewState
+    val totalActivitiesLoaded: Int
+
+    data class Loading(override val totalActivitiesLoaded: Int = 0) : LoadActivitiesViewState
+    data class LoadErrorNoInternet(
+        override val totalActivitiesLoaded: Int = 0,
+        val retrying: Boolean = false
+    ) : LoadActivitiesViewState
 }

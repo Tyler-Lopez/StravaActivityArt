@@ -56,11 +56,12 @@ class WelcomeViewModel @Inject constructor(
          * or directly to Make Art if RAM cache is already present. */
         viewModelScope.launch {
             routeTo(
-                if (getActivitiesFromCacheUseCase().isEmpty()) {
+                // TODO, come back to this, removed because we now add to cache on partial load...
+            //    if (getActivitiesFromCacheUseCase().isEmpty()) {
                     NavigateLoadActivities(athleteId, accessToken)
-                } else {
-                    NavigateEditArt(fromLoad = false)
-                }
+              //  } else {
+            //        NavigateEditArt(fromLoad = false)
+             //   }
             )
         }
     }

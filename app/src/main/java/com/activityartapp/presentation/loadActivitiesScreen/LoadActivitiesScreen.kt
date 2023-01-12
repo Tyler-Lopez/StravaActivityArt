@@ -3,6 +3,7 @@ package com.activityartapp.presentation.loadActivitiesScreen
 import androidx.compose.runtime.*
 import com.activityartapp.data.remote.responses.ActivityResponse
 import com.activityartapp.domain.models.Activity
+import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.presentation.common.ScreenBackgroundLegacy
 import com.activityartapp.presentation.loadActivitiesScreen.composables.LoadActivitiesLoadError
@@ -23,10 +24,11 @@ import com.activityartapp.presentation.ui.theme.spacing
 @Composable
 fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
     viewModel.apply {
-        ScreenBackgroundLegacy(spacedBy = spacing.medium) {
+        ScreenBackground {
             viewState.collectAsState().value?.apply {
                 when (this) {
                     is LoadErrorNoInternet -> LoadActivitiesLoadError(
+                        totalActivitiesLoaded,
                         retrying = retrying,
                         eventReceiver = viewModel
                     )

@@ -33,7 +33,6 @@ class LoadActivitiesViewModel @Inject constructor(
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
-        private const val NO_ACTIVITIES_LOADED_COUNT = 0
         private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
     }
@@ -43,28 +42,26 @@ class LoadActivitiesViewModel @Inject constructor(
 
     private val activitiesByYear: MutableList<Pair<Int, List<Activity>>> =
         mutableListOf()
-    private var activitiesCount = NO_ACTIVITIES_LOADED_COUNT
 
     override fun onEvent(event: LoadActivitiesViewEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is ContinueClicked -> onContinueClicked()
-                is NavigateUpClicked -> onNavigateUpClicked()
-                is TryAgainClicked -> onTryAgainClicked()
-            }
+        when (event) {
+            is ClickedContinue -> onClickedContinue()
+            is ClickedRetry -> onClickedRetry()
+            is ClickedReturn -> onClickedReturn()
         }
     }
 
-    private fun onContinueClicked() {
-
+    private fun onClickedContinue() {
+        viewModelScope.launch { routeTo(NavigateEditArt(fromLoad = true)) }
     }
 
-    private suspend fun onNavigateUpClicked() {
-        routeTo(NavigateUp)
+    private fun onClickedRetry() {
+        (lastPushedState as? LoadErrorNoInternet)?.copy(retrying = true)?.push()
+        viewModelScope.launch(Dispatchers.IO) { loadActivities() }
     }
 
-    private fun onTryAgainClicked() {
-
+    private fun onClickedReturn() {
+        viewModelScope.launch { routeTo(NavigateUp) }
     }
 
     override fun onRouterAttached() {
@@ -77,37 +74,45 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     private suspend fun loadActivities() {
-        println("Here in load activities")
+        var noInternetError = false
+        var activitiesCount = 0
+
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
         (YEAR_NOW downTo YEAR_START).takeWhile { year ->
-            (getActivitiesByYearUseCase(
+            val response = (getActivitiesByYearUseCase(
                 accessToken = accessToken,
                 athleteId = athleteId,
                 year = year,
             ).doOnSuccess {
+
                 /** Add data to Singleton cache for future access **/
                 insertActivitiesIntoCacheUseCase(year, data)
 
                 activitiesByYear += Pair(year, data)
                 activitiesCount += data.size
-                Loading(activitiesCount).push()
-
-                if (year == YEAR_START) {
-                    routeTo(NavigateEditArt(fromLoad = true))
-                }
+                if (lastPushedState == null || lastPushedState is Loading) Loading(activitiesCount).push()
             }.doOnError {
                 when (exception) {
                     is UnknownHostException -> {
-                        LoadErrorNoInternet(false).push()
+                        noInternetError = true
                     }
                     else -> {
-                        // todo handle
+                        // TODO, Handle case of other type of exception
+                        // Right now will just be loading forever
+                        return@loadActivities
                     }
                 }
-                println("It was not a success due to $exception")
-                return@loadActivities
-            }) is Success
+            })
+            /** If response is a Success or an Error due to no internet, keep loading activities **/
+            response is Success || (response as? Error)?.exception is UnknownHostException
+        }
+
+
+        if (noInternetError) {
+            LoadErrorNoInternet(totalActivitiesLoaded = activitiesCount, retrying = false).push()
+        } else {
+            routeTo(NavigateEditArt(fromLoad = true))
         }
     }
 }

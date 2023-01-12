@@ -79,7 +79,7 @@ class FileRepositoryImpl @Inject constructor(
                 bitmap.compressAsPng(outputStream = this)
                 flushAndClose()
             }
-            Response.Success(FileProvider.getUriForFile(context, "com.company.activityart", file))
+            Response.Success(FileProvider.getUriForFile(context, "com.activityartapp", file))
         } catch (e: Exception) {
             println("Here exception caught saving to cache, $e")
             Response.Error(exception = e)
