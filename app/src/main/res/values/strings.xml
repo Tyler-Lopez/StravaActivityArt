@@ -26,6 +26,7 @@
     <string name="welcome_button_about">About</string>
     <!-- Text is shown on a button that directs athletes to logout -->
     <string name="welcome_button_logout">Logout</string>
+    <string name="welcome_error_header">Oops! An Error Occurred</string>
     <string name="welcome_no_internet_header">Internet is Unavailable</string>
     <string name="welcome_no_internet_description">Check your connection and try again</string>
     <string name="welcome_no_internet_retry_button">Retry</string>

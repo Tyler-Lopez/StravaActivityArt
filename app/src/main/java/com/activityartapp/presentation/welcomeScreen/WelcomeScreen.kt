@@ -20,7 +20,6 @@ https://developers.strava.com/guidelines/
 @Composable
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
     ScreenBackground {
-        AppLogo()
         viewModel.viewState.collectAsState().value?.apply {
             when (this) {
                 is WelcomeViewState.Standby -> WelcomeStandby(

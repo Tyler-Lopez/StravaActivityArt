@@ -17,6 +17,7 @@ import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -31,10 +32,17 @@ class WelcomeViewModel @Inject constructor(
     private val getAthleteUseCase: GetAthleteUseCase,
 ) : BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
 
+    companion object {
+        /** Artificial delay to make the RETRY button feel better when pressed **/
+        private const val DELAY_MS = 500L
+    }
+
     private lateinit var accessToken: String
     private lateinit var athleteId: String
 
-    init { initScreen() }
+    init {
+        initScreen()
+    }
 
     override fun onEvent(event: WelcomeViewEvent) {
         when (event) {
@@ -57,11 +65,11 @@ class WelcomeViewModel @Inject constructor(
         viewModelScope.launch {
             routeTo(
                 // TODO, come back to this, removed because we now add to cache on partial load...
-            //    if (getActivitiesFromCacheUseCase().isEmpty()) {
-                    NavigateLoadActivities(athleteId, accessToken)
-              //  } else {
-            //        NavigateEditArt(fromLoad = false)
-             //   }
+                //    if (getActivitiesFromCacheUseCase().isEmpty()) {
+                NavigateLoadActivities(athleteId, accessToken)
+                //  } else {
+                //        NavigateEditArt(fromLoad = false)
+                //   }
             )
         }
     }
@@ -74,8 +82,9 @@ class WelcomeViewModel @Inject constructor(
     }
 
     private fun onClickedRetryConnection() {
+        WelcomeViewState.NoInternet(retrying = true).push()
         viewModelScope.launch {
-            WelcomeViewState.NoInternet(retrying = true).push()
+            delay(DELAY_MS)
             initScreen()
         }
     }

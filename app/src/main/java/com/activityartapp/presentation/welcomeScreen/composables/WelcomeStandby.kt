@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.AppLogo
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.button.MediumEmphasisButton
@@ -43,6 +44,7 @@ fun WelcomeStandby(
         profilePictureSize.toPx().toInt()
     }
 
+    AppLogo()
     Card(backgroundColor = colorResource(R.color.n20_icicle)) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

@@ -20,6 +20,7 @@ import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.common.type.SubheadHeavy
+import com.activityartapp.presentation.common.type.TitleTwo
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewEvent
 
 // todo add retry failed toast...
@@ -28,6 +29,7 @@ fun WelcomeNoInternet(
     retrying: Boolean,
     eventReceiver: EventReceiver<WelcomeViewEvent>
 ) {
+    TitleTwo(text = stringResource(R.string.welcome_error_header))
     Card(
         backgroundColor = colorResource(R.color.n20_icicle),
     ) {
