@@ -2,7 +2,7 @@ package com.activityartapp.domain.use_case.authentication
 
 import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.domain.models.OAuth2
-import com.activityartapp.activityart.util.Response
+import com.activityartapp.util.Response
 import com.activityartapp.util.constants.TokenConstants.CLIENT_ID
 import com.activityartapp.util.constants.TokenConstants.CLIENT_SECRET
 import java.util.concurrent.CancellationException

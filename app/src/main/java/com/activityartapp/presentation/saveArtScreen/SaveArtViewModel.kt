@@ -13,12 +13,8 @@ import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.*
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
-import com.activityartapp.activityart.util.*
-import com.activityartapp.util.ActivityFilterUtils
-import com.activityartapp.util.FontSizeType
-import com.activityartapp.util.ImageSizeUtils
+import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
-import com.activityartapp.util.VisualizationUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

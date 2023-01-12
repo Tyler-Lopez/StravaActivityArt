@@ -12,9 +12,9 @@ import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewEvent.*
-import com.activityartapp.activityart.util.Response
-import com.activityartapp.activityart.util.doOnError
-import com.activityartapp.activityart.util.doOnSuccess
+import com.activityartapp.util.Response
+import com.activityartapp.util.doOnError
+import com.activityartapp.util.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

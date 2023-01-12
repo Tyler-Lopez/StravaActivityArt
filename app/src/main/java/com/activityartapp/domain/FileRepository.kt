@@ -2,7 +2,7 @@ package com.activityartapp.domain
 
 import android.graphics.Bitmap
 import android.net.Uri
-import com.activityartapp.activityart.util.Response
+import com.activityartapp.util.Response
 
 interface FileRepository {
     suspend fun saveBitmapToGallery(bitmap: Bitmap): Response<Unit>

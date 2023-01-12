@@ -5,8 +5,8 @@ import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.data.remote.responses.Bearer
 import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.requiresRefresh
-import com.activityartapp.activityart.util.Response
-import com.activityartapp.activityart.util.Response.*
+import com.activityartapp.util.Response
+import com.activityartapp.util.Response.*
 import com.activityartapp.util.constants.TokenConstants
 import java.util.concurrent.CancellationException
 import javax.inject.Inject

@@ -13,7 +13,7 @@ object TokenConstants {
     const val CLIENT_ID = 75992
     const val CLIENT_ID_STRING = CLIENT_ID.toString()
     const val CLIENT_SECRET = "1393501e79b0abb641468057d790b6df970771f8"
-    const val REDIRECT_URI = "com.company.athleteapiart://myapp.com"
+    const val REDIRECT_URI = "com.activityartapp://myapp.com"
     const val RESPONSE_TYPE = "code"
     const val APPROVAL_PROMPT = "auto"
     const val SCOPE = "activity:read,activity:read_all"

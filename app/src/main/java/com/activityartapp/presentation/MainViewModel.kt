@@ -5,10 +5,7 @@ import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
 import com.activityartapp.presentation.MainViewState.*
 import com.activityartapp.presentation.MainViewEvent.*
-import com.activityartapp.activityart.util.Response.*
-import com.activityartapp.presentation.MainDestination
-import com.activityartapp.presentation.MainViewEvent
-import com.activityartapp.presentation.MainViewState
+import com.activityartapp.util.Response.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException

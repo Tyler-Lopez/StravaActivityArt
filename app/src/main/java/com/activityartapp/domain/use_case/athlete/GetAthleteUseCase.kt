@@ -2,10 +2,10 @@ package com.activityartapp.domain.use_case.athlete
 
 import com.activityartapp.activityart.domain.models.Athlete
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.activityartapp.activityart.util.Response
-import com.activityartapp.activityart.util.Response.Success
-import com.activityartapp.activityart.util.doOnError
-import com.activityartapp.activityart.util.doOnSuccess
+import com.activityartapp.util.Response
+import com.activityartapp.util.Response.Success
+import com.activityartapp.util.doOnError
+import com.activityartapp.util.doOnSuccess
 import javax.inject.Inject
 
 /**

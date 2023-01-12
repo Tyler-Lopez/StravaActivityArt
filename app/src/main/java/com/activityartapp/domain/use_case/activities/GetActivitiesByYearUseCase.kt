@@ -3,10 +3,10 @@ package com.activityartapp.domain.use_case.activities
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.activityart.domain.models.Athlete
 import com.activityartapp.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
-import com.activityartapp.activityart.util.Response
-import com.activityartapp.activityart.util.Response.Success
+import com.activityartapp.util.Response
+import com.activityartapp.util.Response.Success
 import com.activityartapp.util.TimeUtils
-import com.activityartapp.activityart.util.doOnSuccess
+import com.activityartapp.util.doOnSuccess
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

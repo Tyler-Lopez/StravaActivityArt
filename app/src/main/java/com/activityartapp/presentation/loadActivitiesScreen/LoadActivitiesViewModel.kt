@@ -12,11 +12,11 @@ import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewEv
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.LoadError
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.Loading
 import com.activityartapp.util.NavArgSpecification.*
-import com.activityartapp.activityart.util.Response
-import com.activityartapp.activityart.util.Response.Error
-import com.activityartapp.activityart.util.Response.Success
-import com.activityartapp.activityart.util.doOnError
-import com.activityartapp.activityart.util.doOnSuccess
+import com.activityartapp.util.Response
+import com.activityartapp.util.Response.Error
+import com.activityartapp.util.Response.Success
+import com.activityartapp.util.doOnError
+import com.activityartapp.util.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

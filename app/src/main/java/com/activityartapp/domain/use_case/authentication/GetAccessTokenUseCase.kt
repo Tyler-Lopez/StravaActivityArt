@@ -2,10 +2,10 @@ package com.activityartapp.domain.use_case.authentication
 
 import android.net.Uri
 import com.activityartapp.domain.models.OAuth2
-import com.activityartapp.activityart.util.Response
+import com.activityartapp.util.Response
 import com.activityartapp.util.UriUtils
-import com.activityartapp.activityart.util.doOnError
-import com.activityartapp.activityart.util.doOnSuccess
+import com.activityartapp.util.doOnError
+import com.activityartapp.util.doOnSuccess
 import java.net.UnknownHostException
 import javax.inject.Inject
 

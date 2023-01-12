@@ -5,7 +5,7 @@ import android.net.Uri
 class UriUtils {
 
     companion object {
-        private const val URI_START_INDEX = 43
+        private const val URI_START_INDEX = 36
         private const val URI_DELIMITER_CHAR = '&'
     }
 

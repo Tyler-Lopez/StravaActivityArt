@@ -1,10 +1,10 @@
 package com.activityartapp.domain.use_case.activities
 
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.activityart.util.Response
+import com.activityartapp.util.Response
 import com.activityartapp.util.TimeUtils
-import com.activityartapp.activityart.util.doOnError
-import com.activityartapp.activityart.util.doOnSuccess
+import com.activityartapp.util.doOnError
+import com.activityartapp.util.doOnSuccess
 import javax.inject.Inject
 
 class GetActivitiesByYearMonthFromRemoteUseCase @Inject constructor(

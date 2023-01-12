@@ -2,7 +2,7 @@ package com.activityartapp.domain.use_case.activities
 
 import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.activityart.util.Response
+import com.activityartapp.util.Response
 import com.google.maps.android.PolyUtil
 import java.util.concurrent.CancellationException
 import javax.inject.Inject

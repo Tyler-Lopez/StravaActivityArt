@@ -1,4 +1,4 @@
-package com.activityartapp.activityart.util
+package com.activityartapp.util
 
 /**
  * Wrapper interface around a [TypeOfData] which is used when that data is retrieved

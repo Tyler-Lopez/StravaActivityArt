@@ -2,9 +2,9 @@ package com.activityartapp.domain.use_case.athlete
 
 import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.activityart.domain.models.Athlete
-import com.activityartapp.activityart.util.Response
-import com.activityartapp.activityart.util.Response.Error
-import com.activityartapp.activityart.util.Response.Success
+import com.activityartapp.util.Response
+import com.activityartapp.util.Response.Error
+import com.activityartapp.util.Response.Success
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 

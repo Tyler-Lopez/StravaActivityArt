@@ -25,7 +25,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
-import com.activityartapp.activityart.util.*
+import com.activityartapp.util.*
 import com.activityartapp.util.enums.FontType
 import com.activityartapp.util.enums.FontWeightType
 import com.activityartapp.presentation.editArtScreen.*

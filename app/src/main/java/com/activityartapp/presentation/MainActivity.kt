@@ -52,11 +52,10 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         viewState.value == null
                     }
                     /** Push event to [MainViewModel] to determine authentication **/
-                    /** Push event to [MainViewModel] to determine authentication **/
                     LaunchedEffect(key1 = intentUri) {
+                        println("Intent uri is $intentUri")
                         onEvent(LoadAuthentication(intentUri))
                     }
-                    /** Set global nav controller for [routeTo] **/
                     /** Set global nav controller for [routeTo] **/
                     navController = rememberAnimatedNavController()
 
@@ -100,6 +99,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun connectWithStrava() {
         finish()
+        println("Connecting with Strava, authUri is $authUri")
         startActivity(Intent(ACTION_VIEW, authUri))
     }
 

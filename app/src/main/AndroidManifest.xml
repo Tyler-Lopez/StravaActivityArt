@@ -15,7 +15,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name=".AthleteArtApplication"
+        android:name=".ActivityArtApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
