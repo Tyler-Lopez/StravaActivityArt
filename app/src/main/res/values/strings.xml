@@ -65,6 +65,9 @@
     <string name="loading_activities_no_internet_continue_button">Continue</string>
     <string name="loading_activities_no_internet_retry_button">Retry</string>
     <string name="loading_activities_no_internet_return_button">Go Back</string>
+    <string name="loading_activities_no_activities_header">No Activities Found</string>
+    <string name="loading_activities_no_activities_description">Cannot make art without at least one activity on your connected Strava account</string>
+    <string name="loading_activities_no_activities_return_button">Go Back</string>
 
     <!-- EDIT ART SCREEN -->
     <!-- Text is shown on the action bar for the page where an athlete may customize their art -->

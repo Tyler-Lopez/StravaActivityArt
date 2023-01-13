@@ -10,9 +10,9 @@ import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateEditArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewEvent.*
-import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.LoadErrorNoInternet
-import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.Loading
-import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
+import com.activityartapp.util.NavArgSpecification.AccessToken
+import com.activityartapp.util.NavArgSpecification.AthleteId
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Error
 import com.activityartapp.util.Response.Success
@@ -36,6 +36,7 @@ class LoadActivitiesViewModel @Inject constructor(
     companion object {
         /** Artificial delay to make the RETRY button feel better when pressed **/
         private const val DELAY_MS = 500L
+        private const val NO_ACTIVITIES_COUNT = 0
         private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
     }
@@ -81,7 +82,7 @@ class LoadActivitiesViewModel @Inject constructor(
 
     private suspend fun loadActivities() {
         var noInternetError = false
-        var activitiesCount = 0
+        var activitiesCount = NO_ACTIVITIES_COUNT
 
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
@@ -114,11 +115,13 @@ class LoadActivitiesViewModel @Inject constructor(
             response is Success || (response as? Error)?.exception is UnknownHostException
         }
 
-
-        if (noInternetError) {
-            LoadErrorNoInternet(totalActivitiesLoaded = activitiesCount, retrying = false).push()
-        } else {
-            routeTo(NavigateEditArt(fromLoad = true))
+        when {
+            noInternetError -> LoadErrorNoInternet(
+                totalActivitiesLoaded = activitiesCount,
+                retrying = false
+            ).push()
+            activitiesCount == NO_ACTIVITIES_COUNT -> LoadErrorNoActivities.push()
+            else -> routeTo(NavigateEditArt(fromLoad = true))
         }
     }
 }

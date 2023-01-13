@@ -8,6 +8,7 @@ import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewSt
 import com.activityartapp.presentation.common.ScreenBackgroundLegacy
 import com.activityartapp.presentation.loadActivitiesScreen.composables.LoadActivitiesLoadError
 import com.activityartapp.presentation.loadActivitiesScreen.composables.LoadActivitiesLoading
+import com.activityartapp.presentation.loadActivitiesScreen.composables.LoadActivitiesNoActivities
 import com.activityartapp.presentation.ui.theme.spacing
 
 /**
@@ -27,6 +28,7 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
         ScreenBackground {
             viewState.collectAsState().value?.apply {
                 when (this) {
+                    is LoadErrorNoActivities -> LoadActivitiesNoActivities(eventReceiver = viewModel)
                     is LoadErrorNoInternet -> LoadActivitiesLoadError(
                         totalActivitiesLoaded,
                         retrying = retrying,

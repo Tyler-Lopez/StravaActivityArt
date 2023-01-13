@@ -13,6 +13,9 @@ sealed interface LoadActivitiesViewState : ViewState {
     val totalActivitiesLoaded: Int
 
     data class Loading(override val totalActivitiesLoaded: Int = 0) : LoadActivitiesViewState
+    object LoadErrorNoActivities : LoadActivitiesViewState {
+        override val totalActivitiesLoaded: Int = 0
+    }
     data class LoadErrorNoInternet(
         override val totalActivitiesLoaded: Int = 0,
         val retrying: Boolean = false
