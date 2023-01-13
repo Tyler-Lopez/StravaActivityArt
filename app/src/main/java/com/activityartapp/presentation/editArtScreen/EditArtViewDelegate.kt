@@ -54,9 +54,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         ),
                         textColor = White.copy(
                             alpha = if (continueEnabled == true) {
-                                DISABLED_ALPHA
-                            } else {
                                 ENABLED_ALPHA
+                            } else {
+                                DISABLED_ALPHA
                             }
                         )
                     )

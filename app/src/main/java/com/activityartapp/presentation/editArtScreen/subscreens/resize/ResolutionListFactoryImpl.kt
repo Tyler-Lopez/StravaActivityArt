@@ -13,6 +13,11 @@ class ResolutionListFactoryImpl : ResolutionListFactory {
                 1920,
                 1080
             ),
+            Resolution.ComputerResolution(
+                R.string.edit_art_resize_option_linkedin_banner,
+                1584,
+                396
+            ),
             Resolution.PrintResolution(2400, 2400, 8, 8),
             Resolution.PrintResolution(2400, 3000, 8, 10),
             Resolution.PrintResolution(2400, 3600, 8, 12),

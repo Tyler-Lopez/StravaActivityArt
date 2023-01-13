@@ -178,11 +178,12 @@
     <string name="edit_art_resize_header">Resize Art</string>
     <string name="edit_art_resize_description">
         Change the width and height pixel size of the art either from a preset
-        or by inputting custom values.
+        or by inputting custom values
     </string>
 
     <string name="edit_art_resize_preview_text">PREVIEW</string>
     <string name="edit_art_resize_option_computer_wallpaper">Computer Wallpaper</string>
+    <string name="edit_art_resize_option_linkedin_banner">LinkedIn Banner</string>
     <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
     <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
     <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
