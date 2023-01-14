@@ -117,7 +117,7 @@ class LoadActivitiesViewModel @Inject constructor(
                     retrying = false
                 ).push()
             } else {
-                // The athlete has de-authorized our app or some other error
+                // The athlete has de-authorized our app
                 clearAccessTokenUseCase()
                 routeTo(MainDestination.NavigateLogin)
             }
