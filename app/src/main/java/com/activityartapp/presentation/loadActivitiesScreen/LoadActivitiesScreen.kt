@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.activityartapp.presentation.loadActivitiesScreen
 
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -10,8 +13,8 @@ import com.activityartapp.data.remote.responses.ActivityResponse
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.errorScreen.ErrorScreen
+import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
-import com.activityartapp.presentation.loadActivitiesScreen.composables.LoadActivitiesLoading
 import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.classes.ApiError.UserFacingError.*
 
@@ -86,17 +89,25 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                             }
                         )
                     }
-                    is Loading -> LoadActivitiesLoading(totalActivitiesLoaded)
+                    is Loading -> {
+                        CircularProgressIndicator()
+                        SubheadHeavy(
+                            text = totalActivitiesLoaded.takeIf { it > 0 }?.let {
+                                pluralStringResource(
+                                    id = R.plurals.loading_activities_count,
+                                    count = it, it
+                                )
+                            } ?: stringResource(id = R.string.loading_activities_zero_count)
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun ApiError.UserFacingError.getDescription(activityCount: Int): String {
-
     return activityCount.takeIf { it > 0 }?.let {
         when (this) {
             AthleteRateLimited -> pluralStringResource(
