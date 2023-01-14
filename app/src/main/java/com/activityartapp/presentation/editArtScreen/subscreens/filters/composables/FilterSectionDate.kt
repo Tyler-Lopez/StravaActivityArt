@@ -30,7 +30,7 @@ import com.activityartapp.util.classes.YearMonthDay
  * @param dateMinDateSelectedYearMonthDay When null, use total value in place of selected.
  */
 @Composable
-fun FilterSectionDate(
+fun ColumnScope.FilterSectionDate(
     count: Int,
     dateSelections: List<DateSelection>,
     dateSelectionSelectedIndex: Int,

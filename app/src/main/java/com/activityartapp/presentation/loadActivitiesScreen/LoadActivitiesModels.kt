@@ -2,6 +2,7 @@ package com.activityartapp.presentation.loadActivitiesScreen
 
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
+import com.activityartapp.util.classes.ApiError
 
 sealed interface LoadActivitiesViewEvent : ViewEvent {
     object ClickedContinue : LoadActivitiesViewEvent
@@ -13,11 +14,14 @@ sealed interface LoadActivitiesViewState : ViewState {
     val totalActivitiesLoaded: Int
 
     data class Loading(override val totalActivitiesLoaded: Int = 0) : LoadActivitiesViewState
-    object LoadErrorNoActivities : LoadActivitiesViewState {
+
+    data class ErrorApi(
+        val error: ApiError.UserFacingError,
+        val retrying: Boolean,
+        override val totalActivitiesLoaded: Int = 0
+    ) : LoadActivitiesViewState
+    object ErrorNoActivities : LoadActivitiesViewState {
         override val totalActivitiesLoaded: Int = 0
     }
-    data class LoadErrorNoInternet(
-        override val totalActivitiesLoaded: Int = 0,
-        val retrying: Boolean = false
-    ) : LoadActivitiesViewState
+
 }

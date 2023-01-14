@@ -86,7 +86,7 @@ class SaveArtViewModel @Inject constructor(
                         snackbarHostState.showSnackbar("Downloaded successfully")
                     }
                     .doOnError {
-                        println("Error was $exception")
+                        println("ApiError was $exception")
                         snackbarHostState.showSnackbar("Download failed")
                     }
                     .also { copyDownloadTerminate().push() }

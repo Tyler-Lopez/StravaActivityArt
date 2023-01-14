@@ -3,10 +3,7 @@ package com.activityartapp.presentation.welcomeScreen.composables
 import androidx.annotation.Dimension
 import androidx.annotation.Px
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
@@ -26,6 +23,7 @@ import coil.request.ImageRequest
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.AppLogo
+import com.activityartapp.presentation.common.CardColumn
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.button.MediumEmphasisButton
@@ -45,13 +43,11 @@ fun WelcomeStandby(
     }
 
     AppLogo()
-    Card(backgroundColor = colorResource(R.color.n20_icicle)) {
+    CardColumn {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
         ) {
-
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(athleteImageUrl)

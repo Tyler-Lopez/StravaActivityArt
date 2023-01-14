@@ -34,7 +34,7 @@ import com.activityartapp.util.enums.FontWeightType
 import kotlin.math.roundToInt
 
 @Composable
-fun EditArtTypeScreen(
+fun ColumnScope.EditArtTypeScreen(
     activitiesDistanceMetersSummed: Int,
     athleteName: String,
     customTextCenter: String,
@@ -48,208 +48,200 @@ fun EditArtTypeScreen(
     selectedEditArtTypeTypeCenter: EditArtTypeType,
     selectedEditArtTypeTypeLeft: EditArtTypeType,
     selectedEditArtTypeTypeRight: EditArtTypeType,
-    scrollState: ScrollState,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(spacing.medium)
-    ) {
-        EditArtTypeSection.values().forEach { section ->
-            Section(
-                header = stringResource(section.header),
-                description = stringResource(section.description)
-            ) {
-                EditArtTypeType.values().forEach { type ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = type == when (section) {
-                                EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
-                                EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
-                                EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
-                            },
-                            onClick = {
-                                eventReceiver.onEvent(
-                                    TypeSelectionChanged(
-                                        section = section,
-                                        typeSelected = type
-                                    )
+    EditArtTypeSection.values().forEach { section ->
+        Section(
+            header = stringResource(section.header),
+            description = stringResource(section.description)
+        ) {
+            EditArtTypeType.values().forEach { type ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = type == when (section) {
+                            EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
+                            EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
+                            EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
+                        },
+                        onClick = {
+                            eventReceiver.onEvent(
+                                TypeSelectionChanged(
+                                    section = section,
+                                    typeSelected = type
                                 )
-                            })
-                        Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                            Subhead(text = stringResource(type.header))
-                            when (type) {
-                                EditArtTypeType.NONE -> {}
-                                EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
-                                EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(
-                                    text = activitiesDistanceMetersSummed.meterToMilesStr()
-                                )
-                                EditArtTypeType.DISTANCE_KILOMETERS -> SubheadHeavy(
-                                    text = activitiesDistanceMetersSummed.meterToKilometerStr()
-                                )
-                                EditArtTypeType.CUSTOM -> {
-                                    OutlinedTextField(
-                                        value = when (section) {
-                                            EditArtTypeSection.LEFT -> customTextLeft
-                                            EditArtTypeSection.CENTER -> customTextCenter
-                                            EditArtTypeSection.RIGHT -> customTextRight
-                                        },
-                                        onValueChange = {
-                                            eventReceiver.onEvent(
-                                                TypeCustomTextChanged(
-                                                    section = section,
-                                                    changedTo = it
-                                                )
+                            )
+                        })
+                    Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+                        Subhead(text = stringResource(type.header))
+                        when (type) {
+                            EditArtTypeType.NONE -> {}
+                            EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
+                            EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(
+                                text = activitiesDistanceMetersSummed.meterToMilesStr()
+                            )
+                            EditArtTypeType.DISTANCE_KILOMETERS -> SubheadHeavy(
+                                text = activitiesDistanceMetersSummed.meterToKilometerStr()
+                            )
+                            EditArtTypeType.CUSTOM -> {
+                                OutlinedTextField(
+                                    value = when (section) {
+                                        EditArtTypeSection.LEFT -> customTextLeft
+                                        EditArtTypeSection.CENTER -> customTextCenter
+                                        EditArtTypeSection.RIGHT -> customTextRight
+                                    },
+                                    onValueChange = {
+                                        eventReceiver.onEvent(
+                                            TypeCustomTextChanged(
+                                                section = section,
+                                                changedTo = it
                                             )
-                                        },
-                                        keyboardOptions = KeyboardOptions.Default.copy(
-                                            autoCorrect = false,
-                                            keyboardType = KeyboardType.Text,
-                                            imeAction = ImeAction.Done
-                                        ),
-                                        keyboardActions = KeyboardActions(
-                                            onDone = { focusManager.clearFocus() }
-                                        ),
-                                        singleLine = true,
-                                        maxLines = 1,
-                                        enabled = EditArtTypeType.CUSTOM == when (section) {
-                                            EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
-                                            EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
-                                            EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
-                                        },
-                                        modifier = Modifier.sizeIn(maxWidth = 254.dp)
-                                    )
-                                    SubheadHeavy(
-                                        text = "${
-                                            when (section) {
-                                                EditArtTypeSection.LEFT -> customTextLeft.length
-                                                EditArtTypeSection.CENTER -> customTextCenter.length
-                                                EditArtTypeSection.RIGHT -> customTextRight.length
-                                            }
-                                        } / $maximumCustomTextLength"
-                                    )
-                                }
+                                        )
+                                    },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        autoCorrect = false,
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Done
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = { focusManager.clearFocus() }
+                                    ),
+                                    singleLine = true,
+                                    maxLines = 1,
+                                    enabled = EditArtTypeType.CUSTOM == when (section) {
+                                        EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
+                                        EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
+                                        EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
+                                    },
+                                    modifier = Modifier.sizeIn(maxWidth = 254.dp)
+                                )
+                                SubheadHeavy(
+                                    text = "${
+                                        when (section) {
+                                            EditArtTypeSection.LEFT -> customTextLeft.length
+                                            EditArtTypeSection.CENTER -> customTextCenter.length
+                                            EditArtTypeSection.RIGHT -> customTextRight.length
+                                        }
+                                    } / $maximumCustomTextLength"
+                                )
                             }
                         }
                     }
                 }
             }
         }
+    }
+    Section(
+        header = stringResource(R.string.edit_art_type_font_header),
+        description = stringResource(R.string.edit_art_type_font_description)
+    ) {
+        FontType.values().forEach {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = it == fontSelected,
+                    onClick = { eventReceiver.onEvent(TypeFontChanged(changedTo = it)) }
+                )
+                Text(
+                    text = stringResource(it.strRes),
+                    fontFamily = FontFamily(Typeface.createFromAsset(
+                        context.assets,
+                        it.getAssetPath(
+                            /** Provides a loud failure if missing regular font **/
+                            /** Provides a loud failure if missing regular font **/
+                            it.fontWeightTypes.firstOrNull {
+                                it == FontWeightType.REGULAR
+                            } ?: error("Missing REGULAR font for font $it.")
+                        )
+                    ))
+                )
+            }
+        }
+    }
+    if (fontSelected.fontWeightTypes.containsMultipleTypes) {
         Section(
-            header = stringResource(R.string.edit_art_type_font_header),
-            description = stringResource(R.string.edit_art_type_font_description)
+            header = stringResource(R.string.edit_art_type_font_weight_header),
+            description = stringResource(R.string.edit_art_type_font_weight_description)
         ) {
-            FontType.values().forEach {
+            fontSelected.fontWeightTypes.forEach {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = it == fontSelected,
-                        onClick = { eventReceiver.onEvent(TypeFontChanged(changedTo = it)) }
+                        selected = fontWeightSelected == it,
+                        onClick = { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
                     )
                     Text(
-                        text = stringResource(it.strRes),
-                        fontFamily = FontFamily(Typeface.createFromAsset(
-                            context.assets,
-                            it.getAssetPath(
-                                /** Provides a loud failure if missing regular font **/
-                                /** Provides a loud failure if missing regular font **/
-                                it.fontWeightTypes.firstOrNull {
-                                    it == FontWeightType.REGULAR
-                                } ?: error("Missing REGULAR font for font $it.")
-                            )
-                        ))
-                    )
-                }
-            }
-        }
-        if (fontSelected.fontWeightTypes.containsMultipleTypes) {
-            Section(
-                header = stringResource(R.string.edit_art_type_font_weight_header),
-                description = stringResource(R.string.edit_art_type_font_weight_description)
-            ) {
-                fontSelected.fontWeightTypes.forEach {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = fontWeightSelected == it,
-                            onClick = { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
-                        )
-                        Text(
-                            text = stringResource(it.stringRes),
-                            fontFamily = FontFamily(
-                                Typeface.createFromAsset(
-                                    context.assets,
-                                    fontSelected.getAssetPath(it)
-                                )
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        if (fontSelected.isItalic) {
-            Section(
-                header = stringResource(R.string.edit_art_type_font_italic_header),
-                description = stringResource(R.string.edit_art_type_font_italic_description)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Switch(checked = fontItalicized, onCheckedChange = {
-                        eventReceiver.onEvent(TypeFontItalicChanged(changedTo = it))
-                    })
-                    Text(
-                        text = stringResource(
-                            if (fontItalicized) {
-                                R.string.edit_art_type_font_italic_enabled
-                            } else {
-                                R.string.edit_art_type_font_italic_disabled
-                            }
-                        ),
+                        text = stringResource(it.stringRes),
                         fontFamily = FontFamily(
                             Typeface.createFromAsset(
                                 context.assets,
-                                fontSelected.getAssetPath(fontWeightSelected, fontItalicized)
+                                fontSelected.getAssetPath(it)
                             )
                         )
                     )
                 }
             }
         }
+    }
+    if (fontSelected.isItalic) {
         Section(
-            header = stringResource(R.string.edit_art_type_size_header),
-            description = stringResource(R.string.edit_art_type_size_description)
+            header = stringResource(R.string.edit_art_type_font_italic_header),
+            description = stringResource(R.string.edit_art_type_font_italic_description)
         ) {
-            FontSizeType.values().forEach {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = fontSizeSelected == it,
-                        onClick = {
-                            eventReceiver.onEvent(
-                                TypeFontSizeChanged(
-                                    it
-                                )
-                            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Switch(checked = fontItalicized, onCheckedChange = {
+                    eventReceiver.onEvent(TypeFontItalicChanged(changedTo = it))
+                })
+                Text(
+                    text = stringResource(
+                        if (fontItalicized) {
+                            R.string.edit_art_type_font_italic_enabled
+                        } else {
+                            R.string.edit_art_type_font_italic_disabled
                         }
+                    ),
+                    fontFamily = FontFamily(
+                        Typeface.createFromAsset(
+                            context.assets,
+                            fontSelected.getAssetPath(fontWeightSelected, fontItalicized)
+                        )
                     )
-                    Subhead(text = stringResource(it.strRes))
-                }
+                )
+            }
+        }
+    }
+    Section(
+        header = stringResource(R.string.edit_art_type_size_header),
+        description = stringResource(R.string.edit_art_type_size_description)
+    ) {
+        FontSizeType.values().forEach {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = fontSizeSelected == it,
+                    onClick = {
+                        eventReceiver.onEvent(
+                            TypeFontSizeChanged(
+                                it
+                            )
+                        )
+                    }
+                )
+                Subhead(text = stringResource(it.strRes))
             }
         }
     }

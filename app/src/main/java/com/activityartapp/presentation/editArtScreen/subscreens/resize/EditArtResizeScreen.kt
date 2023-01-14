@@ -29,85 +29,82 @@ import com.activityartapp.presentation.editArtScreen.composables.Section
 import kotlin.math.roundToInt
 
 @Composable
-fun EditArtResizeScreen(
+fun ColumnScope.EditArtResizeScreen(
     customHeightPx: Int,
     customWidthPx: Int,
     customRangePx: IntRange,
     resolutionList: List<Resolution>,
-    scrollState: ScrollState,
     selectedResolutionIndex: Int,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    Column(Modifier.verticalScroll(scrollState)) {
-        Section(
-            header = stringResource(R.string.edit_art_resize_header),
-            description = stringResource(R.string.edit_art_resize_description),
-        ) {
-            resolutionList.forEachIndexed { index, res ->
-                val isSelected = selectedResolutionIndex == index
+    Section(
+        header = stringResource(R.string.edit_art_resize_header),
+        description = stringResource(R.string.edit_art_resize_description),
+    ) {
+        resolutionList.forEachIndexed { index, res ->
+            val isSelected = selectedResolutionIndex == index
+            Row(
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(spacing.medium)
+            ) {
+                RadioButton(
+                    selected = isSelected,
+                    onClick = { eventReceiver.onEvent(SizeChanged(index)) }
+                )
                 Row(
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(spacing.medium)
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(
-                        selected = isSelected,
-                        onClick = { eventReceiver.onEvent(SizeChanged(index)) }
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                            Body(text = res.displayTextResolution())
-                            when (res) {
-                                is CustomResolution -> {
-                                    SubheadHeavy(
-                                        text = stringResource(
-                                            R.string.edit_art_resize_pixels_width,
-                                            customWidthPx
-                                        ),
-                                        modifier = Modifier.padding(start = spacing.small)
-                                    )
-                                    CustomDimensionRangeSlider(
-                                        eventReceiver = eventReceiver,
-                                        isEnabled = isSelected,
-                                        isWidth = true,
-                                        value = customWidthPx,
-                                        valueRange = customRangePx
-                                    )
-                                    SubheadHeavy(
-                                        text = stringResource(
-                                            R.string.edit_art_resize_pixels_height, customHeightPx
-                                        ),
-                                        modifier = Modifier.padding(start = spacing.small)
-                                    )
-                                    CustomDimensionRangeSlider(
-                                        isEnabled = isSelected,
-                                        isWidth = false,
-                                        eventReceiver = eventReceiver,
-                                        value = customHeightPx,
-                                        valueRange = customRangePx
-                                    )
-                                }
-                                is RotatingResolution -> SubheadHeavy(text = res.displayTextPixels())
+                    Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+                        Body(text = res.displayTextResolution())
+                        when (res) {
+                            is CustomResolution -> {
+                                SubheadHeavy(
+                                    text = stringResource(
+                                        R.string.edit_art_resize_pixels_width,
+                                        customWidthPx
+                                    ),
+                                    modifier = Modifier.padding(start = spacing.small)
+                                )
+                                CustomDimensionRangeSlider(
+                                    eventReceiver = eventReceiver,
+                                    isEnabled = isSelected,
+                                    isWidth = true,
+                                    value = customWidthPx,
+                                    valueRange = customRangePx
+                                )
+                                SubheadHeavy(
+                                    text = stringResource(
+                                        R.string.edit_art_resize_pixels_height, customHeightPx
+                                    ),
+                                    modifier = Modifier.padding(start = spacing.small)
+                                )
+                                CustomDimensionRangeSlider(
+                                    isEnabled = isSelected,
+                                    isWidth = false,
+                                    eventReceiver = eventReceiver,
+                                    value = customHeightPx,
+                                    valueRange = customRangePx
+                                )
                             }
+                            is RotatingResolution -> SubheadHeavy(text = res.displayTextPixels())
                         }
+                    }
 
-                        if (res is RotatingResolution && res.swappingChangesSize) {
-                            MediumEmphasisButton(
-                                imageVector = Icons.Default.RotateRight,
-                                modifier = Modifier,
-                                size = ButtonSize.MEDIUM,
-                                onClick = {
-                                    eventReceiver.onEvent(
-                                        SizeRotated(
-                                            index
-                                        )
+                    if (res is RotatingResolution && res.swappingChangesSize) {
+                        MediumEmphasisButton(
+                            imageVector = Icons.Default.RotateRight,
+                            modifier = Modifier,
+                            size = ButtonSize.MEDIUM,
+                            onClick = {
+                                eventReceiver.onEvent(
+                                    SizeRotated(
+                                        index
                                     )
-                                }
-                            )
-                        }
+                                )
+                            }
+                        )
                     }
                 }
             }

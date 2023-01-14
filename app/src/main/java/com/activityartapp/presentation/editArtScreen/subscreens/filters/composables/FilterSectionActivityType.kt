@@ -1,6 +1,7 @@
 package com.activityartapp.activityart.presentation.editArtScreen.subscreens.filters.composables
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Checkbox
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSection
 
 @Composable
-fun FilterSectionActivityType(
+fun ColumnScope.FilterSectionActivityType(
     count: Int,
     typesWithSelectedFlag: List<Pair<String, Boolean>>,
     eventReceiver: EventReceiver<EditArtViewEvent>

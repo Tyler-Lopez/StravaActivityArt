@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.presentation.common.AppBarScaffold
-import com.activityartapp.presentation.common.ScreenBackgroundLegacy
+import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
@@ -73,70 +73,74 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 }
             }
         ) {
-            ScreenBackgroundLegacy {
-                if (this@apply is EditArtViewState.Standby) {
-                    val activeHeader =
-                        EditArtHeaderType.fromOrdinal(pagerStateWrapper.pagerState.currentPage)
-                    Crossfade(
-                        targetState = activeHeader,
-                        animationSpec = tween(500, easing = FastOutSlowInEasing)
+            if (this@apply is EditArtViewState.Standby) {
+                val activeHeader =
+                    EditArtHeaderType.fromOrdinal(pagerStateWrapper.pagerState.currentPage)
+                Crossfade(
+                    targetState = activeHeader,
+                    animationSpec = tween(500, easing = FastOutSlowInEasing)
+                ) {
+                    ScreenBackground(
+                        horizontalAlignment = if (it != PREVIEW) Alignment.Start else Alignment.CenterHorizontally,
+                        scrollState = when (it) {
+                            FILTERS -> scrollStateFilter
+                            STYLE -> scrollStateStyle
+                            TYPE -> scrollStateType
+                            RESIZE -> scrollStateResize
+                            else -> null
+                        },
+                        scrollingEnabled = it != PREVIEW
                     ) {
-                        ScreenBackgroundLegacy {
-                            when (it) {
-                                PREVIEW -> EditArtPreview(
-                                    atLeastOneActivitySelected,
-                                    bitmap
-                                )
-                                FILTERS -> YearMonthDay.run {
-                                    EditArtFiltersScreen(
-                                        filterActivitiesCountDate,
-                                        filterActivitiesCountDistance,
-                                        filterActivitiesCountType,
-                                        filterDateSelections,
-                                        filterDateSelectionIndex,
-                                        filterDistanceSelected,
-                                        filterDistanceTotal,
-                                        filterTypes,
-                                        scrollStateFilter,
-                                        viewModel
-                                    )
-                                }
-                                STYLE -> EditArtStyleViewDelegate(
-                                    styleActivities,
-                                    styleBackground,
-                                    styleFont,
-                                    scrollStateStyle,
-                                    styleStrokeWidthType,
+                        when (it) {
+                            PREVIEW -> EditArtPreview(
+                                atLeastOneActivitySelected,
+                                bitmap
+                            )
+                            FILTERS -> YearMonthDay.run {
+                                EditArtFiltersScreen(
+                                    filterActivitiesCountDate,
+                                    filterActivitiesCountDistance,
+                                    filterActivitiesCountType,
+                                    filterDateSelections,
+                                    filterDateSelectionIndex,
+                                    filterDistanceSelected,
+                                    filterDistanceTotal,
+                                    filterTypes,
                                     viewModel
                                 )
-                                TYPE -> EditArtTypeScreen(
-                                    typeActivitiesDistanceMetersSummed,
-                                    typeAthleteName,
-                                    typeCenterCustomText,
-                                    typeLeftCustomText,
-                                    typeRightCustomText,
-                                    typeFontSelected,
-                                    typeFontWeightSelected,
-                                    typeFontItalicized,
-                                    typeFontSizeSelected,
-                                    typeMaximumCustomTextLength,
-                                    typeCenterSelected,
-                                    typeLeftSelected,
-                                    typeRightSelected,
-                                    scrollStateType,
-                                    viewModel
-                                )
-                                RESIZE -> EditArtResizeScreen(
-                                    sizeCustomHeightPx,
-                                    sizeCustomWidthPx,
-                                    sizeCustomRangePx,
-                                    sizeResolutionList,
-                                    scrollStateResize,
-                                    sizeResolutionListSelectedIndex,
-                                    viewModel
-                                )
-                                null -> error("Invalid pagerState current page.")
                             }
+                            STYLE -> EditArtStyleViewDelegate(
+                                styleActivities,
+                                styleBackground,
+                                styleFont,
+                                styleStrokeWidthType,
+                                viewModel
+                            )
+                            TYPE -> EditArtTypeScreen(
+                                typeActivitiesDistanceMetersSummed,
+                                typeAthleteName,
+                                typeCenterCustomText,
+                                typeLeftCustomText,
+                                typeRightCustomText,
+                                typeFontSelected,
+                                typeFontWeightSelected,
+                                typeFontItalicized,
+                                typeFontSizeSelected,
+                                typeMaximumCustomTextLength,
+                                typeCenterSelected,
+                                typeLeftSelected,
+                                typeRightSelected,
+                                viewModel
+                            )
+                            RESIZE -> EditArtResizeScreen(
+                                sizeCustomHeightPx,
+                                sizeCustomWidthPx,
+                                sizeCustomRangePx,
+                                sizeResolutionList,
+                                sizeResolutionListSelectedIndex,
+                                viewModel
+                            )
+                            null -> error("Invalid pagerState current page.")
                         }
                     }
                 }

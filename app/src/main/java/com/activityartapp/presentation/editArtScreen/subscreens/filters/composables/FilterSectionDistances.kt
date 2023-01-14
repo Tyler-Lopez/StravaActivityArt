@@ -1,5 +1,6 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.filters.composables
 
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
 import androidx.compose.material.Text
@@ -12,7 +13,7 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FilterSectionDistances(
+fun ColumnScope.FilterSectionDistances(
     count: Int,
     distanceSelected: ClosedFloatingPointRange<Double>?,
     distanceTotal: ClosedFloatingPointRange<Double>,

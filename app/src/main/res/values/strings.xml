@@ -26,26 +26,30 @@
     <string name="welcome_button_about">About</string>
     <!-- Text is shown on a button that directs athletes to logout -->
     <string name="welcome_button_logout">Logout</string>
-    <string name="welcome_error_header">Oops! An Error Occurred</string>
-    <string name="welcome_no_internet_header">Internet is Unavailable</string>
+    <string name="welcome_no_internet_header">Internet Is Unavailable</string>
     <string name="welcome_no_internet_description">Check your connection and try again</string>
-    <string name="welcome_no_internet_retry_button">Retry</string>
+    <string name="welcome_strava_athlete_rate_limited_header">Too Many Requests</string>
+    <string name="welcome_strava_athlete_rate_limited_description">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow</string>
+    <string name="welcome_strava_app_rate_limited_header">App Is at Capacity</string>
+    <string name="welcome_strava_app_rate_limited_description">Activity Art has been used by too many athletes today; check back tomorrow</string>
+    <string name="welcome_strava_server_issue_header">Strava Server Error</string>
+    <string name="welcome_strava_server_issue_description">We\'re having a problem connecting to Strava; check back later</string>
+    <string name="welcome_unknown_header">Unknown Error</string>
+    <string name="welcome_unknown_description">We aren\'t sure why, but there was an error connecting to Strava; check back later</string>
 
     <!-- ABOUT SCREEN -->
     <!-- Text is shown on the action bar for the page which shows app information -->
     <string name="action_bar_about_header">About</string>
     <!-- Content describes the app in detail -->
     <string-array name="about_screen_content">
-        <item>
-        Activity Art lets athletes create digital artwork of their Strava activities at a high resolution appropriate for printing and framing.
-        </item>
+        <item>Activity Art lets athletes create fully-customizable digital artwork of their Strava activities at a high resolution appropriate for printing and framing.</item>
+        <item>Athletes may visualize only some of their activities as determined by filters they set that include the activity date, distance, and type.</item>
     </string-array>
 
     <!-- LOADING ACTIVITIES SCREEN -->
     <string name="loading_activities_zero_count">
         Loading Activities
-    </string>
-    <!-- Text informs the athlete how many activities have been loaded -->
+    </string><!-- Text informs the athlete how many activities have been loaded -->
     <!-- Todo, this is not an appropriate way to handle the zero case -->
     <plurals name="loading_activities_count">
         <item quantity="zero">@string/loading_activities_zero_count</item>
@@ -53,38 +57,54 @@
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
     <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
-    <string name="loading_activities_error_header">Oops! An Error Occurred</string>
-    <!-- If there was no internet connection while loading activities, present the user a prompt
+    <string name="loading_activities_error_header">Oops! An Error Occurred</string><!-- If there was no internet connection while loading activities, present the user a prompt
     depending on how many activities were loaded to either continue with the partial load or to retry -->
-    <string name="loading_activities_no_internet_prompt_zero_count">Check your connection and try again</string>
-    <plurals name="loading_activities_no_internet_prompt">
-        <item quantity="zero">@string/loading_activities_no_internet_prompt_zero_count</item>
+    <string name="loading_activities_no_internet_description_zero_count">Check your connection and try again</string>
+    <plurals name="loading_activities_no_internet_description">
+        <item quantity="zero">@string/loading_activities_no_internet_description_zero_count</item>
         <item quantity="one">Check your connection and try again or continue with the activity which was successfully loaded</item>
         <item quantity="other">Check your connection and try again or continue with the %d activities which were successfully loaded</item>
     </plurals>
-    <string name="loading_activities_no_internet_continue_button">Continue</string>
-    <string name="loading_activities_no_internet_retry_button">Retry</string>
-    <string name="loading_activities_no_internet_return_button">Go Back</string>
+    <string name="loading_activities_athlete_rate_limited_header">Too Many Requests</string>
+    <string name="loading_activities_athlete_rate_limited_description_zero_count">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow</string>
+    <plurals name="loading_activities_athlete_rate_limited_description">
+        <item quantity="zero">@string/loading_activities_athlete_rate_limited_description_zero_count</item>
+        <item quantity="one">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow or continue with the activity which was successfully loaded</item>
+        <item quantity="other">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow or continue with the %d activities which were successfully loaded</item>
+    </plurals>
+    <string name="loading_activities_app_rate_limited_header">App Is at Capacity</string>
+    <string name="loading_activities_app_rate_limited_description_zero_count">Activity Art has been used by too many athletes today; check back tomorrow</string>
+    <plurals name="loading_activities_app_rate_limited_description">
+        <item quantity="zero">@string/loading_activities_app_rate_limited_description_zero_count</item>
+        <item quantity="one">Activity Art has been used by too many athletes today; check back tomorrow or continue with the activity which was successfully loaded</item>
+        <item quantity="other">Activity Art has been used by too many athletes today; check back tomorrow or continue with the %d activities which were successfully loaded</item>
+    </plurals>
+    <string name="loading_activities_server_issue_header">Strava Server Error</string>
+    <string name="loading_activities_server_issue_description_zero_count">We\'re having a problem connecting to Strava; check back later</string>
+    <plurals name="loading_activities_server_issue_description">
+        <item quantity="zero">@string/loading_activities_server_issue_description_zero_count</item>
+        <item quantity="one">We\'re having a problem connecting to Strava; check back later or continue with the activity which was successfully loaded</item>
+        <item quantity="other">We\'re having a problem connecting to Strava; check back later or continue with the %d activities which were successfully loaded</item>
+    </plurals>
+    <string name="loading_activities_unknown_header">Unknown Error</string>
+    <string name="loading_activities_unknown_description_zero_count">We aren\'t sure why, but there was an error connecting to Strava; check back later</string>
+    <plurals name="loading_activities_unknown_description">
+        <item quantity="zero">@string/loading_activities_unknown_description_zero_count</item>
+        <item quantity="one">We aren\'t sure why, but there was an error connecting to Strava; check back later or continue with the activity which was successfully loaded</item>
+        <item quantity="other">We aren\'t sure why, but there was an error connecting to Strava; check back later or continue with the %d activities which were successfully loaded</item>
+    </plurals>
     <string name="loading_activities_no_activities_header">No Activities Found</string>
     <string name="loading_activities_no_activities_description">Cannot make art without at least one activity on your connected Strava account</string>
-    <string name="loading_activities_no_activities_return_button">Go Back</string>
 
     <!-- EDIT ART SCREEN -->
     <!-- Text is shown on the action bar for the page where an athlete may customize their art -->
-    <string name="action_bar_edit_art_header">Edit Art</string>
-    <!-- Content description for a text button that directs athlete to select filters which may narrow down many activities into a few -->
-    <string name="select_filters_cd">Select Filters</string>
-    <!-- Content description for a text button that directs athletes to customize their art style -->
-    <string name="select_styles_cd">Select Styles</string>
-    <!-- Text is shown on the button which directs the athlete from editing to saving their art -->
-    <string name="button_continue">Continue</string>
-    <!-- Text is shown on the button which directs the athlete from editing to saving their art -->
-    <string name="button_continue_uppercase">CONTINUE</string>
-    <!-- Text is shown on the button which opens art preview -->
-    <string name="button_preview_uppercase">PREVIEW</string>
-    <!-- Content description for preview button -->
-    <string name="button_preview_cd">Preview Art</string>
-    <!-- Text shown on the button which opens art filters, to select which activities will be shown -->
+    <string name="action_bar_edit_art_header">Edit Art</string><!-- Content description for a text button that directs athlete to select filters which may narrow down many activities into a few -->
+    <string name="select_filters_cd">Select Filters</string><!-- Content description for a text button that directs athletes to customize their art style -->
+    <string name="select_styles_cd">Select Styles</string><!-- Text is shown on the button which directs the athlete from editing to saving their art -->
+    <string name="button_continue">Continue</string><!-- Text is shown on the button which directs the athlete from editing to saving their art -->
+    <string name="button_continue_uppercase">CONTINUE</string><!-- Text is shown on the button which opens art preview -->
+    <string name="button_preview_uppercase">PREVIEW</string><!-- Content description for preview button -->
+    <string name="button_preview_cd">Preview Art</string><!-- Text shown on the button which opens art filters, to select which activities will be shown -->
     <string name="button_filters_uppercase">FILTERS</string>
     <string name="button_filters_cd">Select Filters</string>
     <string name="buttons_style_uppercase">STYLE</string>
@@ -206,8 +226,7 @@
     <string name="font_oswald">Oswald</string>
     <string name="font_lobster_two">Lobster Two</string>
     <string name="font_merriweather">Merriweather</string>
-    <string name="font_playfair_display">Playfair Display</string>
-    <!-- SC is short for small caps -->
+    <string name="font_playfair_display">Playfair Display</string><!-- SC is short for small caps -->
     <string name="font_playfair_display_sc">Playfair Display SC</string>
     <string name="font_roboto">Roboto</string>
     <string name="font_alegreya">Alegreya</string>
@@ -229,7 +248,12 @@
     <string name="font_size_type_xs">XS</string>
     <string name="font_size_type_small">Small</string>
     <string name="font_size_type_medium">Medium</string>
-    <string name="font_size_type_large">Large</string>
-    <!-- XL is short for extra-large -->
+    <string name="font_size_type_large">Large</string><!-- XL is short for extra-large -->
     <string name="font_size_type_xl">XL</string>
+
+    <!-- ERRORS -->
+    <string name="error_header">Oops! An Error Occurred</string>
+    <string name="error_continue_button">Continue</string>
+    <string name="error_retry_button">Retry</string>
+    <string name="error_return_button">Go Back</string>
 </resources>

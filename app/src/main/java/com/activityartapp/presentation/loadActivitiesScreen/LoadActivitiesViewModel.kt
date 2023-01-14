@@ -6,6 +6,7 @@ import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.use_case.activities.GetActivitiesByYearUseCase
 import com.activityartapp.domain.use_case.activities.InsertActivitiesIntoCacheUseCase
+import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateEditArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
@@ -16,6 +17,7 @@ import com.activityartapp.util.NavArgSpecification.AthleteId
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Error
 import com.activityartapp.util.Response.Success
+import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoadActivitiesViewModel @Inject constructor(
     private val getActivitiesByYearUseCase: GetActivitiesByYearUseCase,
+    private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
     private val insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
@@ -60,7 +63,7 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     private fun onClickedRetry() {
-        (lastPushedState as? LoadErrorNoInternet)?.copy(retrying = true)?.push()
+        (lastPushedState as? ErrorApi)?.copy(retrying = true)?.push()
         viewModelScope.launch(Dispatchers.IO) {
             delay(DELAY_MS)
             loadActivities()
@@ -81,8 +84,8 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     private suspend fun loadActivities() {
-        var noInternetError = false
         var activitiesCount = NO_ACTIVITIES_COUNT
+        var error: ApiError? = null
 
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
@@ -100,27 +103,25 @@ class LoadActivitiesViewModel @Inject constructor(
                 activitiesCount += data.size
                 if (lastPushedState == null || lastPushedState is Loading) Loading(activitiesCount).push()
             }.doOnError {
-                when (exception) {
-                    is UnknownHostException -> {
-                        noInternetError = true
-                    }
-                    else -> {
-                        // TODO, Handle case of other type of exception
-                        // Right now will just be loading forever
-                        return@loadActivities
-                    }
-                }
+                error = ApiError.valueOf(exception)
             })
-            /** If response is a Success or an Error due to no internet, keep loading activities **/
+            /** If response is a Success or an ApiError due to no internet, keep loading activities **/
             response is Success || (response as? Error)?.exception is UnknownHostException
         }
 
         when {
-            noInternetError -> LoadErrorNoInternet(
-                totalActivitiesLoaded = activitiesCount,
-                retrying = false
-            ).push()
-            activitiesCount == NO_ACTIVITIES_COUNT -> LoadErrorNoActivities.push()
+            error != null -> if (error is ApiError.UserFacingError) {
+                ErrorApi(
+                    error = error as ApiError.UserFacingError,
+                    totalActivitiesLoaded = activitiesCount,
+                    retrying = false
+                ).push()
+            } else {
+                // The athlete has de-authorized our app or some other error
+                clearAccessTokenUseCase()
+                routeTo(MainDestination.NavigateLogin)
+            }
+            activitiesCount == NO_ACTIVITIES_COUNT -> ErrorNoActivities.push()
             else -> routeTo(NavigateEditArt(fromLoad = true))
         }
     }

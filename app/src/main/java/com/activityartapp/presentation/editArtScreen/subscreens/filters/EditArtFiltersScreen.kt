@@ -17,7 +17,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.filters.composab
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
-fun EditArtFiltersScreen(
+fun ColumnScope.EditArtFiltersScreen(
     activitiesCountDate: Int,
     activitiesCountDistance: Int,
     activitiesCountType: Int,
@@ -26,37 +26,31 @@ fun EditArtFiltersScreen(
     distanceSelected: ClosedFloatingPointRange<Double>?,
     distanceTotal: ClosedFloatingPointRange<Double>?,
     typesWithSelectedFlag: List<Pair<String, Boolean>>,
-    scrollState: ScrollState,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    Column(
-        modifier = Modifier.verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(spacing.medium)
-    ) {
-        EditArtFilterType.values().onEach {
-            when (it) {
-                DATE -> if (filterDateSelections != null)
-                    FilterSectionDate(
-                        count = activitiesCountDate,
-                        dateSelections = filterDateSelections,
-                        dateSelectionSelectedIndex = filterDateSelectionIndex,
-                        eventReceiver = eventReceiver
-                    )
-                TYPE -> FilterSectionActivityType(
-                    count = activitiesCountType,
-                    typesWithSelectedFlag = typesWithSelectedFlag,
+    EditArtFilterType.values().onEach {
+        when (it) {
+            DATE -> if (filterDateSelections != null)
+                FilterSectionDate(
+                    count = activitiesCountDate,
+                    dateSelections = filterDateSelections,
+                    dateSelectionSelectedIndex = filterDateSelectionIndex,
                     eventReceiver = eventReceiver
                 )
-                DISTANCE -> if (distanceTotal != null) {
-                    FilterSectionDistances(
-                        count = activitiesCountDistance,
-                        distanceSelected = distanceSelected,
-                        distanceTotal = distanceTotal,
-                        eventReceiver = eventReceiver
-                    )
-                }
+            TYPE -> FilterSectionActivityType(
+                count = activitiesCountType,
+                typesWithSelectedFlag = typesWithSelectedFlag,
+                eventReceiver = eventReceiver
+            )
+            DISTANCE -> if (distanceTotal != null) {
+                FilterSectionDistances(
+                    count = activitiesCountDistance,
+                    distanceSelected = distanceSelected,
+                    distanceTotal = distanceTotal,
+                    eventReceiver = eventReceiver
+                )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
+    Spacer(modifier = Modifier.height(16.dp))
 }

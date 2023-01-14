@@ -13,12 +13,15 @@ import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewEvent.*
 import com.activityartapp.util.Response
+import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
+import com.activityartapp.util.enums.ErrorType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.net.UnknownHostException
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -82,7 +85,7 @@ class WelcomeViewModel @Inject constructor(
     }
 
     private fun onClickedRetryConnection() {
-        WelcomeViewState.NoInternet(retrying = true).push()
+        (lastPushedState as? WelcomeViewState.Error)?.copy(retrying = true)?.push()
         viewModelScope.launch {
             delay(DELAY_MS)
             initScreen()
@@ -135,14 +138,19 @@ class WelcomeViewModel @Inject constructor(
     }
 
     private fun <T> Response.Error<T>.handleError() {
-        if (exception is UnknownHostException) {
-            // The access token is in need of refresh & we are w/o internet
-            WelcomeViewState.NoInternet(retrying = false).push()
-        } else {
-            viewModelScope.launch {
-                // The athlete has de-authorized our app or some other error
-                clearAccessTokenUseCase()
-                routeTo(NavigateLogin)
+        when (val apiError = ApiError.valueOf(exception)) {
+            is ApiError.Unauthorized -> {
+                viewModelScope.launch {
+                    // The athlete has de-authorized our app or some other error
+                    clearAccessTokenUseCase()
+                    routeTo(NavigateLogin)
+                }
+            }
+            is ApiError.UserFacingError -> {
+                WelcomeViewState.Error(
+                    error = apiError,
+                    retrying = false
+                ).push()
             }
         }
     }

@@ -15,7 +15,7 @@ import com.activityartapp.presentation.ui.theme.Typography
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun FilterSection(
+fun ColumnScope.FilterSection(
     count: Int,
     description: String,
     header: String,

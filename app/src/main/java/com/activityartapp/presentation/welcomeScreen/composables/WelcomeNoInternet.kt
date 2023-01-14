@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.CardColumn
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.type.Subhead
@@ -23,6 +24,7 @@ import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.common.type.TitleTwo
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewEvent
 
+/*
 // todo add retry failed toast...
 @Composable
 fun WelcomeNoInternet(
@@ -30,27 +32,19 @@ fun WelcomeNoInternet(
     eventReceiver: EventReceiver<WelcomeViewEvent>
 ) {
     TitleTwo(text = stringResource(R.string.welcome_error_header))
-    Card(
-        backgroundColor = colorResource(R.color.n20_icicle),
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-            modifier = Modifier.padding(16.dp)
+    CardColumn {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    tint = colorResource(R.color.n90_coal),
-                    contentDescription = null
-                )
-                SubheadHeavy(text = stringResource(R.string.welcome_no_internet_header))
-            }
-            Subhead(text = stringResource(R.string.welcome_no_internet_description))
+            Icon(
+                imageVector = Icons.Default.Warning,
+                tint = colorResource(R.color.n90_coal),
+                contentDescription = null
+            )
+            SubheadHeavy(text = stringResource(R.string.welcome_no_internet_header))
         }
+        Subhead(text = stringResource(R.string.welcome_no_internet_description))
     }
     HighEmphasisButton(
         size = ButtonSize.LARGE,
@@ -61,3 +55,5 @@ fun WelcomeNoInternet(
         eventReceiver.onEventDebounced(WelcomeViewEvent.ClickedRetryConnection)
     }
 }
+
+ */

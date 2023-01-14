@@ -1,5 +1,6 @@
 package com.activityartapp.presentation.editArtScreen
 
+import android.location.Location
 import android.util.Size
 import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.graphics.toArgb
@@ -35,6 +36,7 @@ import com.activityartapp.util.TimeUtils
 import com.activityartapp.util.VisualizationUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import com.google.maps.android.PolyUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -395,7 +397,7 @@ class EditArtViewModel @Inject constructor(
         withLastState {
             val replacementCustom = (activitiesDateSelections
                 ?.get(filterDateSelectionIndex) as? DateSelection.Custom
-                ?: error("Error retrieving DateSelection as Custom from selected index."))
+                ?: error("ApiError retrieving DateSelection as Custom from selected index."))
                 .run {
                     val selectedEnd = dateSelected?.last ?: dateTotal.last
                     val selectedStart = dateSelected?.first ?: dateTotal.first
