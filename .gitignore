@@ -17,3 +17,5 @@ app/src/main/java/com/company/athleteapiart/util/ClientSecret.kt
 app/src/main/java/com/company/activityart/util/ClientSecret.kt
 app/src/main/java/com/company/activityart/util/ClientSecret.kt
 *.aab
+app/src/main/java/com/activityartapp/util/constants/TokenConstants.kt
+app/google-services.json

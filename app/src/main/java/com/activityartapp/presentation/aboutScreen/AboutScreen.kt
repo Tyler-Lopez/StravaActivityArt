@@ -14,6 +14,7 @@ import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.type.Body
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.ui.theme.spacing
+import com.activityartapp.util.constants.StringConstants.VERSION
 
 @Composable
 fun AboutScreen(
@@ -26,7 +27,7 @@ fun AboutScreen(
         ScreenBackground {
             viewModel.viewState.collectAsState().value?.apply {
                 AppLogo()
-                SubheadHeavy(stringResource(id = R.string.app_version))
+                SubheadHeavy(stringResource(id = R.string.app_version, VERSION))
                 stringArrayResource(id = R.array.about_screen_content).forEach {
                     Body(text = it, modifier = Modifier.padding(horizontal = spacing.medium))
                 }

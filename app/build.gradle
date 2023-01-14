@@ -7,22 +7,9 @@ plugins {
     id 'dagger.hilt.android.plugin'
     // Navigation library
     id 'com.google.devtools.ksp' version '1.6.10-1.0.2'
+    // Firebase
+    id 'com.google.gms.google-services'
 }
-
-/*
-// https://github.com/raamcosta/compose-destinations
-kotlin {
-    sourceSets {
-        debug {
-            kotlin.srcDir("build/generated/ksp/debug/kotlin")
-        }
-        release {
-            kotlin.srcDir("build/generated/ksp/release/kotlin")
-        }
-    }
-}
-
- */
 
 android {
     compileSdk 33
@@ -73,8 +60,16 @@ android {
 dependencies {
 
     def composeBom = platform('androidx.compose:compose-bom:2022.12.00')
+    def firebaseBom = platform('com.google.firebase:firebase-bom:31.1.1')
     implementation composeBom
+    implementation firebaseBom
     androidTestImplementation composeBom
+
+    /* Firebase Libraries */
+    // Firestore
+    implementation 'com.google.firebase:firebase-firestore'
+    // Realtime Database
+    implementation 'com.google.firebase:firebase-database'
 
     // Choose one of the following:
     // Material Design 3

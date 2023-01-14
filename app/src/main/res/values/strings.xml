@@ -5,7 +5,7 @@
     <!-- Content description of the image of the app logo -->
     <string name="app_logo_content_description">Activity Art Logo</string>
     <!-- The current version of the application -->
-    <string name="app_version">Version 1.0</string>
+    <string name="app_version">Version %s</string>
     <!-- A brief description of the application presented to the athlete -->
     <string name="app_description">
         Celebrate your Strava activities with personalized art customized exactly to your specification
