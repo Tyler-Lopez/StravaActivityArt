@@ -22,7 +22,7 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
         private const val LAST_MONTH_OF_YEAR = 11
         private const val FIRST_PAGE = 1
         private const val INITIAL_USAGE = 0
-        private const val MAXIMUM_USAGE = 10
+        private const val MAXIMUM_USAGE = 50
     }
 
     /**
