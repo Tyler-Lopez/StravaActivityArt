@@ -26,15 +26,12 @@ import * as admin from "firebase-admin";
 
 admin.initializeApp();
 
-export const scheduledFunction = functions
+export const scheduledClearAthleteUsage = functions
     .pubsub
     .schedule("every 720 minutes")
     .onRun((context) => {
-      console.log("Before clear of athlete_usage");
       const dbRef = admin.database().ref("athlete_usage");
       dbRef.remove();
-      console.log("After clear of athlete_usage");
-      console.log("This will be run every 720 minutes!");
       return null;
     });
 ```
