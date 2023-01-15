@@ -3,6 +3,7 @@ package com.activityartapp.domain.use_case.activities
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.activityart.domain.models.Athlete
 import com.activityartapp.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
+import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Success
 import com.activityartapp.util.TimeUtils
@@ -60,6 +61,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
             println("Last cached month: $lastCachedMonth")
             getActivitiesByYearFromRemoteUseCase(
                 accessToken = accessToken,
+                athleteId = athleteId,
                 year = year,
                 startMonth = cachedYearMonths[year].takeIf {
                     it != NO_CACHED_MONTHS

@@ -2,18 +2,27 @@ package com.activityartapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.activityartapp.data.AthleteUsageRepositoryImpl
 import com.activityartapp.data.FileRepositoryImpl
+import com.activityartapp.data.VersionRepositoryImpl
 import com.activityartapp.data.cache.ActivitiesCache
 import com.activityartapp.data.database.AthleteDatabase
 import com.activityartapp.data.remote.AthleteApi
+import com.activityartapp.domain.AthleteUsageRepository
 import com.activityartapp.domain.FileRepository
+import com.activityartapp.domain.VersionRepository
 import com.activityartapp.domain.models.ResolutionListFactory
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.util.constants.StringConstants.BASE_URL
 import com.activityartapp.domain.use_case.activities.*
 import com.activityartapp.domain.use_case.athlete.*
+import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
+import com.activityartapp.domain.use_case.athleteUsage.IncrementAthleteUsage
 import com.activityartapp.util.*
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -77,9 +86,13 @@ object AppModule {
     @Provides
     fun providesGetActivitiesByYearFromRemoteUseCase(
         getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
+        getAthleteUsage: GetAthleteUsage,
+        incrementAthleteUsage: IncrementAthleteUsage,
         timeUtils: TimeUtils
     ) = GetActivitiesByYearFromRemoteUseCase(
         getActivitiesInYearByPageFromRemoteUseCase,
+        getAthleteUsage,
+        incrementAthleteUsage,
         timeUtils
     )
 
@@ -177,4 +190,27 @@ object AppModule {
     @Provides
     fun provideFileRepository(@ApplicationContext appContext: Context): FileRepository =
         FileRepositoryImpl(appContext)
+
+    @Singleton
+    @Provides
+    fun provideFirestoreDb(): FirebaseFirestore = FirebaseFirestore.getInstance().apply {
+        firestoreSettings = FirebaseFirestoreSettings
+            .Builder()
+            .setPersistenceEnabled(false)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRealtimeDb(): FirebaseDatabase = FirebaseDatabase.getInstance().apply {
+        setPersistenceEnabled(false)
+    }
+
+    @Provides
+    fun provideAthleteUsageRepository(db: FirebaseDatabase): AthleteUsageRepository =
+        AthleteUsageRepositoryImpl(db)
+
+    @Provides
+    fun provideVersionRepository(db: FirebaseFirestore): VersionRepository =
+        VersionRepositoryImpl(db)
 }

@@ -20,6 +20,7 @@ import com.activityartapp.util.Response.Success
 import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
+import com.activityartapp.util.errors.AthleteRateLimited
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -86,6 +87,7 @@ class LoadActivitiesViewModel @Inject constructor(
     private suspend fun loadActivities() {
         var activitiesCount = NO_ACTIVITIES_COUNT
         var error: ApiError? = null
+        var athleteRateLimited: Boolean = false
 
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
@@ -105,8 +107,10 @@ class LoadActivitiesViewModel @Inject constructor(
             }.doOnError {
                 error = ApiError.valueOf(exception)
             })
+            val exception = (response as? Error)?.exception
+            if (exception is AthleteRateLimited) athleteRateLimited = true
             /** If response is a Success or an ApiError due to no internet, keep loading activities **/
-            response is Success || (response as? Error)?.exception is UnknownHostException
+            response is Success || exception is UnknownHostException || exception is AthleteRateLimited
         }
 
         when {

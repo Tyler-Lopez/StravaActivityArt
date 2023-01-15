@@ -7,6 +7,8 @@ import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.fullName
 import com.activityartapp.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.activityartapp.domain.use_case.athlete.GetAthleteUseCase
+import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
+import com.activityartapp.domain.use_case.athleteUsage.IncrementAthleteUsage
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
 import com.activityartapp.presentation.MainDestination
@@ -33,6 +35,8 @@ class WelcomeViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val getAthleteUseCase: GetAthleteUseCase,
+    private val getAthleteUsage: GetAthleteUsage,
+    private val incrementUsage: IncrementAthleteUsage
 ) : BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
 
     companion object {
@@ -45,6 +49,7 @@ class WelcomeViewModel @Inject constructor(
 
     init {
         initScreen()
+
     }
 
     override fun onEvent(event: WelcomeViewEvent) {
@@ -102,6 +107,9 @@ class WelcomeViewModel @Inject constructor(
                     athleteName = it.fullName,
                     athleteImageUrl = it.profilePictureLarge
                 ).push()
+                viewModelScope.launch(Dispatchers.IO) {
+             //       incrementUsage(it.athleteId)
+                }
             }
         }
     }
