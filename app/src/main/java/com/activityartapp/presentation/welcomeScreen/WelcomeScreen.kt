@@ -36,7 +36,7 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
                 is WelcomeViewState.ErrorUnsupportedVersion -> ErrorScreen(
                     header = "Unsupported Version",
                     description = "Please update to the newest app version to use Activity Art. Thanks!",
-                    prompt = "You're using a version of Activity Art that's no longer supported.",
+                    prompt = "Oops! You're using a version of Activity Art that is no longer supported.",
                     retrying = false
                 )
                 is WelcomeViewState.Standby -> {
