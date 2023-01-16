@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
+import com.activityartapp.presentation.AppLogo
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
@@ -26,6 +27,7 @@ https://developers.strava.com/guidelines/
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
     ScreenBackground {
         viewModel.viewState.collectAsState().value?.apply {
+            AppLogo()
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally
