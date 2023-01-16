@@ -11,6 +11,7 @@ import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
 import com.activityartapp.domain.use_case.athleteUsage.IncrementAthleteUsage
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
+import com.activityartapp.domain.use_case.version.GetVersion
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewEvent.*
@@ -30,11 +31,33 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class WelcomeViewModel @Inject constructor(private val clearAccessTokenUseCase: ClearAccessTokenUseCase) :
+class WelcomeViewModel @Inject constructor(
+    private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
+    private val getVersion: GetVersion
+) :
     BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
 
     init {
-        WelcomeViewState.push()
+        WelcomeViewState.Loading.push()
+        viewModelScope.launch(Dispatchers.IO) {
+            getVersion()
+                .doOnSuccess {
+                    println("Version received ${data.isLatest} ${data.isSupported}")
+                    if (!data.isSupported) {
+                        WelcomeViewState.ErrorUnsupportedVersion.push()
+                    } else {
+                        WelcomeViewState.Standby(
+                            data.isLatest
+                        ).push()
+                    }
+                }
+                .doOnError {
+                    println("Error was $exception")
+                    WelcomeViewState.Standby(
+                        versionIsLatest = true
+                    ).push()
+                }
+        }
     }
 
     override fun onEvent(event: WelcomeViewEvent) {

@@ -1,10 +1,13 @@
 package com.activityartapp.data
 
 import com.activityartapp.domain.VersionRepository
+import com.activityartapp.domain.models.Version
 import com.activityartapp.util.Response
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -14,38 +17,33 @@ class VersionRepositoryImpl @Inject constructor(private val db: FirebaseFirestor
     VersionRepository {
 
     companion object {
-        private const val FIRESTORE_COLLECTION_VERSION = "athlete_usage"
-        private const val FIRESTORE_DOCUMENT_LATEST_KEY = "latest"
-        private const val FIRESTORE_FIELD_MAJOR_KEY = "major"
-        private const val FIRESTORE_FIELD_MINOR_KEY = "minor"
+        private const val FIRESTORE_COLLECTION_VERSION = "version"
+        private const val FIRESTORE_FIELD_LATEST_KEY = "latest"
+        private const val FIRESTORE_FIELD_SUPPORTED_KEY = "supported"
+        private const val TIMEOUT_TASK_MS = 5000L
     }
 
-    override suspend fun newVersionAvailable(currMajor: Int, currMinor: Int): Response<Boolean> {
+    override suspend fun getVersion(versionStr: String): Response<Version> {
         return try {
-            suspendCoroutine { continuation ->
-                val versionRef =
-                    db.collection(FIRESTORE_COLLECTION_VERSION)
-                versionRef
-                    .whereEqualTo(FieldPath.documentId(), FIRESTORE_DOCUMENT_LATEST_KEY)
-                    .get()
-                    .addOnSuccessListener {
-                        val document: DocumentSnapshot? = it.documents.firstOrNull()
-                        val major = (document?.get(FIRESTORE_FIELD_MAJOR_KEY)
-                            ?.toString()
-                            ?.toInt()) ?: Int.MIN_VALUE
-                        val minor = (document?.get(FIRESTORE_FIELD_MINOR_KEY)
-                            ?.toString()
-                            ?.toInt()) ?: Int.MIN_VALUE
-                        val newVersionAvailable = currMajor < major || currMinor < minor
-                        continuation.resume(Response.Success(newVersionAvailable))
-                    }
-                    .addOnCanceledListener {
-                        continuation.resume(Response.Error())
-                    }
-                    .addOnFailureListener {
-                        continuation.resumeWithException(it)
-                    }
-            }
+            val versionRef =
+                db.collection(FIRESTORE_COLLECTION_VERSION)
+            val versionTask = versionRef
+                .whereEqualTo(FieldPath.documentId(), versionStr.replace('.', '-'))
+                .get()
+            val document = Tasks.await(
+                versionTask,
+                TIMEOUT_TASK_MS, TimeUnit.MILLISECONDS
+            ).documents.firstOrNull()
+            val isLatest = (document?.get(FIRESTORE_FIELD_LATEST_KEY)
+                ?.toString()
+                ?.toBoolean()) ?: true
+            val isSupported = (document?.get(FIRESTORE_FIELD_SUPPORTED_KEY)
+                ?.toString()
+                ?.toBoolean()) ?: true
+            Response.Success(object : Version {
+                override val isLatest: Boolean = isLatest
+                override val isSupported: Boolean = isSupported
+            })
         } catch (e: Exception) {
             Response.Error(exception = e)
         }

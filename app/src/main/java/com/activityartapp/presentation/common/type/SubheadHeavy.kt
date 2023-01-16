@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 import com.activityartapp.R
 import com.activityartapp.presentation.ui.theme.LightTextSecondary
 
@@ -13,10 +14,12 @@ import com.activityartapp.presentation.ui.theme.LightTextSecondary
 fun SubheadHeavy(
     text: String,
     modifier: Modifier = Modifier,
+    textAlign: TextAlign? = null,
     textColor: Color? = LightTextSecondary
 ) {
     Text(
         text = text,
+        textAlign = TextAlign.Center,
         color = textColor ?: colorResource(id = R.color.light_text_secondary),
         style = MaterialTheme.typography.subtitle2,
         modifier = modifier

@@ -11,4 +11,8 @@ sealed interface WelcomeViewEvent : ViewEvent {
     object ClickedLogout : WelcomeViewEvent
 }
 
-object WelcomeViewState : ViewState
+sealed interface WelcomeViewState : ViewState {
+    object Loading : WelcomeViewState
+    data class Standby(val versionIsLatest: Boolean) : WelcomeViewState
+    object ErrorUnsupportedVersion : WelcomeViewState
+}

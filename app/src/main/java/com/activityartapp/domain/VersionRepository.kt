@@ -1,7 +1,8 @@
 package com.activityartapp.domain
 
+import com.activityartapp.domain.models.Version
 import com.activityartapp.util.Response
 
 interface VersionRepository {
-    suspend fun newVersionAvailable(currMajor: Int, currMinor: Int): Response<Boolean>
+    suspend fun getVersion(versionStr: String): Response<Version>
 }
