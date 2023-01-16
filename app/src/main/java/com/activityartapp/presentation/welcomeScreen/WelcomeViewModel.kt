@@ -30,26 +30,11 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class WelcomeViewModel @Inject constructor(
-    private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getActivitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
-    private val getAthleteUseCase: GetAthleteUseCase,
-    private val getAthleteUsage: GetAthleteUsage,
-    private val incrementUsage: IncrementAthleteUsage
-) : BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
-
-    companion object {
-        /** Artificial delay to make the RETRY button feel better when pressed **/
-        private const val DELAY_MS = 500L
-    }
-
-    private lateinit var accessToken: String
-    private lateinit var athleteId: String
+class WelcomeViewModel @Inject constructor(private val clearAccessTokenUseCase: ClearAccessTokenUseCase) :
+    BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
 
     init {
-        initScreen()
-
+        WelcomeViewState.push()
     }
 
     override fun onEvent(event: WelcomeViewEvent) {
@@ -57,7 +42,6 @@ class WelcomeViewModel @Inject constructor(
             is ClickedAbout -> onClickedAbout()
             is ClickedMakeArt -> onClickedMakeArt()
             is ClickedLogout -> onClickedLogout()
-            is ClickedRetryConnection -> onClickedRetryConnection()
         }
     }
 
@@ -68,17 +52,8 @@ class WelcomeViewModel @Inject constructor(
     }
 
     private fun onClickedMakeArt() {
-        /** Either route to screen where activities are loaded into RAM cache
-         * or directly to Make Art if RAM cache is already present. */
         viewModelScope.launch {
-            routeTo(
-                // TODO, come back to this, removed because we now add to cache on partial load...
-                //    if (getActivitiesFromCacheUseCase().isEmpty()) {
-                NavigateLoadActivities(athleteId, accessToken)
-                //  } else {
-                //        NavigateEditArt(fromLoad = false)
-                //   }
-            )
+            routeTo(NavigateLoadActivities)
         }
     }
 
@@ -86,80 +61,6 @@ class WelcomeViewModel @Inject constructor(
         viewModelScope.launch {
             clearAccessTokenUseCase()
             routeTo(NavigateLogin)
-        }
-    }
-
-    private fun onClickedRetryConnection() {
-        (lastPushedState as? WelcomeViewState.Error)?.copy(retrying = true)?.push()
-        viewModelScope.launch {
-            delay(DELAY_MS)
-            initScreen()
-        }
-    }
-
-    private fun initScreen() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val oAuth2 = getOAuth2()
-            val athlete = oAuth2?.getAthlete()
-            athlete?.let {
-                athleteId = it.athleteId.toString()
-                WelcomeViewState.Standby(
-                    athleteName = it.fullName,
-                    athleteImageUrl = it.profilePictureLarge
-                ).push()
-                viewModelScope.launch(Dispatchers.IO) {
-             //       incrementUsage(it.athleteId)
-                }
-            }
-        }
-    }
-
-    private suspend fun getOAuth2(): OAuth2? {
-        return suspendCoroutine { continuation ->
-            viewModelScope.launch(Dispatchers.IO) {
-                getAccessTokenUseCase()
-                    .doOnSuccess {
-                        accessToken = data.accessToken
-                        continuation.resume(data)
-                    }
-                    .doOnError {
-                        continuation.resume(null)
-                        handleError()
-                    }
-            }
-        }
-    }
-
-    private suspend fun OAuth2.getAthlete(): Athlete? {
-        return suspendCoroutine { continuation ->
-            viewModelScope.launch(Dispatchers.IO) {
-                getAthleteUseCase(athleteId, accessToken)
-                    .doOnSuccess {
-                        continuation.resume(data)
-                    }
-                    .doOnError {
-                        continuation.resume(null)
-                        handleError()
-                    }
-            }
-        }
-    }
-
-    private fun <T> Response.Error<T>.handleError() {
-        when (val apiError = ApiError.valueOf(exception)) {
-            is ApiError.Unauthorized -> {
-                viewModelScope.launch {
-                    // The athlete has de-authorized our app or some other error
-                    clearAccessTokenUseCase()
-                    routeTo(NavigateLogin)
-                }
-            }
-            is ApiError.UserFacingError -> {
-                WelcomeViewState.Error(
-                    error = apiError,
-                    retrying = false
-                ).push()
-            }
         }
     }
 }

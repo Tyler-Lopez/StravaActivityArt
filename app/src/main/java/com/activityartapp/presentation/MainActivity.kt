@@ -110,12 +110,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     private fun navigateLoadActivities(destination: NavigateLoadActivities) {
         destination.apply {
             navController.navigate(
-                route = LoadActivities.withArgs(
-                    args = arrayOf(
-                        AthleteId to athleteId,
-                        AccessToken to accessToken
-                    )
-                )
+                route = LoadActivities.route
             )
         }
     }
@@ -137,14 +132,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         navController.navigate(EditArt.route) {
             destination.apply {
                 if (fromLoad) {
-                    popUpTo(
-                        route = LoadActivities.buildRoute(
-                            listOf(
-                                AthleteId,
-                                AccessToken
-                            )
-                        )
-                    ) { inclusive = true }
+                    popUpTo(route = LoadActivities.route) { inclusive = true }
                 }
             }
         }

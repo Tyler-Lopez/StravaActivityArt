@@ -34,7 +34,7 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
                 /** On refresh, pass in local athlete id as refresh does not incl Athlete **/
                 requiresRefresh -> {
                     println("RESULT: REQUIRES REFRESH")
-                    onRequiresRefresh(refreshToken, athleteId)
+                    onRequiresRefresh(this)
                 }
                 else -> {
                     println("RESULT: SUCCESS")
@@ -44,14 +44,14 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
         }
     }
 
-    private suspend fun onRequiresRefresh(refreshToken: String, athleteId: Long):
+    private suspend fun onRequiresRefresh(prevOauth: OAuth2):
             Response<OAuth2> {
         return try {
             Success(
                 athleteApi.getAccessTokenFromRefresh(
                     clientId = TokenConstants.CLIENT_ID,
                     clientSecret = TokenConstants.CLIENT_SECRET,
-                    refreshToken = refreshToken,
+                    refreshToken = prevOauth.refreshToken,
                     grantType = GRANT_TYPE
                 ).apply {
                     /** Refresh token [Bearer] does not include the athlete and thus
@@ -64,7 +64,7 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
             ensure we do not catch CancellationException */
             if (e is CancellationException) throw e
             e.printStackTrace()
-            Error(exception = e)
+            Error(data = prevOauth, exception = e)
         }
     }
 }

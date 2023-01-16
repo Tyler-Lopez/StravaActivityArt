@@ -52,11 +52,7 @@ fun MainNavHost(
         /** TODO, determine if activities have been Singleton cached and
          * if so skip this screen **/
         swipingInOutComposable(
-            screen = LoadActivities,
-            navArgSpecifications = listOf(
-                AthleteId,
-                AccessToken
-            )
+            screen = LoadActivities
         ) {
             LoadActivitiesScreen(hiltViewModel<LoadActivitiesViewModel>().apply {
                 attachRouter(router)

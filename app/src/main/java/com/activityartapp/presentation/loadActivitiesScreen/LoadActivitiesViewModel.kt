@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
+import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.use_case.activities.GetActivitiesByYearUseCase
 import com.activityartapp.domain.use_case.activities.InsertActivitiesIntoCacheUseCase
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateEditArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
@@ -28,10 +30,13 @@ import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import java.time.Year
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class LoadActivitiesViewModel @Inject constructor(
     private val getActivitiesByYearUseCase: GetActivitiesByYearUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
     private val insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
     savedStateHandle: SavedStateHandle
@@ -44,9 +49,6 @@ class LoadActivitiesViewModel @Inject constructor(
         private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
     }
-
-    private val athleteId: Long = AthleteId.rawArg(savedStateHandle).toLong()
-    private val accessToken: String = AccessToken.rawArg(savedStateHandle)
 
     private val activitiesByYear: MutableList<Pair<Int, List<Activity>>> =
         mutableListOf()
@@ -87,7 +89,11 @@ class LoadActivitiesViewModel @Inject constructor(
     private suspend fun loadActivities() {
         var activitiesCount = NO_ACTIVITIES_COUNT
         var error: ApiError? = null
-        var athleteRateLimited: Boolean = false
+
+        /* OAuth2 should never return null here */
+        val oAuth2 = getOAuth2() ?: error("OAuth2 is null for an unknown reason...")
+        val accessToken = oAuth2.accessToken
+        val athleteId = oAuth2.athleteId
 
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
@@ -108,7 +114,6 @@ class LoadActivitiesViewModel @Inject constructor(
                 error = ApiError.valueOf(exception)
             })
             val exception = (response as? Error)?.exception
-            if (exception is AthleteRateLimited) athleteRateLimited = true
             /** If response is a Success or an ApiError due to no internet, keep loading activities **/
             response is Success || exception is UnknownHostException || exception is AthleteRateLimited
         }
@@ -127,6 +132,20 @@ class LoadActivitiesViewModel @Inject constructor(
             }
             activitiesCount == NO_ACTIVITIES_COUNT -> ErrorNoActivities.push()
             else -> routeTo(NavigateEditArt(fromLoad = true))
+        }
+    }
+
+    private suspend fun getOAuth2(): OAuth2? {
+        return suspendCoroutine { continuation ->
+            viewModelScope.launch(Dispatchers.IO) {
+                getAccessTokenUseCase()
+                    .doOnSuccess {
+                        continuation.resume(data)
+                    }
+                    .doOnError {
+                        continuation.resume(data)
+                    }
+            }
         }
     }
 }

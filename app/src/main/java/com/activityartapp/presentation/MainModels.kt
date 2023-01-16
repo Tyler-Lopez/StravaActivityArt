@@ -20,10 +20,7 @@ sealed interface MainDestination : Destination {
     object ConnectWithStrava : MainDestination
     object NavigateAbout : MainDestination
     object NavigateLogin : MainDestination
-    data class NavigateLoadActivities(
-        val athleteId: String,
-        val accessToken: String
-    ) : MainDestination
+    object NavigateLoadActivities : MainDestination
 
     data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
     data class NavigateSaveArt(
