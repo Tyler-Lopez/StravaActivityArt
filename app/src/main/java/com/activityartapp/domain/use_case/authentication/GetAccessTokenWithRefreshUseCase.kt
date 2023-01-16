@@ -7,6 +7,7 @@ import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.requiresRefresh
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.*
+import com.activityartapp.util.constants.CLIENT_SECRET
 import com.activityartapp.util.constants.TokenConstants
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -50,7 +51,7 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
             Success(
                 athleteApi.getAccessTokenFromRefresh(
                     clientId = TokenConstants.CLIENT_ID,
-                    clientSecret = TokenConstants.CLIENT_SECRET,
+                    clientSecret = CLIENT_SECRET,
                     refreshToken = prevOauth.refreshToken,
                     grantType = GRANT_TYPE
                 ).apply {
