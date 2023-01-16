@@ -34,10 +34,9 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
             when (this) {
                 is WelcomeViewState.Loading -> CircularProgressIndicator()
                 is WelcomeViewState.ErrorUnsupportedVersion -> ErrorScreen(
-                    header = "Unsupported Version",
-                    description = "Please update to the newest app version to use Activity Art. Thanks!",
-                    prompt = "Oops! You're using a version of Activity Art that is no longer supported.",
-                    retrying = false
+                    header = stringResource(R.string.error_unsupported_version_header),
+                    description = stringResource(R.string.error_unsupported_version_description),
+                    prompt = stringResource(R.string.error_unsupported_version_prompt)
                 )
                 is WelcomeViewState.Standby -> {
                     Column(
@@ -54,8 +53,9 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
                                 APP_VERSION
                             )
                         )
-                        if (!versionIsLatest) SubheadHeavy(text = "Update Available")
-
+                        if (!versionIsLatest) {
+                            SubheadHeavy(text = stringResource(R.string.welcome_new_version_available))
+                        }
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(

@@ -26,16 +26,7 @@
     <string name="welcome_button_about">About</string>
     <!-- Text is shown on a button that directs athletes to logout -->
     <string name="welcome_button_logout">Logout</string>
-    <string name="welcome_no_internet_header">Internet Is Unavailable</string>
-    <string name="welcome_no_internet_description">Check your connection and try again</string>
-    <string name="welcome_strava_athlete_rate_limited_header">Too Many Requests</string>
-    <string name="welcome_strava_athlete_rate_limited_description">To ration our allowed usage across athletes you have been temporarily unable to retrieve more data from Strava; check back tomorrow</string>
-    <string name="welcome_strava_app_rate_limited_header">App Is at Capacity</string>
-    <string name="welcome_strava_app_rate_limited_description">Activity Art has been used by too many athletes today; check back tomorrow</string>
-    <string name="welcome_strava_server_issue_header">Strava Server Error</string>
-    <string name="welcome_strava_server_issue_description">We\'re having a problem connecting to Strava; check back later</string>
-    <string name="welcome_unknown_header">Unknown Error</string>
-    <string name="welcome_unknown_description">We aren\'t sure why, but there was an error connecting to Strava; check back later</string>
+    <string name="welcome_new_version_available">Update Available</string>
 
     <!-- ABOUT SCREEN -->
     <!-- Text is shown on the action bar for the page which shows app information -->
@@ -266,8 +257,11 @@
     <string name="font_size_type_large">Large</string><!-- XL is short for extra-large -->
     <string name="font_size_type_xl">XL</string>
 
-    <!-- ERRORS -->
+    <!-- GENERIC ERRORS -->
     <string name="error_continue_button">Make Art</string>
     <string name="error_retry_button">Retry</string>
     <string name="error_return_button">Go Back</string>
+    <string name="error_unsupported_version_header">Unsupported Version</string>
+    <string name="error_unsupported_version_prompt">Please update to the newest app version to use Activity Art. Thanks!</string>
+    <string name="error_unsupported_version_description">Oops! You\'re using a version of Activity Art that is no longer supported.</string>
 </resources>

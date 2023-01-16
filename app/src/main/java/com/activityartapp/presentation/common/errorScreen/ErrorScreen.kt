@@ -32,7 +32,7 @@ fun ColumnScope.ErrorScreen(
     header: String,
     description: String,
     prompt: String,
-    retrying: Boolean,
+    retrying: Boolean = false,
     onContinueClicked: (() -> Unit)? = null,
     onRetryClicked: (() -> Unit)? = null,
     onReturnClicked: (() -> Unit)? = null
@@ -55,8 +55,8 @@ fun ColumnScope.ErrorScreen(
         .onGloballyPositioned {
             minButtonWidth = minButtonWidth.coerceAtLeast(localDensity.run { it.size.width.toDp() })
         }) {
-        Body(text = prompt, textAlign = TextAlign.Center)
         Body(text = description, textAlign = TextAlign.Center)
+        Body(text = prompt, textAlign = TextAlign.Center)
     }
 
     Column(

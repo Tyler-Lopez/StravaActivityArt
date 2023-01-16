@@ -36,37 +36,14 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
             viewState.collectAsState().value?.apply {
                 when (this) {
                     is ErrorApi -> {
-                        val headerDescription = when (error) {
-                            AthleteRateLimited -> Pair(
-                                stringResource(R.string.welcome_strava_athlete_rate_limited_header),
-                                error.getPrompt(totalActivitiesLoaded)
-                            )
-                            NoInternet -> Pair(
-                                stringResource(R.string.welcome_no_internet_header),
-                                error.getPrompt(totalActivitiesLoaded)
-                            )
-                            StravaRateLimited -> Pair(
-                                stringResource(R.string.welcome_strava_app_rate_limited_header),
-                                error.getPrompt(totalActivitiesLoaded)
-                            )
-                            StravaServerIssues -> Pair(
-                                stringResource(R.string.welcome_strava_server_issue_header),
-                                error.getPrompt(totalActivitiesLoaded)
-                            )
-                            Unknown -> Pair(
-                                stringResource(R.string.welcome_strava_server_issue_header),
-                                error.getPrompt(totalActivitiesLoaded)
-                            )
-                        }
                         ErrorScreen(
-                            header = headerDescription.first,
-                            description = headerDescription.second,
-                            prompt = error.getDescription(),
+                            header = error.getHeader(),
+                            description = error.getDescription(),
+                            prompt = error.getPrompt(totalActivitiesLoaded),
                             retrying = retrying,
                             onContinueClicked = totalActivitiesLoaded.takeIf { it > 0 }?.run {
                                 {
                                     viewModel.onEventDebounced(LoadActivitiesViewEvent.ClickedContinue)
-
                                 }
                             },
                             onRetryClicked = error.takeIf { it is NoInternet || it is StravaServerIssues }
@@ -108,6 +85,17 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
     }
 }
 
+
+@Composable
+private fun ApiError.UserFacingError.getHeader(): String {
+    return when (this) {
+        AthleteRateLimited -> stringResource(R.string.loading_activities_athlete_rate_limited_header)
+        NoInternet -> stringResource(R.string.loading_activities_no_internet_header)
+        StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_header)
+        StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_header)
+        Unknown -> stringResource(R.string.loading_activities_unknown_header)
+    }
+}
 
 @Composable
 private fun ApiError.UserFacingError.getDescription(): String {
