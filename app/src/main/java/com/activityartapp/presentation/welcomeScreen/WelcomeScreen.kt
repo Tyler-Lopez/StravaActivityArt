@@ -30,6 +30,7 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
                     eventReceiver = viewModel
                 )
                 is WelcomeViewState.Error -> {
+                    /*
                     val headerDescription = when (error) {
                         ApiError.UserFacingError.AthleteRateLimited -> Pair(
                             stringResource(R.string.welcome_strava_athlete_rate_limited_header),
@@ -62,6 +63,9 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
                             }
                         }
                     )
+                }
+
+                     */
                 }
             }
         }

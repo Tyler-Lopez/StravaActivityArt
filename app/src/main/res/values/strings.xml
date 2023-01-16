@@ -29,7 +29,7 @@
     <string name="welcome_no_internet_header">Internet Is Unavailable</string>
     <string name="welcome_no_internet_description">Check your connection and try again</string>
     <string name="welcome_strava_athlete_rate_limited_header">Too Many Requests</string>
-    <string name="welcome_strava_athlete_rate_limited_description">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow</string>
+    <string name="welcome_strava_athlete_rate_limited_description">To ration our allowed usage across athletes you have been temporarily unable to retrieve more data from Strava; check back tomorrow</string>
     <string name="welcome_strava_app_rate_limited_header">App Is at Capacity</string>
     <string name="welcome_strava_app_rate_limited_description">Activity Art has been used by too many athletes today; check back tomorrow</string>
     <string name="welcome_strava_server_issue_header">Strava Server Error</string>
@@ -56,45 +56,60 @@
         <item quantity="one">%d Activity Loaded</item>
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
-    <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
-    <string name="loading_activities_error_header">Oops! An Error Occurred</string><!-- If there was no internet connection while loading activities, present the user a prompt
+    <string name="loading_activities_error_header">Oops! An Error Occurred</string>
+    <!-- If there was no internet connection while loading activities, present the user a prompt
     depending on how many activities were loaded to either continue with the partial load or to retry -->
-    <string name="loading_activities_no_internet_description_zero_count">Check your connection and try again</string>
-    <plurals name="loading_activities_no_internet_description">
-        <item quantity="zero">@string/loading_activities_no_internet_description_zero_count</item>
-        <item quantity="one">Check your connection and try again or continue with the activity which was successfully loaded</item>
-        <item quantity="other">Check your connection and try again or continue with the %d activities which were successfully loaded</item>
+    <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
+    <string name="loading_activities_no_internet_description">We can\'t connect to the internet.</string>
+    <string name="loading_activities_no_internet_prompt_zero_count">Check your connection and try again.</string>
+    <plurals name="loading_activities_no_internet_prompt">
+        <item quantity="zero">@string/loading_activities_no_internet_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check your connection and try again.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check your connection and try again.</item>
     </plurals>
-    <string name="loading_activities_athlete_rate_limited_header">Too Many Requests</string>
-    <string name="loading_activities_athlete_rate_limited_description_zero_count">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow</string>
-    <plurals name="loading_activities_athlete_rate_limited_description">
-        <item quantity="zero">@string/loading_activities_athlete_rate_limited_description_zero_count</item>
-        <item quantity="one">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow or continue with the activity which was successfully loaded</item>
-        <item quantity="other">You have exceeded the maximum amount of times allowed to get data from Strava today; check back tomorrow or continue with the %d activities which were successfully loaded</item>
+    <!-- Error information shown when the athlete has been personally rate-limited -->
+    <string name="loading_activities_athlete_rate_limited_header">Personal Daily Limit</string>
+    <string name="loading_activities_athlete_rate_limited_description">
+        Wow, you must have a lot of activities! Because Strava limits how many times we can get athlete data in a day, we can\'t load more today.
+    </string>
+    <string name="loading_activities_athlete_rate_limited_prompt_zero_count">Check back tomorrow when we can get the rest.</string>
+    <plurals name="loading_activities_athlete_rate_limited_prompt">
+        <item quantity="zero">@string/loading_activities_athlete_rate_limited_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back tomorrow when we can get the rest.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back tomorrow when we can get the rest.</item>
     </plurals>
-    <string name="loading_activities_app_rate_limited_header">App Is at Capacity</string>
-    <string name="loading_activities_app_rate_limited_description_zero_count">Activity Art has been used by too many athletes today; check back tomorrow</string>
-    <plurals name="loading_activities_app_rate_limited_description">
-        <item quantity="zero">@string/loading_activities_app_rate_limited_description_zero_count</item>
-        <item quantity="one">Activity Art has been used by too many athletes today; check back tomorrow or continue with the activity which was successfully loaded</item>
-        <item quantity="other">Activity Art has been used by too many athletes today; check back tomorrow or continue with the %d activities which were successfully loaded</item>
+    <!-- Error information shown when the app has been rate-limited by Strava -->
+    <string name="loading_activities_app_rate_limited_header">Daily Limit</string>
+    <string name="loading_activities_app_rate_limited_description">Activity Art is busy today! Because Strava limits how many times we can get athlete data in a day, we can\'t load any more today.</string>
+    <string name="loading_activities_app_rate_limited_prompt_zero_count">Check back tomorrow when we can get the rest.</string>
+    <plurals name="loading_activities_app_rate_limited_prompt">
+        <item quantity="zero">@string/loading_activities_app_rate_limited_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back tomorrow when we can get the rest.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back tomorrow when we can get the rest.</item>
     </plurals>
+    <!-- Error information shown when we Strava is having Server issues -->
     <string name="loading_activities_server_issue_header">Strava Server Error</string>
-    <string name="loading_activities_server_issue_description_zero_count">We\'re having a problem connecting to Strava; check back later</string>
-    <plurals name="loading_activities_server_issue_description">
-        <item quantity="zero">@string/loading_activities_server_issue_description_zero_count</item>
-        <item quantity="one">We\'re having a problem connecting to Strava; check back later or continue with the activity which was successfully loaded</item>
-        <item quantity="other">We\'re having a problem connecting to Strava; check back later or continue with the %d activities which were successfully loaded</item>
+    <string name="loading_activities_server_issue_description">We had a problem connecting to Strava.</string>
+    <string name="loading_activities_server_issue_prompt_zero_count">Check back later or retry the connection.</string>
+    <plurals name="loading_activities_server_issue_prompt">
+        <item quantity="zero">@string/loading_activities_server_issue_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it, retry the connection, or check back later.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them, retry the connection, or check back later.</item>
     </plurals>
+    <!-- Error information shown when we don't know why we are having issues -->
     <string name="loading_activities_unknown_header">Unknown Error</string>
-    <string name="loading_activities_unknown_description_zero_count">We aren\'t sure why, but there was an error connecting to Strava; check back later</string>
-    <plurals name="loading_activities_unknown_description">
-        <item quantity="zero">@string/loading_activities_unknown_description_zero_count</item>
-        <item quantity="one">We aren\'t sure why, but there was an error connecting to Strava; check back later or continue with the activity which was successfully loaded</item>
-        <item quantity="other">We aren\'t sure why, but there was an error connecting to Strava; check back later or continue with the %d activities which were successfully loaded</item>
+    <string name="loading_activities_unknown_description">We\'re not sure why, but we aren\'t able to get all of your activities right now.</string>
+    <string name="loading_activities_unknown_prompt_zero_count">Check back later.</string>
+    <plurals name="loading_activities_unknown_prompt">
+        <item quantity="zero">@string/loading_activities_unknown_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back later.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back later.</item>
     </plurals>
+    <!-- Error information shown when the athlete doesn't have at least one activity -->
     <string name="loading_activities_no_activities_header">No Activities Found</string>
-    <string name="loading_activities_no_activities_description">Cannot make art without at least one activity on your connected Strava account</string>
+    <string name="loading_activities_no_activities_prompt">Oops! We checked Strava, and you don\'t seem to have any activities.</string>
+    <string name="loading_activities_no_activities_description">Record at least one activity and check back later.</string>
+
 
     <!-- EDIT ART SCREEN -->
     <!-- Text is shown on the action bar for the page where an athlete may customize their art -->
@@ -252,8 +267,7 @@
     <string name="font_size_type_xl">XL</string>
 
     <!-- ERRORS -->
-    <string name="error_header">Oops! An Error Occurred</string>
-    <string name="error_continue_button">Continue</string>
+    <string name="error_continue_button">Make Art</string>
     <string name="error_retry_button">Retry</string>
     <string name="error_return_button">Go Back</string>
 </resources>

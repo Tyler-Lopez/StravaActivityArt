@@ -39,28 +39,29 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                         val headerDescription = when (error) {
                             AthleteRateLimited -> Pair(
                                 stringResource(R.string.welcome_strava_athlete_rate_limited_header),
-                                error.getDescription(totalActivitiesLoaded)
+                                error.getPrompt(totalActivitiesLoaded)
                             )
                             NoInternet -> Pair(
                                 stringResource(R.string.welcome_no_internet_header),
-                                error.getDescription(totalActivitiesLoaded)
+                                error.getPrompt(totalActivitiesLoaded)
                             )
                             StravaRateLimited -> Pair(
                                 stringResource(R.string.welcome_strava_app_rate_limited_header),
-                                error.getDescription(totalActivitiesLoaded)
+                                error.getPrompt(totalActivitiesLoaded)
                             )
                             StravaServerIssues -> Pair(
                                 stringResource(R.string.welcome_strava_server_issue_header),
-                                error.getDescription(totalActivitiesLoaded)
+                                error.getPrompt(totalActivitiesLoaded)
                             )
                             Unknown -> Pair(
                                 stringResource(R.string.welcome_strava_server_issue_header),
-                                error.getDescription(totalActivitiesLoaded)
+                                error.getPrompt(totalActivitiesLoaded)
                             )
                         }
                         ErrorScreen(
                             header = headerDescription.first,
                             description = headerDescription.second,
+                            prompt = error.getDescription(),
                             retrying = retrying,
                             onContinueClicked = totalActivitiesLoaded.takeIf { it > 0 }?.run {
                                 {
@@ -83,6 +84,7 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                         ErrorScreen(
                             header = stringResource(R.string.loading_activities_no_activities_header),
                             description = stringResource(R.string.loading_activities_no_activities_description),
+                            prompt = stringResource(R.string.loading_activities_no_activities_prompt),
                             retrying = false,
                             onReturnClicked = {
                                 viewModel.onEventDebounced(LoadActivitiesViewEvent.ClickedReturn)
@@ -106,38 +108,50 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
     }
 }
 
+
 @Composable
-private fun ApiError.UserFacingError.getDescription(activityCount: Int): String {
+private fun ApiError.UserFacingError.getDescription(): String {
+    return when (this) {
+        AthleteRateLimited -> stringResource(R.string.loading_activities_athlete_rate_limited_description)
+        NoInternet -> stringResource(R.string.loading_activities_no_internet_description)
+        StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_description)
+        StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_description)
+        Unknown -> stringResource(R.string.loading_activities_unknown_description)
+    }
+}
+
+@Composable
+private fun ApiError.UserFacingError.getPrompt(activityCount: Int): String {
     return activityCount.takeIf { it > 0 }?.let {
         when (this) {
             AthleteRateLimited -> pluralStringResource(
-                id = R.plurals.loading_activities_athlete_rate_limited_description,
+                id = R.plurals.loading_activities_athlete_rate_limited_prompt,
                 count = it, it
             )
             NoInternet -> pluralStringResource(
-                id = R.plurals.loading_activities_no_internet_description,
+                id = R.plurals.loading_activities_no_internet_prompt,
                 count = it, it
             )
             StravaRateLimited -> pluralStringResource(
-                id = R.plurals.loading_activities_app_rate_limited_description,
+                id = R.plurals.loading_activities_app_rate_limited_prompt,
                 count = it, it
             )
             StravaServerIssues -> pluralStringResource(
-                id = R.plurals.loading_activities_server_issue_description,
+                id = R.plurals.loading_activities_server_issue_prompt,
                 count = it, it
             )
             Unknown -> pluralStringResource(
-                id = R.plurals.loading_activities_unknown_description,
+                id = R.plurals.loading_activities_unknown_prompt,
                 count = it, it
             )
         }
     } ?: run {
         when (this) {
-            AthleteRateLimited -> stringResource(R.string.loading_activities_athlete_rate_limited_description_zero_count)
-            NoInternet -> stringResource(R.string.loading_activities_no_internet_description_zero_count)
-            StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_description_zero_count)
-            StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_description_zero_count)
-            Unknown -> stringResource(R.string.loading_activities_unknown_description_zero_count)
+            AthleteRateLimited -> stringResource(R.string.loading_activities_athlete_rate_limited_prompt_zero_count)
+            NoInternet -> stringResource(R.string.loading_activities_no_internet_prompt_zero_count)
+            StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_prompt_zero_count)
+            StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_prompt_zero_count)
+            Unknown -> stringResource(R.string.loading_activities_unknown_prompt_zero_count)
         }
     }
 }

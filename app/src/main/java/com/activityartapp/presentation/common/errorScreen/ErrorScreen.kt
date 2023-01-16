@@ -11,12 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.CardColumn
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.button.MediumEmphasisButton
+import com.activityartapp.presentation.common.type.Body
 import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.common.type.TitleTwo
@@ -25,25 +27,27 @@ import com.activityartapp.presentation.common.type.TitleTwo
 fun ColumnScope.ErrorScreen(
     header: String,
     description: String,
+    prompt: String,
     retrying: Boolean,
     onContinueClicked: (() -> Unit)? = null,
     onRetryClicked: (() -> Unit)? = null,
     onReturnClicked: (() -> Unit)? = null
 ) {
-    TitleTwo(text = stringResource(R.string.loading_activities_error_header))
+    //TitleTwo(text = stringResource(R.string.loading_activities_error_header))
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Warning,
+            tint = colorResource(R.color.n90_coal),
+            contentDescription = null
+        )
+        TitleTwo(text = header)
+    }
     CardColumn {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Warning,
-                tint = colorResource(R.color.n90_coal),
-                contentDescription = null
-            )
-            SubheadHeavy(text = header)
-        }
-        Subhead(text = description)
+        Body(text = prompt, textAlign = TextAlign.Center)
+        Body(text = description, textAlign = TextAlign.Center)
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
