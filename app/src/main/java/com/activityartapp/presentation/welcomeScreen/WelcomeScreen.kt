@@ -54,9 +54,8 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
                                 APP_VERSION
                             )
                         )
-                        when {
-                            !versionIsLatest -> SubheadHeavy(text = "An update is available.")
-                        }
+                        if (!versionIsLatest) SubheadHeavy(text = "Update Available")
+
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(
