@@ -33,11 +33,6 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
         viewModel.viewState.collectAsState().value?.apply {
             when (this) {
                 is WelcomeViewState.Loading -> CircularProgressIndicator()
-                is WelcomeViewState.ErrorUnsupportedVersion -> ErrorScreen(
-                    header = stringResource(R.string.error_unsupported_version_header),
-                    description = stringResource(R.string.error_unsupported_version_description),
-                    prompt = stringResource(R.string.error_unsupported_version_prompt)
-                )
                 is WelcomeViewState.Standby -> {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(

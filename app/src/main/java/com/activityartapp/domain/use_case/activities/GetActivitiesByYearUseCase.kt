@@ -44,7 +44,7 @@ class GetActivitiesByYearUseCase @Inject constructor(
         year: Int,
     ): Response<List<Activity>> {
 
-        var athleteUsage = initialAthleteUsage
+        var athleteUsageMutable = initialAthleteUsage
 
         /** If Singleton RAM cache has been populated for this year prev, return that **/
         getActivitiesFromCacheUseCase(year)?.apply { return Success(this) }
@@ -69,8 +69,11 @@ class GetActivitiesByYearUseCase @Inject constructor(
                     accessToken = accessToken,
                     athleteId = athleteId,
                     year = year,
-                    initialAthleteUsage = initialAthleteUsage,
-                    onAthleteUsageChanged = onAthleteUsageChanged,
+                    initialAthleteUsage = athleteUsageMutable,
+                    onAthleteUsageChanged = {
+                        athleteUsageMutable = it
+                        onAthleteUsageChanged(it)
+                    },
                     startMonth = cachedYearMonths[year].takeIf {
                         it != NO_CACHED_MONTHS
                     }?.plus(1) ?: FIRST_MONTH_OF_YEAR

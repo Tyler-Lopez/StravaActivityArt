@@ -15,6 +15,7 @@ import com.activityartapp.presentation.loginScreen.LoginScreen
 import com.activityartapp.presentation.loginScreen.LoginViewModel
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewDelegate
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewModel
+import com.activityartapp.presentation.unsupportedVersionScreen.UnsupportedVersionScreen
 import com.activityartapp.presentation.welcomeScreen.WelcomeScreen
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewModel
 import com.activityartapp.util.NavArgSpecification.*
@@ -87,6 +88,9 @@ fun MainNavHost(
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
                 attachRouter(router)
             })
+        }
+        swipingInOutComposable(UnsupportedVersion) {
+            UnsupportedVersionScreen()
         }
     }
 }

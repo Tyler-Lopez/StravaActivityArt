@@ -28,7 +28,7 @@ class WelcomeViewModel @Inject constructor(
                 .doOnSuccess {
                     println("Version received ${data.isLatest} ${data.isSupported}")
                     if (!data.isSupported) {
-                        WelcomeViewState.ErrorUnsupportedVersion.push()
+                        routeTo(NavigateUnsupportedVersion)
                     } else {
                         WelcomeViewState.Standby(
                             data.isLatest

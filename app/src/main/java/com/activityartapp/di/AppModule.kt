@@ -198,6 +198,7 @@ object AppModule {
             .Builder()
             .setPersistenceEnabled(false)
             .build()
+        clearPersistence()
     }
 
     @Singleton

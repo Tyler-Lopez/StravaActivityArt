@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.AppBarScaffold
 import com.activityartapp.presentation.common.ScreenBackground
@@ -82,6 +83,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 ) {
                     ScreenBackground(
                         horizontalAlignment = if (it != PREVIEW) Alignment.Start else Alignment.CenterHorizontally,
+                        padding = if (it != PREVIEW) spacing.medium else 0.dp,
                         scrollState = when (it) {
                             FILTERS -> scrollStateFilter
                             STYLE -> scrollStateStyle
@@ -118,7 +120,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             )
                             TYPE -> EditArtTypeScreen(
                                 typeActivitiesDistanceMetersSummed,
-                       //         typeAthleteName,
+                                //         typeAthleteName,
                                 typeCenterCustomText,
                                 typeLeftCustomText,
                                 typeRightCustomText,

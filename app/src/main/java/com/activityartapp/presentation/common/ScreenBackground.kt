@@ -16,12 +16,14 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
 fun ScreenBackground(
     modifier: Modifier = Modifier,
     horizontalAlignment: Horizontal = CenterHorizontally,
+    padding: Dp = spacing.medium,
     scrollState: ScrollState? = rememberScrollState(),
     scrollingEnabled: Boolean = true,
     verticalArrangement: Vertical = spacedBy(
@@ -37,7 +39,7 @@ fun ScreenBackground(
             .fillMaxSize()
             .background(Color.White)
             .run { if (scrollingEnabled) scrollState?.let { verticalScroll(it) } ?: this else this }
-            .padding(spacing.medium),
+            .padding(padding),
         verticalArrangement = verticalArrangement
     )
 }

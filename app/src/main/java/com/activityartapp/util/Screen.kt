@@ -8,6 +8,7 @@ sealed class Screen(val route: String) {
     object LoadActivities : Screen("LoadActivities")
     object EditArt : Screen("EditArt")
     object SaveArt : Screen("SaveArt")
+    object UnsupportedVersion : Screen("UnsupportedVersion")
 
     fun buildRoute(navArgSpecifications: List<NavArgSpecification>? = null): String {
         return buildString {

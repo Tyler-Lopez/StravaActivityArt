@@ -42,6 +42,7 @@ sealed interface MainDestination : Destination {
         val textFontSize: FontSizeType
     ) : MainDestination
 
+    object NavigateUnsupportedVersion : MainDestination
     object NavigateUp : MainDestination
     data class ShareFile(val uri: Uri) : MainDestination
 }

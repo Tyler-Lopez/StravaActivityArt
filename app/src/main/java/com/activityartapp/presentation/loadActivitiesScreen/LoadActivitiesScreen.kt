@@ -79,11 +79,6 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                             } ?: stringResource(id = R.string.loading_activities_zero_count)
                         )
                     }
-                    is ErrorUnsupported -> ErrorScreen(
-                        header = stringResource(R.string.error_unsupported_version_header),
-                        description = stringResource(R.string.error_unsupported_version_description),
-                        prompt = stringResource(R.string.error_unsupported_version_prompt)
-                    )
                 }
             }
         }

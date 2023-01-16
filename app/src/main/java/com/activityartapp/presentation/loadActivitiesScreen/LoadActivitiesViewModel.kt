@@ -13,12 +13,9 @@ import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
 import com.activityartapp.domain.use_case.version.GetVersion
 import com.activityartapp.presentation.MainDestination
-import com.activityartapp.presentation.MainDestination.NavigateEditArt
-import com.activityartapp.presentation.MainDestination.NavigateUp
+import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewEvent.*
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
-import com.activityartapp.util.NavArgSpecification.AccessToken
-import com.activityartapp.util.NavArgSpecification.AthleteId
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Error
 import com.activityartapp.util.Response.Success
@@ -43,8 +40,7 @@ class LoadActivitiesViewModel @Inject constructor(
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
     private val insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
     private val getAthleteUsage: GetAthleteUsage,
-    private val getVersion: GetVersion,
-    savedStateHandle: SavedStateHandle
+    private val getVersion: GetVersion
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
@@ -99,10 +95,13 @@ class LoadActivitiesViewModel @Inject constructor(
         /** Determine from Remote if this version is still supported. **/
         val versionResponse: Response<Version> = getVersion()
         val versionSupported: Boolean = versionResponse.data?.isSupported ?: true
+        println("Version response is $versionResponse")
+        println("Is success: ${versionResponse is Success}")
+        println("Exception is ${(versionResponse as? Error)?.exception}")
 
         /** If unsupported, show an error to the athlete **/
         if (!versionSupported) {
-            ErrorUnsupported.push()
+            routeTo(NavigateUnsupportedVersion)
             return
         }
 
@@ -155,7 +154,7 @@ class LoadActivitiesViewModel @Inject constructor(
             } else {
                 // The athlete has de-authorized our app
                 clearAccessTokenUseCase()
-                routeTo(MainDestination.NavigateLogin)
+                routeTo(NavigateLogin)
             }
             activitiesCount == NO_ACTIVITIES_COUNT -> ErrorNoActivities.push()
             else -> routeTo(NavigateEditArt(fromLoad = true))

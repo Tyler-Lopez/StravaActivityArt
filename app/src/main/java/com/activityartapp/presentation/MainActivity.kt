@@ -92,6 +92,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateLogin -> navigateLogin()
             is NavigateEditArt -> navigateMakeArt(destination)
             is NavigateSaveArt -> navigateSaveArt(destination)
+            is NavigateUnsupportedVersion -> navigateUnsupportedVersion()
             is NavigateUp -> navigateUp()
             is ShareFile -> shareFile(destination)
         }
@@ -162,6 +163,14 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     )
                 )
             )
+        }
+    }
+
+    private fun navigateUnsupportedVersion() {
+        navController.navigate(route = UnsupportedVersion.route) {
+            popUpTo(route = Welcome.route) {
+                inclusive = true
+            }
         }
     }
 
