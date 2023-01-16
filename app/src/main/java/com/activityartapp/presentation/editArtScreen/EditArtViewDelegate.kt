@@ -118,7 +118,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             )
                             TYPE -> EditArtTypeScreen(
                                 typeActivitiesDistanceMetersSummed,
-                                typeAthleteName,
+                       //         typeAthleteName,
                                 typeCenterCustomText,
                                 typeLeftCustomText,
                                 typeRightCustomText,

@@ -2,7 +2,7 @@ package com.activityartapp.domain.use_case.activities
 
 import com.activityartapp.data.database.AthleteDatabase
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.activityart.domain.models.Athlete
+import com.activityartapp.domain.models.Athlete
 import javax.inject.Inject
 
 /**

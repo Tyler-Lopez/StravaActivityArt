@@ -1,9 +1,6 @@
 package com.activityartapp.domain.use_case.athleteUsage
 
-import com.activityartapp.activityart.domain.models.Athlete
-import com.activityartapp.data.database.AthleteDatabase
 import com.activityartapp.domain.AthleteUsageRepository
-import com.activityartapp.domain.models.dataExpired
 import com.activityartapp.util.Response
 import javax.inject.Inject
 

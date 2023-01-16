@@ -23,4 +23,8 @@ sealed interface LoadActivitiesViewState : ViewState {
     object ErrorNoActivities : LoadActivitiesViewState {
         override val totalActivitiesLoaded: Int = 0
     }
+
+    object ErrorUnsupported : LoadActivitiesViewState {
+        override val totalActivitiesLoaded: Int = 0
+    }
 }

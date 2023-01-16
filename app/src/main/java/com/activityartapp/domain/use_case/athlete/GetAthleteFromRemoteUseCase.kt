@@ -1,7 +1,7 @@
 package com.activityartapp.domain.use_case.athlete
 
 import com.activityartapp.data.remote.AthleteApi
-import com.activityartapp.activityart.domain.models.Athlete
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Error
 import com.activityartapp.util.Response.Success

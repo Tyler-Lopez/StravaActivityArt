@@ -1,4 +1,4 @@
-package com.activityartapp.activityart.domain.models
+package com.activityartapp.domain.models
 
 import java.util.concurrent.TimeUnit
 
@@ -9,12 +9,12 @@ import java.util.concurrent.TimeUnit
  */
 interface Athlete {
     val athleteId: Long
-    val userName: String?
-    val receivedOnUnixSeconds: Int?
-    val profilePictureMedium: String
-    val profilePictureLarge: String
-    val firstName: String
-    val lastName: String
+    // TODO COMMENTED FOR NOW val userName: String?
+    // TODO COMMENTED FOR NOW val receivedOnUnixSeconds: Int?
+    // TODO COMMENTED FOR NOW val profilePictureMedium: String
+    // TODO COMMENTED FOR NOW val profilePictureLarge: String
+    // TODO COMMENTED FOR NOW val firstName: String
+    // TODO COMMENTED FOR NOW val lastName: String
     // This is to tell us what we have and have not yet mapped to Room
     /*
     val yearMonthsCached: Map<Int, Int>

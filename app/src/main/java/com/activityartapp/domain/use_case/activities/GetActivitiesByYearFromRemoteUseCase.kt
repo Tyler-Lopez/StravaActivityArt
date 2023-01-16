@@ -2,7 +2,7 @@ package com.activityartapp.domain.use_case.activities
 
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
-import com.activityartapp.domain.use_case.athleteUsage.IncrementAthleteUsage
+import com.activityartapp.domain.use_case.athleteUsage.InsertAthleteUsage
 import com.activityartapp.util.Response
 import com.activityartapp.util.TimeUtils
 import com.activityartapp.util.doOnError
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
     private val getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
     private val getAthleteUsage: GetAthleteUsage,
-    private val incrementAthleteUsage: IncrementAthleteUsage,
+    private val insertAthleteUsage: InsertAthleteUsage,
     private val timeUtils: TimeUtils
 ) {
     companion object {
@@ -32,13 +32,14 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
     suspend operator fun invoke(
         accessToken: String,
         athleteId: Long,
+        initialAthleteUsage: Int,
+        onAthleteUsageChanged: (Int) -> Unit,
         year: Int,
         startMonth: Int = FIRST_MONTH_OF_YEAR
     ): Response<List<Activity>> {
 
-        println("Getting usage")
-        var usage = getAthleteUsage(athleteId).data ?: INITIAL_USAGE
-        println("After usage, usage is $usage")
+        var usage = initialAthleteUsage
+        println("GetActivitiesByYearFromRemoteUseCase: usage is $usage")
 
         var page = FIRST_PAGE
         var activitiesInLastPage = ACTIVITIES_PER_PAGE
@@ -61,7 +62,8 @@ class GetActivitiesByYearFromRemoteUseCase @Inject constructor(
                 ),
             )
                 .doOnSuccess {
-                    incrementAthleteUsage(athleteId, usage++)
+                    insertAthleteUsage(athleteId, ++usage)
+                    onAthleteUsageChanged(usage)
                     activitiesInLastPage = data.size
                     activities.addAll(data)
                 }

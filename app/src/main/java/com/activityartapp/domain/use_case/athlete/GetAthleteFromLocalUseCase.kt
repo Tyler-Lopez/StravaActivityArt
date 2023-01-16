@@ -1,8 +1,7 @@
 package com.activityartapp.domain.use_case.athlete
 
 import com.activityartapp.data.database.AthleteDatabase
-import com.activityartapp.activityart.domain.models.Athlete
-import com.activityartapp.domain.models.dataExpired
+import com.activityartapp.domain.models.Athlete
 import javax.inject.Inject
 
 class GetAthleteFromLocalUseCase @Inject constructor(
@@ -13,7 +12,8 @@ class GetAthleteFromLocalUseCase @Inject constructor(
             .athleteDao
             .getAthleteById(athleteId)
             ?.takeIf {
-                !it.dataExpired
+                // todo evalute !it.dataExpired
+                true
             }
     }
 }

@@ -1,6 +1,5 @@
 package com.activityartapp.presentation.editArtScreen
 
-import android.location.Location
 import android.util.Size
 import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.graphics.toArgb
@@ -8,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.models.ResolutionListFactory
-import com.activityartapp.domain.models.fullName
 import com.activityartapp.domain.use_case.activities.GetActivitiesFromCacheUseCase
 import com.activityartapp.domain.use_case.athlete.GetAthleteFromLocalUseCase
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateSaveArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
+import com.activityartapp.presentation.editArtScreen.*
 import com.activityartapp.presentation.editArtScreen.ColorType.*
 import com.activityartapp.presentation.editArtScreen.EditArtFilterType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.*
@@ -29,14 +28,8 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.util.*
 import com.activityartapp.util.enums.FontType
 import com.activityartapp.util.enums.FontWeightType
-import com.activityartapp.presentation.editArtScreen.*
-import com.activityartapp.util.FontSizeType
-import com.activityartapp.util.ImageSizeUtils
-import com.activityartapp.util.TimeUtils
-import com.activityartapp.util.VisualizationUtils
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.google.maps.android.PolyUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -306,7 +299,8 @@ class EditArtViewModel @Inject constructor(
                 typeActivitiesDistanceMetersSummed = activitiesFiltered
                     .sumOf { it.distance }
                     .roundToInt(),
-                typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
+                // Todo, decide whether or not to add this back...
+                //typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
                 typeFontSelected = FontType.QUICKSAND,
                 typeFontWeightSelected = FontWeightType.REGULAR,
                 typeFontItalicized = false,
@@ -675,7 +669,7 @@ class EditArtViewModel @Inject constructor(
 
                 when (typeCustomText.first) {
                     NONE -> null
-                    NAME -> typeAthleteName
+                  //  NAME -> typeAthleteName
                     DISTANCE_MILES -> activitiesFilteredSumDistance.meterToMilesStr()
                     DISTANCE_KILOMETERS -> activitiesFilteredSumDistance.meterToKilometerStr()
                     CUSTOM -> typeCustomText.second.takeIf { it.isNotBlank() }

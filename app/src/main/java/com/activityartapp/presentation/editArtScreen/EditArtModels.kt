@@ -144,7 +144,8 @@ sealed interface EditArtViewState : ViewState {
         val styleFont: ColorWrapper?, // Null when inheriting from activities
         val styleStrokeWidthType: StrokeWidthType,
         val typeActivitiesDistanceMetersSummed: Int,
-        val typeAthleteName: String,
+        // Todo, decide whether or not to add this back...
+        // val typeAthleteName: String,
         val typeFontSelected: FontType,
         val typeFontWeightSelected: FontWeightType,
         val typeFontItalicized: Boolean,

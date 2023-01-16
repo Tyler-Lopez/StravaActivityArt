@@ -1,12 +1,13 @@
 package com.activityartapp.data.remote.responses
 
-import com.activityartapp.activityart.domain.models.Athlete
+import com.activityartapp.domain.models.Athlete
 import com.google.gson.annotations.SerializedName
 import kotlin.collections.Map
 
 data class AthleteResponse(
     @SerializedName("id")
     override val athleteId: Long,
+    /* TODO COMMENTED FOR NOW
     @SerializedName("username")
     override val userName: String,
     @SerializedName("firstname")
@@ -17,6 +18,8 @@ data class AthleteResponse(
     override val profilePictureLarge: String,
     @SerializedName("profile_medium")
     override val profilePictureMedium: String,
+
+     */
     val athlete_type: Int,
     val badge_type_id: Int,
     val bikes: List<Bike>?,
@@ -41,7 +44,7 @@ data class AthleteResponse(
     val weight: Int
 ) : Athlete {
 
-    override val receivedOnUnixSeconds: Int? = null
+    // TODO COMMENTED FOR NOW override val receivedOnUnixSeconds: Int? = null
 
     override val lastCachedYearMonth: Map<Int, Int>
         get() = mapOf()

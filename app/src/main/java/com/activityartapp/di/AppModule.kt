@@ -18,7 +18,7 @@ import com.activityartapp.util.constants.StringConstants.BASE_URL
 import com.activityartapp.domain.use_case.activities.*
 import com.activityartapp.domain.use_case.athlete.*
 import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
-import com.activityartapp.domain.use_case.athleteUsage.IncrementAthleteUsage
+import com.activityartapp.domain.use_case.athleteUsage.InsertAthleteUsage
 import com.activityartapp.util.*
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -87,12 +87,12 @@ object AppModule {
     fun providesGetActivitiesByYearFromRemoteUseCase(
         getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
         getAthleteUsage: GetAthleteUsage,
-        incrementAthleteUsage: IncrementAthleteUsage,
+        insertAthleteUsage: InsertAthleteUsage,
         timeUtils: TimeUtils
     ) = GetActivitiesByYearFromRemoteUseCase(
         getActivitiesInYearByPageFromRemoteUseCase,
         getAthleteUsage,
-        incrementAthleteUsage,
+        insertAthleteUsage,
         timeUtils
     )
 

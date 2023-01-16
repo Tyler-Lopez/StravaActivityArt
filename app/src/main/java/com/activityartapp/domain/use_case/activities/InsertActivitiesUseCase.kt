@@ -4,6 +4,7 @@ import com.activityartapp.data.database.AthleteDatabase
 import com.activityartapp.data.entities.ActivityEntity
 import com.activityartapp.data.entities.AthleteEntity
 import com.activityartapp.domain.models.Activity
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.use_case.athlete.GetAthleteFromLocalUseCase
 import com.activityartapp.domain.use_case.athlete.InsertAthleteUseCase
 import java.util.concurrent.TimeUnit
@@ -20,6 +21,7 @@ class InsertActivitiesUseCase @Inject constructor(
         year: Int,
         lastStableMonth: Int
     ) {
+        println("Insert activities use case invoked for year $year, last stable month $lastStableMonth")
 
         val activityEntities = activities
                 // Todo, replace with general to ActivityEntity function
@@ -35,20 +37,25 @@ class InsertActivitiesUseCase @Inject constructor(
             .insertAllActivities(*activityEntities)
 
         /** Update athlete cache for inserted activities **/
+        println("Trying to get previous athlete")
         val prevAthlete = getAthleteFromLocalUseCase(athleteId)
-        prevAthlete?.lastCachedYearMonth.let { prevCache ->
-            val newCache = prevCache?.toMutableMap() ?: mutableMapOf()
+        println("Prev athlete was $prevAthlete")
+        (prevAthlete ?: object : Athlete {
+            override val athleteId: Long = athleteId
+            override val lastCachedYearMonth: Map<Int, Int> = mapOf()
+        }).lastCachedYearMonth.let { prevCache ->
+            val newCache = prevCache.toMutableMap()
             newCache[year] = lastStableMonth
-            prevAthlete?.apply {
+            apply {
                 insertAthleteUseCase(
                     AthleteEntity(
                         athleteId,
-                        userName,
-                        receivedOnUnixSeconds ?: TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
-                        profilePictureMedium,
-                        profilePictureLarge,
-                        firstName,
-                        lastName,
+                        // TODO COMMENTED FOR NOW   userName,
+                        // TODO COMMENTED FOR NOW   receivedOnUnixSeconds ?: TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
+                        // TODO COMMENTED FOR NOW     profilePictureMedium,
+                        // TODO COMMENTED FOR NOW      profilePictureLarge,
+                        // TODO COMMENTED FOR NOW       firstName,
+                        // TODO COMMENTED FOR NOW       lastName,
                         newCache
                     )
                 )

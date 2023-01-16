@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.models.OAuth2
+import com.activityartapp.domain.models.Version
 import com.activityartapp.domain.use_case.activities.GetActivitiesByYearUseCase
 import com.activityartapp.domain.use_case.activities.InsertActivitiesIntoCacheUseCase
+import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
+import com.activityartapp.domain.use_case.version.GetVersion
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateEditArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
@@ -39,6 +42,8 @@ class LoadActivitiesViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
     private val insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
+    private val getAthleteUsage: GetAthleteUsage,
+    private val getVersion: GetVersion,
     savedStateHandle: SavedStateHandle
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
@@ -47,6 +52,7 @@ class LoadActivitiesViewModel @Inject constructor(
         private const val DELAY_MS = 500L
         private const val NO_ACTIVITIES_COUNT = 0
         private const val YEAR_START = 2018
+        private const val ATHLETE_USAGE_DEFAULT = 0
         private val YEAR_NOW = Year.now().value
     }
 
@@ -90,10 +96,29 @@ class LoadActivitiesViewModel @Inject constructor(
         var activitiesCount = NO_ACTIVITIES_COUNT
         var error: ApiError? = null
 
+        /** Determine from Remote if this version is still supported. **/
+        val versionResponse: Response<Version> = getVersion()
+        val versionSupported: Boolean = versionResponse.data?.isSupported ?: true
+
+        /** If unsupported, show an error to the athlete **/
+        if (!versionSupported) {
+            ErrorUnsupported.push()
+            return
+        }
+
+        /** If we don't have internet to know if the version is supported, make sure we don't access the internet **/
+        val internetEnabled: Boolean = versionResponse is Success
+
         /* OAuth2 should never return null here */
         val oAuth2 = getOAuth2() ?: error("OAuth2 is null for an unknown reason...")
         val accessToken = oAuth2.accessToken
         val athleteId = oAuth2.athleteId
+
+        /** Fetch Athlete Usage from remote if internet is enabled **/
+        var usage: Int = internetEnabled
+            .takeIf { true }
+            ?.let { getAthleteUsage(athleteId = athleteId).data }
+            ?: ATHLETE_USAGE_DEFAULT
 
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
@@ -102,8 +127,10 @@ class LoadActivitiesViewModel @Inject constructor(
                 accessToken = accessToken,
                 athleteId = athleteId,
                 year = year,
+                initialAthleteUsage = usage,
+                onAthleteUsageChanged = { usage++ },
+                internetEnabled = internetEnabled
             ).doOnSuccess {
-
                 /** Add data to Singleton cache for future access **/
                 insertActivitiesIntoCacheUseCase(year, data)
 

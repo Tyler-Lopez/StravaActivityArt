@@ -1,9 +1,8 @@
 package com.activityartapp.domain.use_case.activities
 
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.activityart.domain.models.Athlete
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.use_case.athlete.GetLastCachedYearMonthsUseCase
-import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Success
 import com.activityartapp.util.TimeUtils
@@ -13,6 +12,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
 
@@ -38,8 +38,13 @@ class GetActivitiesByYearUseCase @Inject constructor(
     suspend operator fun invoke(
         accessToken: String,
         athleteId: Long,
+        initialAthleteUsage: Int,
+        internetEnabled: Boolean,
+        onAthleteUsageChanged: (Int) -> Unit,
         year: Int,
     ): Response<List<Activity>> {
+
+        var athleteUsage = initialAthleteUsage
 
         /** If Singleton RAM cache has been populated for this year prev, return that **/
         getActivitiesFromCacheUseCase(year)?.apply { return Success(this) }
@@ -59,47 +64,58 @@ class GetActivitiesByYearUseCase @Inject constructor(
          * receive from remote */
         if (lastCachedMonth != LAST_MONTH_OF_YEAR) {
             println("Last cached month: $lastCachedMonth")
-            getActivitiesByYearFromRemoteUseCase(
-                accessToken = accessToken,
-                athleteId = athleteId,
-                year = year,
-                startMonth = cachedYearMonths[year].takeIf {
-                    it != NO_CACHED_MONTHS
-                }?.plus(1) ?: FIRST_MONTH_OF_YEAR
-            ).doOnSuccess {
+            if (internetEnabled) {
+                getActivitiesByYearFromRemoteUseCase(
+                    accessToken = accessToken,
+                    athleteId = athleteId,
+                    year = year,
+                    initialAthleteUsage = initialAthleteUsage,
+                    onAthleteUsageChanged = onAthleteUsageChanged,
+                    startMonth = cachedYearMonths[year].takeIf {
+                        it != NO_CACHED_MONTHS
+                    }?.plus(1) ?: FIRST_MONTH_OF_YEAR
+                ).doOnSuccess {
 
-                val cal = Calendar.getInstance()
-                val currMonth = cal.get(Calendar.MONTH)
-                val currYear = cal.get(Calendar.YEAR)
-                val lastStableMonth = if (currYear == year) {
-                    currMonth - 1
-                } else {
-                    LAST_MONTH_OF_YEAR
-                }
-                toReturn += data
-
-                /** Cache received activities from remote, excl currMonth **/
-                data.filter {
-                    if (currYear == year) {
-                        timeUtils.iso8601StringToMonth(it.iso8601LocalDate) != currMonth
+                    val cal = Calendar.getInstance()
+                    val currMonth = cal.get(Calendar.MONTH)
+                    val currYear = cal.get(Calendar.YEAR)
+                    val lastStableMonth = if (currYear == year) {
+                        currMonth - 1
                     } else {
-                        true
+                        LAST_MONTH_OF_YEAR
                     }
-                }
-                    .let {
-                        lastStableMonth.takeIf { it >= 0 }?.let { month ->
-                            insertActivitiesUseCase(it, athleteId, year, month)
+                    toReturn += data
+
+                    /** Cache received activities from remote, excl currMonth **/
+                    data.filter {
+                        if (currYear == year) {
+                            timeUtils.iso8601StringToMonth(it.iso8601LocalDate) != currMonth
+                        } else {
+                            true
                         }
                     }
+                        .let {
+                            println("Here, have list of activities ${it.size} for year $year")
+                            lastStableMonth.takeIf { it >= 0 }?.let { month ->
+                                insertActivitiesUseCase(it, athleteId, year, month)
+                            }
+                        }
 
-            }
-                .doOnError {
-                    println("Here, error $exception")
-                    return Response.Error(
-                        data = toReturn,
-                        exception = exception
-                    )
                 }
+                    .doOnError {
+                        println("Here, error $exception")
+                        return Response.Error(
+                            data = toReturn,
+                            exception = exception
+                        )
+                    }
+            } else {
+                /** Force return unknown host exception if internet disabled **/
+                return Response.Error(
+                    data = toReturn,
+                    exception = UnknownHostException()
+                )
+            }
         }
 
         /** Return successful result **/

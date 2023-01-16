@@ -1,6 +1,6 @@
 package com.activityartapp.domain.use_case.athlete
 
-import com.activityartapp.activityart.domain.models.Athlete
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Success
