@@ -12,8 +12,14 @@ import com.activityartapp.R
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
-fun CardColumn(content: @Composable ColumnScope.() -> Unit) {
-    Card(backgroundColor = colorResource(R.color.n20_icicle)) {
+fun CardColumn(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        backgroundColor = colorResource(R.color.n20_icicle),
+        modifier = modifier
+    ) {
         Column(
             modifier = Modifier
                 .defaultMinSize(minWidth = dimensionResource(id = R.dimen.button_min_width))
