@@ -15,13 +15,16 @@ class UriUtils {
      * [com.activityartapp.activityart.domain.use_case.authentication.GetAccessTokenUseCase]
      * to fetch an [com.activityartapp.activityart.domain.models.OAuth2] object from remote.
      *
+     * On Nexus 7 API 30 when redirecting from Browser (Strava not installed)
+     * The URI is com.activityartapp://myapp.com?state=&code=9068207431c5f9ac453fc06d1ba7091e8b47e2d5&scope=read,activity:read,activity:read_all
      * @return Parsed URI, or null if invalid.
      */
-    fun parseUri(uri: Uri): String? =
-        uri.toString()
-            .takeIf { it.lastIndex >= URI_START_INDEX }
-            ?.substring(URI_START_INDEX)
-            ?.takeIf { it.contains(URI_DELIMITER_CHAR) }
-            ?.substringBefore(URI_DELIMITER_CHAR)
-
+    fun parseUri(uri: Uri): String = uri
+        .toString()
+        .run {
+            substring(
+                startIndex = indexOf("code=") + 5,
+                endIndex = indexOf("&scope=")
+            )
+        }
 }
