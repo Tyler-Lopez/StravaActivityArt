@@ -26,6 +26,7 @@ class FileRepositoryImpl @Inject constructor(
             val fileName = System.currentTimeMillis().toString() + ".png"
             val resolver = context.contentResolver
 
+            println("Here saving bitmap to gallery")
             val uri: Uri? = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
                 println("Here saving to gallery when Build is > Q")
                 /**

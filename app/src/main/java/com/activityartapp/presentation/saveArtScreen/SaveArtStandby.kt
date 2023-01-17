@@ -41,7 +41,8 @@ fun SaveArtStandby(
     eventReceiver: EventReceiver<SaveArtViewEvent>,
     snackbarHostState: SnackbarHostState
 ) {
-    val osGreaterThan10 = BuildConfig.VERSION_CODE > Build.VERSION_CODES.Q
+    /** OS Greater than Android 10 (API 30) do not require permissions **/
+    val osGreaterThan10 = Build.VERSION.SDK_INT > Build.VERSION_CODES.Q
     val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     /** Activity resumes upon returning to foreground when share activity is closed **/

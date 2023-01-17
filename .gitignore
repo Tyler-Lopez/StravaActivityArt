@@ -19,3 +19,4 @@ app/src/main/java/com/company/activityart/util/ClientSecret.kt
 *.aab
 app/google-services.json
 app/src/main/java/com/activityartapp/util/constants/ClientSecret.kt
+.idea/deploymentTargetDropDown.xml
