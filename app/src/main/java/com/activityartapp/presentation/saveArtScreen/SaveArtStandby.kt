@@ -24,6 +24,7 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.BuildConfig
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.button.MediumEmphasisButton
@@ -53,14 +54,7 @@ fun SaveArtStandby(
     }
 
     Box {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                space = 16.dp,
-                alignment = Alignment.CenterVertically
-            )
-        ) {
+        ScreenBackground {
             Image(
                 bitmap = bitmapScreenSize.asImageBitmap(),
                 modifier = Modifier.weight(1f, false),
