@@ -264,4 +264,7 @@
     <string name="error_unsupported_version_header">Unsupported Version</string>
     <string name="error_unsupported_version_prompt">Please update to the newest app version to use Activity Art. Thanks!</string>
     <string name="error_unsupported_version_description">Oops! You\'re using a version of Activity Art that is no longer supported.</string>
+    <string name="error_permission_denied_header">Unable to Download</string>
+    <string name="error_permission_denied_description">We need permission to download your art. When we asked for this permission earlier, you denied it. We aren\'t able to request it again.</string>
+    <string name="error_permission_denied_prompt">To grant this permission, open your device\'s settings, find Activity Art, and enable the storage permission.</string>
 </resources>

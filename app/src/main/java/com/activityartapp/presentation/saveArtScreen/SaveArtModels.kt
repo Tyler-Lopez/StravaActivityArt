@@ -9,6 +9,7 @@ import com.activityartapp.architecture.ViewState
 sealed interface SaveArtViewEvent : ViewEvent {
     object ActivityResumed : SaveArtViewEvent
     object ClickedDownload : SaveArtViewEvent
+    object ClickedDownloadWhenPermissionPermaDenied : SaveArtViewEvent
     object ClickedNavigateUp : SaveArtViewEvent
     object ClickedShare : SaveArtViewEvent
     data class ScreenMeasured(val size: Size) : SaveArtViewEvent

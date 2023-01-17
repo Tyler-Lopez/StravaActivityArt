@@ -90,9 +90,9 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             is NavigateAbout -> navigateAbout()
             is NavigateLoadActivities -> navigateLoadActivities(destination)
             is NavigateLogin -> navigateLogin()
+            is NavigateError -> onNavigateError(destination)
             is NavigateEditArt -> navigateMakeArt(destination)
             is NavigateSaveArt -> navigateSaveArt(destination)
-            is NavigateUnsupportedVersion -> navigateUnsupportedVersion()
             is NavigateUp -> navigateUp()
             is ShareFile -> shareFile(destination)
         }
@@ -125,6 +125,22 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 //     "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
             ) {
                 inclusive = true
+            }
+        }
+    }
+
+    private fun onNavigateError(destination: NavigateError) {
+        navController.navigate(
+            route = Error.withArgs(
+                args = arrayOf(
+                    ErrorScreen to destination.errorScreenType.toString()
+                )
+            )
+        ) {
+            if (destination.clearNavigationHistory) {
+                popUpTo(route = Welcome.route) {
+                    inclusive = true
+                }
             }
         }
     }
@@ -163,14 +179,6 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     )
                 )
             )
-        }
-    }
-
-    private fun navigateUnsupportedVersion() {
-        navController.navigate(route = UnsupportedVersion.route) {
-            popUpTo(route = Welcome.route) {
-                inclusive = true
-            }
         }
     }
 

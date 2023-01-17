@@ -75,18 +75,18 @@ fun SaveArtStandby(
                     text = stringResource(R.string.save_art_download_art)
                 ) {
                     /** For Android <= 10, permission must be requested **/
-                    /** For Android <= 10, permission must be requested **/
                     permissionState.apply {
                         when {
                             osGreaterThan10 || hasPermission -> {
                                 eventReceiver.onEventDebounced(ClickedDownload)
                             }
-                            !permissionRequested || shouldShowRationale -> {
+                            shouldShowRationale -> {
                                 permissionState.launchPermissionRequest()
                             }
                             else -> {
-                                // TODO
-                                println("Permission is perma-denied. Handle this later.")
+                                eventReceiver.onEventDebounced(
+                                    ClickedDownloadWhenPermissionPermaDenied
+                                )
                             }
                         }
                     }

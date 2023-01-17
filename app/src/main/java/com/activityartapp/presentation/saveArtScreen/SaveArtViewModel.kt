@@ -11,6 +11,7 @@ import com.activityartapp.domain.use_case.activities.GetActivitiesFromCacheUseCa
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
+import com.activityartapp.presentation.errorScreen.ErrorScreenType
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.*
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
@@ -64,6 +65,7 @@ class SaveArtViewModel @Inject constructor(
         when (event) {
             is ActivityResumed -> onActivityResumed()
             is ClickedDownload -> onClickedDownload()
+            is ClickedDownloadWhenPermissionPermaDenied -> onClickedDownloadWhenPermissionPermaDenied()
             is ClickedNavigateUp -> onClickedNavigateUp()
             is ClickedShare -> onClickedShare()
             is ScreenMeasured -> onScreenMeasured(event)
@@ -91,6 +93,17 @@ class SaveArtViewModel @Inject constructor(
                     }
                     .also { copyDownloadTerminate().push() }
             }
+        }
+    }
+
+    private fun onClickedDownloadWhenPermissionPermaDenied() {
+        viewModelScope.launch {
+            routeTo(
+                NavigateError(
+                    clearNavigationHistory = false,
+                    errorScreenType = ErrorScreenType.PERMISSION_DENIED
+                )
+            )
         }
     }
 

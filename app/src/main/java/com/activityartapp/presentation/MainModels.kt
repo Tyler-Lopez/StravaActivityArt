@@ -5,6 +5,7 @@ import com.activityartapp.architecture.Destination
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
+import com.activityartapp.presentation.errorScreen.ErrorScreenType
 import com.activityartapp.util.FontSizeType
 
 sealed interface MainViewState : ViewState {
@@ -23,6 +24,11 @@ sealed interface MainDestination : Destination {
     object NavigateLoadActivities : MainDestination
 
     data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
+    data class NavigateError(
+        val clearNavigationHistory: Boolean,
+        val errorScreenType: ErrorScreenType
+    ) : MainDestination
+
     data class NavigateSaveArt(
         val activityTypes: List<String>,
         val colorActivitiesArgb: Int,
@@ -42,7 +48,6 @@ sealed interface MainDestination : Destination {
         val textFontSize: FontSizeType
     ) : MainDestination
 
-    object NavigateUnsupportedVersion : MainDestination
     object NavigateUp : MainDestination
     data class ShareFile(val uri: Uri) : MainDestination
 }

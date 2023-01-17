@@ -1,4 +1,4 @@
-package com.activityartapp.presentation.common.errorScreen
+package com.activityartapp.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -17,14 +17,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
-import com.activityartapp.presentation.common.CardColumn
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.button.LowEmphasisButton
 import com.activityartapp.presentation.common.button.MediumEmphasisButton
 import com.activityartapp.presentation.common.type.Body
-import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.common.type.TitleTwo
 
 @Composable

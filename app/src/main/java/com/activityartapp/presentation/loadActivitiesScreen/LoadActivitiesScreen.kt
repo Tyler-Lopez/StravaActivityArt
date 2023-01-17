@@ -12,7 +12,7 @@ import com.activityartapp.R
 import com.activityartapp.data.remote.responses.ActivityResponse
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.common.ScreenBackground
-import com.activityartapp.presentation.common.errorScreen.ErrorScreen
+import com.activityartapp.presentation.common.ErrorScreen
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.util.classes.ApiError

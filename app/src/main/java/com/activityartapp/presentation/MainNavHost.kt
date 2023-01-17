@@ -9,13 +9,14 @@ import com.activityartapp.presentation.aboutScreen.AboutScreen
 import com.activityartapp.presentation.aboutScreen.AboutViewModel
 import com.activityartapp.presentation.editArtScreen.EditArtViewDelegate
 import com.activityartapp.presentation.editArtScreen.EditArtViewModel
+import com.activityartapp.presentation.errorScreen.ErrorScreen
+import com.activityartapp.presentation.errorScreen.ErrorViewModel
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesScreen
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewModel
 import com.activityartapp.presentation.loginScreen.LoginScreen
 import com.activityartapp.presentation.loginScreen.LoginViewModel
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewDelegate
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewModel
-import com.activityartapp.presentation.unsupportedVersionScreen.UnsupportedVersionScreen
 import com.activityartapp.presentation.welcomeScreen.WelcomeScreen
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewModel
 import com.activityartapp.util.NavArgSpecification.*
@@ -89,8 +90,15 @@ fun MainNavHost(
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(UnsupportedVersion) {
-            UnsupportedVersionScreen()
+        swipingInOutComposable(
+            screen = Error,
+            navArgSpecifications = listOf(
+                ErrorScreen
+            )
+        ) {
+            ErrorScreen(viewModel = hiltViewModel<ErrorViewModel>().apply {
+                attachRouter(router)
+            })
         }
     }
 }

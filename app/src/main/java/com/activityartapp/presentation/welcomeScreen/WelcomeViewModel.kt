@@ -6,6 +6,7 @@ import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
 import com.activityartapp.domain.use_case.version.GetVersion
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
+import com.activityartapp.presentation.errorScreen.ErrorScreenType
 import com.activityartapp.presentation.welcomeScreen.WelcomeViewEvent.*
 import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
@@ -28,7 +29,12 @@ class WelcomeViewModel @Inject constructor(
                 .doOnSuccess {
                     println("Version received ${data.isLatest} ${data.isSupported}")
                     if (!data.isSupported) {
-                        routeTo(NavigateUnsupportedVersion)
+                        routeTo(
+                            NavigateError(
+                                clearNavigationHistory = true,
+                                errorScreenType = ErrorScreenType.UNSUPPORTED_VERSION
+                            )
+                        )
                     } else {
                         WelcomeViewState.Standby(
                             data.isLatest

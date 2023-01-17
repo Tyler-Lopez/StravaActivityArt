@@ -14,6 +14,7 @@ sealed interface NavArgSpecification {
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLOR_BACKGROUND_KEY = "colorBackground"
         private const val COLOR_FONT_KEY = "colorFont"
+        private const val ERROR_SCREEN_TYPE = "errorScreenType"
         private const val FILTER_DATE_AFTER_MS_KEY = "filterDateAfterMs"
         private const val FILTER_DATE_BEFORE_MS_KEY = "filterDateBeforeMs"
         private const val FILTER_DISTANCE_LESS_THAN_KEY = "filterDistanceLessThan"
@@ -67,6 +68,10 @@ sealed interface NavArgSpecification {
 
     object ColorFontArgb : NavArgSpecification {
         override val name: String = COLOR_FONT_KEY
+    }
+
+    object ErrorScreen : NavArgSpecification {
+        override val name: String = ERROR_SCREEN_TYPE
     }
 
     object FilterDateAfterMs : NavArgSpecification {

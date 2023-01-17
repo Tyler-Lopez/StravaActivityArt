@@ -14,6 +14,7 @@ import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
 import com.activityartapp.domain.use_case.version.GetVersion
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
+import com.activityartapp.presentation.errorScreen.ErrorScreenType
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewEvent.*
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.util.Response
@@ -101,7 +102,12 @@ class LoadActivitiesViewModel @Inject constructor(
 
         /** If unsupported, show an error to the athlete **/
         if (!versionSupported) {
-            routeTo(NavigateUnsupportedVersion)
+            routeTo(
+                NavigateError(
+                    clearNavigationHistory = true,
+                    errorScreenType = ErrorScreenType.UNSUPPORTED_VERSION
+                )
+            )
             return
         }
 
