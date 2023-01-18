@@ -45,5 +45,4 @@ This is a critical function to ensure that we may disable the usage of older ver
 ## References
 https://developers.strava.com/docs/authentication/<br>
 https://developers.strava.com/guidelines/<br>
-// Todo, remove Singleton cache in favor of SSH
 https://medium.com/@davethomas_9528/please-dont-use-singletons-to-persist-state-on-android-7bac9bc78b29<br>
