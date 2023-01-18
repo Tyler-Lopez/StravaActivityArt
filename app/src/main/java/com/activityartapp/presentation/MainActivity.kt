@@ -3,6 +3,8 @@ package com.activityartapp.presentation
 import android.content.Intent
 import android.content.Intent.*
 import android.os.Bundle
+import android.os.Parcel
+import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -13,16 +15,22 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.activityartapp.architecture.Router
+import com.activityartapp.data.cache.ActivitiesCache
+import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.MainViewEvent.LoadAuthentication
 import com.activityartapp.presentation.MainViewState.Authenticated
 import com.activityartapp.presentation.ui.theme.AthleteApiArtTheme
 import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.util.ParcelableActivity
 import com.activityartapp.util.Screen.*
 import com.activityartapp.util.constants.TokenConstants.authUri
+import com.activityartapp.util.parcelize
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.Year
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -30,7 +38,16 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), Router<MainDestination> {
 
+    companion object {
+        private const val YEAR_EARLIEST = 2018
+        private val YEAR_NOW = Year.now().value
+        private const val CACHED_ACTIVITIES_KEY = "CACHED_ACTIVITIES"
+    }
+
     private lateinit var navController: NavHostController
+
+    @Inject
+    lateinit var activitiesCache: ActivitiesCache
 
     @Inject
     lateinit var gson: Gson
@@ -39,6 +56,13 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         // Push event to ViewModel to determine authentication
         val intentUri = intent.data.also { intent.data = null }
         super.onCreate(savedInstanceState)
+        (YEAR_EARLIEST..YEAR_NOW).forEach { year ->
+            savedInstanceState?.getParcelableArray("$CACHED_ACTIVITIES_KEY$year")?.mapNotNull {
+                it as? (ParcelableActivity)
+            }?.let {
+                activitiesCache.cachedActivitiesByYear[year] = it
+            }
+        }
         // Install Splash Screen before content is setContent
         val splashScreen = installSplashScreen()
         setContent {
@@ -77,6 +101,17 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        (YEAR_EARLIEST..YEAR_NOW).forEach {
+            outState.putParcelableArray(
+                "$CACHED_ACTIVITIES_KEY$it",
+                (activitiesCache.cachedActivitiesByYear[it] ?: listOf()).parcelize()
+                    .toTypedArray()
+            )
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onNewIntent(intent: Intent) {
