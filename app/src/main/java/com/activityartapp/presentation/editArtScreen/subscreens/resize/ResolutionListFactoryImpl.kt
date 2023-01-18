@@ -32,6 +32,7 @@ class ResolutionListFactoryImpl : ResolutionListFactory {
             Resolution.PrintResolution(6000, 6000, 20, 20),
             Resolution.PrintResolution(6000, 9000, 20, 30),
             Resolution.PrintResolution(6000, 12000, 20, 40),
+            Resolution.CustomResolution()
         )
     }
 }

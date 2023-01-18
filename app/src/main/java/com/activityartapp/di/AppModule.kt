@@ -49,7 +49,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideActivitiesCache() = ActivitiesCache
+    fun provideActivitiesCache() = ActivitiesCache()
 
     @Provides
     fun providesGetAthleteFromLocalUseCase(athleteDatabase: AthleteDatabase) =

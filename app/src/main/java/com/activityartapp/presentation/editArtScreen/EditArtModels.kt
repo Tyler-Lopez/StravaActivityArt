@@ -10,9 +10,12 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
+import com.activityartapp.domain.models.ResolutionListFactory
+import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.util.FontSizeType
@@ -20,8 +23,10 @@ import com.activityartapp.util.enums.FontType
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import javax.inject.Inject
 
 annotation class UnixMS
 
@@ -107,62 +112,111 @@ sealed interface EditArtViewState : ViewState {
     val pagerStateWrapper: PagerStateWrapper
 
     data class Loading(
-        override val dialogNavigateUpActive: Boolean,
-        override val pagerStateWrapper: PagerStateWrapper
+        override val dialogNavigateUpActive: Boolean = false,
+        override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
+            pagerHeaders = EditArtHeaderType.values().toList(),
+            pagerState = PagerState(EditArtHeaderType.values().toList().size),
+            fadeLengthMs = Standby.FADE_LENGTH_MS // todo
+        )
     ) : EditArtViewState
 
     /**
-     * @param filterDateSelectedActivitiesCount How many activities are selected
-     * after applying filter for date and any other preceding filters.
-     * @param filterTypesCount How many activities are selected after applying
-     * filter for type and any other preceding filters.
+     * @param styleActivities The color of the activities on the art.
+     * @param styleBackground The color of the background of the art.
+     * @param styleFont The color of text on the art. When set to null, [styleActivities] determines
+     * the color of the text.
      */
+    @Parcelize
     data class Standby(
-        val bitmap: Bitmap?,
-        override val dialogNavigateUpActive: Boolean,
+        @IgnoredOnParcel val bitmap: Bitmap? = null,
+        @IgnoredOnParcel override val dialogNavigateUpActive: Boolean = false,
         val filterActivitiesCountDate: Int,
         val filterActivitiesCountDistance: Int,
         val filterActivitiesCountType: Int,
         val filterDateSelections: List<DateSelection>?,
         val filterDateSelectionIndex: Int,
-        val filterDistanceSelected: ClosedFloatingPointRange<Double>?,
-        val filterDistanceTotal: ClosedFloatingPointRange<Double>?,
-        val filterTypes: List<Pair<String, Boolean>>,
-        override val pagerStateWrapper: PagerStateWrapper,
-        val scrollStateFilter: ScrollState,
-        val scrollStateStyle: ScrollState,
-        val scrollStateType: ScrollState,
-        val scrollStateResize: ScrollState,
-        val sizeActual: Size,
-        val sizeResolutionList: List<Resolution>,
-        val sizeResolutionListSelectedIndex: Int,
-        val sizeCustomWidthPx: Int,
-        val sizeCustomHeightPx: Int,
-        val sizeCustomRangePx: IntRange,
-        val styleActivities: ColorWrapper,
-        val styleBackground: ColorWrapper,
-        val styleFont: ColorWrapper?, // Null when inheriting from activities
-        val styleStrokeWidthType: StrokeWidthType,
+        val filterDistanceSelectedStart: Double? = null,
+        val filterDistanceSelectedEnd: Double? = null,
+        val filterDistanceTotalStart: Double?,
+        val filterDistanceTotalEnd: Double?,
+        val filterTypes: List<Pair<String, Boolean>>?,
+        @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
+            pagerHeaders = EditArtHeaderType.values().toList(),
+            pagerState = PagerState(EditArtHeaderType.values().toList().size),
+            fadeLengthMs = FADE_LENGTH_MS
+        ),
+        @IgnoredOnParcel val scrollStateFilter: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel val scrollStateStyle: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val sizeResolutionList: List<Resolution> = ResolutionListFactoryImpl().create(),
+        val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
+        @IgnoredOnParcel val sizeCustomMaxPx: Int = CUSTOM_SIZE_MAXIMUM_PX,
+        @IgnoredOnParcel val sizeCustomMinPx: Int = CUSTOM_SIZE_MINIMUM_PX,
+        val styleActivities: ColorWrapper = ColorWrapper(
+            alpha = INIT_ACTIVITIES_ALPHA,
+            blue = INIT_ACTIVITIES_BLUE,
+            green = INIT_ACTIVITIES_GREEN,
+            red = INIT_ACTIVITIES_RED
+        ),
+        val styleBackground: ColorWrapper = ColorWrapper(
+            alpha = INIT_BACKGROUND_ALPHA,
+            blue = INIT_BACKGROUND_BLUE,
+            green = INIT_BACKGROUND_GREEN,
+            red = INIT_BACKGROUND_RED
+        ),
+        val styleFont: ColorWrapper? = null,
+        val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
         val typeActivitiesDistanceMetersSummed: Int,
-        // Todo, decide whether or not to add this back...
-        // val typeAthleteName: String,
-        val typeFontSelected: FontType,
-        val typeFontWeightSelected: FontWeightType,
-        val typeFontItalicized: Boolean,
-        val typeFontSizeSelected: FontSizeType,
-        val typeMaximumCustomTextLength: Int,
-        val typeLeftSelected: EditArtTypeType,
-        val typeLeftCustomText: String,
-        val typeCenterSelected: EditArtTypeType,
-        val typeCenterCustomText: String,
-        val typeRightSelected: EditArtTypeType,
-        val typeRightCustomText: String,
-    ) : EditArtViewState {
+        val typeFontSelected: FontType = INIT_TYPE_FONT_SELECTION,
+        val typeFontWeightSelected: FontWeightType = INIT_TYPE_FONT_WEIGHT_SELECTION,
+        val typeFontItalicized: Boolean = INIT_TYPE_IS_ITALICIZED,
+        val typeFontSizeSelected: FontSizeType = INIT_TYPE_FONT_SIZE_SELECTION,
+        @IgnoredOnParcel val typeMaximumCustomTextLength: Int = CUSTOM_TEXT_MAXIMUM_LENGTH,
+        val typeLeftSelected: EditArtTypeType = INIT_TYPE_TYPE,
+        val typeLeftCustomText: String = INIT_TYPE_CUSTOM_TEXT,
+        val typeCenterSelected: EditArtTypeType = INIT_TYPE_TYPE,
+        val typeCenterCustomText: String = INIT_TYPE_CUSTOM_TEXT,
+        val typeRightSelected: EditArtTypeType = INIT_TYPE_TYPE,
+        val typeRightCustomText: String = INIT_TYPE_CUSTOM_TEXT,
+    ) : EditArtViewState, Parcelable {
 
         companion object {
+            private const val CUSTOM_SIZE_MINIMUM_PX = 100
+            private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
+            const val FADE_LENGTH_MS = 1000
+
+            private const val INITIAL_SCROLL_STATE = 0
+            private const val INITIAL_SELECTED_RES_INDEX = 0
+
+            /** Initial Style settings **/
+            private const val INIT_ACTIVITIES_ALPHA = 1f
+            private const val INIT_ACTIVITIES_BLUE = 1f
+            private const val INIT_ACTIVITIES_GREEN = 1f
+            private const val INIT_ACTIVITIES_RED = 1f
+            private const val INIT_BACKGROUND_ALPHA = 1f
+            private const val INIT_BACKGROUND_BLUE = 0f
+            private const val INIT_BACKGROUND_GREEN = 0f
+            private const val INIT_BACKGROUND_RED = 0f
+            private val INIT_STROKE_WIDTH = StrokeWidthType.MEDIUM
+
+            /** Initial Type settings **/
+            private const val CUSTOM_TEXT_MAXIMUM_LENGTH = 30
+            private const val INIT_TYPE_CUSTOM_TEXT = ""
+            private val INIT_TYPE_FONT_SELECTION = FontType.JOSEFIN_SANS
+            private val INIT_TYPE_FONT_WEIGHT_SELECTION = FontWeightType.REGULAR
+            private val INIT_TYPE_FONT_SIZE_SELECTION = FontSizeType.MEDIUM
+            private const val INIT_TYPE_IS_ITALICIZED = false
+            private val INIT_TYPE_TYPE = EditArtTypeType.NONE
+
             private const val NO_ACTIVITIES_COUNT = 0
         }
 
+        @Inject
+        @IgnoredOnParcel
+        lateinit var resolutionListFactory: ResolutionListFactory
+
+        @IgnoredOnParcel
         val atLeastOneActivitySelected = minOf(
             filterActivitiesCountDate,
             filterActivitiesCountDistance,
@@ -211,13 +265,26 @@ data class ColorWrapper(
     }
 }
 
-sealed interface DateSelection {
+
+sealed interface DateSelection : Parcelable {
+    @Parcelize
     object All : DateSelection
+
+    @Parcelize
     data class Year(val year: Int) : DateSelection
+
+    @Parcelize
     data class Custom(
-        @UnixMS val dateSelected: LongProgression?,
-        @UnixMS val dateTotal: LongProgression
-    ) : DateSelection
+        @UnixMS val dateSelectedStart: Long?,
+        @UnixMS val dateSelectedEnd: Long?,
+        @UnixMS val dateTotalStart: Long,
+        @UnixMS val dateTotalEnd: Long
+    ) : DateSelection {
+        val dateSelected: LongProgression?
+            get() = dateSelectedEnd?.let { dateSelectedStart?.rangeTo(it) }
+        val dateTotal: LongProgression
+            get() = dateTotalEnd.let { dateTotalStart.rangeTo(it) }
+    }
 }
 
 enum class StyleType(
@@ -252,7 +319,7 @@ enum class StrokeWidthType(val headerId: Int) {
 }
 
 
-sealed interface Resolution {
+sealed interface Resolution : Parcelable {
 
     val widthPx: Int
     val heightPx: Int
@@ -291,6 +358,7 @@ sealed interface Resolution {
         }
     }
 
+    @Parcelize
     data class ComputerResolution(
         override val stringResourceId: Int,
         override val origWidthPx: Int,
@@ -307,6 +375,7 @@ sealed interface Resolution {
         }
     }
 
+    @Parcelize
     data class PrintResolution(
         override val origWidthPx: Int,
         override val origHeightPx: Int,
@@ -338,17 +407,14 @@ sealed interface Resolution {
             get() = R.string.edit_art_resize_option_print
     }
 
+    @Parcelize
     data class CustomResolution(
-        val customWidthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
-        val customHeightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
+        override val widthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
+        override val heightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
     ) : Resolution {
 
         override val stringResourceId: Int
             get() = R.string.edit_art_resize_option_custom
-        override val widthPx: Int
-            get() = customWidthPx
-        override val heightPx: Int
-            get() = customHeightPx
 
         @Composable
         override fun displayTextResolution(): String {

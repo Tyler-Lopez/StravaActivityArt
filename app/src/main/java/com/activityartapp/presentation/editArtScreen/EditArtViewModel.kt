@@ -1,90 +1,88 @@
 package com.activityartapp.presentation.editArtScreen
 
+import android.os.Parcelable
+import android.util.Range
 import android.util.Size
-import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.util.rangeTo
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.domain.models.ResolutionListFactory
 import com.activityartapp.domain.use_case.activities.GetActivitiesFromCacheUseCase
-import com.activityartapp.domain.use_case.athlete.GetAthleteFromLocalUseCase
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateSaveArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
 import com.activityartapp.presentation.editArtScreen.*
 import com.activityartapp.presentation.editArtScreen.ColorType.*
 import com.activityartapp.presentation.editArtScreen.EditArtFilterType.*
+import com.activityartapp.presentation.editArtScreen.EditArtFilterType.Companion.filterFinal
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewState.Loading
 import com.activityartapp.presentation.editArtScreen.EditArtViewState.Standby
-import com.activityartapp.presentation.editArtScreen.StrokeWidthType.MEDIUM
 import com.activityartapp.presentation.editArtScreen.StyleType.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.activityartapp.util.*
-import com.activityartapp.util.enums.FontType
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlin.reflect.KProperty1
+
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
-    private val athleteFromLocalUseCase: GetAthleteFromLocalUseCase,
-    private val activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
+    activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
     private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
-    private val resolutionListFactory: ResolutionListFactory,
-    private val visualizationUtils: VisualizationUtils
+    private val visualizationUtils: VisualizationUtils,
+    private val savedStateHandle: SavedStateHandle,
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        private const val CUSTOM_SIZE_MINIMUM_PX = 100
-        private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
         private const val DEFAULT_SELECTION = true
-        private const val FADE_LENGTH_MS = 1000
-        private const val INITIAL_ACTIVITIES_ALPHA = 1f
-        private const val INITIAL_ACTIVITIES_BLUE = 1f
-        private const val INITIAL_ACTIVITIES_GREEN = 1f
-        private const val INITIAL_ACTIVITIES_RED = 1f
-        private const val INITIAL_BACKGROUND_ALPHA = 1f
-        private const val INITIAL_BACKGROUND_BLUE = 0f
-        private const val INITIAL_BACKGROUND_GREEN = 0f
-        private const val INITIAL_BACKGROUND_RED = 0f
-        private const val INITIAL_HEIGHT_PX = 1080
-        private const val INITIAL_WIDTH_PX = 1920
-        private const val INITIAL_SCROLL_STATE = 0
-        private const val INITIAL_SELECTED_RES_INDEX = 0
-        private const val INITIAL_TYPE_CUSTOM_TEXT = ""
         private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
         private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
         private const val CUSTOM_TEXT_MAXIMUM_LENGTH = 30
+
+        private const val STANDBY_SAVE_STATE_KEY = "StandbySaveState"
+        private const val EDIT_ART_VIEW_MODEL_SAVE_STATE_KEY = "EditArtViewModel"
     }
 
-    private lateinit var activities: List<Activity>
-    private val activitiesFiltered: List<Activity> get() = activitiesFilteredByFilterType[EditArtFilterType.filterFinal]!!
-    private lateinit var activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>>
-    private val activitiesFilteredSumDistance: Double get() = activitiesFiltered.sumOf { it.distance }
-    private var activitiesTypesSelectionsMap: Map<String, Boolean> = mapOf()
-    private lateinit var activitiesDistancesList: List<Double>
-    private var activitiesDateSelections: List<DateSelection>? = null
+    /** All activities cached in Singleton memory **/
+    private val activities: List<Activity> = activitiesFromCacheUseCase()
+
+    /** The list of activities for each [EditArtFilterType] **/
+    private val activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>> =
+        mutableMapOf()
+
+    /** The activities which are drawn after all filters have been applied **/
+    private val activitiesFiltered: List<Activity>
+        get() = activitiesFilteredByFilterType[filterFinal] ?: activities
+
+    @Parcelize
+    private data class FilterChoicesState(
+        val activitiesTypesSelectionsMap: Map<String, Boolean>? = null,
+        val activitiesDistancesList: List<Double>? = null,
+        val activitiesDateSelections: List<DateSelection>? = null
+    ) : Parcelable
+
+    private lateinit var state: FilterChoicesState
 
     /** Determine current start and end MS of selected Date filters  **/
     private val activitiesDateRangeUnixMs: LongProgression?
-        get() = activitiesDateSelections?.let { selections ->
+        get() = state.activitiesDateSelections?.let { selections ->
             val index = (lastPushedState as? Standby)?.filterDateSelectionIndex
                 ?: error("Attempted to compute date range when not in Standby state.")
 
@@ -116,63 +114,65 @@ class EditArtViewModel @Inject constructor(
                                 it >= range.first && it <= range.last
                             } ?: true
                         }
-                    TYPE -> activitiesTypesSelectionsMap[activity.type] ?: true
-                    DISTANCE -> filterDistanceSelected?.let {
-                        activity.distance in it
-                    } ?: true
+                    TYPE -> state.activitiesTypesSelectionsMap?.get(activity.type) ?: true
+                    DISTANCE -> {
+                        val rng =
+                            filterDistanceSelectedStart.rangeToOrNull(filterDistanceSelectedEnd)
+                                ?: Double.MIN_VALUE.rangeTo(Double.MAX_VALUE)
+                        activity.distance in rng
+                    }
                 }
             }
             activitiesFilteredByFilterType[this@updateFilteredActivities] = filteredActivities
         }
     }
 
-    /** Sets [activitiesTypesSelectionsMap], [activitiesUnixMsList]: the filters which the
-     * user may control. Must not be invoked before [activities] is populated. **/
+    /** Updates the corresponding [EditArtFilterType] property of the [FilterChoicesState] object to
+     * reflect the user's current choices. **/
     private fun EditArtFilterType.updateFilters() {
         val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
-        when (this) {
+        state = when (this) {
             DATE -> {
                 filteredActivities
                     .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
                     .asRangeOrNullIfEmpty()
                     ?.let {
-                        activitiesDateSelections = mutableListOf<DateSelection>(DateSelection.All)
-                            .apply {
-                                addAll(filteredActivities
-                                    .map { timeUtils.iso8601StringToYearMonth(it.iso8601LocalDate).first }
-                                    .distinct()
-                                    .map { DateSelection.Year(it) }
-                                    .toMutableList<DateSelection>()
-                                    .apply {
-                                        add(
-                                            DateSelection.Custom(
-                                                dateSelected = null,
-                                                dateTotal = it
+                        state.copy(
+                            activitiesDateSelections = mutableListOf<DateSelection>(DateSelection.All)
+                                .apply {
+                                    addAll(filteredActivities
+                                        .map { timeUtils.iso8601StringToYearMonth(it.iso8601LocalDate).first }
+                                        .distinct()
+                                        .map { DateSelection.Year(it) }
+                                        .toMutableList<DateSelection>()
+                                        .apply {
+                                            add(
+                                                DateSelection.Custom(
+                                                    dateSelectedStart = null,
+                                                    dateSelectedEnd = null,
+                                                    dateTotalStart = it.first,
+                                                    dateTotalEnd = it.last
+                                                )
                                             )
-                                        )
-                                    })
-                            }
+                                        })
+                                }
+                        )
                     }
+                    ?: state
             }
-            TYPE -> activitiesTypesSelectionsMap = filteredActivities
-                .distinctlyMapAndAssociateWith(Activity::type, activitiesTypesSelectionsMap)
-            DISTANCE -> activitiesDistancesList = filteredActivities
-                .map { it.distance }
+            TYPE -> state.run {
+                copy(
+                    activitiesTypesSelectionsMap = filteredActivities
+                        .distinctBy(Activity::type)
+                        .map(Activity::type)
+                        .associateWith {
+                            activitiesTypesSelectionsMap?.get(it) ?: DEFAULT_SELECTION
+                        }
+                )
+            }
+            DISTANCE -> state.copy(activitiesDistancesList = filteredActivities.map { it.distance })
         }
-    }
-
-    /** Extension Functions **/
-    private fun List<Activity>.distinctlyMapAndAssociateWith(
-        property: KProperty1<Activity, String>,
-        previousMap: Map<String, Boolean>
-    ): Map<String, Boolean> {
-        return distinctBy(property)
-            .map(property)
-            .associateWith { previousMap[it] ?: DEFAULT_SELECTION }
-    }
-
-    private fun List<Long>.asRangeOrNullIfEmpty(): LongProgression? {
-        return maxOrNull()?.let { max -> minOrNull()?.rangeTo(max) }
+        savedStateHandle[EDIT_ART_VIEW_MODEL_SAVE_STATE_KEY] = state
     }
 
     private val EditArtFilterType.activitiesCount: Int
@@ -192,40 +192,27 @@ class EditArtViewModel @Inject constructor(
     private fun EditArtFilterType.pushUpdatedFiltersToView() {
         copyLastState {
             when (this@pushUpdatedFiltersToView) {
-                DATE -> {
-                    copy(
-                        filterDateSelections = activitiesDateSelections
-                        // dont really know what this was doing, investigate
-                        /*
-                filterDateYearsList = activitiesYears,
-                filterDateSelected = filterDateSelected?.run {
-                    last
-                        .takeIf { it >= (newRange?.first ?: Long.MAX_VALUE) }
-                        ?.let { adjEnd ->
-                            first
-                                .takeIf { it <= (newRange?.last ?: Long.MIN_VALUE) }
-                                ?.rangeTo(adjEnd)
-                        }
-                },
-                filterDateTotal = newRange
-
-                         */
-                    )
-                }
-                TYPE -> copy(filterTypes = activitiesTypesSelectionsMap.toList())
+                DATE -> copy(filterDateSelections = state.activitiesDateSelections)
+                TYPE -> copy(filterTypes = state.activitiesTypesSelectionsMap?.toList())
                 DISTANCE -> {
-                    val distanceShortest = activitiesDistancesList.minOrNull()
-                    val distanceLongest = activitiesDistancesList.maxOrNull()
+                    val distanceShortest = state.activitiesDistancesList?.minOrNull()
+                    val distanceLongest = state.activitiesDistancesList?.maxOrNull()
+                    val filterDistanceSelected = filterDistanceSelectedEnd?.let {
+                        filterDistanceSelectedStart?.rangeTo(it)
+                    }
+
+                    val adjStart = filterDistanceSelected?.lower?.takeIf {
+                        it >= (distanceShortest ?: Double.MAX_VALUE)
+                    }
+                    val adjEnd = filterDistanceSelected?.upper?.takeIf {
+                        it <= (distanceLongest ?: Double.MIN_VALUE)
+                    }
 
                     copy(
-                        filterDistanceSelected = filterDistanceSelected?.run {
-                            val adjStart = start
-                                .takeIf { it >= (distanceShortest ?: Double.MAX_VALUE) }
-                            val adjEnd = endInclusive
-                                .takeIf { it <= (distanceLongest ?: Double.MIN_VALUE) }
-                            adjEnd?.let { adjStart?.rangeTo(it) }
-                        },
-                        filterDistanceTotal = distanceLongest?.let { distanceShortest?.rangeTo(it) }
+                        filterDistanceSelectedStart = adjStart,
+                        filterDistanceSelectedEnd = adjEnd,
+                        filterDistanceTotalStart = distanceShortest,
+                        filterDistanceTotalEnd = distanceLongest
                     )
                 }
             }
@@ -233,92 +220,55 @@ class EditArtViewModel @Inject constructor(
     }
 
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
-    private val pagerHeaders: List<EditArtHeaderType> = EditArtHeaderType.values().toList()
-    private val pagerState = PagerState(pagerHeaders.size)
-    private val pagerStateWrapper = PagerStateWrapper(
-        pagerHeaders = pagerHeaders,
-        pagerState = pagerState,
-        fadeLengthMs = FADE_LENGTH_MS
-    )
-    private val resolutionList by lazy {
-        resolutionListFactory.create().apply { add(Resolution.CustomResolution()) }
-    }
-    private val customResolution by lazy {
-        resolutionList.last() as? Resolution.CustomResolution ?: error("Missing custom resolution")
-    }
 
     init {
-        Loading(pagerStateWrapper = pagerStateWrapper, dialogNavigateUpActive = false).push()
+        Loading().push()
         viewModelScope.launch {
-            activities = activitiesFromCacheUseCase()
+            val prevViewModelState: FilterChoicesState? =
+                savedStateHandle[EDIT_ART_VIEW_MODEL_SAVE_STATE_KEY]
 
-            EditArtFilterType.values().apply {
-                activitiesFilteredByFilterType = associateWith { activities }.toMutableMap()
-                forEach { it.updateFilters() }
+            /** Initialize state as either a previously-saved state or constructed state **/
+            state = prevViewModelState ?: FilterChoicesState()
+
+            /** If there was not previously-saved state, the properties of the just-constructed
+             * state will be populated here. **/
+            if (prevViewModelState == null) {
+                EditArtFilterType.values().forEach {
+                    activitiesFilteredByFilterType[it] = activities
+                    it.updateFilters()
+                }
             }
 
-            Standby(
-                bitmap = null,
-                dialogNavigateUpActive = false,
+            /** Push either a previously-saved (if available) or constructed Standby state **/
+            (savedStateHandle[STANDBY_SAVE_STATE_KEY] ?: Standby(
                 filterActivitiesCountDate = DATE.activitiesCount,
                 filterActivitiesCountDistance = DISTANCE.activitiesCount,
                 filterActivitiesCountType = TYPE.activitiesCount,
-                filterDateSelections = activitiesDateSelections,
-                filterDateSelectionIndex = activitiesDateSelections?.indexOfFirst { it is DateSelection.All }
+                filterDateSelections = state.activitiesDateSelections,
+                filterDateSelectionIndex = state.activitiesDateSelections?.indexOfFirst { it is DateSelection.All }
                     ?: -1,
-                filterDistanceSelected = null,
-                filterDistanceTotal = activitiesDistancesList
-                    .takeIf { it.isNotEmpty() }
-                    ?.run { min()..max() }, // todo rewrite this with the asrange ext
-                filterTypes = activitiesTypesSelectionsMap.toList(),
-                pagerStateWrapper = pagerStateWrapper,
-                scrollStateFilter = ScrollState(INITIAL_SCROLL_STATE),
-                scrollStateResize = ScrollState(INITIAL_SCROLL_STATE),
-                scrollStateStyle = ScrollState(INITIAL_SCROLL_STATE),
-                scrollStateType = ScrollState(INITIAL_SCROLL_STATE),
-                sizeActual = Size(INITIAL_WIDTH_PX, INITIAL_HEIGHT_PX),
-                sizeCustomHeightPx = customResolution.heightPx,
-                sizeCustomWidthPx = customResolution.widthPx,
-                sizeCustomRangePx = CUSTOM_SIZE_MINIMUM_PX..CUSTOM_SIZE_MAXIMUM_PX,
-                sizeResolutionList = resolutionList,
-                sizeResolutionListSelectedIndex = INITIAL_SELECTED_RES_INDEX,
-                styleActivities = ColorWrapper(
-                    INITIAL_ACTIVITIES_ALPHA,
-                    INITIAL_ACTIVITIES_BLUE,
-                    INITIAL_ACTIVITIES_GREEN,
-                    INITIAL_ACTIVITIES_RED
-                ),
-                styleBackground = ColorWrapper(
-                    INITIAL_BACKGROUND_ALPHA,
-                    INITIAL_BACKGROUND_BLUE,
-                    INITIAL_BACKGROUND_GREEN,
-                    INITIAL_BACKGROUND_RED
-                ),
-                styleFont = null,
-                styleStrokeWidthType = MEDIUM,
+                filterDistanceTotalStart = state.activitiesDistancesList?.minOrNull(),
+                filterDistanceTotalEnd = state.activitiesDistancesList?.maxOrNull(),
+                filterTypes = state.activitiesTypesSelectionsMap?.toList(),
                 typeActivitiesDistanceMetersSummed = activitiesFiltered
                     .sumOf { it.distance }
-                    .roundToInt(),
-                // Todo, decide whether or not to add this back...
-                //typeAthleteName = athleteFromLocalUseCase(activities.first().athleteId)!!.fullName,
-                typeFontSelected = FontType.QUICKSAND,
-                typeFontWeightSelected = FontWeightType.REGULAR,
-                typeFontItalicized = false,
-                typeFontSizeSelected = FontSizeType.MEDIUM,
-                typeMaximumCustomTextLength = CUSTOM_TEXT_MAXIMUM_LENGTH,
-                typeLeftSelected = NONE,
-                typeLeftCustomText = INITIAL_TYPE_CUSTOM_TEXT,
-                typeCenterSelected = NONE,
-                typeCenterCustomText = INITIAL_TYPE_CUSTOM_TEXT,
-                typeRightSelected = NONE,
-                typeRightCustomText = INITIAL_TYPE_CUSTOM_TEXT
-            ).push()
+                    .roundToInt()
+            )).push()
+
+            /** If there was a saved state, now that we've pushed Standby update filtered activities to reflect
+             * the various saved filters. **/
+            if (prevViewModelState != null) {
+                EditArtFilterType.values().forEach {
+                    it.updateFilteredActivities()
+                }
+            }
+
+            /** Finally, update the bitmap of the current Standby state **/
             updateBitmap()
         }
     }
 
     override fun onEvent(event: EditArtViewEvent) {
-
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
             is DialogNavigateUpCancelled -> onDialogNavigateUpCancelled()
@@ -348,6 +298,7 @@ class EditArtViewModel @Inject constructor(
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         updateBitmap()
+        savedStateHandle[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
     }
 
     private fun onFilterChangeEvent(event: FilterChanged) {
@@ -389,55 +340,70 @@ class EditArtViewModel @Inject constructor(
 
     private fun onFilterDateCustomChanged(event: FilterChanged.FilterDateCustomChanged) {
         withLastState {
-            val replacementCustom = (activitiesDateSelections
-                ?.get(filterDateSelectionIndex) as? DateSelection.Custom
-                ?: error("ApiError retrieving DateSelection as Custom from selected index."))
-                .run {
-                    val selectedEnd = dateSelected?.last ?: dateTotal.last
-                    val selectedStart = dateSelected?.first ?: dateTotal.first
-                    val totalEnd = dateTotal.last
+            val replacementCustom: DateSelection.Custom =
+                (state.activitiesDateSelections
+                    ?.get(filterDateSelectionIndex) as? DateSelection.Custom
+                    ?: error("ApiError retrieving DateSelection as Custom from selected index."))
+                    .run {
+                        val selectedEnd = dateSelected?.last ?: dateTotal.last
+                        val selectedStart = dateSelected?.first ?: dateTotal.first
+                        val totalEnd = dateTotal.last
 
-                    copy(
-                        dateSelected = when (event) {
-                            is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
-                                event.changedTo.coerceAtMost(totalEnd).rangeTo(selectedEnd)
+                        copy(
+                            dateSelectedStart = when (event) {
+                                is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
+                                    event.changedTo.coerceAtMost(totalEnd)
+                                }
+                                is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
+                                    selectedStart
+                                }
+                            },
+                            dateSelectedEnd = when (event) {
+                                is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
+                                    selectedEnd
+                                }
+                                is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
+                                    event.changedTo.coerceAtMost(totalEnd)
+                                }
                             }
-                            is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
-                                selectedStart.rangeTo(event.changedTo.coerceAtMost(totalEnd))
-                            }
-                        }
-                    )
-                }
+                        )
+                    }
 
-            activitiesDateSelections = activitiesDateSelections
-                ?.toMutableList()
-                ?.apply {
-                    set(filterDateSelectionIndex, replacementCustom)
-                }
+            state =
+                state.copy(activitiesDateSelections = state.activitiesDateSelections
+                    ?.toMutableList()
+                    ?.apply {
+                        set(filterDateSelectionIndex, replacementCustom)
+                    })
 
-            copy(filterDateSelections = activitiesDateSelections).push()
+            copy(filterDateSelections = state.activitiesDateSelections).push()
         }
     }
 
     private fun onFilterDistanceChanged(event: FilterChanged.FilterDistanceChanged) {
         copyLastState {
-            copy(filterDistanceSelected = event.changedTo)
+            copy(
+                filterDistanceSelectedStart = event.changedTo.start,
+                filterDistanceSelectedEnd = event.changedTo.endInclusive
+            )
         }.push()
     }
 
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
-        activitiesTypesSelectionsMap = activitiesTypesSelectionsMap
-            .toMutableMap()
-            .apply {
-                set(event.type, !get(event.type)!!)
-            }
+        state =
+            state.copy(activitiesTypesSelectionsMap = state.activitiesTypesSelectionsMap
+                ?.toMutableMap()
+                ?.apply {
+                    set(event.type, !get(event.type)!!)
+                }
+            )
         copyLastState {
-            copy(filterTypes = activitiesTypesSelectionsMap.toList())
+            copy(filterTypes = state.activitiesTypesSelectionsMap?.toList())
         }.push()
     }
 
     private fun onMakeFullscreenClicked() {
-
+        // Todo
     }
 
     private fun onNavigateUpClicked() {
@@ -461,16 +427,17 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filterTypes
-                            .filter { it.second }
-                            .map { it.first },
+                            ?.filter { it.second }
+                            ?.map { it.first }
+                            ?: listOf(), // Todo, evaluate this.
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                         filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
                         filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
-                        filterDistanceLessThan = filterDistanceSelected?.endInclusive
-                            ?: Double.MAX_VALUE,
-                        filterDistanceMoreThan = filterDistanceSelected?.start ?: Double.MIN_VALUE,
+                        filterDistanceLessThan = filterDistanceSelectedEnd ?: Double.MAX_VALUE,
+                        filterDistanceMoreThan = filterDistanceSelectedStart
+                            ?: Double.MIN_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType,
@@ -489,42 +456,46 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeChanged(event: SizeChanged) {
-        val newSizeActual = resolutionList[event.changedIndex].run { Size(widthPx, heightPx) }
         copyLastState {
-            copy(
-                sizeActual = newSizeActual,
-                sizeResolutionListSelectedIndex = event.changedIndex
-            )
+            copy(sizeResolutionListSelectedIndex = event.changedIndex)
         }.push()
     }
 
     private fun onSizeCustomChangeDone() {
-        copyLastState {
-            resolutionList[resolutionList.lastIndex] = customResolution.copy(
-                customWidthPx = sizeCustomWidthPx,
-                customHeightPx = sizeCustomHeightPx
-            )
-            copy(bitmap = null)
-        }.push()
+        // No-op, this event is necessary as it is Art Mutating where SizeCustomChanged is not.
     }
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
         copyLastState {
-            when (event) {
-                is SizeCustomChanged.HeightChanged -> copy(sizeCustomHeightPx = event.changedToPx)
-                is SizeCustomChanged.WidthChanged -> copy(sizeCustomWidthPx = event.changedToPx)
-            }
+            copy(
+                sizeResolutionList = sizeResolutionList
+                    .toMutableList()
+                    .apply {
+                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
+                        set(tarIndex, get(tarIndex).run {
+                            Resolution.CustomResolution(
+                                widthPx = if (event is SizeCustomChanged.WidthChanged) event.changedToPx else widthPx,
+                                heightPx = if (event is SizeCustomChanged.HeightChanged) event.changedToPx else heightPx
+                            )
+                        })
+                    }
+            )
         }.push()
     }
 
     private fun onSizeRotated(event: SizeRotated) {
-        event.apply {
-            resolutionList[rotatedIndex] =
-                (resolutionList[rotatedIndex] as Resolution.RotatingResolution).copyWithRotation()
-        }
-        // Todo, believe this makes update immediate, kind of awkward looking hack, fix later
         copyLastState {
-            copy(bitmap = null)
+            copy(
+                sizeResolutionList = sizeResolutionList
+                    .toMutableList()
+                    .apply {
+                        val prevRes = get(event.rotatedIndex)
+                        val adjRes = (prevRes as? Resolution.RotatingResolution
+                            ?: error("Rotated a non-rotating resolution."))
+                            .copyWithRotation()
+                        set(event.rotatedIndex, adjRes)
+                    }
+            )
         }.push()
     }
 
@@ -534,7 +505,9 @@ class EditArtViewModel @Inject constructor(
                 when (styleType) {
                     BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
                     ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
-                    FONT -> copy(styleFont = (styleFont ?: styleActivities).copyWithEvent(event))
+                    FONT -> copy(
+                        styleFont = (styleFont ?: styleActivities).copyWithEvent(event)
+                    )
                 }
             }
         }.push()
@@ -553,7 +526,8 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onTypeCustomTextChanged(event: TypeCustomTextChanged) {
-        val newText: String? = event.changedTo.takeIf { it.length <= CUSTOM_TEXT_MAXIMUM_LENGTH }
+        val newText: String? =
+            event.changedTo.takeIf { it.length <= CUSTOM_TEXT_MAXIMUM_LENGTH }
         copyLastState {
             when (event.section) {
                 LEFT -> copy(typeLeftCustomText = newText ?: typeLeftCustomText)
@@ -619,7 +593,8 @@ class EditArtViewModel @Inject constructor(
         viewModelScope.launch(imageProcessingDispatcher) {
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFilteredByFilterType[EditArtFilterType.filterFinal]!!,
+                    activities = activitiesFilteredByFilterType[filterFinal]
+                        ?: listOf(), // todo...
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorBackgroundArgb = styleBackground.color.toArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
@@ -669,9 +644,9 @@ class EditArtViewModel @Inject constructor(
 
                 when (typeCustomText.first) {
                     NONE -> null
-                  //  NAME -> typeAthleteName
-                    DISTANCE_MILES -> activitiesFilteredSumDistance.meterToMilesStr()
-                    DISTANCE_KILOMETERS -> activitiesFilteredSumDistance.meterToKilometerStr()
+                    DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
+                    DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
+                        .meterToKilometerStr()
                     CUSTOM -> typeCustomText.second.takeIf { it.isNotBlank() }
                 }
             }
@@ -679,4 +654,9 @@ class EditArtViewModel @Inject constructor(
 
     private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
+    private fun Double?.rangeToOrNull(end: Double?): Range<Double>? =
+        end?.let { this?.rangeTo(it) }
+    private fun List<Long>.asRangeOrNullIfEmpty(): LongProgression? {
+        return maxOrNull()?.let { max -> minOrNull()?.rangeTo(max) }
+    }
 }

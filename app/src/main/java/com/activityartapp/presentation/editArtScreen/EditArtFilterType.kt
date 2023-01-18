@@ -1,9 +1,13 @@
 package com.activityartapp.presentation.editArtScreen
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * Ordinal position
  */
-enum class EditArtFilterType {
+@Parcelize
+enum class EditArtFilterType : Parcelable {
     DATE, TYPE, DISTANCE;
 
     inline fun forEachNextFilterType(action: (EditArtFilterType) -> Unit) {
