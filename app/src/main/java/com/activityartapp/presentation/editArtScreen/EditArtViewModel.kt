@@ -71,18 +71,9 @@ class EditArtViewModel @Inject constructor(
     private val activitiesFiltered: List<Activity>
         get() = activitiesFilteredByFilterType[filterFinal] ?: activities
 
-    @Parcelize
-    private data class FilterChoicesState(
-        val activitiesTypesSelectionsMap: Map<String, Boolean>? = null,
-        val activitiesDistancesList: List<Double>? = null,
-        val activitiesDateSelections: List<DateSelection>? = null
-    ) : Parcelable
-
-    private lateinit var state: FilterChoicesState
-
     /** Determine current start and end MS of selected Date filters  **/
     private val activitiesDateRangeUnixMs: LongProgression?
-        get() = state.activitiesDateSelections?.let { selections ->
+        get() = state?.filterDateSelections?.let { selections ->
             val index = (lastPushedState as? Standby)?.filterDateSelectionIndex
                 ?: error("Attempted to compute date range when not in Standby state.")
 
@@ -114,7 +105,17 @@ class EditArtViewModel @Inject constructor(
                                 it >= range.first && it <= range.last
                             } ?: true
                         }
-                    TYPE -> state.activitiesTypesSelectionsMap?.get(activity.type) ?: true
+                    TYPE -> {
+                        println("Here evaluating type for ${activity.type}")
+                        println(
+                            "Evaluates in my thing ${state?.filterTypes} to ${
+                                state?.filterTypes?.get(
+                                    activity.type
+                                )
+                            }"
+                        )
+                        state?.filterTypes?.get(activity.type) ?: true
+                    }
                     DISTANCE -> {
                         val rng =
                             filterDistanceSelectedStart.rangeToOrNull(filterDistanceSelectedEnd)
@@ -131,14 +132,14 @@ class EditArtViewModel @Inject constructor(
      * reflect the user's current choices. **/
     private fun EditArtFilterType.updateFilters() {
         val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
-        state = when (this) {
-            DATE -> {
-                filteredActivities
-                    .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
-                    .asRangeOrNullIfEmpty()
-                    ?.let {
-                        state.copy(
-                            activitiesDateSelections = mutableListOf<DateSelection>(DateSelection.All)
+        withLastState {
+            when (this@updateFilters) {
+                DATE -> {
+                    filteredActivities
+                        .map { SECONDS.toMillis(timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)) }
+                        .asRangeOrNullIfEmpty()
+                        ?.let {
+                            val newDateSelections = mutableListOf<DateSelection>(DateSelection.All)
                                 .apply {
                                     addAll(filteredActivities
                                         .map { timeUtils.iso8601StringToYearMonth(it.iso8601LocalDate).first }
@@ -156,47 +157,29 @@ class EditArtViewModel @Inject constructor(
                                             )
                                         })
                                 }
-                        )
-                    }
-                    ?: state
-            }
-            TYPE -> state.run {
-                copy(
-                    activitiesTypesSelectionsMap = filteredActivities
+                            copy(
+                                filterDateSelections = newDateSelections,
+                                // Todo, more readable
+                                filterDateSelectionIndex = if (filterDateSelectionUnset) {
+                                    0
+                                } else {
+                                    filterDateSelectionIndex
+                                }
+                            )
+                        }
+                }
+                TYPE -> copy(
+                    filterTypes = filteredActivities
                         .distinctBy(Activity::type)
                         .map(Activity::type)
                         .associateWith {
-                            activitiesTypesSelectionsMap?.get(it) ?: DEFAULT_SELECTION
+                            filterTypes?.get(it) ?: DEFAULT_SELECTION
                         }
                 )
-            }
-            DISTANCE -> state.copy(activitiesDistancesList = filteredActivities.map { it.distance })
-        }
-        savedStateHandle[EDIT_ART_VIEW_MODEL_SAVE_STATE_KEY] = state
-    }
-
-    private val EditArtFilterType.activitiesCount: Int
-        get() = activitiesFilteredByFilterType[this]?.size ?: 0
-
-    private fun EditArtFilterType.pushUpdatedFilteredActivityCountToView() {
-        copyLastState {
-            when (this@pushUpdatedFilteredActivityCountToView) {
-                DATE -> copy(filterActivitiesCountDate = DATE.activitiesCount)
-                DISTANCE -> copy(filterActivitiesCountDistance = DISTANCE.activitiesCount)
-                TYPE -> copy(filterActivitiesCountType = TYPE.activitiesCount)
-            }
-        }.push()
-    }
-
-    /** Pushes updated filter information as set in [updateFilters] to the View **/
-    private fun EditArtFilterType.pushUpdatedFiltersToView() {
-        copyLastState {
-            when (this@pushUpdatedFiltersToView) {
-                DATE -> copy(filterDateSelections = state.activitiesDateSelections)
-                TYPE -> copy(filterTypes = state.activitiesTypesSelectionsMap?.toList())
                 DISTANCE -> {
-                    val distanceShortest = state.activitiesDistancesList?.minOrNull()
-                    val distanceLongest = state.activitiesDistancesList?.maxOrNull()
+                    val distances = filteredActivities.map { it.distance }
+                    val distanceShortest = distances.minOrNull()
+                    val distanceLongest = distances.maxOrNull()
                     val filterDistanceSelected = filterDistanceSelectedEnd?.let {
                         filterDistanceSelectedStart?.rangeTo(it)
                     }
@@ -215,6 +198,20 @@ class EditArtViewModel @Inject constructor(
                         filterDistanceTotalEnd = distanceLongest
                     )
                 }
+            }?.push()
+        }
+        savedStateHandle[EDIT_ART_VIEW_MODEL_SAVE_STATE_KEY] = state
+    }
+
+    private val EditArtFilterType.activitiesCount: Int
+        get() = activitiesFilteredByFilterType[this]?.size ?: 0
+
+    private fun EditArtFilterType.pushUpdatedFilteredActivityCountToView() {
+        copyLastState {
+            when (this@pushUpdatedFilteredActivityCountToView) {
+                DATE -> copy(filterActivitiesCountDate = DATE.activitiesCount)
+                DISTANCE -> copy(filterActivitiesCountDistance = DISTANCE.activitiesCount)
+                TYPE -> copy(filterActivitiesCountType = TYPE.activitiesCount)
             }
         }.push()
     }
@@ -224,43 +221,28 @@ class EditArtViewModel @Inject constructor(
     init {
         Loading().push()
         viewModelScope.launch {
-            val prevViewModelState: FilterChoicesState? =
-                savedStateHandle[EDIT_ART_VIEW_MODEL_SAVE_STATE_KEY]
-
-            /** Initialize state as either a previously-saved state or constructed state **/
-            state = prevViewModelState ?: FilterChoicesState()
 
             /** If there was not previously-saved state, the properties of the just-constructed
              * state will be populated here. **/
-            if (prevViewModelState == null) {
-                EditArtFilterType.values().forEach {
-                    activitiesFilteredByFilterType[it] = activities
-                    it.updateFilters()
-                }
+            EditArtFilterType.values().forEach {
+                activitiesFilteredByFilterType[it] = activities
             }
 
             /** Push either a previously-saved (if available) or constructed Standby state **/
-            (savedStateHandle[STANDBY_SAVE_STATE_KEY] ?: Standby(
-                filterActivitiesCountDate = DATE.activitiesCount,
-                filterActivitiesCountDistance = DISTANCE.activitiesCount,
-                filterActivitiesCountType = TYPE.activitiesCount,
-                filterDateSelections = state.activitiesDateSelections,
-                filterDateSelectionIndex = state.activitiesDateSelections?.indexOfFirst { it is DateSelection.All }
-                    ?: -1,
-                filterDistanceTotalStart = state.activitiesDistancesList?.minOrNull(),
-                filterDistanceTotalEnd = state.activitiesDistancesList?.maxOrNull(),
-                filterTypes = state.activitiesTypesSelectionsMap?.toList(),
-                typeActivitiesDistanceMetersSummed = activitiesFiltered
-                    .sumOf { it.distance }
-                    .roundToInt()
-            )).push()
+            val prevState: Standby? = savedStateHandle[STANDBY_SAVE_STATE_KEY]
+            (prevState ?: Standby()).push()
 
+            // todo, believe issue is with how things are init with null and such... look into, see how type doesnt do anyuthing but distance do es
             /** If there was a saved state, now that we've pushed Standby update filtered activities to reflect
              * the various saved filters. **/
-            if (prevViewModelState != null) {
-                EditArtFilterType.values().forEach {
+            EditArtFilterType.values().forEach {
+                if (prevState != null) {
+                    println("Prev state was not null, activity types are ${state?.filterTypes}")
                     it.updateFilteredActivities()
+                } else {
+                    it.updateFilters()
                 }
+                it.pushUpdatedFilteredActivityCountToView()
             }
 
             /** Finally, update the bitmap of the current Standby state **/
@@ -313,7 +295,7 @@ class EditArtViewModel @Inject constructor(
             pushUpdatedFilteredActivityCountToView()
             forEachNextFilterType {
                 it.updateFilters()
-                it.pushUpdatedFiltersToView()
+                //it.pushUpdatedFiltersToView()
                 it.updateFilteredActivities()
                 it.pushUpdatedFilteredActivityCountToView()
             }
@@ -341,7 +323,7 @@ class EditArtViewModel @Inject constructor(
     private fun onFilterDateCustomChanged(event: FilterChanged.FilterDateCustomChanged) {
         withLastState {
             val replacementCustom: DateSelection.Custom =
-                (state.activitiesDateSelections
+                (filterDateSelections
                     ?.get(filterDateSelectionIndex) as? DateSelection.Custom
                     ?: error("ApiError retrieving DateSelection as Custom from selected index."))
                     .run {
@@ -369,14 +351,11 @@ class EditArtViewModel @Inject constructor(
                         )
                     }
 
-            state =
-                state.copy(activitiesDateSelections = state.activitiesDateSelections
-                    ?.toMutableList()
-                    ?.apply {
-                        set(filterDateSelectionIndex, replacementCustom)
-                    })
-
-            copy(filterDateSelections = state.activitiesDateSelections).push()
+            copy(
+                filterDateSelections = filterDateSelections
+                    .toMutableList()
+                    .apply { set(filterDateSelectionIndex, replacementCustom) }
+            ).push()
         }
     }
 
@@ -390,16 +369,14 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
-        state =
-            state.copy(activitiesTypesSelectionsMap = state.activitiesTypesSelectionsMap
-                ?.toMutableMap()
-                ?.apply {
-                    set(event.type, !get(event.type)!!)
-                }
-            )
         copyLastState {
-            copy(filterTypes = state.activitiesTypesSelectionsMap?.toList())
+            println("Here, on filter type toggled, filter types was $filterTypes")
+            copy(filterTypes = filterTypes
+                ?.toMutableMap()
+                ?.apply { set(event.type, !get(event.type)!!) }
+            )
         }.push()
+        println("Hi, now my thing is ${state?.filterTypes}")
     }
 
     private fun onMakeFullscreenClicked() {
@@ -426,10 +403,8 @@ class EditArtViewModel @Inject constructor(
                 val filterRange = activitiesDateRangeUnixMs
                 routeTo(
                     NavigateSaveArt(
-                        activityTypes = filterTypes
-                            ?.filter { it.second }
-                            ?.map { it.first }
-                            ?: listOf(), // Todo, evaluate this.
+                        activityTypes = filterTypes?.entries?.filter { it.value }?.map { it.key }
+                            ?: listOf(),
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
@@ -656,7 +631,11 @@ class EditArtViewModel @Inject constructor(
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
     private fun Double?.rangeToOrNull(end: Double?): Range<Double>? =
         end?.let { this?.rangeTo(it) }
+
     private fun List<Long>.asRangeOrNullIfEmpty(): LongProgression? {
         return maxOrNull()?.let { max -> minOrNull()?.rangeTo(max) }
     }
+
+    private val state: Standby?
+        get() = lastPushedState as? Standby
 }
