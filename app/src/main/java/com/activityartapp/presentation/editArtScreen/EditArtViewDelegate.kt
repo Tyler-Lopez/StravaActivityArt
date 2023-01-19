@@ -105,8 +105,12 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     filterActivitiesCountType,
                                     filterDateSelections,
                                     filterDateSelectionIndex,
-                                    filterDistanceSelected,
-                                    filterDistanceTotal,
+                                    filterDistanceSelectedEnd?.let {
+                                        filterDistanceSelectedStart?.rangeTo(it)
+                                    },
+                                    filterDistanceTotalEnd?.let {
+                                        filterDistanceTotalStart?.rangeTo(it)
+                                    },
                                     filterTypes,
                                     viewModel
                                 )
@@ -135,9 +139,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 viewModel
                             )
                             RESIZE -> EditArtResizeScreen(
-                                sizeCustomHeightPx,
-                                sizeCustomWidthPx,
-                                sizeCustomRangePx,
+                           //     sizeCustomHeightPx,
+                            //    sizeCustomWidthPx,
+                                sizeCustomMinPx..sizeCustomMaxPx,
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,
                                 viewModel

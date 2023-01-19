@@ -30,8 +30,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ColumnScope.EditArtResizeScreen(
-    customHeightPx: Int,
-    customWidthPx: Int,
+    // customHeightPx: Int,
+    //  customWidthPx: Int,
     customRangePx: IntRange,
     resolutionList: List<Resolution>,
     selectedResolutionIndex: Int,
@@ -63,7 +63,8 @@ fun ColumnScope.EditArtResizeScreen(
                                 SubheadHeavy(
                                     text = stringResource(
                                         R.string.edit_art_resize_pixels_width,
-                                        customWidthPx
+                                        //customWidthPx
+                                        res.widthPx
                                     ),
                                     modifier = Modifier.padding(start = spacing.small)
                                 )
@@ -71,12 +72,12 @@ fun ColumnScope.EditArtResizeScreen(
                                     eventReceiver = eventReceiver,
                                     isEnabled = isSelected,
                                     isWidth = true,
-                                    value = customWidthPx,
+                                    value = res.widthPx,
                                     valueRange = customRangePx
                                 )
                                 SubheadHeavy(
                                     text = stringResource(
-                                        R.string.edit_art_resize_pixels_height, customHeightPx
+                                        R.string.edit_art_resize_pixels_height, res.heightPx
                                     ),
                                     modifier = Modifier.padding(start = spacing.small)
                                 )
@@ -84,7 +85,7 @@ fun ColumnScope.EditArtResizeScreen(
                                     isEnabled = isSelected,
                                     isWidth = false,
                                     eventReceiver = eventReceiver,
-                                    value = customHeightPx,
+                                    value = res.heightPx,
                                     valueRange = customRangePx
                                 )
                             }

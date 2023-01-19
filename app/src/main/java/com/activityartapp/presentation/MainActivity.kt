@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -20,6 +21,7 @@ import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.MainViewEvent.LoadAuthentication
 import com.activityartapp.presentation.MainViewState.Authenticated
+import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.ui.theme.AthleteApiArtTheme
 import com.activityartapp.util.NavArgSpecification.*
 import com.activityartapp.util.ParcelableActivity
@@ -56,46 +58,60 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         // Push event to ViewModel to determine authentication
         val intentUri = intent.data.also { intent.data = null }
         super.onCreate(savedInstanceState)
+        var debugTest = false
         (YEAR_EARLIEST..YEAR_NOW).forEach { year ->
             savedInstanceState?.getParcelableArray("$CACHED_ACTIVITIES_KEY$year")?.mapNotNull {
                 it as? (ParcelableActivity)
             }?.let {
                 activitiesCache.cachedActivitiesByYear[year] = it
+                //debugTest = true
             }
         }
-        // Install Splash Screen before content is setContent
-        val splashScreen = installSplashScreen()
-        setContent {
-            AthleteApiArtTheme {
-                val viewModel: MainViewModel = hiltViewModel()
+        if (debugTest) {
+            setContent {
+                ScreenBackground {
+                    (YEAR_EARLIEST..YEAR_NOW).forEach { year ->
+                        val activities = activitiesCache.cachedActivitiesByYear[year]
+                        Text("year: $year, activities ${activities?.size}")
 
-                viewModel.apply {
-                    /** Set splash screen to on while loading authentication **/
-                    /** Set splash screen to on while loading authentication **/
-                    splashScreen.setKeepOnScreenCondition {
-                        viewState.value == null
                     }
-                    /** Push event to [MainViewModel] to determine authentication **/
-                    LaunchedEffect(key1 = intentUri) {
-                        println("Intent uri is $intentUri")
-                        onEvent(LoadAuthentication(intentUri))
-                    }
-                    /** Set global nav controller for [routeTo] **/
-                    navController = rememberAnimatedNavController()
+                }
+            }
+        } else {
+            // Install Splash Screen before content is setContent
+            val splashScreen = installSplashScreen()
+            setContent {
+                AthleteApiArtTheme {
+                    val viewModel: MainViewModel = hiltViewModel()
 
-
-                    viewState.collectAsState().value?.let {
-                        val startScreen = if (it is Authenticated) {
-                            Welcome.route
-                        } else {
-                            Login.route
+                    viewModel.apply {
+                        /** Set splash screen to on while loading authentication **/
+                        /** Set splash screen to on while loading authentication **/
+                        splashScreen.setKeepOnScreenCondition {
+                            viewState.value == null
                         }
-                        AthleteApiArtTheme {
-                            MainNavHost(
-                                navController = navController,
-                                startRoute = startScreen,
-                                router = this@MainActivity,
-                            )
+                        /** Push event to [MainViewModel] to determine authentication **/
+                        LaunchedEffect(key1 = intentUri) {
+                            println("Intent uri is $intentUri")
+                            onEvent(LoadAuthentication(intentUri))
+                        }
+                        /** Set global nav controller for [routeTo] **/
+                        navController = rememberAnimatedNavController()
+
+
+                        viewState.collectAsState().value?.let {
+                            val startScreen = if (it is Authenticated) {
+                                Welcome.route
+                            } else {
+                                Login.route
+                            }
+                            AthleteApiArtTheme {
+                                MainNavHost(
+                                    navController = navController,
+                                    startRoute = startScreen,
+                                    router = this@MainActivity,
+                                )
+                            }
                         }
                     }
                 }
@@ -103,13 +119,16 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         }
     }
 
+    /** SaveInstanceState is guaranteed to be called before the Activity is killed by the OS.
+     * Herein we ensure that we maintain [activitiesCache] on subsequent relaunch of the Activity **/
     override fun onSaveInstanceState(outState: Bundle) {
-        (YEAR_EARLIEST..YEAR_NOW).forEach {
-            outState.putParcelableArray(
-                "$CACHED_ACTIVITIES_KEY$it",
-                (activitiesCache.cachedActivitiesByYear[it] ?: listOf()).parcelize()
-                    .toTypedArray()
-            )
+        (YEAR_EARLIEST..YEAR_NOW).forEach { year ->
+            (activitiesCache.cachedActivitiesByYear[year])
+                ?.parcelize()
+                ?.toTypedArray()
+                ?.let {
+                    outState.putParcelableArray("$CACHED_ACTIVITIES_KEY$year", it)
+                }
         }
         super.onSaveInstanceState(outState)
     }

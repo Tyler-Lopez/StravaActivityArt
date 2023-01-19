@@ -1,20 +1,19 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.filters
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.activityartapp.activityart.presentation.editArtScreen.subscreens.filters.composables.FilterSectionActivityType
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.DateSelection
 import com.activityartapp.presentation.editArtScreen.EditArtFilterType
 import com.activityartapp.presentation.editArtScreen.EditArtFilterType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
-import com.activityartapp.activityart.presentation.editArtScreen.subscreens.filters.composables.FilterSectionActivityType
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSectionDate
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSectionDistances
-import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
 fun ColumnScope.EditArtFiltersScreen(
@@ -25,7 +24,7 @@ fun ColumnScope.EditArtFiltersScreen(
     filterDateSelectionIndex: Int,
     distanceSelected: ClosedFloatingPointRange<Double>?,
     distanceTotal: ClosedFloatingPointRange<Double>?,
-    typesWithSelectedFlag: List<Pair<String, Boolean>>,
+    typesWithSelectedFlag: List<Pair<String, Boolean>>?,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     EditArtFilterType.values().onEach {
@@ -37,12 +36,13 @@ fun ColumnScope.EditArtFiltersScreen(
                     dateSelectionSelectedIndex = filterDateSelectionIndex,
                     eventReceiver = eventReceiver
                 )
-            TYPE -> FilterSectionActivityType(
-                count = activitiesCountType,
-                typesWithSelectedFlag = typesWithSelectedFlag,
-                eventReceiver = eventReceiver
-            )
-            DISTANCE -> if (distanceTotal != null) {
+            TYPE -> if (typesWithSelectedFlag != null)
+                FilterSectionActivityType(
+                    count = activitiesCountType,
+                    typesWithSelectedFlag = typesWithSelectedFlag,
+                    eventReceiver = eventReceiver
+                )
+            DISTANCE -> if (distanceTotal != null && distanceTotal.start != distanceTotal.endInclusive) {
                 FilterSectionDistances(
                     count = activitiesCountDistance,
                     distanceSelected = distanceSelected,
