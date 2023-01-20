@@ -18,7 +18,7 @@ import com.activityartapp.data.entities.OAuth2Entity
 
 @Database(
     entities = [ActivityEntity::class, AthleteEntity::class, OAuth2Entity::class],
-    version = 7
+    version = 1
 )
 @TypeConverters(Converters::class)
 abstract class AthleteDatabase : RoomDatabase() {

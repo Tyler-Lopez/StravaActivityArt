@@ -111,6 +111,7 @@ class EditArtViewModel @Inject constructor(
             }
             activitiesFilteredByFilterType[this@updateFilteredActivities] = filteredActivities
             pushUpdatedFilteredActivityCountToView()
+            if (this@updateFilteredActivities == filterFinal) pushUpdatedDistancesToView()
         }
     }
 
@@ -180,18 +181,7 @@ class EditArtViewModel @Inject constructor(
                         filterDistanceTotalEnd = distanceLongest
                     )
                 }
-            }?.run {
-                /** If this was the last filter, also update summed distances which appear on the
-                 * Type screen **/
-                if (this@updateFilters == filterFinal) {
-                    copy(typeActivitiesDistanceMetersSummed = activitiesFiltered
-                        .sumOf { it.distance }
-                        .roundToInt()
-                    )
-                } else {
-                    this
-                }.push()
-            }
+            }?.push()
         }
     }
 
@@ -205,6 +195,15 @@ class EditArtViewModel @Inject constructor(
                 DISTANCE -> copy(filterActivitiesCountDistance = DISTANCE.activitiesCount)
                 TYPE -> copy(filterActivitiesCountType = TYPE.activitiesCount)
             }
+        }.push()
+    }
+
+    private fun pushUpdatedDistancesToView() {
+        copyLastState {
+            copy(typeActivitiesDistanceMetersSummed = activitiesFiltered
+                .sumOf { it.distance }
+                .roundToInt()
+            )
         }.push()
     }
 
