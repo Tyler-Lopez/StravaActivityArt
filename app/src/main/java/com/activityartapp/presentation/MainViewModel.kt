@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase
 ) : BaseRoutingViewModel<
         MainViewState,
         MainViewEvent,

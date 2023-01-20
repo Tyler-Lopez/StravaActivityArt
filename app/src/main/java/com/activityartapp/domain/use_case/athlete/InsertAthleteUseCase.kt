@@ -12,14 +12,26 @@ class InsertAthleteUseCase @Inject constructor(
     suspend operator fun invoke(athlete: Athlete) {
         val entity = athlete.run {
             AthleteEntity(
-                athleteId,
-                // TODO COMMENTED FOR NOW      userName,
-                // TODO COMMENTED FOR NOW      receivedOnUnixSeconds ?: TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
-                // TODO COMMENTED FOR NOW          .toInt(),
-                // TODO COMMENTED FOR NOW    profilePictureMedium,
-                // TODO COMMENTED FOR NOW    profilePictureLarge,
-                // TODO COMMENTED FOR NOW      firstName,
-                // TODO COMMENTED FOR NOW     lastName,
+                id,
+                userName,
+                resourceState,
+                firstName,
+                lastName,
+                bio,
+                city,
+                state,
+                country,
+                sex,
+                premium,
+                summit,
+                createdAt,
+                updatedAt,
+                badgeTypeId,
+                weight,
+                profileMedium,
+                profile,
+                friend,
+                follower,
                 lastCachedYearMonth
             )
         }

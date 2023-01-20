@@ -24,12 +24,29 @@ class InsertActivitiesUseCase @Inject constructor(
         println("Insert activities use case invoked for year $year, last stable month $lastStableMonth")
 
         val activityEntities = activities
-                // Todo, replace with general to ActivityEntity function
-            .map { it.run {
-                ActivityEntity(
-                    athleteId, averageSpeed, distance, gearId, id, kudosCount, locationCity, locationCountry, locationState, maxSpeed, movingTime, name, sufferScore, iso8601LocalDate, summaryPolyline, type
-                )
-            } }
+            // Todo, replace with general to ActivityEntity function
+            .map {
+                it.run {
+                    ActivityEntity(
+                        athleteId,
+                        averageSpeed,
+                        distance,
+                        gearId,
+                        id,
+                        kudosCount,
+                        locationCity,
+                        locationCountry,
+                        locationState,
+                        maxSpeed,
+                        movingTime,
+                        name,
+                        sufferScore,
+                        iso8601LocalDate,
+                        summaryPolyline,
+                        type
+                    )
+                }
+            }
             .toTypedArray()
 
         athleteDatabase
@@ -40,27 +57,38 @@ class InsertActivitiesUseCase @Inject constructor(
         println("Trying to get previous athlete")
         val prevAthlete = getAthleteFromLocalUseCase(athleteId)
         println("Prev athlete was $prevAthlete")
-        (prevAthlete ?: object : Athlete {
-            override val athleteId: Long = athleteId
-            override val lastCachedYearMonth: Map<Int, Int> = mapOf()
-        }).lastCachedYearMonth.let { prevCache ->
-            val newCache = prevCache.toMutableMap()
-            newCache[year] = lastStableMonth
-            apply {
-                insertAthleteUseCase(
-                    AthleteEntity(
-                        athleteId,
-                        // TODO COMMENTED FOR NOW   userName,
-                        // TODO COMMENTED FOR NOW   receivedOnUnixSeconds ?: TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
-                        // TODO COMMENTED FOR NOW     profilePictureMedium,
-                        // TODO COMMENTED FOR NOW      profilePictureLarge,
-                        // TODO COMMENTED FOR NOW       firstName,
-                        // TODO COMMENTED FOR NOW       lastName,
-                        newCache
+        prevAthlete?.run {
+            lastCachedYearMonth.let { prevCache ->
+                val newCache = prevCache.toMutableMap()
+                newCache[year] = lastStableMonth
+                apply {
+                    insertAthleteUseCase(
+                        AthleteEntity(
+                            athleteId,
+                            userName,
+                            resourceState,
+                            firstName,
+                            lastName,
+                            bio,
+                            city,
+                            state,
+                            country,
+                            sex,
+                            premium,
+                            summit,
+                            createdAt,
+                            updatedAt,
+                            badgeTypeId,
+                            weight,
+                            profileMedium,
+                            profile,
+                            friend,
+                            follower,
+                            newCache
+                        )
                     )
-                )
+                }
             }
         }
-
     }
 }

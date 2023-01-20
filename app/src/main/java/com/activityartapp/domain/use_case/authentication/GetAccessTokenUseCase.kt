@@ -2,6 +2,7 @@ package com.activityartapp.domain.use_case.authentication
 
 import android.net.Uri
 import com.activityartapp.domain.models.OAuth2
+import com.activityartapp.domain.use_case.athlete.InsertAthleteUseCase
 import com.activityartapp.util.Response
 import com.activityartapp.util.UriUtils
 import com.activityartapp.util.doOnError
@@ -13,6 +14,7 @@ import javax.inject.Inject
  * Retrieves access token from local and / or remote repositories.
  */
 class GetAccessTokenUseCase @Inject constructor(
+    private val insertAthleteUseCase: InsertAthleteUseCase,
     private val getAccessTokenWithRefreshUseCase: GetAccessTokenWithRefreshUseCase,
     private val getAccessTokenFromRemoteUseCase: GetAccessTokenFromRemoteUseCase,
     private val insertAccessTokenUseCase: InsertAccessTokenUseCase,

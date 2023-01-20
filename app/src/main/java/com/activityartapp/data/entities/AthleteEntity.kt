@@ -9,52 +9,26 @@ import com.activityartapp.domain.models.Athlete
 @Entity
 data class AthleteEntity(
     @PrimaryKey
-    override val athleteId: Long,
-    // TODO COMMENTED FOR NOW override val userName: String?,
-    // This is important as Strava does not want you caching data for more than 3 days
-    // TODO COMMENTED FOR NOW override val receivedOnUnixSeconds: Int,
-    // TODO COMMENTED FOR NOW override val profilePictureMedium: String,
-    // TODO COMMENTED FOR NOW override val profilePictureLarge: String,
-    // TODO COMMENTED FOR NOW override val firstName: String,
-    // TODO COMMENTED FOR NOW  override val lastName: String,
-
+    override val id: Long,
+    override val userName: String?,
+    override val resourceState: Int?,
+    override val firstName: String?,
+    override val lastName: String?,
+    override val bio: String?,
+    override val city: String?,
+    override val state: String?,
+    override val country: String?,
+    override val sex: String?,
+    override val premium: Boolean?,
+    override val summit: Boolean?,
+    override val createdAt: String?,
+    override val updatedAt: String?,
+    override val badgeTypeId: Int?,
+    override val weight: Double?,
+    override val profileMedium: String?,
+    override val profile: String?,
+    override val friend: Boolean?,
+    override val follower: Boolean?,
     @TypeConverters(Converters::class)
     override val lastCachedYearMonth: Map<Int, Int>
-    // This is to tell us what we have and have not yet mapped to Room
-    /*
-    override val yearMonthsCached: Map<Int, Int>,
-    override val gears: Map<String, String>
-
-     */
-) : Athlete {
-
-    /*
-    fun lastCachedMonth(year: Int): Int = yearMonthsCached.getOrDefault(year, -1)
-
-    fun withNewCaches(cache: Map<Int, Int>): AthleteEntity = AthleteEntity(
-        athleteId = athleteId,
-        userName = userName,
-        receivedOnUnixSeconds = receivedOnUnixSeconds,
-        profilePictureMedium = profilePictureMedium,
-        profilePictureLarge = profilePictureLarge,
-        firstName = firstName,
-        lastName = lastName,
-        yearMonthsCached = yearMonthsCached.plus(cache),
-        gears = gears
-    )
-
-    fun withNewGearCaches(caches: List<Pair<String, String>>): AthleteEntity = AthleteEntity(
-        athleteId = athleteId,
-        userName = userName,
-        receivedOnUnixSeconds = receivedOnUnixSeconds,
-        profilePictureMedium = profilePictureMedium,
-        profilePictureLarge = profilePictureLarge,
-        firstName = firstName,
-        lastName = lastName,
-        yearMonthsCached = yearMonthsCached,
-        gears = gears.plus(caches)
-    )
-
-
-     */
-}
+) : Athlete

@@ -4,6 +4,7 @@ import com.activityartapp.data.entities.OAuth2Entity
 import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.data.remote.responses.Bearer
 import com.activityartapp.domain.models.OAuth2
+import com.activityartapp.domain.models.OAuth2WithoutAthlete
 import com.activityartapp.domain.models.requiresRefresh
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.*
@@ -54,11 +55,21 @@ class GetAccessTokenWithRefreshUseCase @Inject constructor(
                     clientSecret = CLIENT_SECRET,
                     refreshToken = prevOauth.refreshToken,
                     grantType = GRANT_TYPE
-                ).apply {
-                    /** Refresh token [Bearer] does not include the athlete and thus
-                     * id must be SET to prevent an NPE. **/
-                    this.athleteId = athleteId
+                ).run {
+                    val expiresAtUnixSeconds = expiresAtUnixSeconds
+                    val accessToken = accessToken
+                    val refreshToken = refreshToken
+                    object : OAuth2 {
+                        override val athleteId: Long = prevOauth.athleteId
+                        override val expiresAtUnixSeconds: Int = expiresAtUnixSeconds
+                        override val accessToken: String = accessToken
+                        override val refreshToken: String = refreshToken
+                    }
                 }
+
+                /** Refresh token [Bearer] does not include the athlete and thus
+                 * id must be SET to prevent an NPE. **/
+                //  this.athleteId = athleteId
             )
         } catch (e: Exception) {
             /* When using try catch in a suspend block,

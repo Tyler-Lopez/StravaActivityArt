@@ -18,7 +18,7 @@ interface AthleteApi {
         @Query("client_secret") clientSecret: String,
         @Query("refresh_token") refreshToken: String,
         @Query("grant_type") grantType: String = "refresh_token"
-    ): Bearer
+    ): BearerWithoutAthlete
 
     // Get activities from access token
     @GET("api/v3/athlete/activities?")

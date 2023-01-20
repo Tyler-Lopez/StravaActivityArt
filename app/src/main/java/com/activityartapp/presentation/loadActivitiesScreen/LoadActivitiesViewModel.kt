@@ -117,6 +117,7 @@ class LoadActivitiesViewModel @Inject constructor(
         /* OAuth2 should never return null here */
         val oAuth2 = getOAuth2() ?: error("OAuth2 is null for an unknown reason...")
         val accessToken = oAuth2.accessToken
+        println("here, oauth is $oAuth2, athleteId is ${oAuth2.athleteId}")
         val athleteId = oAuth2.athleteId
 
         /** Fetch Athlete Usage from remote if internet is enabled **/

@@ -64,6 +64,8 @@ class GetActivitiesByYearUseCase @Inject constructor(
          * receive from remote */
         if (lastCachedMonth != LAST_MONTH_OF_YEAR) {
             println("Last cached month: $lastCachedMonth")
+            println("Here, athlete ID was $athleteId")
+
             if (internetEnabled) {
                 getActivitiesByYearFromRemoteUseCase(
                     accessToken = accessToken,

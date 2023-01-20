@@ -45,7 +45,7 @@ fun SaveArtStandby(
 ) {
 
     /** OS Greater than Android 10 (API 30) do not require permissions **/
-    val osGreaterThan10 = Build.VERSION.SDK_INT > Build.VERSION_CODES.Q
+    val osGreaterThan10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     /** Unfortunate necessary hack with the permissions API.
@@ -60,7 +60,7 @@ fun SaveArtStandby(
      * they click "Download" thereafter we know whether or not they are perma-denied. **/
     SideEffect {
         permissionState.apply {
-            if (!permissionRequested || (permissionRequested && shouldShowRationale)) {
+            if (!osGreaterThan10 && (!permissionRequested || (permissionRequested && shouldShowRationale))) {
                 launchPermissionRequest()
             }
         }

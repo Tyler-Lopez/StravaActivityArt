@@ -6,48 +6,74 @@ import kotlin.collections.Map
 
 data class AthleteResponse(
     @SerializedName("id")
-    override val athleteId: Long,
-    /* TODO COMMENTED FOR NOW
+    override val id: Long,
     @SerializedName("username")
-    override val userName: String,
+    override val userName: String?,
+    @SerializedName("resource_state")
+    override val resourceState: Int?,
     @SerializedName("firstname")
-    override val firstName: String,
+    override val firstName: String?,
     @SerializedName("lastname")
-    override val lastName: String,
-    @SerializedName("profile")
-    override val profilePictureLarge: String,
+    override val lastName: String?,
+    @SerializedName("bio")
+    override val bio: String?,
+    @SerializedName("city")
+    override val city: String?,
+    @SerializedName("state")
+    override val state: String?,
+    @SerializedName("country")
+    override val country: String?,
+    @SerializedName("sex")
+    override val sex: String?,
+    @SerializedName("premium")
+    override val premium: Boolean?,
+    @SerializedName("summit")
+    override val summit: Boolean?,
+    @SerializedName("created_at")
+    override val createdAt: String?,
+    @SerializedName("updated_at")
+    override val updatedAt: String?,
+    @SerializedName("badge_type_id")
+    override val badgeTypeId: Int?,
+    @SerializedName("weight")
+    override val weight: Double?,
     @SerializedName("profile_medium")
-    override val profilePictureMedium: String,
-
-     */
-    val athlete_type: Int,
-    val badge_type_id: Int,
-    val bikes: List<Bike>?,
-    val city: String,
-    val clubs: List<Any>,
-    val country: String,
-    val created_at: String,
-    val date_preference: String,
-    val follower: Any,
-    val follower_count: Int,
-    val friend: Any,
-    val friend_count: Int,
-    val ftp: Any,
-    val measurement_preference: String,
-    val mutual_friend_count: Int,
-    val premium: Boolean,
-    val resource_state: Int,
-    val sex: String,
-    val shoes: List<Shoe>?,
-    val state: String,
-    val updated_at: String,
-    val weight: Int
+    override val profileMedium: String?,
+    @SerializedName("profile")
+    override val profile: String?,
+    @SerializedName("friend")
+    override val friend: Boolean?,
+    @SerializedName("follower")
+    override val follower: Boolean?
 ) : Athlete {
-
-    // TODO COMMENTED FOR NOW override val receivedOnUnixSeconds: Int? = null
-
     override val lastCachedYearMonth: Map<Int, Int>
         get() = mapOf()
-    //override val yearMonthsCached: Map<Int, Int> = mapOf()
-    //override val gears: Map<String, String> = mapOf()
 }
+
+/**
+ *
+ * Example Response:
+ *
+ * "athlete": {
+"id": 94894359,
+"username": "tylerlopez",
+"resource_state": 2,
+"firstname": "Tyler",
+"lastname": "Lopez",
+"bio": "I just walk",
+"city": "",
+"state": "",
+"country": null,
+"sex": "M",
+"premium": false,
+"summit": false,
+"created_at": "2021-11-02T22:12:19Z",
+"updated_at": "2023-01-20T17:47:10Z",
+"badge_type_id": 0,
+"weight": 0.0,
+"profile_medium": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/94894359/22514957/7/medium.jpg",
+"profile": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/94894359/22514957/7/large.jpg",
+"friend": null,
+"follower": null
+}
+ */
