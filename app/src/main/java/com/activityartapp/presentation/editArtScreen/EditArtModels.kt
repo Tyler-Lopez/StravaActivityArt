@@ -108,6 +108,10 @@ sealed interface EditArtViewEvent : ViewEvent {
 
 sealed interface EditArtViewState : ViewState {
 
+    companion object {
+        private const val FADE_LENGTH_MS = 1000
+    }
+
     val dialogNavigateUpActive: Boolean
     val pagerStateWrapper: PagerStateWrapper
 
@@ -116,7 +120,7 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
             pagerState = PagerState(EditArtHeaderType.values().toList().size),
-            fadeLengthMs = Standby.FADE_LENGTH_MS // todo
+            fadeLengthMs = FADE_LENGTH_MS // todo
         )
     ) : EditArtViewState
 
@@ -130,16 +134,16 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         @IgnoredOnParcel val bitmap: Bitmap? = null,
         @IgnoredOnParcel override val dialogNavigateUpActive: Boolean = false,
-        val filterActivitiesCountDate: Int,
-        val filterActivitiesCountDistance: Int,
-        val filterActivitiesCountType: Int,
-        val filterDateSelections: List<DateSelection>?,
-        val filterDateSelectionIndex: Int,
+        val filterActivitiesCountDate: Int = 0,
+        val filterActivitiesCountDistance: Int = 0,
+        val filterActivitiesCountType: Int = 0,
+        val filterDateSelections: List<DateSelection>? = null,
+        val filterDateSelectionIndex: Int = INIT_SELECTION_INDEX,
         val filterDistanceSelectedStart: Double? = null,
         val filterDistanceSelectedEnd: Double? = null,
-        val filterDistanceTotalStart: Double?,
-        val filterDistanceTotalEnd: Double?,
-        val filterTypes: List<Pair<String, Boolean>>?,
+        val filterDistanceTotalStart: Double? = null,
+        val filterDistanceTotalEnd: Double? = null,
+        val filterTypes: Map<String, Boolean>? = null,
         @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
             pagerState = PagerState(EditArtHeaderType.values().toList().size),
@@ -167,7 +171,7 @@ sealed interface EditArtViewState : ViewState {
         ),
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
-        val typeActivitiesDistanceMetersSummed: Int,
+        val typeActivitiesDistanceMetersSummed: Int = -1,
         val typeFontSelected: FontType = INIT_TYPE_FONT_SELECTION,
         val typeFontWeightSelected: FontWeightType = INIT_TYPE_FONT_WEIGHT_SELECTION,
         val typeFontItalicized: Boolean = INIT_TYPE_IS_ITALICIZED,
@@ -184,7 +188,6 @@ sealed interface EditArtViewState : ViewState {
         companion object {
             private const val CUSTOM_SIZE_MINIMUM_PX = 100
             private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
-            const val FADE_LENGTH_MS = 1000
 
             private const val INITIAL_SCROLL_STATE = 0
             private const val INITIAL_SELECTED_RES_INDEX = 0
@@ -210,6 +213,8 @@ sealed interface EditArtViewState : ViewState {
             private val INIT_TYPE_TYPE = EditArtTypeType.NONE
 
             private const val NO_ACTIVITIES_COUNT = 0
+
+            private const val INIT_SELECTION_INDEX = 0
         }
 
         @Inject
@@ -217,11 +222,16 @@ sealed interface EditArtViewState : ViewState {
         lateinit var resolutionListFactory: ResolutionListFactory
 
         @IgnoredOnParcel
-        val atLeastOneActivitySelected = minOf(
-            filterActivitiesCountDate,
-            filterActivitiesCountDistance,
-            filterActivitiesCountType
-        ) != NO_ACTIVITIES_COUNT
+        val atLeastOneActivitySelected
+            get() = minOf(
+                filterActivitiesCountDate,
+                filterActivitiesCountDistance,
+                filterActivitiesCountType
+            ) != NO_ACTIVITIES_COUNT
+
+        @IgnoredOnParcel
+        val filterDateSelectionUnset = filterDateSelectionIndex == INIT_SELECTION_INDEX
+
     }
 }
 

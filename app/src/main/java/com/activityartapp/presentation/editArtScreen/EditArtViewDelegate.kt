@@ -111,7 +111,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     filterDistanceTotalEnd?.let {
                                         filterDistanceTotalStart?.rangeTo(it)
                                     },
-                                    filterTypes,
+                                    filterTypes?.toList(),
                                     viewModel
                                 )
                             }
