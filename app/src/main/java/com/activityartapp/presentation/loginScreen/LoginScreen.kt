@@ -35,7 +35,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
 
     val configuration = LocalConfiguration.current
 
-// If our configuration changes then this will launch a new coroutine scope for it
+    // If our configuration changes then this will launch a new coroutine scope for it
     LaunchedEffect(configuration) {
         // Save any changes to the orientation value on the configuration object
         snapshotFlow { configuration.orientation }
@@ -50,29 +50,6 @@ fun LoginScreen(viewModel: LoginViewModel) {
             PortraitContent(viewModel)
         }
     }
-
-    /*
-    ScreenBackground(
-        padding = 0.dp,
-        scrollingEnabled = false
-    ) {
-        viewModel.viewState.collectAsState().value?.apply {
-
-            Image(painterResource(id = R.drawable.ic_activity_art_logo), contentDescription = null)
-            Subhead(
-                text = stringResource(id = R.string.app_description),
-                modifier = Modifier.sizeIn(maxWidth = 254.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.ic_btn_strava_connectwith_orange_clipped),
-                contentDescription = stringResource(id = R.string.connect_with_strava_button_cd),
-                modifier = Modifier
-                    .clickable { viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked) },
-            )
-        }
-    }
-
-     */
 }
 
 
@@ -92,13 +69,15 @@ fun LandscapeContent(viewModel: LoginViewModel) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
                 alignment = Alignment.Center,
-                contentDescription = null
+                contentDescription = stringResource(R.string.content_description_feature_graphic)
             )
         }
-        Spacer(modifier = Modifier
-            .fillMaxHeight()
-            .width(1.dp)
-            .background(StravaOrange))
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(1.dp)
+                .background(StravaOrange)
+        )
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -107,7 +86,10 @@ fun LandscapeContent(viewModel: LoginViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Image(painterResource(id = R.drawable.ic_activity_art_logo), contentDescription = null)
+            Image(
+                painter = painterResource(id = R.drawable.ic_activity_art_logo),
+                contentDescription = stringResource(R.string.app_logo_content_description)
+            )
             Subhead(
                 text = stringResource(id = R.string.app_description),
                 modifier = Modifier.sizeIn(maxWidth = 254.dp)
@@ -138,13 +120,15 @@ fun PortraitContent(viewModel: LoginViewModel) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
                 alignment = Alignment.BottomCenter,
-                contentDescription = null
+                contentDescription = stringResource(R.string.content_description_feature_graphic)
             )
         }
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(StravaOrange))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(StravaOrange)
+        )
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -153,7 +137,10 @@ fun PortraitContent(viewModel: LoginViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Image(painterResource(id = R.drawable.ic_activity_art_logo), contentDescription = null)
+            Image(
+                painter = painterResource(id = R.drawable.ic_activity_art_logo),
+                contentDescription = stringResource(R.string.app_logo_content_description)
+            )
             Subhead(
                 text = stringResource(id = R.string.app_description),
                 modifier = Modifier.sizeIn(maxWidth = 254.dp)

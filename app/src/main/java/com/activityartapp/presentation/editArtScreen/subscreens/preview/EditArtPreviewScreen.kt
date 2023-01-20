@@ -26,7 +26,7 @@ fun EditArtPreview(
         bitmap?.let {
             Image(
                 bitmap = it.asImageBitmap(),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.edit_art_preview_image_content_description),
                 contentScale = ContentScale.Fit
             )
         } ?: run {

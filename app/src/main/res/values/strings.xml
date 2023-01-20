@@ -7,12 +7,11 @@
     <!-- The current version of the application -->
     <string name="app_version">Version %s</string>
     <!-- A brief description of the application presented to the athlete -->
-    <string name="app_description">
-        Celebrate your Strava activities with personalized art customized exactly to your specification
-    </string>
+    <string name="app_description">Celebrate your Strava activities with personalized art customized to your liking</string>
     <!-- Content description of the image button which connects the app with an
     athlete's Strava account when clicked -->
     <string name="connect_with_strava_button_cd">Connect with Strava</string>
+    <string name="content_description_feature_graphic">Feature graphic</string>
 
     <!-- Content description of the image of the athlete's profile picture -->
     <string name="profile_picture_cd">Profile Picture</string>
@@ -120,6 +119,7 @@
     <string name="buttons_resize_uppercase">RESIZE</string>
     <string name="buttons_resize_cd">Resize Art</string>
 
+    <string name="edit_art_preview_image_content_description">Art Preview</string>
     <string name="edit_art_preview_activities_zero_count_header">Oops! No Activities Selected</string>
     <string name="edit_art_preview_activities_zero_count_description">Modify your filters to include at least one activity and try again</string>
     <string name="edit_art_filters_activities_filtered_zero">
@@ -224,6 +224,7 @@
     <string name="save_art_header">Save Art</string>
     <string name="save_art_download_art">Download</string>
     <string name="save_art_share_art">Share</string>
+    <string name="save_art_content_description_preview">Art Preview</string>
 
     <!-- FONT TYPES -->
     <string name="font_josefinsans">Josefin Sans</string>
@@ -261,6 +262,7 @@
     <string name="error_continue_button">Make Art</string>
     <string name="error_retry_button">Retry</string>
     <string name="error_return_button">Go Back</string>
+    <string name="error_warning_content_description">Warning</string>
     <string name="error_unsupported_version_header">Unsupported Version</string>
     <string name="error_unsupported_version_prompt">Please update to the newest app version to use Activity Art. Thanks!</string>
     <string name="error_unsupported_version_description">Oops! You\'re using a version of Activity Art that is no longer supported.</string>

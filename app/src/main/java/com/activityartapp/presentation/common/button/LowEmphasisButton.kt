@@ -23,6 +23,7 @@ fun LowEmphasisButton(
         .defaultMinSize(minWidth = dimensionResource(id = R.dimen.button_min_width)),
     text: String? = null,
     imageVector: ImageVector? = null,
+    contentDescription: String? = null,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -57,7 +58,7 @@ fun LowEmphasisButton(
             )
         }
         imageVector?.let {
-            Icon(imageVector = imageVector, contentDescription = null)
+            Icon(imageVector = imageVector, contentDescription = contentDescription)
         }
     }
 }

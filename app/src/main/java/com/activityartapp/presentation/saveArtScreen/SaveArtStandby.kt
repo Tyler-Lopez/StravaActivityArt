@@ -78,7 +78,7 @@ fun SaveArtStandby(
             Image(
                 bitmap = bitmapScreenSize.asImageBitmap(),
                 modifier = Modifier.weight(1f, false),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.save_art_content_description_preview),
                 contentScale = ContentScale.Fit
             )
             Column {

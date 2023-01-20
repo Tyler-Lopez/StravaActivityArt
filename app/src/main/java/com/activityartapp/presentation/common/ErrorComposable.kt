@@ -44,7 +44,7 @@ fun ColumnScope.ErrorScreen(
         Icon(
             imageVector = Icons.Default.Warning,
             tint = colorResource(R.color.n90_coal),
-            contentDescription = null
+            contentDescription = stringResource(R.string.error_warning_content_description)
         )
         TitleTwo(text = header)
     }
