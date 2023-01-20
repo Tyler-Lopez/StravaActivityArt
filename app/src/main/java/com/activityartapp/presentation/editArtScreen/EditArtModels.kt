@@ -134,9 +134,9 @@ sealed interface EditArtViewState : ViewState {
     data class Standby(
         @IgnoredOnParcel val bitmap: Bitmap? = null,
         @IgnoredOnParcel override val dialogNavigateUpActive: Boolean = false,
-        val filterActivitiesCountDate: Int = -1,
-        val filterActivitiesCountDistance: Int = -1,
-        val filterActivitiesCountType: Int = -1,
+        val filterActivitiesCountDate: Int = 0,
+        val filterActivitiesCountDistance: Int = 0,
+        val filterActivitiesCountType: Int = 0,
         val filterDateSelections: List<DateSelection>? = null,
         val filterDateSelectionIndex: Int = INIT_SELECTION_INDEX,
         val filterDistanceSelectedStart: Double? = null,
@@ -214,7 +214,7 @@ sealed interface EditArtViewState : ViewState {
 
             private const val NO_ACTIVITIES_COUNT = 0
 
-            private const val INIT_SELECTION_INDEX = -1
+            private const val INIT_SELECTION_INDEX = 0
         }
 
         @Inject
