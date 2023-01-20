@@ -88,9 +88,9 @@ fun SaveArtStandby(
                     size = ButtonSize.MEDIUM,
                     text = stringResource(R.string.save_art_download_art)
                 ) {
-                    /** For Android <= 10, permission must be requested **/
                     permissionState.apply {
                         when {
+                            /** Permission must be requested only when Android is <= 10 **/
                             osGreaterThan10 || hasPermission -> {
                                 eventReceiver.onEventDebounced(ClickedDownload)
                             }
@@ -131,8 +131,6 @@ fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) ->
         }
 
         lifecycle.addObserver(observer)
-        onDispose {
-            lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycle.removeObserver(observer) }
     }
 }
