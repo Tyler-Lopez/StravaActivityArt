@@ -1,3 +1,272 @@
 <resources>
-    <string name="app_name">Activities Art</string>
+    <!-- LOGIN SCREEN -->
+    <!-- Application name -->
+    <string name="app_name">Activity Art</string>
+    <!-- Content description of the image of the app logo -->
+    <string name="app_logo_content_description">Activity Art Logo</string>
+    <!-- The current version of the application -->
+    <string name="app_version">Version %s</string>
+    <!-- A brief description of the application presented to the athlete -->
+    <string name="app_description">Celebrate your Strava activities with personalized art customized to your liking</string>
+    <!-- Content description of the image button which connects the app with an
+    athlete's Strava account when clicked -->
+    <string name="connect_with_strava_button_cd">Connect with Strava</string>
+    <string name="content_description_feature_graphic">Feature graphic</string>
+
+    <!-- Content description of the image of the athlete's profile picture -->
+    <string name="profile_picture_cd">Profile Picture</string>
+    <!-- Content description of the image button that navigates to the previous screen -->
+    <string name="navigate_up_cd">Navigate Up</string>
+
+    <!-- WELCOME SCREEN -->
+    <!-- Text is shown on a button that directs athletes to being making artwork -->
+    <string name="welcome_button_make_art">Make Art</string>
+    <!-- Text is shown on a button that directs athlete to information about the app -->
+    <string name="welcome_button_about">About</string>
+    <!-- Text is shown on a button that directs athletes to logout -->
+    <string name="welcome_button_logout">Logout</string>
+    <string name="welcome_new_version_available">Update Available</string>
+
+    <!-- ABOUT SCREEN -->
+    <!-- Text is shown on the action bar for the page which shows app information -->
+    <string name="action_bar_about_header">About</string>
+    <!-- Content describes the app in detail -->
+    <string-array name="about_screen_content">
+        <item>Activity Art lets athletes create fully-customizable digital artwork of their Strava activities at a high resolution appropriate for printing and framing.</item>
+        <item>Athletes may visualize only some of their activities as determined by filters they set that include the activity date, distance, and type.</item>
+    </string-array>
+
+    <!-- LOADING ACTIVITIES SCREEN -->
+    <string name="loading_activities_zero_count">
+        Loading Activities
+    </string><!-- Text informs the athlete how many activities have been loaded -->
+    <!-- Todo, this is not an appropriate way to handle the zero case -->
+    <plurals name="loading_activities_count">
+        <item quantity="zero">@string/loading_activities_zero_count</item>
+        <item quantity="one">%d Activity Loaded</item>
+        <item quantity="other">%d Activities Loaded</item>
+    </plurals>
+    <string name="loading_activities_error_header">Oops! An Error Occurred</string>
+    <!-- If there was no internet connection while loading activities, present the user a prompt
+    depending on how many activities were loaded to either continue with the partial load or to retry -->
+    <string name="loading_activities_no_internet_header">Internet is Unavailable</string>
+    <string name="loading_activities_no_internet_description">We can\'t connect to the internet.</string>
+    <string name="loading_activities_no_internet_prompt_zero_count">Check your connection and try again.</string>
+    <plurals name="loading_activities_no_internet_prompt">
+        <item quantity="zero">@string/loading_activities_no_internet_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check your connection and try again.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check your connection and try again.</item>
+    </plurals>
+    <!-- Error information shown when the athlete has been personally rate-limited -->
+    <string name="loading_activities_athlete_rate_limited_header">Personal Daily Limit</string>
+    <string name="loading_activities_athlete_rate_limited_description">
+        Wow, you must have a lot of activities! Because Strava limits how many times we can get athlete data in a day, we can\'t load more today.
+    </string>
+    <string name="loading_activities_athlete_rate_limited_prompt_zero_count">Check back tomorrow when we can get the rest.</string>
+    <plurals name="loading_activities_athlete_rate_limited_prompt">
+        <item quantity="zero">@string/loading_activities_athlete_rate_limited_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back tomorrow when we can get the rest.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back tomorrow when we can get the rest.</item>
+    </plurals>
+    <!-- Error information shown when the app has been rate-limited by Strava -->
+    <string name="loading_activities_app_rate_limited_header">Daily Limit</string>
+    <string name="loading_activities_app_rate_limited_description">Activity Art is busy today! Because Strava limits how many times we can get athlete data in a day, we can\'t load any more today.</string>
+    <string name="loading_activities_app_rate_limited_prompt_zero_count">Check back tomorrow when we can get the rest.</string>
+    <plurals name="loading_activities_app_rate_limited_prompt">
+        <item quantity="zero">@string/loading_activities_app_rate_limited_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back tomorrow when we can get the rest.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back tomorrow when we can get the rest.</item>
+    </plurals>
+    <!-- Error information shown when we Strava is having Server issues -->
+    <string name="loading_activities_server_issue_header">Strava Server Error</string>
+    <string name="loading_activities_server_issue_description">We had a problem connecting to Strava.</string>
+    <string name="loading_activities_server_issue_prompt_zero_count">Check back later or retry the connection.</string>
+    <plurals name="loading_activities_server_issue_prompt">
+        <item quantity="zero">@string/loading_activities_server_issue_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it, retry the connection, or check back later.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them, retry the connection, or check back later.</item>
+    </plurals>
+    <!-- Error information shown when we don't know why we are having issues -->
+    <string name="loading_activities_unknown_header">Unknown Error</string>
+    <string name="loading_activities_unknown_description">We\'re not sure why, but we aren\'t able to get all of your activities right now.</string>
+    <string name="loading_activities_unknown_prompt_zero_count">Check back later.</string>
+    <plurals name="loading_activities_unknown_prompt">
+        <item quantity="zero">@string/loading_activities_unknown_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back later.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back later.</item>
+    </plurals>
+    <!-- Error information shown when the athlete doesn't have at least one activity -->
+    <string name="loading_activities_no_activities_header">No Activities Found</string>
+    <string name="loading_activities_no_activities_prompt">Oops! We checked Strava, and you don\'t seem to have any activities.</string>
+    <string name="loading_activities_no_activities_description">Record at least one activity and check back later.</string>
+
+
+    <!-- EDIT ART SCREEN -->
+    <!-- Text is shown on the action bar for the page where an athlete may customize their art -->
+    <string name="action_bar_edit_art_header">Edit Art</string><!-- Content description for a text button that directs athlete to select filters which may narrow down many activities into a few -->
+    <string name="select_filters_cd">Select Filters</string><!-- Content description for a text button that directs athletes to customize their art style -->
+    <string name="select_styles_cd">Select Styles</string><!-- Text is shown on the button which directs the athlete from editing to saving their art -->
+    <string name="button_continue">Continue</string><!-- Text is shown on the button which directs the athlete from editing to saving their art -->
+    <string name="button_continue_uppercase">CONTINUE</string><!-- Text is shown on the button which opens art preview -->
+    <string name="button_preview_uppercase">PREVIEW</string><!-- Content description for preview button -->
+    <string name="button_preview_cd">Preview Art</string><!-- Text shown on the button which opens art filters, to select which activities will be shown -->
+    <string name="button_filters_uppercase">FILTERS</string>
+    <string name="button_filters_cd">Select Filters</string>
+    <string name="buttons_style_uppercase">STYLE</string>
+    <string name="buttons_style_cd">Style Art</string>
+    <string name="buttons_type_uppercase">TYPE</string>
+    <string name="buttons_type_cd">Typography</string>
+    <string name="buttons_resize_uppercase">RESIZE</string>
+    <string name="buttons_resize_cd">Resize Art</string>
+
+    <string name="edit_art_preview_image_content_description">Art Preview</string>
+    <string name="edit_art_preview_activities_zero_count_header">Oops! No Activities Selected</string>
+    <string name="edit_art_preview_activities_zero_count_description">Modify your filters to include at least one activity and try again</string>
+    <string name="edit_art_filters_activities_filtered_zero">
+        Oops! No activities for the selected filters
+    </string>
+    <plurals name="edit_art_filters_activities_filtered">
+        <!-- Android ignores 'zero' and this must be implemented programmatically -->
+        <item quantity="zero">@string/edit_art_filters_activities_filtered_zero</item>
+        <item quantity="one">Includes %d activity</item>
+        <item quantity="other">Includes %d activities</item>
+    </plurals>
+
+    <string name="edit_art_filters_date_include_all">Include all activities</string>
+    <string name="edit_art_filters_date_custom_range">Choose a custom date range</string>
+    <string name="edit_art_filters_date_header">Date</string>
+    <string name="edit_art_filters_date_description">
+        Which window of time should activities be selected from?
+    </string>
+    <string name="edit_art_filters_date_start">Start</string>
+    <string name="edit_art_filters_date_end">End</string>
+
+    <string name="edit_art_filters_activity_type_header">Activity Type</string>
+    <string name="edit_art_filters_activity_type_description">
+        Which types of activities should be used?
+    </string>
+
+    <string name="edit_art_filters_distance_header">Distance</string>
+    <string name="edit_art_filters_distance_description">
+        Which range of distances should be used?
+    </string>
+
+    <string name="edit_art_style_background_header">Background</string>
+    <string name="edit_art_style_background_description">
+        What color should the background of the art be?
+    </string>
+    <string name="edit_art_style_activities_header">Activities</string>
+    <string name="edit_art_style_activities_description">
+        What color should the activities of the art be?
+    </string>
+    <string name="edit_art_style_font_header">Font</string>
+    <string name="edit_art_style_font_description">
+        What color should any text be?
+    </string>
+    <string name="edit_art_style_color_red">Red: %d</string>
+    <string name="edit_art_style_color_green">Green: %d</string>
+    <string name="edit_art_style_color_blue">Blue: %d</string>
+    <string name="edit_art_style_stroke_width_header">Activity Thickness</string>
+    <string name="edit_art_style_stroke_width_description">
+        How thick should the lines of each activity be?
+    </string>
+    <string name="edit_art_style_stroke_thin">Thin</string>
+    <string name="edit_art_style_stroke_medium">Medium</string>
+    <string name="edit_art_style_stroke_thick">Thick</string>
+
+    <string name="edit_art_type_section_left_header">Left</string>
+    <string name="edit_art_type_section_left_description">What text should appear in the bottom-left of the art?</string>
+    <string name="edit_art_type_section_center_header">Center</string>
+    <string name="edit_art_type_section_center_description">What text should appear in the bottom-center of the art?</string>
+    <string name="edit_art_type_section_right_header">Right</string>
+    <string name="edit_art_type_section_right_description">What text should appear in the bottom-right of the art?</string>
+
+    <string name="edit_art_type_type_none">None</string>
+    <string name="edit_art_type_type_name">Your Name</string>
+    <string name="edit_art_type_type_distance_meters">Total Distance in Kilometers</string>
+    <string name="edit_art_type_type_distance_miles">Total Distance in Miles</string>
+    <string name="edit_art_type_type_custom">Custom</string>
+
+    <string name="edit_art_type_font_header">Font</string>
+    <string name="edit_art_type_font_description">What typeface should be used?</string>
+
+    <string name="edit_art_type_font_weight_header">Font Weight</string>
+    <string name="edit_art_type_font_weight_description">How thick should the font be?</string>
+
+    <string name="edit_art_type_font_italic_header">Italicize</string>
+    <string name="edit_art_type_font_italic_description">Should the text be slanted?</string>
+    <string name="edit_art_type_font_italic_enabled">Yes</string>
+    <string name="edit_art_type_font_italic_disabled">No</string>
+
+    <string name="edit_art_type_size_header">Font Size</string>
+    <string name="edit_art_type_size_description">How large should any text be?</string>
+
+    <string name="edit_art_resize_header">Resize Art</string>
+    <string name="edit_art_resize_description">
+        Change the width and height pixel size of the art either from a preset
+        or by inputting custom values
+    </string>
+
+    <string name="edit_art_resize_preview_text">PREVIEW</string>
+    <string name="edit_art_resize_option_computer_wallpaper">Computer Wallpaper</string>
+    <string name="edit_art_resize_option_linkedin_banner">LinkedIn Banner</string>
+    <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
+    <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
+    <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
+    <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
+    <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
+    <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
+    <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
+    <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
+    <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
+
+    <!-- SAVE ART SCREEN -->
+    <string name="save_art_header">Save Art</string>
+    <string name="save_art_download_art">Download</string>
+    <string name="save_art_share_art">Share</string>
+    <string name="save_art_content_description_preview">Art Preview</string>
+
+    <!-- FONT TYPES -->
+    <string name="font_josefinsans">Josefin Sans</string>
+    <string name="font_josefinslab">Josefin Slab</string>
+    <string name="font_quicksand">Quicksand</string>
+    <string name="font_oswald">Oswald</string>
+    <string name="font_lobster_two">Lobster Two</string>
+    <string name="font_merriweather">Merriweather</string>
+    <string name="font_playfair_display">Playfair Display</string><!-- SC is short for small caps -->
+    <string name="font_playfair_display_sc">Playfair Display SC</string>
+    <string name="font_roboto">Roboto</string>
+    <string name="font_alegreya">Alegreya</string>
+
+    <!-- FONT WEIGHT TYPES -->
+    <string name="font_weight_type_black">Black</string>
+    <string name="font_weight_type_extra_bold">Extra-bold</string>
+    <string name="font_weight_type_bold">Bold</string>
+    <string name="font_weight_type_semibold">Semi-bold</string>
+    <string name="font_weight_type_medium">Medium</string>
+    <string name="font_weight_type_regular">Regular</string>
+    <string name="font_weight_type_light">Light</string>
+    <string name="font_weight_type_extra_light">Extra-light</string>
+    <string name="font_weight_type_thin">Thin</string>
+
+
+    <!-- FONT SIZE TYPES -->
+    <!-- XS is short for extra-small -->
+    <string name="font_size_type_xs">XS</string>
+    <string name="font_size_type_small">Small</string>
+    <string name="font_size_type_medium">Medium</string>
+    <string name="font_size_type_large">Large</string><!-- XL is short for extra-large -->
+    <string name="font_size_type_xl">XL</string>
+
+    <!-- GENERIC ERRORS -->
+    <string name="error_continue_button">Make Art</string>
+    <string name="error_retry_button">Retry</string>
+    <string name="error_return_button">Go Back</string>
+    <string name="error_warning_content_description">Warning</string>
+    <string name="error_unsupported_version_header">Unsupported Version</string>
+    <string name="error_unsupported_version_prompt">Please update to the newest app version to use Activity Art. Thanks!</string>
+    <string name="error_unsupported_version_description">Oops! You\'re using a version of Activity Art that is no longer supported.</string>
+    <string name="error_permission_denied_header">Unable to Download</string>
+    <string name="error_permission_denied_description">We need permission to download your art. When we asked for this permission earlier, you denied it. We aren\'t able to request it again.</string>
+    <string name="error_permission_denied_prompt">To grant this permission, open your device\'s settings, find Activity Art, and enable the storage permission.</string>
 </resources>

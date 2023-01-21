@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SpandexBaseFont">
+        <item name="android:textColor">@color/light_text_primary</item>
+        <item name="android:textColorHint">@color/light_text_primary</item>
+        <item name="android:textColorLink">@color/light_text_primary</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">normalFont</item>
+    </style>
+    <style name="TitleOne" parent="SpandexBaseFont">
+        <item name="android:textSize">28sp</item>
+        <item name="lineHeight">34sp</item>
+        <item name="android:fontFamily">@font/maison_neue</item>
+    </style>
+</resources>

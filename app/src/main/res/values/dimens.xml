@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Begin Module System Theme -->
+    <dimen name="title_large_text_size">24sp</dimen>
+    <dimen name="title_small_text_size">17sp</dimen>
+    <dimen name="label_large_text_size">13sp</dimen>
+    <dimen name="label_small_text_size">10sp</dimen>
+    <dimen name="body_large_text_size">15sp</dimen>
+    <dimen name="button_height">48dp</dimen>
+
+    <dimen name="button_corner_radius">4dp</dimen>
+    <dimen name="button_stroke_width">1dp</dimen>
+    <dimen name="button_height_large">48dp</dimen>
+    <dimen name="button_height_medium">40dp</dimen>
+    <dimen name="button_height_small">32dp</dimen>
+    <dimen name="button_height_extra_small">24dp</dimen>
+
+    <dimen name="button_text_large">13sp</dimen>
+    <dimen name="button_text_medium">12sp</dimen>
+    <dimen name="button_text_small">10sp</dimen>
+    <dimen name="button_text_extra_small">10sp</dimen>
+
+    <dimen name="button_min_width">164dp</dimen>
+    <dimen name="profile_picture_size">32dp</dimen>
+    <dimen name="rounded_picture_stroke_width">1dp</dimen>
+    <!-- 16dp is the default gutter value in the app -->
+    <dimen name="one_gutter">16dp</dimen>
+
+    <dimen name="color_preview_height">48dp</dimen>
+    <dimen name="color_preview_stroke_width">1dp</dimen>
+
+    <!-- A RangeSlider is offset horizontally to make room for the Thumb control -->
+    <dimen name="slider_horizontal_offset">10dp</dimen>
+</resources>
