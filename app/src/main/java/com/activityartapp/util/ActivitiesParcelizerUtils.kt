@@ -1,6 +1,5 @@
 package com.activityartapp.util
 
-import android.os.Parcel
 import com.activityartapp.domain.models.Activity
 
 fun List<Activity>.parcelize(): List<ParcelableActivity> {

@@ -1,4 +1,4 @@
-package com.activityartapp.util
+package com.activityartapp.util.enums
 
 import androidx.annotation.StringRes
 import com.activityartapp.R

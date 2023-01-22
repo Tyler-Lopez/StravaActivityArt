@@ -1,6 +1,5 @@
 package com.activityartapp.util
 
-import android.os.Parcel
 import android.os.Parcelable
 import com.activityartapp.domain.models.Activity
 import kotlinx.parcelize.Parcelize

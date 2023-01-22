@@ -16,6 +16,7 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.*
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.util.enums.FontSizeType
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

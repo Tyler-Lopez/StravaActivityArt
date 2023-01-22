@@ -6,6 +6,7 @@ import android.util.Size
 import androidx.annotation.Px
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
+import com.activityartapp.util.enums.FontSizeType
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlin.math.ceil

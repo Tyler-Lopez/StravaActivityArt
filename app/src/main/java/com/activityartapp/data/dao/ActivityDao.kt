@@ -41,5 +41,4 @@ interface ActivityDao {
         monthStringWithDelimiter: String,
         yearStringWithDelimiter: String
     ): List<ActivityEntity>
-
 }

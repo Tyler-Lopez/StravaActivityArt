@@ -33,28 +33,17 @@ class AthleteUsageRepositoryImpl @Inject constructor(private val db: FirebaseDat
             val usageInt = usageStr?.toString()?.toInt()
             Response.Success(usageInt ?: 0)
         } catch (e: Exception) {
-            println("Caught exception returning error")
-            println("btw bro exception was $e")
             Response.Error(exception = e)
         }
     }
 
     override suspend fun insertAthleteUsage(athleteId: String, usage: Int) {
         try {
-            val task = db
+            db
                 .reference
                 .child("athlete_usage")
                 .child(athleteId)
                 .setValue(usage)
-                .addOnSuccessListener {
-                    println("Success")
-                }
-                .addOnCanceledListener {
-                    println("Canceled")
-                }
-                .addOnFailureListener {
-                    println("Failure on insert")
-                }
         } catch (e: Exception) {
 
         }

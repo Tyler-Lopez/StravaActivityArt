@@ -4,13 +4,11 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.os.Parcelable
-import android.util.Size
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -18,7 +16,7 @@ import com.activityartapp.domain.models.ResolutionListFactory
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
-import com.activityartapp.util.FontSizeType
+import com.activityartapp.util.enums.FontSizeType
 import com.activityartapp.util.enums.FontType
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi

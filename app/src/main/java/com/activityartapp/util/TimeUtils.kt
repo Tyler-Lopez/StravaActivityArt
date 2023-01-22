@@ -1,11 +1,11 @@
 package com.activityartapp.util
 
-import com.activityartapp.util.classes.YearMonthDay
-import java.time.*
+import java.time.Instant
+import java.time.Year
+import java.time.YearMonth
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
-
 
 class TimeUtils {
 
@@ -50,23 +50,6 @@ class TimeUtils {
 
     fun iso8601StringToUnixMillisecond(value: String): Long {
         return TimeUnit.SECONDS.toMillis(Instant.parse(value).epochSecond)
-    }
-
-    /**
-     * Provided a UNIX seconds timestamp, returns the corresponding year and month
-     * which it represents.
-     *
-     * Todo, currently assumes UTC TimeZone. Must adjust to pass in actual from ISO8601.
-     *
-     * @param seconds A time in UNIX seconds.
-     *
-     * @return A pair of the year to 0-index month (0-11) representing when this UNIX
-     * second occurred.
-     */
-    fun unixSecondToYearMonthDay(seconds: Long): YearMonthDay {
-       return LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.UTC).run {
-           YearMonthDay(year, month.value - 1, dayOfMonth)
-       }
     }
 
     /**
@@ -154,80 +137,3 @@ class TimeUtils {
         ).timeInMillis
     }
 }
-/*
-class TimeUtils {
-    companion object {
-        private const val DATE_TIME_FORMAT = "dd MM uuu HH mm"
-
-        fun parseIso8601(string: String): Map<String, Int> {
-            val instant = Instant.parse(string)
-            val dateArr = LocalDateTime
-                .ofInstant(instant, ZoneOffset.UTC)
-                .format(DateTimeFormatter.ofPattern("dd MM uuuu HH mm"))
-                .split(" ")
-            return mapOf(
-                "day" to dateArr[0].toInt(),
-                "month" to dateArr[1].toInt(),
-                "year" to dateArr[2].toInt(),
-                "hour" to dateArr[3].toInt(),
-                "minute" to dateArr[4].toInt()
-            )
-        }
-
-        fun monthIntToString(int: Int) = when (int) {
-            1 -> "JAN"
-            2 -> "FEB"
-            3 -> "MAR"
-            4 -> "APR"
-            5 -> "MAY"
-            6 -> "JUN"
-            7 -> "JUL"
-            8 -> "AUG"
-            9 -> "SEP"
-            10 -> "OCT"
-            11 -> "NOV"
-            12 -> "DEC"
-            else -> "???"
-        }
-
-        fun monthStringToInt(string: String) = when (string) {
-            "JAN" -> 1
-            "FEB" -> 2
-            "MAR" -> 3
-            "APR" -> 4
-            "MAY" -> 5
-            "JUN" -> 6
-            "JUL" -> 7
-            "AUG" -> 8
-            "SEP" -> 9
-            "OCT" -> 10
-            "NOV" -> 11
-            "DEC" -> 12
-            else -> -1
-        }
-
-        fun yearsAvailable() = FIRST_YEAR..LocalDateTime.now().year
-
-        fun timeToString(input: Int): String {
-            val hours = input / 3600
-            val minutes = (input % 3600) / 60
-            val seconds = (input % 3600) % 60
-
-            val toReturn = StringBuilder()
-            if (hours != 0) toReturn.append("${hours}h ")
-            if (minutes != 0 || hours != 0) toReturn.append("${minutes}m ")
-            if (hours == 0) toReturn.append("${seconds}s")
-            return toReturn.toString()
-        }
-
-        fun accessTokenExpired(time: Int): Boolean {
-            val now = (GregorianCalendar().timeInMillis / 1000).toInt()
-            return (now - time >= 20000)
-        }
-    }
-}
-
-
-
-
- */

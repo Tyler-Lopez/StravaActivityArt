@@ -18,5 +18,4 @@ interface OAuth2Dao {
 
     @Query("SELECT * FROM oAuth2Entity")
     suspend fun getCurrAuth(): OAuth2Entity?
-
 }

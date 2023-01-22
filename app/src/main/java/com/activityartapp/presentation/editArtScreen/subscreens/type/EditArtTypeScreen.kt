@@ -1,11 +1,9 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.type
 
 import android.graphics.Typeface
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
@@ -28,7 +26,7 @@ import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.ui.theme.spacing
-import com.activityartapp.util.FontSizeType
+import com.activityartapp.util.enums.FontSizeType
 import com.activityartapp.util.enums.FontType
 import com.activityartapp.util.enums.FontWeightType
 import kotlin.math.roundToInt

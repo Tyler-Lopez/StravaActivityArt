@@ -4,15 +4,11 @@ import com.activityartapp.domain.VersionRepository
 import com.activityartapp.domain.models.Version
 import com.activityartapp.util.Response
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class VersionRepositoryImpl @Inject constructor(private val db: FirebaseFirestore) :
     VersionRepository {

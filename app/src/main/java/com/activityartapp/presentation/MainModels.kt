@@ -6,7 +6,7 @@ import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
-import com.activityartapp.util.FontSizeType
+import com.activityartapp.util.enums.FontSizeType
 
 sealed interface MainViewState : ViewState {
     object Unauthenticated : MainViewState
