@@ -29,22 +29,4 @@ interface AthleteApi {
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
     ): Activities
-
-    // Get Authenticated Athlete from access token
-    @GET("api/v3/athlete")
-    suspend fun getAuthenticatedAthlete(
-        @Header("Authorization") authHeader: String
-    ): AthleteResponse
-
-    @GET("api/v3/gear/{id}?")
-    suspend fun getGearById(
-        @Path("id") id: String,
-        @Header("Authorization") authHeader: String
-    ): DetailedGear
-
-    @GET("api/v3/activities/{id}?")
-    suspend fun getActivityDetailed(
-        @Path("id") id: Long,
-        @Header("Authorization") authHeader: String,
-    ) : ActivityDetailed
 }

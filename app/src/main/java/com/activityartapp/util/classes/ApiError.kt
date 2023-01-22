@@ -1,34 +1,31 @@
 package com.activityartapp.util.classes
 
-import com.activityartapp.util.errors.AthleteRateLimited
+import com.activityartapp.util.errors.AthleteRateLimitedException
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
 sealed interface ApiError {
-    /** Unauthorized error will be handled by redirecting user to the login screen **/
     object Unauthorized : ApiError
-
-    /** A UserFacingError will be handled by informing the user why they are experiencing the error **/
-    sealed interface UserFacingError : ApiError {
-        object AthleteRateLimited : UserFacingError
-        object NoInternet : UserFacingError
-        object StravaRateLimited : UserFacingError
-        object StravaServerIssues : UserFacingError
-        object Unknown : UserFacingError
-    }
+    object AthleteRateLimited : ApiError
+    object NoInternet : ApiError
+    object StravaRateLimited : ApiError
+    object StravaServerIssues : ApiError
+    object Unknown : ApiError
 
     companion object {
         fun valueOf(value: Exception?): ApiError {
             return when (value) {
-                is UnknownHostException -> UserFacingError.NoInternet
-                is AthleteRateLimited -> UserFacingError.AthleteRateLimited
-                is HttpException -> { when (value.code()) {
-                    401, 403, 404 -> Unauthorized
-                    429 -> UserFacingError.StravaRateLimited
-                    500 -> UserFacingError.StravaServerIssues
-                    else -> UserFacingError.Unknown
-                }}
-                else -> UserFacingError.Unknown
+                is UnknownHostException -> NoInternet
+                is AthleteRateLimitedException -> AthleteRateLimited
+                is HttpException -> {
+                    when (value.code()) {
+                        401, 403, 404 -> Unauthorized
+                        429 -> StravaRateLimited
+                        500 -> StravaServerIssues
+                        else -> Unknown
+                    }
+                }
+                else -> Unknown
             }
         }
     }

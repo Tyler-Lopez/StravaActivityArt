@@ -10,6 +10,5 @@ val OAuth2.requiresRefresh: Boolean
         val currSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
         println("--> currSeconds: $currSeconds")
         println("--> expiresAtUnixSeconds: $expiresAtUnixSeconds")
-        return true
-       // return expiresAtUnixSeconds < currSeconds + EXPIRE_BUFFER_SECONDS
+        return expiresAtUnixSeconds < currSeconds + EXPIRE_BUFFER_SECONDS
     }

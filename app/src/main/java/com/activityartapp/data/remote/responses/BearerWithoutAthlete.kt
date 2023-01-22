@@ -1,6 +1,5 @@
 package com.activityartapp.data.remote.responses
 
-import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.OAuth2WithoutAthlete
 import com.google.gson.annotations.SerializedName
 

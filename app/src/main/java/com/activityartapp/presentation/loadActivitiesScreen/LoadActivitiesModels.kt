@@ -6,6 +6,7 @@ import com.activityartapp.util.classes.ApiError
 
 sealed interface LoadActivitiesViewEvent : ViewEvent {
     object ClickedContinue : LoadActivitiesViewEvent
+    object ClickedReconnectWithStrava : LoadActivitiesViewEvent
     object ClickedRetry : LoadActivitiesViewEvent
     object ClickedReturn : LoadActivitiesViewEvent
 }
@@ -16,7 +17,7 @@ sealed interface LoadActivitiesViewState : ViewState {
     data class Loading(override val totalActivitiesLoaded: Int = 0) : LoadActivitiesViewState
 
     data class ErrorApi(
-        val error: ApiError.UserFacingError,
+        val error: ApiError,
         val retrying: Boolean,
         override val totalActivitiesLoaded: Int = 0
     ) : LoadActivitiesViewState

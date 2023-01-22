@@ -2,24 +2,25 @@ package com.activityartapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.activityartapp.data.AthleteUsageRepositoryImpl
-import com.activityartapp.data.FileRepositoryImpl
-import com.activityartapp.data.VersionRepositoryImpl
 import com.activityartapp.data.cache.ActivitiesCache
 import com.activityartapp.data.database.AthleteDatabase
 import com.activityartapp.data.remote.AthleteApi
+import com.activityartapp.data.remote.repository.AthleteUsageRepositoryImpl
+import com.activityartapp.data.remote.repository.FileRepositoryImpl
+import com.activityartapp.data.remote.repository.VersionRepositoryImpl
 import com.activityartapp.domain.AthleteUsageRepository
 import com.activityartapp.domain.FileRepository
 import com.activityartapp.domain.VersionRepository
 import com.activityartapp.domain.models.ResolutionListFactory
-import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
+import com.activityartapp.domain.useCase.activities.*
+import com.activityartapp.domain.useCase.athleteCacheDictionary.GetAthleteCacheDictionaryFromDisk
+import com.activityartapp.domain.useCase.athleteCacheDictionary.InsertAthleteCacheDictionaryIntoDisk
+import com.activityartapp.domain.useCase.athleteUsage.GetAthleteUsageFromRemote
+import com.activityartapp.domain.useCase.athleteUsage.InsertAthleteUsageIntoRemote
+import com.activityartapp.domain.useCase.authentication.ClearAccessTokenFromDisk
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
-import com.activityartapp.util.constants.StringConstants.BASE_URL
-import com.activityartapp.domain.use_case.activities.*
-import com.activityartapp.domain.use_case.athlete.*
-import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
-import com.activityartapp.domain.use_case.athleteUsage.InsertAthleteUsage
 import com.activityartapp.util.*
+import com.activityartapp.util.constants.StringConstants.BASE_URL
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -53,105 +54,72 @@ object AppModule {
 
     @Provides
     fun providesGetAthleteFromLocalUseCase(athleteDatabase: AthleteDatabase) =
-        GetAthleteFromLocalUseCase(athleteDatabase)
-
-    @Provides
-    fun providesGetAthleteFromRemoteUseCase(api: AthleteApi) =
-        GetAthleteFromRemoteUseCase(api)
-
-    @Provides
-    fun providesGetAthleteUseCase(
-        getAthleteFromLocalUseCase: GetAthleteFromLocalUseCase,
-        getAthleteFromRemoteUseCase: GetAthleteFromRemoteUseCase,
-        insertAthleteUseCase: InsertAthleteUseCase,
-        clearAccessTokenUseCase: ClearAccessTokenUseCase
-    ): GetAthleteUseCase =
-        GetAthleteUseCase(
-            getAthleteFromLocalUseCase,
-            getAthleteFromRemoteUseCase,
-            insertAthleteUseCase,
-            clearAccessTokenUseCase
-        )
-
-    @Provides
-    fun providesGetCachedMonthsByYearUseCase(athleteDatabase: AthleteDatabase) =
-        GetLastCachedYearMonthsUseCase(athleteDatabase)
+        GetAthleteCacheDictionaryFromDisk(athleteDatabase)
 
     @Provides
     fun providesGetActivitiesByPageFromRemoteUseCase(
         api: AthleteApi
-    ): GetActivitiesByPageFromRemoteUseCase =
-        GetActivitiesByPageFromRemoteUseCase(api)
+    ): GetActivitiesByPageFromRemote =
+        GetActivitiesByPageFromRemote(api)
 
     @Provides
     fun providesGetActivitiesByYearFromRemoteUseCase(
-        getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
-        getAthleteUsage: GetAthleteUsage,
-        insertAthleteUsage: InsertAthleteUsage,
+        getActivitiesByPageFromRemote: GetActivitiesByPageFromRemote,
+        getAthleteUsageFromRemote: GetAthleteUsageFromRemote,
+        insertAthleteUsageIntoRemote: InsertAthleteUsageIntoRemote,
         timeUtils: TimeUtils
-    ) = GetActivitiesByYearFromRemoteUseCase(
-        getActivitiesInYearByPageFromRemoteUseCase,
-        getAthleteUsage,
-        insertAthleteUsage,
-        timeUtils
-    )
-
-    @Provides
-    fun providesGetActivitiesByYearMonthFromRemoteUseCase(
-        getActivitiesInYearByPageFromRemoteUseCase: GetActivitiesByPageFromRemoteUseCase,
-        timeUtils: TimeUtils
-    ) = GetActivitiesByYearMonthFromRemoteUseCase(
-        getActivitiesInYearByPageFromRemoteUseCase,
+    ) = GetActivitiesByYearFromRemote(
+        getActivitiesByPageFromRemote,
+        getAthleteUsageFromRemote,
+        insertAthleteUsageIntoRemote,
         timeUtils
     )
 
     @Provides
     fun providesGetActivitiesByYearFromLocalUseCase(
         athleteDatabase: AthleteDatabase
-    ) = GetActivitiesByYearFromLocalUseCase(athleteDatabase)
+    ) = GetActivitiesByYearFromDisk(athleteDatabase)
 
     @Provides
     fun providesGetActivitiesByYearMonthFromLocalUseCase(
         athleteDatabase: AthleteDatabase
-    ) = GetActivitiesByYearMonthFromLocalUseCase(athleteDatabase)
+    ) = GetActivitiesByYearMonthFromDisk(athleteDatabase)
 
     @Provides
     fun providesGetActivitiesFromCacheUseCase(cache: ActivitiesCache) =
-        GetActivitiesByYearFromCacheUseCase(cache)
+        GetActivitiesByYearFromMemory(cache)
 
     @Provides
     fun providesInsertActivitiesFromCacheUseCase(cache: ActivitiesCache) =
-        InsertActivitiesIntoCacheUseCase(cache)
+        InsertActivitiesIntoMemory(cache)
 
     @Provides
     fun providesGetActivitiesByYear(
-        getAthleteLastCachedYearMonthsUseCase: GetLastCachedYearMonthsUseCase,
-        getActivitiesByYearMonthFromLocalUseCase: GetActivitiesByYearMonthFromLocalUseCase,
-        getActivitiesByYearFromRemoteUseCase: GetActivitiesByYearFromRemoteUseCase,
-        getActivitiesFromCacheUseCase: GetActivitiesByYearFromCacheUseCase,
-        insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
-        insertActivitiesUseCase: InsertActivitiesUseCase,
+        getAthleteCacheDictionaryFromDisk: GetAthleteCacheDictionaryFromDisk,
+        getActivitiesByYearMonthFromDisk: GetActivitiesByYearMonthFromDisk,
+        getActivitiesByYearFromRemote: GetActivitiesByYearFromRemote,
+        insertActivitiesIntoDisk: InsertActivitiesIntoDisk,
+        insertActivitiesIntoMemory: InsertActivitiesIntoMemory,
         timeUtils: TimeUtils
-    ) = GetActivitiesByYearUseCase(
-        getAthleteLastCachedYearMonthsUseCase,
-        getActivitiesByYearMonthFromLocalUseCase,
-        getActivitiesByYearFromRemoteUseCase,
-        getActivitiesFromCacheUseCase,
-        insertActivitiesIntoCacheUseCase,
-        insertActivitiesUseCase,
+    ) = GetActivitiesByYearFromDiskOrRemote(
+        getAthleteCacheDictionaryFromDisk,
+        getActivitiesByYearMonthFromDisk,
+        getActivitiesByYearFromRemote,
+        insertActivitiesIntoDisk,
+        insertActivitiesIntoMemory,
         timeUtils
     )
 
     @Provides
     fun providesInsertAthleteFromRemoteUseCase(athleteDatabase: AthleteDatabase) =
-        InsertAthleteUseCase(athleteDatabase)
+        InsertAthleteCacheDictionaryIntoDisk(athleteDatabase)
 
     @Provides
     fun clearAccessTokenUseCase(
         athleteDatabase: AthleteDatabase,
         cache: ActivitiesCache
     ) =
-        ClearAccessTokenUseCase(athleteDatabase, cache)
+        ClearAccessTokenFromDisk(athleteDatabase, cache)
 
     @Singleton
     @Provides

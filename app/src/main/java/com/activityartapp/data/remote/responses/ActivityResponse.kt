@@ -4,7 +4,6 @@ import com.activityartapp.domain.models.Activity
 import com.google.gson.annotations.SerializedName
 
 data class ActivityResponse(
-
     @SerializedName("average_speed")
     override val averageSpeed: Double,
     @SerializedName("distance")
@@ -35,7 +34,7 @@ data class ActivityResponse(
     override val sufferScore: Int?,
 
     val achievement_count: Int,
-    val athlete: AthleteX,
+    val athlete: AthleteWithResourceState,
     val athlete_count: Int,
     val average_cadence: Double,
     val comment_count: Int,

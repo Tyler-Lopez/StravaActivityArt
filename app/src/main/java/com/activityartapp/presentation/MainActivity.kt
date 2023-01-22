@@ -3,37 +3,27 @@ package com.activityartapp.presentation
 import android.content.Intent
 import android.content.Intent.*
 import android.os.Bundle
-import android.os.Parcel
-import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.core.os.bundleOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.activityartapp.architecture.Router
 import com.activityartapp.data.cache.ActivitiesCache
-import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.MainViewEvent.LoadAuthentication
 import com.activityartapp.presentation.MainViewState.Authenticated
-import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.ui.theme.AthleteApiArtTheme
 import com.activityartapp.util.NavArgSpecification.*
-import com.activityartapp.util.ParcelableActivity
 import com.activityartapp.util.Screen.*
 import com.activityartapp.util.constants.TokenConstants.authUri
-import com.activityartapp.util.parcelize
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.Year
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -63,7 +53,6 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 viewModel = hiltViewModel()
 
                 viewModel.apply {
-                    /** Set splash screen to on while loading authentication **/
                     /** Set splash screen to on while loading authentication **/
                     splashScreen.setKeepOnScreenCondition {
                         viewState.value == null
@@ -163,7 +152,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     }
 
     private fun navigateMakeArt(destination: NavigateEditArt) {
-        viewModel.onEvent(MainViewEvent.MakeArt)
+        viewModel.onEvent(MainViewEvent.LoadedActivities)
         navController.navigate(EditArt.route) {
             destination.apply {
                 if (fromLoad) {

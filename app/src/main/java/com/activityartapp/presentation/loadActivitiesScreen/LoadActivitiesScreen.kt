@@ -16,7 +16,7 @@ import com.activityartapp.presentation.common.ErrorScreen
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.util.classes.ApiError
-import com.activityartapp.util.classes.ApiError.UserFacingError.*
+import com.activityartapp.util.classes.ApiError.*
 
 /**
  * The only screen in the app which handles loading [ActivityResponse] from
@@ -41,6 +41,11 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                             description = error.getDescription(),
                             prompt = error.getPrompt(totalActivitiesLoaded),
                             retrying = retrying,
+                            onReconnectStravaClicked = error.takeIf { it is Unauthorized }?.run {
+                                {
+                                    viewModel.onEventDebounced(LoadActivitiesViewEvent.ClickedReconnectWithStrava)
+                                }
+                            },
                             onContinueClicked = totalActivitiesLoaded.takeIf { it > 0 }?.run {
                                 {
                                     viewModel.onEventDebounced(LoadActivitiesViewEvent.ClickedContinue)
@@ -87,29 +92,31 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
 
 
 @Composable
-private fun ApiError.UserFacingError.getHeader(): String {
+private fun ApiError.getHeader(): String {
     return when (this) {
         AthleteRateLimited -> stringResource(R.string.loading_activities_athlete_rate_limited_header)
         NoInternet -> stringResource(R.string.loading_activities_no_internet_header)
         StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_header)
         StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_header)
+        Unauthorized -> stringResource(R.string.loading_activities_unauthorized_header)
         Unknown -> stringResource(R.string.loading_activities_unknown_header)
     }
 }
 
 @Composable
-private fun ApiError.UserFacingError.getDescription(): String {
+private fun ApiError.getDescription(): String {
     return when (this) {
         AthleteRateLimited -> stringResource(R.string.loading_activities_athlete_rate_limited_description)
         NoInternet -> stringResource(R.string.loading_activities_no_internet_description)
         StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_description)
         StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_description)
+        Unauthorized -> stringResource(R.string.loading_activities_unauthorized_description)
         Unknown -> stringResource(R.string.loading_activities_unknown_description)
     }
 }
 
 @Composable
-private fun ApiError.UserFacingError.getPrompt(activityCount: Int): String {
+private fun ApiError.getPrompt(activityCount: Int): String {
     return activityCount.takeIf { it > 0 }?.let {
         when (this) {
             AthleteRateLimited -> pluralStringResource(
@@ -128,6 +135,10 @@ private fun ApiError.UserFacingError.getPrompt(activityCount: Int): String {
                 id = R.plurals.loading_activities_server_issue_prompt,
                 count = it, it
             )
+            Unauthorized -> pluralStringResource(
+                id = R.plurals.loading_activities_unauthorized_prompt,
+                count = it, it
+            )
             Unknown -> pluralStringResource(
                 id = R.plurals.loading_activities_unknown_prompt,
                 count = it, it
@@ -139,6 +150,7 @@ private fun ApiError.UserFacingError.getPrompt(activityCount: Int): String {
             NoInternet -> stringResource(R.string.loading_activities_no_internet_prompt_zero_count)
             StravaRateLimited -> stringResource(R.string.loading_activities_app_rate_limited_prompt_zero_count)
             StravaServerIssues -> stringResource(R.string.loading_activities_server_issue_prompt_zero_count)
+            Unauthorized -> stringResource(R.string.loading_activities_unauthorized_prompt_zero_count)
             Unknown -> stringResource(R.string.loading_activities_unknown_prompt_zero_count)
         }
     }
