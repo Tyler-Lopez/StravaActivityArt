@@ -31,6 +31,7 @@ fun ColumnScope.ErrorScreen(
     prompt: String,
     retrying: Boolean = false,
     onContinueClicked: (() -> Unit)? = null,
+    onReconnectStravaClicked: (() -> Unit)? = null,
     onRetryClicked: (() -> Unit)? = null,
     onReturnClicked: (() -> Unit)? = null
 ) {
@@ -60,33 +61,126 @@ fun ColumnScope.ErrorScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
     ) {
-        onContinueClicked?.let {
-            HighEmphasisButton(
-                size = ButtonSize.LARGE,
+        var hasUsedHighEmphasisButton = false
+        var hasUsedMediumEmphasisButton = false
+
+        onReconnectStravaClicked?.let {
+            buttonWithEmphasis(
                 enabled = !retrying,
-                modifier = Modifier.defaultMinSize(minWidth = minButtonWidth),
-                text = stringResource(R.string.error_continue_button),
+                isLoading = false,
+                text = stringResource(R.string.error_reconnect_button),
+                minWidth = minButtonWidth,
+                hasUsedHighEmphasisButton = hasUsedHighEmphasisButton,
+                hasUsedMediumEmphasisButton = hasUsedMediumEmphasisButton,
                 onClick = it
-            )
+            ).apply {
+                when (this) {
+                    ButtonEmphasisType.HIGH -> hasUsedHighEmphasisButton = true
+                    ButtonEmphasisType.MEDIUM -> hasUsedMediumEmphasisButton = true
+                    else -> {}
+                }
+            }
+        }
+
+        onContinueClicked?.let {
+            buttonWithEmphasis(
+                enabled = !retrying,
+                isLoading = false,
+                text = stringResource(R.string.error_continue_button),
+                minWidth = minButtonWidth,
+                hasUsedHighEmphasisButton = hasUsedHighEmphasisButton,
+                hasUsedMediumEmphasisButton = hasUsedMediumEmphasisButton,
+                onClick = it
+            ).apply {
+                when (this) {
+                    ButtonEmphasisType.HIGH -> hasUsedHighEmphasisButton = true
+                    ButtonEmphasisType.MEDIUM -> hasUsedMediumEmphasisButton = true
+                    else -> {}
+                }
+            }
         }
         onRetryClicked?.let {
-            MediumEmphasisButton(
-                size = ButtonSize.LARGE,
+            buttonWithEmphasis(
                 enabled = !retrying,
-                modifier = Modifier.defaultMinSize(minWidth = minButtonWidth),
                 isLoading = retrying,
                 text = stringResource(R.string.error_retry_button),
+                minWidth = minButtonWidth,
+                hasUsedHighEmphasisButton = hasUsedHighEmphasisButton,
+                hasUsedMediumEmphasisButton = hasUsedMediumEmphasisButton,
                 onClick = it
-            )
+            ).apply {
+                when (this) {
+                    ButtonEmphasisType.HIGH -> hasUsedHighEmphasisButton = true
+                    ButtonEmphasisType.MEDIUM -> hasUsedMediumEmphasisButton = true
+                    else -> {}
+                }
+            }
         }
         onReturnClicked?.let {
-            LowEmphasisButton(
-                size = ButtonSize.LARGE,
+            buttonWithEmphasis(
                 enabled = !retrying,
-                modifier = Modifier.defaultMinSize(minWidth = minButtonWidth),
+                isLoading = false,
                 text = stringResource(R.string.error_return_button),
+                minWidth = minButtonWidth,
+                hasUsedHighEmphasisButton = hasUsedHighEmphasisButton,
+                hasUsedMediumEmphasisButton = hasUsedMediumEmphasisButton,
                 onClick = it
-            )
+            ).apply {
+                when (this) {
+                    ButtonEmphasisType.HIGH -> hasUsedHighEmphasisButton = true
+                    ButtonEmphasisType.MEDIUM -> hasUsedMediumEmphasisButton = true
+                    else -> {}
+                }
+            }
         }
     }
+}
+
+private enum class ButtonEmphasisType {
+    LOW, MEDIUM, HIGH
+}
+
+@Composable
+private fun buttonWithEmphasis(
+    enabled: Boolean,
+    isLoading: Boolean,
+    text: String,
+    minWidth: Dp,
+    hasUsedHighEmphasisButton: Boolean,
+    hasUsedMediumEmphasisButton: Boolean,
+    onClick: () -> Unit
+): ButtonEmphasisType {
+
+    val emphasis = when {
+        !hasUsedHighEmphasisButton -> ButtonEmphasisType.HIGH
+        !hasUsedMediumEmphasisButton -> ButtonEmphasisType.MEDIUM
+        else -> ButtonEmphasisType.LOW
+    }
+
+    when (emphasis) {
+        ButtonEmphasisType.HIGH -> HighEmphasisButton(
+            size = ButtonSize.LARGE,
+            enabled = enabled,
+            isLoading = isLoading,
+            modifier = Modifier.defaultMinSize(minWidth = minWidth),
+            text = text,
+            onClick = onClick
+        )
+        ButtonEmphasisType.MEDIUM -> MediumEmphasisButton(
+            size = ButtonSize.LARGE,
+            enabled = enabled,
+            isLoading = isLoading,
+            modifier = Modifier.defaultMinSize(minWidth = minWidth),
+            text = text,
+            onClick = onClick
+        )
+        ButtonEmphasisType.LOW -> LowEmphasisButton(
+            size = ButtonSize.LARGE,
+            enabled = enabled,
+            modifier = Modifier.defaultMinSize(minWidth = minWidth),
+            text = text,
+            onClick = onClick
+        )
+    }
+    return emphasis
 }

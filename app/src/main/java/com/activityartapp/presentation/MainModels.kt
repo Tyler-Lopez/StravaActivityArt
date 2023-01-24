@@ -15,7 +15,7 @@ sealed interface MainViewState : ViewState {
 
 sealed interface MainViewEvent : ViewEvent {
     data class LoadAuthentication(val uri: Uri?) : MainViewEvent
-    object MakeArt : MainViewEvent
+    object LoadedActivities : MainViewEvent
 }
 
 sealed interface MainDestination : Destination {

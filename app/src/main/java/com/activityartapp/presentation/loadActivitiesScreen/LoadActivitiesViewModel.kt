@@ -1,17 +1,12 @@
 package com.activityartapp.presentation.loadActivitiesScreen
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
-import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.Version
-import com.activityartapp.domain.use_case.activities.GetActivitiesByYearUseCase
-import com.activityartapp.domain.use_case.activities.InsertActivitiesIntoCacheUseCase
-import com.activityartapp.domain.use_case.athleteUsage.GetAthleteUsage
-import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.activityartapp.domain.use_case.authentication.GetAccessTokenUseCase
-import com.activityartapp.domain.use_case.version.GetVersion
+import com.activityartapp.domain.useCase.activities.GetActivitiesByYearFromDiskOrRemote
+import com.activityartapp.domain.useCase.authentication.GetAccessTokenFromDiskOrRemote
+import com.activityartapp.domain.useCase.version.GetVersionFromRemote
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
@@ -23,12 +18,10 @@ import com.activityartapp.util.Response.Success
 import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.doOnError
 import com.activityartapp.util.doOnSuccess
-import com.activityartapp.util.errors.AthleteRateLimited
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.net.UnknownHostException
 import java.time.Year
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -36,12 +29,9 @@ import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class LoadActivitiesViewModel @Inject constructor(
-    private val getActivitiesByYearUseCase: GetActivitiesByYearUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val insertActivitiesIntoCacheUseCase: InsertActivitiesIntoCacheUseCase,
-    private val getAthleteUsage: GetAthleteUsage,
-    private val getVersion: GetVersion
+    private val getActivitiesByYearFromDiskOrRemote: GetActivitiesByYearFromDiskOrRemote,
+    private val getAccessTokenFromDiskOrRemote: GetAccessTokenFromDiskOrRemote,
+    private val getVersionFromRemote: GetVersionFromRemote,
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
@@ -49,16 +39,13 @@ class LoadActivitiesViewModel @Inject constructor(
         private const val DELAY_MS = 500L
         private const val NO_ACTIVITIES_COUNT = 0
         private const val YEAR_START = 2018
-        private const val ATHLETE_USAGE_DEFAULT = 0
         private val YEAR_NOW = Year.now().value
     }
-
-    private val activitiesByYear: MutableList<Pair<Int, List<Activity>>> =
-        mutableListOf()
 
     override fun onEvent(event: LoadActivitiesViewEvent) {
         when (event) {
             is ClickedContinue -> onClickedContinue()
+            is ClickedReconnectWithStrava -> onClickedReconnectWithStrava()
             is ClickedRetry -> onClickedRetry()
             is ClickedReturn -> onClickedReturn()
         }
@@ -66,6 +53,10 @@ class LoadActivitiesViewModel @Inject constructor(
 
     private fun onClickedContinue() {
         viewModelScope.launch { routeTo(NavigateEditArt(fromLoad = true)) }
+    }
+
+    private fun onClickedReconnectWithStrava() {
+        viewModelScope.launch { routeTo(ConnectWithStrava) }
     }
 
     private fun onClickedRetry() {
@@ -94,11 +85,8 @@ class LoadActivitiesViewModel @Inject constructor(
         var error: ApiError? = null
 
         /** Determine from Remote if this version is still supported. **/
-        val versionResponse: Response<Version> = getVersion()
+        val versionResponse: Response<Version> = getVersionFromRemote()
         val versionSupported: Boolean = versionResponse.data?.isSupported ?: true
-        println("Version response is $versionResponse")
-        println("Is success: ${versionResponse is Success}")
-        println("Exception is ${(versionResponse as? Error)?.exception}")
 
         /** If unsupported, show an error to the athlete **/
         if (!versionSupported) {
@@ -117,52 +105,34 @@ class LoadActivitiesViewModel @Inject constructor(
         /* OAuth2 should never return null here */
         val oAuth2 = getOAuth2() ?: error("OAuth2 is null for an unknown reason...")
         val accessToken = oAuth2.accessToken
-        println("here, oauth is $oAuth2, athleteId is ${oAuth2.athleteId}")
         val athleteId = oAuth2.athleteId
-
-        /** Fetch Athlete Usage from remote if internet is enabled **/
-        var usage: Int = internetEnabled
-            .takeIf { true }
-            ?.let { getAthleteUsage(athleteId = athleteId).data }
-            ?: ATHLETE_USAGE_DEFAULT
 
         /** Load activities until complete or
          * returned [Response] is an [Error] **/
-        (YEAR_NOW downTo YEAR_START).takeWhile { year ->
-            val response = (getActivitiesByYearUseCase(
+        (YEAR_NOW downTo YEAR_START).forEach { year ->
+            getActivitiesByYearFromDiskOrRemote(
                 accessToken = accessToken,
                 athleteId = athleteId,
                 year = year,
-                initialAthleteUsage = usage,
-                onAthleteUsageChanged = { usage++ },
                 internetEnabled = internetEnabled
-            ).doOnSuccess {
-                /** Add data to Singleton cache for future access **/
-                insertActivitiesIntoCacheUseCase(year, data)
-
-                activitiesByYear += Pair(year, data)
-                activitiesCount += data.size
-                if (lastPushedState == null || lastPushedState is Loading) Loading(activitiesCount).push()
-            }.doOnError {
-                error = ApiError.valueOf(exception)
-            })
-            val exception = (response as? Error)?.exception
-            /** If response is a Success or an ApiError due to no internet, keep loading activities **/
-            response is Success || exception is UnknownHostException || exception is AthleteRateLimited
+            )
+                .doOnError { error = ApiError.valueOf(exception) }
+                .apply {
+                    data?.let { activitiesCount += it.size }
+                    activitiesCount
+                        .takeIf { it > NO_ACTIVITIES_COUNT }
+                        ?.let { Loading(activitiesCount).push() }
+                }
         }
 
         when {
-            error != null -> if (error is ApiError.UserFacingError) {
+            error != null -> error?.let {
                 ErrorApi(
-                    error = error as ApiError.UserFacingError,
+                    error = it,
                     totalActivitiesLoaded = activitiesCount,
                     retrying = false
-                ).push()
-            } else {
-                // The athlete has de-authorized our app
-                clearAccessTokenUseCase()
-                routeTo(NavigateLogin)
-            }
+                )
+            }?.push()
             activitiesCount == NO_ACTIVITIES_COUNT -> ErrorNoActivities.push()
             else -> routeTo(NavigateEditArt(fromLoad = true))
         }
@@ -171,7 +141,7 @@ class LoadActivitiesViewModel @Inject constructor(
     private suspend fun getOAuth2(): OAuth2? {
         return suspendCoroutine { continuation ->
             viewModelScope.launch(Dispatchers.IO) {
-                getAccessTokenUseCase()
+                getAccessTokenFromDiskOrRemote()
                     .doOnSuccess {
                         continuation.resume(data)
                     }

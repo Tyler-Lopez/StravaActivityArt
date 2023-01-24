@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
+import com.activityartapp.presentation.common.ConnectWithStravaButton
 import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.ui.theme.StravaOrange
@@ -94,12 +95,9 @@ fun LandscapeContent(viewModel: LoginViewModel) {
                 text = stringResource(id = R.string.app_description),
                 modifier = Modifier.sizeIn(maxWidth = 254.dp)
             )
-            Image(
-                painter = painterResource(id = R.drawable.ic_btn_strava_connectwith_orange_clipped),
-                contentDescription = stringResource(id = R.string.connect_with_strava_button_cd),
-                modifier = Modifier
-                    .clickable { viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked) },
-            )
+            ConnectWithStravaButton {
+                viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)
+            }
         }
     }
 }
@@ -145,12 +143,9 @@ fun PortraitContent(viewModel: LoginViewModel) {
                 text = stringResource(id = R.string.app_description),
                 modifier = Modifier.sizeIn(maxWidth = 254.dp)
             )
-            Image(
-                painter = painterResource(id = R.drawable.ic_btn_strava_connectwith_orange_clipped),
-                contentDescription = stringResource(id = R.string.connect_with_strava_button_cd),
-                modifier = Modifier
-                    .clickable { viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked) },
-            )
+            ConnectWithStravaButton {
+                viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)
+            }
         }
     }
 }

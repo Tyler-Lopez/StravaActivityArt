@@ -95,6 +95,15 @@
         <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or check back later.</item>
         <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or check back later.</item>
     </plurals>
+    <!-- Error information when the athlete is deauthorized -->
+    <string name="loading_activities_unauthorized_header">Unauthorized Error</string>
+    <string name="loading_activities_unauthorized_description">Strava has said we\'re not currently authorized to read your activities.</string>
+    <string name="loading_activities_unauthorized_prompt_zero_count">Please reconnect with Strava to fix this error.</string>
+    <plurals name="loading_activities_unauthorized_prompt">
+        <item quantity="zero">@string/loading_activities_unauthorized_prompt_zero_count</item>
+        <item quantity="one">We successfully loaded an activity. You can continue to make Activity Art with it or reconnect with Strava to fix the error.</item>
+        <item quantity="other">We successfully loaded %d activities. You can continue to make Activity Art with them or reconnect with Strava to fix the error.</item>
+    </plurals>
     <!-- Error information shown when the athlete doesn't have at least one activity -->
     <string name="loading_activities_no_activities_header">No Activities Found</string>
     <string name="loading_activities_no_activities_prompt">Oops! We checked Strava, and you don\'t seem to have any activities.</string>
@@ -259,6 +268,7 @@
     <string name="font_size_type_xl">XL</string>
 
     <!-- GENERIC ERRORS -->
+    <string name="error_reconnect_button">Reconnect with Strava</string>
     <string name="error_continue_button">Make Art</string>
     <string name="error_retry_button">Retry</string>
     <string name="error_return_button">Go Back</string>

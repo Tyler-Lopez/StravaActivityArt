@@ -7,7 +7,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.core.graphics.scale
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.FileRepository
-import com.activityartapp.domain.use_case.activities.GetActivitiesFromCacheUseCase
+import com.activityartapp.domain.useCase.activities.GetActivitiesFromMemory
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
@@ -31,7 +31,7 @@ class SaveArtViewModel @Inject constructor(
     private val fileRepository: FileRepository,
     private val imageSizeUtils: ImageSizeUtils,
     private val visualizationUtils: VisualizationUtils,
-    activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
+    getActivitiesFromMemory: GetActivitiesFromMemory,
     gson: Gson,
     ssh: SavedStateHandle,
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
@@ -45,7 +45,7 @@ class SaveArtViewModel @Inject constructor(
         ActivityTypes.rawArg(ssh),
         List::class.java
     )
-    private val activities = activitiesFromCacheUseCase()
+    private val activities = getActivitiesFromMemory()
     private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
     private val colorBackgroundArgb = ColorBackgroundArgb.rawArg(ssh).toInt()
     private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()

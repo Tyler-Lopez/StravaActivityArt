@@ -2,8 +2,8 @@ package com.activityartapp.presentation.welcomeScreen
 
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
-import com.activityartapp.domain.use_case.authentication.ClearAccessTokenUseCase
-import com.activityartapp.domain.use_case.version.GetVersion
+import com.activityartapp.domain.useCase.authentication.ClearAccessTokenFromDisk
+import com.activityartapp.domain.useCase.version.GetVersionFromRemote
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
@@ -17,15 +17,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
-    private val clearAccessTokenUseCase: ClearAccessTokenUseCase,
-    private val getVersion: GetVersion
+    private val clearAccessTokenFromDiskUseCase: ClearAccessTokenFromDisk,
+    private val getVersionFromRemote: GetVersionFromRemote
 ) :
     BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
 
     init {
         WelcomeViewState.Loading.push()
         viewModelScope.launch(Dispatchers.IO) {
-            getVersion()
+            getVersionFromRemote()
                 .doOnSuccess {
                     println("Version received ${data.isLatest} ${data.isSupported}")
                     if (!data.isSupported) {
@@ -42,7 +42,6 @@ class WelcomeViewModel @Inject constructor(
                     }
                 }
                 .doOnError {
-                    println("Error was $exception")
                     WelcomeViewState.Standby(
                         versionIsLatest = true
                     ).push()
@@ -72,7 +71,7 @@ class WelcomeViewModel @Inject constructor(
 
     private fun onClickedLogout() {
         viewModelScope.launch {
-            clearAccessTokenUseCase()
+            clearAccessTokenFromDiskUseCase()
             routeTo(NavigateLogin)
         }
     }

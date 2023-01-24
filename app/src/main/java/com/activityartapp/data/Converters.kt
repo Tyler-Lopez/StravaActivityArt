@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class Converters {
-
     @TypeConverter
     fun stringToMap(value: String): Map<Int, Int> {
         return Gson().fromJson(

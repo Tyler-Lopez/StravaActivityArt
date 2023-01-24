@@ -8,7 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.domain.use_case.activities.GetActivitiesFromCacheUseCase
+import com.activityartapp.domain.useCase.activities.GetActivitiesFromMemory
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateSaveArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
-    activitiesFromCacheUseCase: GetActivitiesFromCacheUseCase,
+    getActivitiesFromMemory: GetActivitiesFromMemory,
     private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
     private val visualizationUtils: VisualizationUtils,
@@ -57,7 +57,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     /** All activities cached in Singleton memory **/
-    private val activities: List<Activity> = activitiesFromCacheUseCase()
+    private val activities: List<Activity> = getActivitiesFromMemory()
 
     /** The list of activities for each [EditArtFilterType] **/
     private val activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>> =
