@@ -1,6 +1,6 @@
-package com.activityartapp.data.remote.repository
+package com.activityartapp.data.repository
 
-import com.activityartapp.domain.VersionRepository
+import com.activityartapp.domain.repository.VersionRepository
 import com.activityartapp.domain.models.Version
 import com.activityartapp.util.Response
 import com.google.android.gms.tasks.Tasks

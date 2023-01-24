@@ -1,6 +1,6 @@
 package com.activityartapp.domain.useCase.version
 
-import com.activityartapp.domain.VersionRepository
+import com.activityartapp.domain.repository.VersionRepository
 import com.activityartapp.domain.models.Version
 import com.activityartapp.util.Response
 import com.activityartapp.util.constants.StringConstants.APP_VERSION

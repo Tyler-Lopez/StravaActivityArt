@@ -1,6 +1,6 @@
 package com.activityartapp.domain.useCase.athleteUsage
 
-import com.activityartapp.domain.AthleteUsageRepository
+import com.activityartapp.domain.repository.AthleteUsageRepository
 import com.activityartapp.domain.models.Athlete
 import javax.inject.Inject
 

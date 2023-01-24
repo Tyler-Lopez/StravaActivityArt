@@ -6,7 +6,7 @@ import android.util.Size
 import androidx.compose.material.SnackbarHostState
 import androidx.core.graphics.scale
 import com.activityartapp.architecture.BaseRoutingViewModel
-import com.activityartapp.domain.FileRepository
+import com.activityartapp.domain.repository.FileRepository
 import com.activityartapp.domain.useCase.activities.GetActivitiesFromMemory
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
