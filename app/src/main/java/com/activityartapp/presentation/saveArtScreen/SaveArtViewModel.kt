@@ -51,8 +51,8 @@ class SaveArtViewModel @Inject constructor(
     private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()
     private val filterDateAfterMs = FilterDateAfterMs.rawArg(ssh).toLong()
     private val filterDateBeforeMs = FilterDateBeforeMs.rawArg(ssh).toLong()
-    private val filterDistanceLessThan = FilterDistanceLessThan.rawArg(ssh).toDouble()
-    private val filterDistanceMoreThan = FilterDistanceMoreThan.rawArg(ssh).toDouble()
+    private val filterDistanceLessThanMeters = FilterDistanceLessThanMeters.rawArg(ssh).toInt()
+    private val filterDistanceMoreThanMeters = FilterDistanceMoreThanMeters.rawArg(ssh).toInt()
     private val sizeHeightPx = SizeHeightPx.rawArg(ssh).toInt()
     private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
     private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
@@ -136,14 +136,12 @@ class SaveArtViewModel @Inject constructor(
     private fun onScreenMeasured(event: ScreenMeasured) {
         Loading.push()
         viewModelScope.launch(Dispatchers.Default) {
-            val secondsAfter = TimeUnit.MILLISECONDS.toSeconds(filterDateAfterMs)
-            val secondsBefore = TimeUnit.MILLISECONDS.toSeconds(filterDateBeforeMs)
             val bitmap = visualizationUtils.createBitmap(
                 activities = activityFilterUtils.filterActivities(
                     activities = activities,
                     includeActivityTypes = activityTypes.toSet(),
-                    unixSecondsRange = secondsAfter..secondsBefore,
-                    distanceRange = filterDistanceMoreThan..filterDistanceLessThan
+                    unixMsRange = filterDateAfterMs..filterDateBeforeMs,
+                    distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
                 ),
                 fontAssetPath = fontAssetPath,
                 fontSize = fontTypeSize,

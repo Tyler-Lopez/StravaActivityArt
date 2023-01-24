@@ -24,6 +24,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
+import com.activityartapp.util.ActivityFilterUtils
 import com.activityartapp.util.ImageSizeUtils
 import com.activityartapp.util.TimeUtils
 import com.activityartapp.util.VisualizationUtils
@@ -42,6 +43,7 @@ import kotlin.math.roundToInt
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
     getActivitiesFromMemory: GetActivitiesFromMemory,
+    private val activityFilterUtils: ActivityFilterUtils,
     private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
     private val visualizationUtils: VisualizationUtils,
@@ -85,31 +87,28 @@ class EditArtViewModel @Inject constructor(
             }
         }
 
-
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
      * Designates which activities this particular filter type is in-charge of filtering. **/
     private fun EditArtFilterType.updateFilteredActivities() {
         withLastState {
             val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
-            val activitiesDateRangeUnixMs = activitiesDateRangeUnixMs
-            val filteredActivities = prevActivities.filter { activity ->
-                when (this@updateFilteredActivities) {
-                    DATE -> timeUtils
-                        .iso8601StringToUnixMillisecond(activity.iso8601LocalDate)
-                        .let {
-                            activitiesDateRangeUnixMs?.let { range ->
-                                it >= range.first && it <= range.last
-                            } ?: true
-                        }
-                    TYPE -> state?.filterTypes?.get(activity.type) ?: true
-                    DISTANCE -> filterDistanceSelectedStart
-                        ?.roundToInt()
-                        ?.rangeToOrNull(filterDistanceSelectedEnd?.roundToInt())
-                        ?.let { activity.distance.roundToInt() in it }
-                        ?: true
+            activitiesFilteredByFilterType[this@updateFilteredActivities] =
+                prevActivities.filter { activity ->
+                    when (this@updateFilteredActivities) {
+                        DATE -> activityFilterUtils.activityWithinUnixMs(
+                                activity = activity,
+                                range = activitiesDateRangeUnixMs ?: Long.MIN_VALUE..Long.MAX_VALUE
+                            )
+                        TYPE -> activityFilterUtils.activityTypeContainedWithinTypes(
+                                activity = activity,
+                                types = filteredTypes
+                            )
+                        DISTANCE -> activityFilterUtils.activityWithinDistanceRange(
+                                activity = activity,
+                                range = filteredDistanceRangeMeters
+                            )
+                    }
                 }
-            }
-            activitiesFilteredByFilterType[this@updateFilteredActivities] = filteredActivities
             pushUpdatedFilteredActivityCountToView()
             if (this@updateFilteredActivities == filterFinal) pushUpdatedDistancesToView()
         }
@@ -217,7 +216,6 @@ class EditArtViewModel @Inject constructor(
             val prevState: Standby? = savedStateHandle[STANDBY_SAVE_STATE_KEY]
             (prevState ?: Standby()).push()
 
-
             EditArtFilterType.values().forEach {
                 if (prevState != null) {
                     /** If there was a saved state, now that we've pushed Standby update filtered activities to reflect
@@ -226,7 +224,8 @@ class EditArtViewModel @Inject constructor(
                 } else {
                     /** Otherwise, simply initialize filtered activities for each type as all activities and
                      * initialize filters. **/
-                    it.updateFilteredActivities()
+                    activitiesFilteredByFilterType[it] = activities
+                    it.pushUpdatedFilteredActivityCountToView()
                     it.updateFilters()
                 }
             }
@@ -388,16 +387,18 @@ class EditArtViewModel @Inject constructor(
                 val filterRange = activitiesDateRangeUnixMs
                 routeTo(
                     NavigateSaveArt(
-                        activityTypes = filterTypes?.entries?.filter { it.value }?.map { it.key }
-                            ?: listOf(),
+                        activityTypes = filteredTypes,
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorBackgroundArgb = styleBackground.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                         filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
                         filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
-                        filterDistanceLessThan = filterDistanceSelectedEnd ?: Double.MAX_VALUE,
-                        filterDistanceMoreThan = filterDistanceSelectedStart
-                            ?: Double.MIN_VALUE,
+                        filterDistanceLessThanMeters = filterDistanceSelectedEnd
+                            ?.roundToInt()
+                            ?: Int.MAX_VALUE,
+                        filterDistanceMoreThanMeters = filterDistanceSelectedStart
+                            ?.roundToInt()
+                            ?: Int.MIN_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
                         strokeWidthType = styleStrokeWidthType,
@@ -551,12 +552,12 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun updateBitmap() {
+        println("Here, update bitmap invoked, final filtered is ${activitiesFiltered.size} size")
         imageProcessingDispatcher.cancelChildren()
         viewModelScope.launch(imageProcessingDispatcher) {
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFilteredByFilterType[filterFinal]
-                        ?: listOf(), // todo...
+                    activities = activitiesFiltered, // todo...
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorBackgroundArgb = styleBackground.color.toArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
