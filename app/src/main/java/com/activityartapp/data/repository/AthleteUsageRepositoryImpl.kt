@@ -1,6 +1,6 @@
-package com.activityartapp.data.remote.repository
+package com.activityartapp.data.repository
 
-import com.activityartapp.domain.AthleteUsageRepository
+import com.activityartapp.domain.repository.AthleteUsageRepository
 import com.activityartapp.util.Response
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.FirebaseDatabase
@@ -11,9 +11,6 @@ class AthleteUsageRepositoryImpl @Inject constructor(private val db: FirebaseDat
     AthleteUsageRepository {
 
     companion object {
-        private const val FIRESTORE_COLLECTION_ATHLETE_USAGE = "athlete_usage"
-        private const val FIRESTORE_FIELD_USAGE_KEY = "usage"
-        private const val FIRESTORE_FIELD_INITIAL_USAGE = 0
         private const val TIMEOUT_TASK_MS = 5000L
     }
 
@@ -22,7 +19,7 @@ class AthleteUsageRepositoryImpl @Inject constructor(private val db: FirebaseDat
             val usageTask = db.reference.child("athlete_usage").child(athleteId).get()
             val usageStr = Tasks.await(usageTask, TIMEOUT_TASK_MS, TimeUnit.MILLISECONDS)?.value
             val usageInt = usageStr?.toString()?.toInt()
-            Response.Success(usageInt ?: 0)
+            Response.Success(usageInt ?: AthleteUsageRepository.NO_USAGE_FOUND)
         } catch (e: Exception) {
             Response.Error(exception = e)
         }

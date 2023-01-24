@@ -22,8 +22,6 @@ class GetActivitiesByYearFromRemote @Inject constructor(
         private const val LAST_MONTH_OF_YEAR = 11
         private const val FIRST_PAGE = 1
         private const val MAXIMUM_USAGE = 25
-
-        private const val INITIAL_ATHLETE_USAGE = 0
     }
 
     /**
@@ -37,12 +35,22 @@ class GetActivitiesByYearFromRemote @Inject constructor(
         startMonth: Int = FIRST_MONTH_OF_YEAR
     ): Response<List<Activity>> {
 
-        var usage = getAthleteUsageFromRemote(athleteId).data ?: INITIAL_ATHLETE_USAGE
-        println("GetActivitiesByYearFromRemote: usage is $usage")
-
         var page = FIRST_PAGE
         var activitiesInLastPage = ACTIVITIES_PER_PAGE
         val activities = mutableListOf<Activity>()
+
+        var usage: Int
+        getAthleteUsageFromRemote(athleteId)
+            .run {
+                when (this) {
+                    is Response.Success -> usage = data
+                    is Response.Error -> return Response.Error(
+                        activities,
+                        exception
+                    )
+                }
+            }
+        println("GetActivitiesByYearFromRemote: usage is $usage")
 
         while (activitiesInLastPage >= ACTIVITIES_PER_PAGE) {
             if (usage >= MAXIMUM_USAGE) {

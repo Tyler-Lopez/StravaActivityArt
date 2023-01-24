@@ -1,4 +1,4 @@
-package com.activityartapp.domain
+package com.activityartapp.domain.repository
 
 import android.graphics.Bitmap
 import android.net.Uri

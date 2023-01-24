@@ -1,4 +1,4 @@
-package com.activityartapp.activityart.presentation.ui.theme
+package com.activityartapp.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

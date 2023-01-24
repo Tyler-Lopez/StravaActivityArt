@@ -1,4 +1,4 @@
-package com.activityartapp.data.remote.repository
+package com.activityartapp.data.repository
 
 import android.content.ContentValues
 import android.content.Context
@@ -10,7 +10,7 @@ import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
-import com.activityartapp.domain.FileRepository
+import com.activityartapp.domain.repository.FileRepository
 import com.activityartapp.util.Response
 import java.io.File
 import java.io.FileOutputStream

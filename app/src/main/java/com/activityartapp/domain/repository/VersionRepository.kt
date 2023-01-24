@@ -1,4 +1,4 @@
-package com.activityartapp.domain
+package com.activityartapp.domain.repository
 
 import com.activityartapp.domain.models.Version
 import com.activityartapp.util.Response
