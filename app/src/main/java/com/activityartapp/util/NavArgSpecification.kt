@@ -17,8 +17,8 @@ sealed interface NavArgSpecification {
         private const val ERROR_SCREEN_TYPE = "errorScreenType"
         private const val FILTER_DATE_AFTER_MS_KEY = "filterDateAfterMs"
         private const val FILTER_DATE_BEFORE_MS_KEY = "filterDateBeforeMs"
-        private const val FILTER_DISTANCE_LESS_THAN_KEY = "filterDistanceLessThan"
-        private const val FILTER_DISTANCE_MORE_THAN_KEY = "filterDistanceMoreThan"
+        private const val FILTER_DISTANCE_LESS_THAN_KEY = "filterDistanceLessThanMeters"
+        private const val FILTER_DISTANCE_MORE_THAN_KEY = "filterDistanceMoreThanMeters"
         private const val SIZE_HEIGHT_KEY = "sizeHeight"
         private const val SIZE_WIDTH_KEY = "sizeWidth"
         private const val STROKE_WIDTH_KEY = "strokeWidth"
@@ -82,11 +82,11 @@ sealed interface NavArgSpecification {
         override val name = FILTER_DATE_BEFORE_MS_KEY
     }
 
-    object FilterDistanceLessThan : NavArgSpecification {
+    object FilterDistanceLessThanMeters : NavArgSpecification {
         override val name: String = FILTER_DISTANCE_LESS_THAN_KEY
     }
 
-    object FilterDistanceMoreThan : NavArgSpecification {
+    object FilterDistanceMoreThanMeters : NavArgSpecification {
         override val name: String = FILTER_DISTANCE_MORE_THAN_KEY
     }
 

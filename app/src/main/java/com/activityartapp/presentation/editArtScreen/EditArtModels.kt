@@ -25,6 +25,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 annotation class UnixMS
 
@@ -229,6 +230,20 @@ sealed interface EditArtViewState : ViewState {
 
         @IgnoredOnParcel
         val filterDateSelectionUnset = filterDateSelectionIndex == INIT_SELECTION_INDEX
+
+        @IgnoredOnParcel
+        val filteredTypes: List<String>
+            get() = filterTypes?.entries?.filter { it.value }?.map { it.key } ?: emptyList()
+
+        val filteredDistanceRangeMeters: IntRange
+            get() = (filterDistanceSelectedStart
+                ?.roundToInt()
+                ?: Int.MIN_VALUE)
+                .rangeTo(
+                    filterDistanceSelectedEnd
+                        ?.roundToInt()
+                        ?: Int.MAX_VALUE
+                )
 
     }
 }
