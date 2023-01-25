@@ -9,6 +9,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -298,15 +299,18 @@ sealed interface DateSelection : Parcelable {
 
     @Parcelize
     data class Custom(
-        @UnixMS val dateSelectedStart: Long?,
-        @UnixMS val dateSelectedEnd: Long?,
-        @UnixMS val dateTotalStart: Long,
-        @UnixMS val dateTotalEnd: Long
+        val dateSelectedStartUnixMs: Long,
+        val dateSelectedEndUnixMs: Long,
+        val dateTotalStartUnixMs: Long,
+        val dateTotalEndUnixMs: Long
     ) : DateSelection {
-        val dateSelected: LongProgression?
-            get() = dateSelectedEnd?.let { dateSelectedStart?.rangeTo(it) }
+        @IgnoredOnParcel
+        val dateSelected: LongProgression
+            get() = dateSelectedStartUnixMs..dateSelectedEndUnixMs
+
+        @IgnoredOnParcel
         val dateTotal: LongProgression
-            get() = dateTotalEnd.let { dateTotalStart.rangeTo(it) }
+            get() = dateTotalStartUnixMs..dateTotalEndUnixMs
     }
 }
 
