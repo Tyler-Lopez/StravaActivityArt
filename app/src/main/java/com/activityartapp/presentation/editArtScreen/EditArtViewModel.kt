@@ -591,12 +591,6 @@ class EditArtViewModel @Inject constructor(
 
     private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
-    private fun <T : Comparable<T>> T?.rangeToOrNull(end: T?): Range<T>? =
-        end?.let { this?.rangeTo(it) }
-
-    private fun List<Long>.asRangeOrNullIfEmpty(): LongProgression? {
-        return maxOrNull()?.let { max -> minOrNull()?.rangeTo(max) }
-    }
 
     private val state: Standby? get() = lastPushedState as? Standby
 }
