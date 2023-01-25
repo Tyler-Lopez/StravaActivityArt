@@ -116,19 +116,4 @@ class ActivityFilterUtils @Inject constructor(
         val distanceLongest = distances.maxOrNull()
         return distanceLongest?.let { distanceShortest?.rangeTo(it) }
     }
-
-    fun getAdjustedSelectedDistancesInRange(
-        range: ClosedFloatingPointRange<Double>,
-        selectedStart: Double?,
-        selectedEnd: Double?
-    ): ClosedFloatingPointRange<Double> {
-        val adjStart = selectedStart?.takeIf {
-            it >= range.start && it <= range.endInclusive
-        } ?: range.start
-        val adjEnd = selectedEnd?.takeIf {
-            it >= range.start && it <= range.endInclusive
-        } ?: range.endInclusive
-
-        return adjStart..adjEnd
-    }
 }

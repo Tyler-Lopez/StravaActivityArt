@@ -1,9 +1,7 @@
 package com.activityartapp.presentation.editArtScreen
 
-import android.util.Range
 import android.util.Size
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.util.rangeTo
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -86,6 +84,9 @@ class EditArtViewModel @Inject constructor(
             }
         }
 
+    /** The total distance, in meters, of the filtered activities **/
+    private val activitiesSummedDistance: Double get() = activitiesFiltered.sumOf { it.distance }
+
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
      * Designates which activities this particular filter type is in-charge of filtering. **/
     private fun EditArtFilterType.updateFilteredActivities() {
@@ -109,7 +110,6 @@ class EditArtViewModel @Inject constructor(
                     }
                 }
             pushUpdatedFilteredActivityCountToView()
-            if (this@updateFilteredActivities == filterFinal) pushUpdatedDistancesToView()
         }
     }
 
@@ -147,12 +147,14 @@ class EditArtViewModel @Inject constructor(
                 )
                 DISTANCE -> {
                     val newRangeTotal = activityFilterUtils.getPossibleDistances(filteredActivities)
-                    val newRangeSelected = newRangeTotal?.let {
-                        activityFilterUtils.getAdjustedSelectedDistancesInRange(
-                            range = it,
-                            selectedStart = filterDistanceSelectedStart,
-                            selectedEnd = filterDistanceSelectedEnd
-                        )
+                    val newRangeSelected = newRangeTotal?.let { range ->
+                        val adjStart = filterDistanceSelectedStart?.takeIf {
+                            it >= range.start && it <= range.endInclusive
+                        } ?: range.start
+                        val adjEnd = filterDistanceSelectedEnd?.takeIf {
+                            it >= range.start && it <= range.endInclusive
+                        } ?: range.endInclusive
+                        adjStart..adjEnd
                     }
                     copy(
                         filterDistanceSelectedStart = newRangeSelected?.start,
@@ -175,15 +177,12 @@ class EditArtViewModel @Inject constructor(
                 DISTANCE -> copy(filterActivitiesCountDistance = DISTANCE.activitiesCount)
                 TYPE -> copy(filterActivitiesCountType = TYPE.activitiesCount)
             }
-        }.push()
-    }
-
-    private fun pushUpdatedDistancesToView() {
-        copyLastState {
-            copy(typeActivitiesDistanceMetersSummed = activitiesFiltered
-                .sumOf { it.distance }
-                .roundToInt()
-            )
+        }.run {
+            if (this@pushUpdatedFilteredActivityCountToView == filterFinal) {
+                copy(typeActivitiesDistanceMetersSummed = activitiesSummedDistance.roundToInt())
+            } else {
+                this
+            }
         }.push()
     }
 
@@ -263,10 +262,16 @@ class EditArtViewModel @Inject constructor(
         /** Run all operations which require many linear scans of activities off of the main thread **/
         viewModelScope.launch(activitiesProcessingDispatcher) {
             event.filterType.apply {
+                /** In response to [EditArtViewState.Standby] changes relevant to this
+                 * [EditArtFilterType] which just occurred, update its filtered activities **/
                 updateFilteredActivities()
+                /** For all subsequent [EditArtFilterType], update [EditArtViewState.Standby]
+                 * in response to the activities they are filtering potentially having changed.
+                 * This may change both the total number of [activitiesFilteredByFilterType]
+                 * and the filters which the user interacts with. **/
                 forEachNextFilterType {
-                    it.updateFilters()
                     it.updateFilteredActivities()
+                    it.updateFilters()
                 }
             }
             updateBitmap()
@@ -358,7 +363,6 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSaveClicked() {
         viewModelScope.launch {
-            // Todo, determine how to handle when no activities are selected
             (lastPushedState as? Standby)?.run {
                 val targetSize = sizeResolutionList[sizeResolutionListSelectedIndex]
                 val filterRange = activitiesDateRangeUnixMs
@@ -581,9 +585,8 @@ class EditArtViewModel @Inject constructor(
 
                 when (typeCustomText.first) {
                     NONE -> null
-                    DISTANCE_MILES -> activitiesFiltered.sumOf { it.distance }.meterToMilesStr()
-                    DISTANCE_KILOMETERS -> activitiesFiltered.sumOf { it.distance }
-                        .meterToKilometerStr()
+                    DISTANCE_MILES -> activitiesSummedDistance.meterToMilesStr()
+                    DISTANCE_KILOMETERS -> activitiesSummedDistance.meterToKilometerStr()
                     CUSTOM -> typeCustomText.second.takeIf { it.isNotBlank() }
                 }
             }
