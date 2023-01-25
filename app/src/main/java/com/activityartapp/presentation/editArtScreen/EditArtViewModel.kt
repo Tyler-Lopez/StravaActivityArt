@@ -50,7 +50,6 @@ class EditArtViewModel @Inject constructor(
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        private const val DEFAULT_ACTIVITY_TYPE_SELECTION = true
         private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
         private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
 
@@ -124,8 +123,8 @@ class EditArtViewModel @Inject constructor(
                     var selectionIndex = INDEX_FIRST
                     val selections = activityFilterUtils
                         .getPossibleDateSelections(
-                            filteredActivities,
-                            filterDateSelections
+                            activities = filteredActivities,
+                            customRangeSelectedPreviousMs = filterDateSelections
                                 ?.find { it is DateSelection.Custom }
                                 ?.run { this as? DateSelection.Custom }
                                 ?.run { dateSelected }
@@ -150,9 +149,9 @@ class EditArtViewModel @Inject constructor(
                     val newRangeTotal = activityFilterUtils.getPossibleDistances(filteredActivities)
                     val newRangeSelected = newRangeTotal?.let {
                         activityFilterUtils.getAdjustedSelectedDistancesInRange(
-                            it,
-                            filterDistanceSelectedStart,
-                            filterDistanceSelectedEnd
+                            range = it,
+                            selectedStart = filterDistanceSelectedStart,
+                            selectedEnd = filterDistanceSelectedEnd
                         )
                     }
                     copy(
