@@ -111,7 +111,7 @@ class ActivityFilterUtils @Inject constructor(
     fun getPossibleDistances(
         activities: List<Activity>
     ): ClosedFloatingPointRange<Double>? {
-        val distances =activities.map { it.distance }
+        val distances = activities.map { it.distance }
         val distanceShortest = distances.minOrNull()
         val distanceLongest = distances.maxOrNull()
         return distanceLongest?.let { distanceShortest?.rangeTo(it) }
