@@ -1,8 +1,8 @@
 package com.activityartapp.util
 
 import com.activityartapp.domain.models.Activity
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import com.activityartapp.presentation.editArtScreen.DateSelection
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -262,5 +262,55 @@ class ActivityFilterUtilsTest {
                 types
             )
         )
+    }
+
+    /** Test [ActivityFilterUtils.getPossibleDateSelections] **/
+    @Test
+    fun `Getting possible date selections when activities is empty and the previous custom range is null returns null`() {
+        assert(
+            activityFilterUtils.getPossibleDateSelections(
+                activities = emptyList(),
+                customRangeSelectedPreviousMs = null,
+            ) == null
+        )
+    }
+
+    @Test
+    fun `Possible date selections when activities is empty and the previous custom range is not null returns null`() {
+        assert(
+            activityFilterUtils.getPossibleDateSelections(
+                activities = emptyList(),
+                customRangeSelectedPreviousMs = 0L..1L,
+            ) == null
+        )
+    }
+
+    @Test
+    fun `Possible date selections when activities is not empty and the previous custom range is not null returns null`() {
+        assert(
+            activityFilterUtils.getPossibleDateSelections(
+                activities = emptyList(),
+                customRangeSelectedPreviousMs = 0L..1L,
+            ) == null
+        )
+    }
+
+    @Test
+    fun `Possible date selections of a single activity in 2018 and a previous range of null`() {
+        val actual = activityFilterUtils.getPossibleDateSelections(
+            activities = activities,
+            customRangeSelectedPreviousMs = null,
+        )
+        val expected = listOf(
+            DateSelection.All,
+            DateSelection.Year(2018),
+            DateSelection.Custom(
+                1525238109000,
+                1525238109000,
+                1525238109000,
+                1525238109000
+            )
+        )
+        assert(actual == expected)
     }
 }
