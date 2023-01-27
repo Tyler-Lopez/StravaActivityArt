@@ -39,8 +39,8 @@
     <!-- LOADING ACTIVITIES SCREEN -->
     <string name="loading_activities_zero_count">
         Loading Activities
-    </string><!-- Text informs the athlete how many activities have been loaded -->
-    <!-- Todo, this is not an appropriate way to handle the zero case -->
+    </string>
+    <!-- Text informs the athlete how many activities have been loaded -->
     <plurals name="loading_activities_count">
         <item quantity="zero">@string/loading_activities_zero_count</item>
         <item quantity="one">%d Activity Loaded</item>
