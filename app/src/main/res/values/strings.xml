@@ -125,6 +125,8 @@
     <string name="buttons_style_cd">Style Art</string>
     <string name="buttons_type_uppercase">TYPE</string>
     <string name="buttons_type_cd">Typography</string>
+    <string name="buttons_sort_uppercase">SORT</string>
+    <string name="buttons_sort_cd">Sort By</string>
     <string name="buttons_resize_uppercase">RESIZE</string>
     <string name="buttons_resize_cd">Resize Art</string>
 
@@ -209,6 +211,22 @@
 
     <string name="edit_art_type_size_header">Font Size</string>
     <string name="edit_art_type_size_description">How large should any text be?</string>
+
+    <string name="edit_art_sort_header">Sort By</string>
+    <string name="edit_art_sort_description">Which property of your activities should they be ordered by?</string>
+    <string name="edit_art_sort_type_date">Date</string>
+    <string name="edit_art_sort_type_distance">Distance</string>
+    <string name="edit_art_sort_type_type">Type</string>
+    <string name="edit_art_sort_direction_header">Sort Direction</string>
+    <string name="edit_art_sort_direction_description">Which way should activities be ordered with the \"sort by\" property?</string>
+    <string name="edit_art_sort_direction_ascending_header">Ascending</string>
+    <string name="edit_art_sort_direction_ascending_description_date">Oldest to newest</string>
+    <string name="edit_art_sort_direction_ascending_description_distance">Shortest to longest</string>
+    <string name="edit_art_sort_direction_ascending_description_type">A to Z - for example, you would see any rides before walks</string>
+    <string name="edit_art_sort_direction_descending_header">Descending</string>
+    <string name="edit_art_sort_direction_descending_description_date">Newest to oldest</string>
+    <string name="edit_art_sort_direction_descending_description_distance">Longest to shortest</string>
+    <string name="edit_art_sort_direction_descending_description_type">Z to A - for example, you would see any walks before rides</string>
 
     <string name="edit_art_resize_header">Resize Art</string>
     <string name="edit_art_resize_description">

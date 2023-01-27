@@ -19,7 +19,7 @@ fun SubheadHeavy(
 ) {
     Text(
         text = text,
-        textAlign = TextAlign.Center,
+        textAlign = textAlign,
         color = textColor ?: colorResource(id = R.color.light_text_secondary),
         style = MaterialTheme.typography.subtitle2,
         modifier = modifier

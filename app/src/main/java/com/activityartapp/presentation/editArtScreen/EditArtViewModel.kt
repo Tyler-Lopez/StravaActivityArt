@@ -234,6 +234,8 @@ class EditArtViewModel @Inject constructor(
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChangeDone -> onSizeCustomChangeDone()
             is SizeRotated -> onSizeRotated(event)
+            is SortDirectionChanged -> onSortDirectionChanged(event)
+            is SortTypeChanged -> onSortTypeChanged(event)
             is StylesColorChanged -> onStylesColorChanged(event)
             is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
@@ -382,6 +384,8 @@ class EditArtViewModel @Inject constructor(
                             ?: Int.MIN_VALUE,
                         sizeHeightPx = targetSize.heightPx,
                         sizeWidthPx = targetSize.widthPx,
+                        sortType = sortTypeSelected,
+                        sortDirectionType = sortDirectionTypeSelected,
                         strokeWidthType = styleStrokeWidthType,
                         textLeft = LEFT.text,
                         textCenter = CENTER.text,
@@ -439,6 +443,14 @@ class EditArtViewModel @Inject constructor(
                     }
             )
         }.push()
+    }
+
+    private fun onSortDirectionChanged(event: SortDirectionChanged) {
+        copyLastState { copy(sortDirectionTypeSelected = event.changedTo) }.push()
+    }
+
+    private fun onSortTypeChanged(event: SortTypeChanged) {
+        copyLastState { copy(sortTypeSelected = event.changedTo) }.push()
     }
 
     private fun onStylesColorChanged(event: StylesColorChanged) {
@@ -557,6 +569,8 @@ class EditArtViewModel @Inject constructor(
                         italicized = typeFontItalicized
                     ),
                     fontSize = typeFontSizeSelected,
+                    sortType = sortTypeSelected,
+                    sortDirectionType = sortDirectionTypeSelected,
                     textLeft = LEFT.text,
                     textCenter = CENTER.text,
                     textRight = RIGHT.text

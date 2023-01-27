@@ -6,6 +6,8 @@ import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
+import com.activityartapp.util.enums.EditArtSortDirectionType
+import com.activityartapp.util.enums.EditArtSortType
 import com.activityartapp.util.enums.FontSizeType
 
 sealed interface MainViewState : ViewState {
@@ -41,6 +43,8 @@ sealed interface MainDestination : Destination {
         val filterDistanceMoreThanMeters: Int,
         val sizeHeightPx: Int,
         val sizeWidthPx: Int,
+        val sortType: EditArtSortType,
+        val sortDirectionType: EditArtSortDirectionType,
         val strokeWidthType: StrokeWidthType,
         val textLeft: String?,
         val textCenter: String?,

@@ -78,6 +78,8 @@ fun MainNavHost(
                 FilterDistanceMoreThanMeters,
                 SizeHeightPx,
                 SizeWidthPx,
+                SortDirectionType,
+                SortType,
                 StrokeWidth,
                 TextLeft,
                 TextCenter,

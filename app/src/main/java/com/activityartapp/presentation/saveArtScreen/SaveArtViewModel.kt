@@ -16,6 +16,8 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.*
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.util.enums.EditArtSortDirectionType
+import com.activityartapp.util.enums.EditArtSortType
 import com.activityartapp.util.enums.FontSizeType
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,6 +57,8 @@ class SaveArtViewModel @Inject constructor(
     private val filterDistanceMoreThanMeters = FilterDistanceMoreThanMeters.rawArg(ssh).toInt()
     private val sizeHeightPx = SizeHeightPx.rawArg(ssh).toInt()
     private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
+    private val sortDirectionType = EditArtSortDirectionType.valueOf(SortDirectionType.rawArg(ssh))
+    private val sortType = EditArtSortType.valueOf(SortType.rawArg(ssh))
     private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
     private val textLeft = TextLeft.rawArg(ssh).takeIf { it.isNotBlank() }
     private val textCenter = TextCenter.rawArg(ssh).takeIf { it.isNotBlank() }
@@ -155,6 +159,8 @@ class SaveArtViewModel @Inject constructor(
                         PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
                     )
                 ),
+                sortType = sortType,
+                sortDirectionType = sortDirectionType,
                 strokeWidth = strokeWidthType,
                 textLeft = textLeft,
                 textCenter = textCenter,

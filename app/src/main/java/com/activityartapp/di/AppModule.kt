@@ -135,9 +135,10 @@ object AppModule {
     fun provideResolutionListFactory(): ResolutionListFactory = ResolutionListFactoryImpl()
 
     @Provides
-    fun provideActivityFilterUtils(timeUtils: TimeUtils) = ActivityFilterUtils(
-        timeUtils
-    )
+    fun provideActivityFilterUtils(timeUtils: TimeUtils) = ActivityFilterUtils(timeUtils)
+
+    @Provides
+    fun provideActivitySortUtils(timeUtils: TimeUtils) = ActivitySortUtils(timeUtils)
 
     @Provides
     fun provideImageSizeUtils() = ImageSizeUtils()
@@ -152,8 +153,11 @@ object AppModule {
     fun provideGson() = Gson()
 
     @Provides
-    fun provideVisualizationUtils(@ApplicationContext appContext: Context) =
-        VisualizationUtils(appContext)
+    fun provideVisualizationUtils(
+        activitySortUtils: ActivitySortUtils,
+        @ApplicationContext appContext: Context
+    ) =
+        VisualizationUtils(appContext, activitySortUtils)
 
     @Provides
     fun provideFileRepository(@ApplicationContext appContext: Context): FileRepository =
