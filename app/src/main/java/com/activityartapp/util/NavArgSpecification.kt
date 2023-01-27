@@ -21,6 +21,8 @@ sealed interface NavArgSpecification {
         private const val FILTER_DISTANCE_MORE_THAN_KEY = "filterDistanceMoreThanMeters"
         private const val SIZE_HEIGHT_KEY = "sizeHeight"
         private const val SIZE_WIDTH_KEY = "sizeWidth"
+        private const val SORT_TYPE_KEY = "sortType"
+        private const val SORT_DIRECTION_TYPE_KEY = "sortDirectionType"
         private const val STROKE_WIDTH_KEY = "strokeWidth"
         private const val TEXT_LEFT_KEY = "textLeft"
         private const val TEXT_CENTER_KEY = "textCenter"
@@ -100,6 +102,14 @@ sealed interface NavArgSpecification {
 
     object SizeWidthPx : NavArgSpecification {
         override val name = SIZE_WIDTH_KEY
+    }
+
+    object SortType : NavArgSpecification {
+        override val name: String = SORT_TYPE_KEY
+    }
+
+    object SortDirectionType : NavArgSpecification {
+        override val name: String = SORT_DIRECTION_TYPE_KEY
     }
 
     object TextLeft : NavArgSpecification {

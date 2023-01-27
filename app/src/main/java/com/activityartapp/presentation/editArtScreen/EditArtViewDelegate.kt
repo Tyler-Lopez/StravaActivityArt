@@ -23,11 +23,14 @@ import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogNa
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.preview.EditArtPreview
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.EditArtResizeScreen
+import com.activityartapp.presentation.editArtScreen.subscreens.sort.EditArtSortScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.style.EditArtStyleViewDelegate
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
 import com.activityartapp.presentation.ui.theme.White
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
+import com.activityartapp.util.enums.EditArtSortDirectionType
+import com.activityartapp.util.enums.EditArtSortType
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 private const val DISABLED_ALPHA = 0.5f
@@ -88,6 +91,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             FILTERS -> scrollStateFilter
                             STYLE -> scrollStateStyle
                             TYPE -> scrollStateType
+                            SORT -> scrollStateSort
                             RESIZE -> scrollStateResize
                             else -> null
                         },
@@ -138,9 +142,14 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 typeRightSelected,
                                 viewModel
                             )
+                            SORT -> EditArtSortScreen(
+                                sortTypeSelected = sortTypeSelected,
+                                sortDirectionSelected = sortDirectionTypeSelected,
+                                eventReceiver = viewModel
+                            )
                             RESIZE -> EditArtResizeScreen(
-                           //     sizeCustomHeightPx,
-                            //    sizeCustomWidthPx,
+                                //     sizeCustomHeightPx,
+                                //    sizeCustomWidthPx,
                                 sizeCustomMinPx..sizeCustomMaxPx,
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,

@@ -6,6 +6,8 @@ import android.util.Size
 import androidx.annotation.Px
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
+import com.activityartapp.util.enums.EditArtSortDirectionType
+import com.activityartapp.util.enums.EditArtSortType
 import com.activityartapp.util.enums.FontSizeType
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
@@ -13,7 +15,10 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt
 
-class VisualizationUtils @Inject constructor(private val context: Context) {
+class VisualizationUtils @Inject constructor(
+    private val context: Context,
+    private val activitySortUtils: ActivitySortUtils
+) {
 
     companion object {
         private const val ACTIVITY_SIZE_REDUCE_FRACTION = 0.85f
@@ -31,6 +36,8 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
         bitmapSize: Size,
         fontAssetPath: String,
         fontSize: FontSizeType,
+        sortType: EditArtSortType,
+        sortDirectionType: EditArtSortDirectionType,
         strokeWidth: StrokeWidthType,
         @Px paddingFraction: Float = 0.1f,
         textLeft: String? = null,
@@ -119,7 +126,12 @@ class VisualizationUtils @Inject constructor(private val context: Context) {
                     }
 
                     val finalRowOffset = (activitySize * remainder) / 2f
-                    activities.forEachIndexed { index, activity ->
+                    val sortedActivities = activitySortUtils.sortActivities(
+                        activities,
+                        sortType,
+                        sortDirectionType
+                    )
+                    sortedActivities.forEachIndexed { index, activity ->
                         // 0 % 1 = 0
                         // 0 * 606 = 0
 

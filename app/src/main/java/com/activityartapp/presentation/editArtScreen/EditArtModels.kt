@@ -17,9 +17,7 @@ import com.activityartapp.domain.models.ResolutionListFactory
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
-import com.activityartapp.util.enums.FontSizeType
-import com.activityartapp.util.enums.FontType
-import com.activityartapp.util.enums.FontWeightType
+import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.IgnoredOnParcel
@@ -82,6 +80,8 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
         object SizeCustomChangeDone : ArtMutatingEvent
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
+        data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
+        data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
         data class StylesColorChanged(
             val styleType: StyleType,
@@ -153,10 +153,13 @@ sealed interface EditArtViewState : ViewState {
         @IgnoredOnParcel val scrollStateStyle: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val sizeResolutionList: List<Resolution> = ResolutionListFactoryImpl().create(),
         val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
         @IgnoredOnParcel val sizeCustomMaxPx: Int = CUSTOM_SIZE_MAXIMUM_PX,
         @IgnoredOnParcel val sizeCustomMinPx: Int = CUSTOM_SIZE_MINIMUM_PX,
+        val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
+        val sortDirectionTypeSelected: EditArtSortDirectionType = EditArtSortDirectionType.ASCENDING,
         val styleActivities: ColorWrapper = ColorWrapper(
             alpha = INIT_ACTIVITIES_ALPHA,
             blue = INIT_ACTIVITIES_BLUE,

@@ -177,6 +177,8 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         FilterDistanceMoreThanMeters to filterDistanceMoreThanMeters.toString(),
                         SizeHeightPx to sizeHeightPx.toString(),
                         SizeWidthPx to sizeWidthPx.toString(),
+                        SortType to sortType.toString(),
+                        SortDirectionType to sortDirectionType.toString(),
                         StrokeWidth to strokeWidthType.toString(),
                         TextLeft to (textLeft ?: ""),
                         TextCenter to (textCenter ?: ""),
