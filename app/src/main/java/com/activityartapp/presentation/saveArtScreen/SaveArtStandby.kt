@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -28,21 +25,19 @@ import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.HighEmphasisButton
 import com.activityartapp.presentation.common.button.MediumEmphasisButton
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
+import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.DownloadShareStatusType.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
-
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaveArtStandby(
     bitmapScreenSize: Bitmap,
-    buttonsEnabled: Boolean,
-    downloadInProgress: Boolean,
-    shareInProgress: Boolean,
-    eventReceiver: EventReceiver<SaveArtViewEvent>,
-    snackbarHostState: SnackbarHostState
+    downloadShareStatusType: SaveArtViewState.Standby.DownloadShareStatusType,
+    eventReceiver: EventReceiver<SaveArtViewEvent>
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
 
     /** OS Greater than Android 10 (API 30) do not require permissions **/
     val osGreaterThan10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
@@ -73,6 +68,26 @@ fun SaveArtStandby(
         }
     }
 
+    val statusIsDownloading = (downloadShareStatusType == DOWNLOAD_IN_PROGRESS)
+        .or(downloadShareStatusType == DOWNLOAD_FAILURE)
+        .or(downloadShareStatusType == DOWNLOAD_SUCCESS)
+    val statusIsSharing = (downloadShareStatusType == SHARE_IN_PROGRESS)
+        .or(downloadShareStatusType == SHARE_SUCCESS)
+        .or(downloadShareStatusType == SHARE_WAITING_FOR_RETURN)
+    val statusIsStandby = downloadShareStatusType == STANDBY
+
+    val snackbarMessage = downloadShareStatusType.snackbarStringRes?.let { stringResource(it) }
+    LaunchedEffect(downloadShareStatusType) {
+        snackbarMessage?.let { snackbarHostState.showSnackbar(it) }
+        when (downloadShareStatusType) {
+            DOWNLOAD_FAILURE -> ReceivedDownloadFailure
+            DOWNLOAD_SUCCESS -> ReceivedDownloadSuccess
+            SHARE_FAILURE -> ReceivedShareFailure
+            SHARE_SUCCESS -> ReceivedShareSuccess
+            STANDBY, DOWNLOAD_IN_PROGRESS, SHARE_IN_PROGRESS, SHARE_WAITING_FOR_RETURN -> null
+        }?.let { eventReceiver.onEvent(it) }
+    }
+
     Box {
         ScreenBackground {
             Image(
@@ -83,8 +98,8 @@ fun SaveArtStandby(
             )
             Column {
                 HighEmphasisButton(
-                    enabled = buttonsEnabled,
-                    isLoading = downloadInProgress,
+                    enabled = statusIsStandby,
+                    isLoading = statusIsDownloading,
                     size = ButtonSize.MEDIUM,
                     text = stringResource(R.string.save_art_download_art)
                 ) {
@@ -104,9 +119,9 @@ fun SaveArtStandby(
                     }
                 }
                 MediumEmphasisButton(
-                    enabled = buttonsEnabled,
+                    enabled = statusIsStandby,
                     size = ButtonSize.MEDIUM,
-                    isLoading = shareInProgress,
+                    isLoading = statusIsSharing,
                     text = stringResource(R.string.save_art_share_art)
                 ) { eventReceiver.onEventDebounced(ClickedShare) }
             }

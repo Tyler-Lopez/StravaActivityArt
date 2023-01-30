@@ -252,6 +252,9 @@
     <string name="save_art_download_art">Download</string>
     <string name="save_art_share_art">Share</string>
     <string name="save_art_content_description_preview">Art Preview</string>
+    <string name="save_art_snackbar_download_success">Download success</string>
+    <string name="save_art_snackbar_download_failure">Download failed</string>
+    <string name="save_art_snackbar_share_failure">Share failed</string>
 
     <!-- FONT TYPES -->
     <string name="font_josefinsans">Josefin Sans</string>

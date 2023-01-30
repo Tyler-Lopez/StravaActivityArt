@@ -1,10 +1,9 @@
 package com.activityartapp.presentation.saveArtScreen
 
+import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import android.util.Size
-import androidx.compose.material.SnackbarHostState
-import androidx.core.graphics.scale
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.repository.FileRepository
 import com.activityartapp.domain.useCase.activities.GetActivitiesFromMemory
@@ -13,6 +12,8 @@ import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.*
+import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.DownloadShareStatusType
+import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.DownloadShareStatusType.*
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
@@ -24,7 +25,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,11 +37,6 @@ class SaveArtViewModel @Inject constructor(
     gson: Gson,
     ssh: SavedStateHandle,
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
-
-    companion object {
-        private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
-        private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
-    }
 
     private val activityTypes = gson.fromJson<List<String>>(
         ActivityTypes.rawArg(ssh),
@@ -57,6 +52,7 @@ class SaveArtViewModel @Inject constructor(
     private val filterDistanceMoreThanMeters = FilterDistanceMoreThanMeters.rawArg(ssh).toInt()
     private val sizeHeightPx = SizeHeightPx.rawArg(ssh).toInt()
     private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
+    private val sizePx: Size get() = Size(sizeWidthPx, sizeHeightPx)
     private val sortDirectionType = EditArtSortDirectionType.valueOf(SortDirectionType.rawArg(ssh))
     private val sortType = EditArtSortType.valueOf(SortType.rawArg(ssh))
     private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
@@ -73,52 +69,26 @@ class SaveArtViewModel @Inject constructor(
             is ClickedDownloadWhenPermissionPermaDenied -> onClickedDownloadWhenPermissionPermaDenied()
             is ClickedNavigateUp -> onClickedNavigateUp()
             is ClickedShare -> onClickedShare()
+            is ReceivedDownloadFailure -> onReceivedDownloadFailure()
+            is ReceivedDownloadSuccess -> onReceivedDownloadSuccess()
+            is ReceivedShareFailure -> onReceivedShareFailure()
+            is ReceivedShareSuccess -> onReceivedShareSuccess()
             is ScreenMeasured -> onScreenMeasured(event)
         }
     }
 
     private fun onActivityResumed() {
-        withStandbyState {
-            copyShareTerminate().push()
-        }
+        pushUpdateToDownloadShareStatus(STANDBY)
     }
 
     private fun onClickedDownload() {
-        withStandbyState {
-            copyDownloadStart().push()
-            viewModelScope.launch(Dispatchers.IO) {
-                viewModelScope.launch(Dispatchers.Default) {
-                    val bitmap = visualizationUtils.createBitmap(
-                        activities = activityFilterUtils.filterActivities(
-                            activities = activities,
-                            includeActivityTypes = activityTypes.toSet(),
-                            unixMsRange = filterDateAfterMs..filterDateBeforeMs,
-                            distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
-                        ),
-                        fontAssetPath = fontAssetPath,
-                        fontSize = fontTypeSize,
-                        colorActivitiesArgb = colorActivitiesArgb,
-                        colorBackgroundArgb = colorBackgroundArgb,
-                        colorFontArgb = colorFontArgb,
-                        bitmapSize = Size(sizeWidthPx, sizeHeightPx),
-                        sortType = sortType,
-                        sortDirectionType = sortDirectionType,
-                        strokeWidth = strokeWidthType,
-                        textLeft = textLeft,
-                        textCenter = textCenter,
-                        textRight = textRight,
-                    )
-                    fileRepository
-                        .saveBitmapToGallery(bitmap)
-                        .doOnSuccess {
-                            snackbarHostState.showSnackbar("Downloaded successfully")
-                        }
-                        .doOnError {
-                            println("ApiError was $exception")
-                            snackbarHostState.showSnackbar("Download failed")
-                        }
-                        .also { copyDownloadTerminate().push() }
-                }
+        pushUpdateToDownloadShareStatus(DOWNLOAD_IN_PROGRESS)
+        viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.Default) {
+                fileRepository
+                    .saveBitmapToGallery(createArtBitmapOfSize(sizePx))
+                    .doOnSuccess { pushUpdateToDownloadShareStatus(DOWNLOAD_SUCCESS) }
+                    .doOnError { pushUpdateToDownloadShareStatus(DOWNLOAD_FAILURE) }
             }
         }
     }
@@ -141,78 +111,76 @@ class SaveArtViewModel @Inject constructor(
     }
 
     private fun onClickedShare() {
-        withStandbyState {
-            copyShareStart().push()
-            viewModelScope.launch(Dispatchers.IO) {
-                val bitmap = visualizationUtils.createBitmap(
-                    activities = activityFilterUtils.filterActivities(
-                        activities = activities,
-                        includeActivityTypes = activityTypes.toSet(),
-                        unixMsRange = filterDateAfterMs..filterDateBeforeMs,
-                        distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
-                    ),
-                    fontAssetPath = fontAssetPath,
-                    fontSize = fontTypeSize,
-                    colorActivitiesArgb = colorActivitiesArgb,
-                    colorBackgroundArgb = colorBackgroundArgb,
-                    colorFontArgb = colorFontArgb,
-                    bitmapSize = Size(sizeWidthPx, sizeHeightPx),
-                    sortType = sortType,
-                    sortDirectionType = sortDirectionType,
-                    strokeWidth = strokeWidthType,
-                    textLeft = textLeft,
-                    textCenter = textCenter,
-                    textRight = textRight,
-                )
-                fileRepository
-                    .saveBitmapToCache(bitmap)
-                    .doOnSuccess {
-                        withContext(Dispatchers.Main) {
-                            routeTo(ShareFile(data))
-                        }
+        pushUpdateToDownloadShareStatus(SHARE_IN_PROGRESS)
+        viewModelScope.launch(Dispatchers.IO) {
+            fileRepository
+                .saveBitmapToCache(createArtBitmapOfSize(sizePx))
+                .doOnSuccess {
+                    withContext(Dispatchers.Main) {
+                        routeTo(ShareFile(data))
                     }
-                    .doOnError {
-                        copyDownloadTerminate().push()
-                        snackbarHostState.showSnackbar("Sharing failed")
-                    }
-            }
+                    pushUpdateToDownloadShareStatus(SHARE_SUCCESS)
+                }
+                .doOnError { pushUpdateToDownloadShareStatus(SHARE_FAILURE) }
         }
+    }
+
+    private fun onReceivedDownloadFailure() {
+        pushUpdateToDownloadShareStatus(STANDBY)
+    }
+
+    private fun onReceivedDownloadSuccess() {
+        pushUpdateToDownloadShareStatus(STANDBY)
+    }
+
+    private fun onReceivedShareFailure() {
+        pushUpdateToDownloadShareStatus(STANDBY)
+    }
+
+    private fun onReceivedShareSuccess() {
+        pushUpdateToDownloadShareStatus(SHARE_IN_PROGRESS)
     }
 
     private fun onScreenMeasured(event: ScreenMeasured) {
         Loading.push()
         viewModelScope.launch(Dispatchers.Default) {
-            val bitmap = visualizationUtils.createBitmap(
-                activities = activityFilterUtils.filterActivities(
-                    activities = activities,
-                    includeActivityTypes = activityTypes.toSet(),
-                    unixMsRange = filterDateAfterMs..filterDateBeforeMs,
-                    distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
-                ),
-                fontAssetPath = fontAssetPath,
-                fontSize = fontTypeSize,
-                colorActivitiesArgb = colorActivitiesArgb,
-                colorBackgroundArgb = colorBackgroundArgb,
-                colorFontArgb = colorFontArgb,
-                bitmapSize = imageSizeUtils.sizeToMaximumSize(
-                    actualSize = Size(sizeWidthPx, sizeHeightPx),
-                    maximumSize = event.size
-                ),
-                sortType = sortType,
-                sortDirectionType = sortDirectionType,
-                strokeWidth = strokeWidthType,
-                textLeft = textLeft,
-                textCenter = textCenter,
-                textRight = textRight,
-            )
             Standby(
-                bitmapScreenSize = bitmap,
-                snackbarHostState = SnackbarHostState()
+                bitmapScreenSize = createArtBitmapOfSize(
+                    imageSizeUtils.sizeToMaximumSize(
+                        actualSize = sizePx,
+                        maximumSize = event.size
+                    )
+                )
             ).push()
         }
     }
 
-    private fun withStandbyState(onState: Standby.() -> Unit) {
-        (lastPushedState as? Standby)?.apply(onState)
+    private fun createArtBitmapOfSize(size: Size): Bitmap {
+        return visualizationUtils.createBitmap(
+            activities = activityFilterUtils.filterActivities(
+                activities = activities,
+                includeActivityTypes = activityTypes.toSet(),
+                unixMsRange = filterDateAfterMs..filterDateBeforeMs,
+                distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
+            ),
+            fontAssetPath = fontAssetPath,
+            fontSize = fontTypeSize,
+            colorActivitiesArgb = colorActivitiesArgb,
+            colorBackgroundArgb = colorBackgroundArgb,
+            colorFontArgb = colorFontArgb,
+            bitmapSize = size,
+            sortType = sortType,
+            sortDirectionType = sortDirectionType,
+            strokeWidth = strokeWidthType,
+            textLeft = textLeft,
+            textCenter = textCenter,
+            textRight = textRight,
+        )
+    }
+
+    private fun pushUpdateToDownloadShareStatus(downloadShareStatusType: DownloadShareStatusType) {
+        (lastPushedState as? Standby)
+            ?.copy(downloadShareStatusType = downloadShareStatusType)
+            ?.push()
     }
 }
