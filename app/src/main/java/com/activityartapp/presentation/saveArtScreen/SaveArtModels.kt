@@ -18,7 +18,6 @@ sealed interface SaveArtViewEvent : ViewEvent {
 sealed interface SaveArtViewState : ViewState {
     object Loading : SaveArtViewState
     data class Standby(
-        val bitmapDownloadSize: Bitmap,
         val bitmapScreenSize: Bitmap,
         val buttonsEnabled: Boolean = true,
         val downloadInProgress: Boolean = false,

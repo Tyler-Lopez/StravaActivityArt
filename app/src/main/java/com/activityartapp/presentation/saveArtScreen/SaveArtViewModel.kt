@@ -87,16 +87,38 @@ class SaveArtViewModel @Inject constructor(
         withStandbyState {
             copyDownloadStart().push()
             viewModelScope.launch(Dispatchers.IO) {
-                fileRepository
-                    .saveBitmapToGallery(bitmapDownloadSize)
-                    .doOnSuccess {
-                        snackbarHostState.showSnackbar("Downloaded successfully")
-                    }
-                    .doOnError {
-                        println("ApiError was $exception")
-                        snackbarHostState.showSnackbar("Download failed")
-                    }
-                    .also { copyDownloadTerminate().push() }
+                viewModelScope.launch(Dispatchers.Default) {
+                    val bitmap = visualizationUtils.createBitmap(
+                        activities = activityFilterUtils.filterActivities(
+                            activities = activities,
+                            includeActivityTypes = activityTypes.toSet(),
+                            unixMsRange = filterDateAfterMs..filterDateBeforeMs,
+                            distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
+                        ),
+                        fontAssetPath = fontAssetPath,
+                        fontSize = fontTypeSize,
+                        colorActivitiesArgb = colorActivitiesArgb,
+                        colorBackgroundArgb = colorBackgroundArgb,
+                        colorFontArgb = colorFontArgb,
+                        bitmapSize = Size(sizeWidthPx, sizeHeightPx),
+                        sortType = sortType,
+                        sortDirectionType = sortDirectionType,
+                        strokeWidth = strokeWidthType,
+                        textLeft = textLeft,
+                        textCenter = textCenter,
+                        textRight = textRight,
+                    )
+                    fileRepository
+                        .saveBitmapToGallery(bitmap)
+                        .doOnSuccess {
+                            snackbarHostState.showSnackbar("Downloaded successfully")
+                        }
+                        .doOnError {
+                            println("ApiError was $exception")
+                            snackbarHostState.showSnackbar("Download failed")
+                        }
+                        .also { copyDownloadTerminate().push() }
+                }
             }
         }
     }
@@ -122,8 +144,28 @@ class SaveArtViewModel @Inject constructor(
         withStandbyState {
             copyShareStart().push()
             viewModelScope.launch(Dispatchers.IO) {
+                val bitmap = visualizationUtils.createBitmap(
+                    activities = activityFilterUtils.filterActivities(
+                        activities = activities,
+                        includeActivityTypes = activityTypes.toSet(),
+                        unixMsRange = filterDateAfterMs..filterDateBeforeMs,
+                        distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
+                    ),
+                    fontAssetPath = fontAssetPath,
+                    fontSize = fontTypeSize,
+                    colorActivitiesArgb = colorActivitiesArgb,
+                    colorBackgroundArgb = colorBackgroundArgb,
+                    colorFontArgb = colorFontArgb,
+                    bitmapSize = Size(sizeWidthPx, sizeHeightPx),
+                    sortType = sortType,
+                    sortDirectionType = sortDirectionType,
+                    strokeWidth = strokeWidthType,
+                    textLeft = textLeft,
+                    textCenter = textCenter,
+                    textRight = textRight,
+                )
                 fileRepository
-                    .saveBitmapToCache(bitmapDownloadSize)
+                    .saveBitmapToCache(bitmap)
                     .doOnSuccess {
                         withContext(Dispatchers.Main) {
                             routeTo(ShareFile(data))
@@ -154,10 +196,7 @@ class SaveArtViewModel @Inject constructor(
                 colorFontArgb = colorFontArgb,
                 bitmapSize = imageSizeUtils.sizeToMaximumSize(
                     actualSize = Size(sizeWidthPx, sizeHeightPx),
-                    maximumSize = Size(
-                        PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX,
-                        PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
-                    )
+                    maximumSize = event.size
                 ),
                 sortType = sortType,
                 sortDirectionType = sortDirectionType,
@@ -166,14 +205,8 @@ class SaveArtViewModel @Inject constructor(
                 textCenter = textCenter,
                 textRight = textRight,
             )
-            val newSize = imageSizeUtils.sizeToMaximumSize(
-                Size(sizeWidthPx, sizeHeightPx),
-                event.size,
-            )
-            val scaledBitmap = bitmap.scale(newSize.width, newSize.height)
             Standby(
-                bitmapDownloadSize = bitmap,
-                bitmapScreenSize = scaledBitmap,
+                bitmapScreenSize = bitmap,
                 snackbarHostState = SnackbarHostState()
             ).push()
         }
