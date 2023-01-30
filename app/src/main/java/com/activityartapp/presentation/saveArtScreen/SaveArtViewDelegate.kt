@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.ClickedNav
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.ScreenMeasured
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Loading
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby
+import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.DownloadShareStatusType.*
 
 @Composable
 fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
@@ -29,14 +31,13 @@ fun SaveArtViewDelegate(viewModel: SaveArtViewModel) {
             viewModel.viewState.collectAsState().value.apply {
                 when (this) {
                     is Loading -> CircularProgressIndicator()
-                    is Standby -> SaveArtStandby(
-                        bitmapScreenSize = bitmapScreenSize,
-                        buttonsEnabled = buttonsEnabled,
-                        downloadInProgress = downloadInProgress,
-                        shareInProgress = shareInProgress,
-                        eventReceiver = viewModel,
-                        snackbarHostState = snackbarHostState
-                    )
+                    is Standby -> {
+                        SaveArtStandby(
+                            bitmapScreenSize = bitmapScreenSize,
+                            downloadShareStatusType = downloadShareStatusType,
+                            eventReceiver = viewModel,
+                        )
+                    }
                     null -> ScreenMeasurer { viewModel.onEvent(ScreenMeasured(it)) }
                 }
             }
