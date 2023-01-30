@@ -9,7 +9,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -82,6 +81,10 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
+        data class StyleBackgroundStyleChanged(
+            val changedTo: EditArtBackgroundStyle
+        ) : ArtMutatingEvent
+
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
         data class StylesColorChanged(
             val styleType: StyleType,
@@ -165,6 +168,14 @@ sealed interface EditArtViewState : ViewState {
             blue = INIT_ACTIVITIES_BLUE,
             green = INIT_ACTIVITIES_GREEN,
             red = INIT_ACTIVITIES_RED
+        ),
+        val styleBackgroundStyle: EditArtBackgroundStyle = EditArtBackgroundStyle.Solid(
+            color = ColorWrapper(
+                alpha = INIT_BACKGROUND_ALPHA,
+                blue = INIT_BACKGROUND_BLUE,
+                green = INIT_BACKGROUND_GREEN,
+                red = INIT_BACKGROUND_RED
+            )
         ),
         val styleBackground: ColorWrapper = ColorWrapper(
             alpha = INIT_BACKGROUND_ALPHA,

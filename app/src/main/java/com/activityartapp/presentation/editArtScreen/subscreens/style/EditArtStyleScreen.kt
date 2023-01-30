@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
@@ -20,17 +21,35 @@ import com.activityartapp.presentation.editArtScreen.StyleType.*
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorPreview
 import com.activityartapp.activityart.presentation.editArtScreen.subscreens.style.composables.ColorSlider
+import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.presentation.editArtScreen.*
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWithText
+import com.activityartapp.util.Screen
+import kotlin.reflect.KClass
 
 @Composable
 fun ColumnScope.EditArtStyleViewDelegate(
+    backgroundStyle: EditArtBackgroundStyle,
     colorActivities: ColorWrapper,
     colorBackground: ColorWrapper,
     colorFont: ColorWrapper?,
     strokeWidthType: StrokeWidthType,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
+    Section(
+        header = "Background Type",
+        description = "What style of background should your art use?"
+    ) {
+        EditArtBackgroundStyle.values().forEach {
+            RadioButtonWithText(
+                isSelected = it.isInstance(backgroundStyle),
+                text = backgroundStyleToHeaderText(it)
+            ) {
+
+            }
+        }
+    }
     StyleType.values().forEach { styleType ->
         Section(
             header = stringResource(styleType.headerStrRes),
@@ -134,5 +153,13 @@ fun ColumnScope.EditArtStyleViewDelegate(
                 Subhead(text = stringResource(id = it.headerId))
             }
         }
+    }
+}
+
+private fun backgroundStyleToHeaderText(style: KClass<out EditArtBackgroundStyle>): String {
+    return when (style.objectInstance) {
+        is EditArtBackgroundStyle.Transparent -> "Transparent"
+        is EditArtBackgroundStyle.Solid -> "Solid Color"
+        else -> "null"
     }
 }

@@ -120,6 +120,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 )
                             }
                             STYLE -> EditArtStyleViewDelegate(
+                                styleBackgroundStyle,
                                 styleActivities,
                                 styleBackground,
                                 styleFont,

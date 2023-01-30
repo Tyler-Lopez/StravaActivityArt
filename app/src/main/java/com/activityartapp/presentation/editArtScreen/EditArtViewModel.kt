@@ -236,6 +236,7 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
+            is StyleBackgroundStyleChanged -> {} // todo
             is StylesColorChanged -> onStylesColorChanged(event)
             is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
