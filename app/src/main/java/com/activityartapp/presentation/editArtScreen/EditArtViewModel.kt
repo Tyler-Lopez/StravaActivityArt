@@ -220,7 +220,6 @@ class EditArtViewModel @Inject constructor(
             is ClickedInfoCheckeredPattern -> onClickedInfoCheckeredPattern()
             is DialogDismissed -> onDialogDismissed()
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
-            is MakeFullscreenClicked -> onMakeFullscreenClicked()
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
             is SizeCustomChanged -> onSizeCustomChanged(event)
@@ -354,10 +353,6 @@ class EditArtViewModel @Inject constructor(
         }.push()
     }
 
-    private fun onMakeFullscreenClicked() {
-        // Todo
-    }
-
     private fun onNavigateUpClicked() {
         copyLastState { copy(dialogActive = EditArtDialogType.NAVIGATE_UP) }.push()
     }
@@ -465,24 +460,6 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(styleBackgroundType = event.changedTo) }.push()
     }
 
-    /*
-    private fun onStylesColorChanged(event: StylesColorChanged) {
-
-copyLastState {
-
-   event.run {
-       when (styleType) {
-           BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
-           ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
-           FONT -> copy(
-               styleFont = (styleFont ?: styleActivities).copyWithEvent(event)
-           )
-       }
-   }
-}.push()
-
-    }
- */
     private fun onStyleColorActivitiesChanged(event: StyleColorActivitiesChanged) {
         pushStateCopy {
             copy(

@@ -32,7 +32,6 @@ sealed interface EditArtViewEvent : ViewEvent {
     object ClickedInfoCheckeredPattern : EditArtViewEvent
     object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
-    object MakeFullscreenClicked : EditArtViewEvent
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
