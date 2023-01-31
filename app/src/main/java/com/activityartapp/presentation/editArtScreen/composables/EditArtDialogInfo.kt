@@ -17,7 +17,10 @@ import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.R
 
 @Composable
-fun EditArtDialogCheckeredPattern(eventReceiver: EventReceiver<EditArtViewEvent>) {
+fun EditArtDialogInfo(
+    body: Array<String>,
+    eventReceiver: EventReceiver<EditArtViewEvent>
+) {
     Dialog(
         onDismissRequest = {
             eventReceiver.onEvent(DialogDismissed)
@@ -33,8 +36,7 @@ fun EditArtDialogCheckeredPattern(eventReceiver: EventReceiver<EditArtViewEvent>
                     ),
                     verticalArrangement = Arrangement.spacedBy(spacing.medium)
                 ) {
-                    Body(text = stringResource(R.string.edit_art_dialog_checkered_background_prompt_one))
-                    Body(text = stringResource(R.string.edit_art_dialog_checkered_background_prompt_two))
+                    body.forEach { Body(text = it) }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -42,7 +44,7 @@ fun EditArtDialogCheckeredPattern(eventReceiver: EventReceiver<EditArtViewEvent>
                         LowEmphasisButton(
                             size = ButtonSize.SMALL,
                             modifier = Modifier,
-                            text = stringResource(R.string.edit_art_dialog_checkered_background_dismiss)
+                            text = stringResource(R.string.edit_art_dialog_info_dismiss)
                         ) { eventReceiver.onEvent(DialogDismissed) }
                     }
                 }

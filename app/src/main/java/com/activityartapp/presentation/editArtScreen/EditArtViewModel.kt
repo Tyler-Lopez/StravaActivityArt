@@ -217,7 +217,8 @@ class EditArtViewModel @Inject constructor(
     override fun onEvent(event: EditArtViewEvent) {
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
-            is ClickedInfoCheckeredPattern -> onClickedInfoCheckeredPattern()
+            is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
+            is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
             is DialogDismissed -> onDialogDismissed()
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is NavigateUpClicked -> onNavigateUpClicked()
@@ -283,12 +284,16 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun onClickedInfoCheckeredPattern() {
-        copyLastState { copy(dialogActive = EditArtDialogType.CHECKERED_BACKGROUND_INFO) }.push()
+    private fun onClickedInfoCheckeredBackground() {
+        pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_CHECKERED_BACKGROUND) }
+    }
+
+    private fun onClickedInfoTransparentBackground() {
+        pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_TRANSPARENT) }
     }
 
     private fun onDialogDismissed() {
-        copyLastState { copy(dialogActive = EditArtDialogType.NONE) }.push()
+        pushStateCopy { copy(dialogActive = EditArtDialogType.NONE) }
     }
 
     private fun onDialogNavigateUpConfirmed() {

@@ -14,6 +14,7 @@ sealed interface ApiError {
 
     companion object {
         fun valueOf(value: Exception?): ApiError {
+            println("Determining what exception $value is")
             return when (value) {
                 is UnknownHostException -> NoInternet
                 is AthleteRateLimitedException -> AthleteRateLimited

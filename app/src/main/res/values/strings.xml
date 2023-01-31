@@ -32,8 +32,8 @@
     <string name="action_bar_about_header">About</string>
     <!-- Content describes the app in detail -->
     <string-array name="about_screen_content">
-        <item>Activity Art lets athletes create fully-customizable digital artwork of their Strava activities at a high resolution appropriate for printing and framing.</item>
-        <item>Athletes may visualize only some of their activities as determined by filters they set that include the activity date, distance, and type.</item>
+        <item>Activity Art helps you create customizable artwork with your Strava activities. The art you can make with this app is perfect for framing, computer wallpaper, printing on a shirt, and more!</item>
+        <item>This app is my project, and I want to make it the best I can! Please consider leaving a review if you are enjoying the app to help others find it. If you have any feature requests or find a bug, write me at tyler@activityartapp.com - thanks!</item>
     </string-array>
 
     <!-- LOADING ACTIVITIES SCREEN -->
@@ -170,7 +170,7 @@
     <string name="edit_art_style_background_type_solid_description">What solid color should the background of the art be?</string>
     <string name="edit_art_style_activities_header">Activities Color</string>
     <string name="edit_art_style_activities_description">What color should the activities of the art be?</string>
-    <string name="edit_art_style_font_header">Font Color</string>
+    <string name="edit_art_style_text_header">Font Color</string>
     <string name="edit_art_style_font_description">What color should any text be?</string>
     <string name="edit_art_style_font_use_activities">Use the same color as your activities</string>
     <string name="edit_art_style_font_use_custom">Choose a different color</string>
@@ -243,13 +243,15 @@
     <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
     <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
-    <string name="edit_art_dialog_checkered_background_prompt_one">
-        We added a checkerboard pattern to help you see your art with a transparent background.
-    </string>
-    <string name="edit_art_dialog_checkered_background_prompt_two">
-        Don\'t worry - we\'ll remove it when you download or share it!
-    </string>
-    <string name="edit_art_dialog_checkered_background_dismiss">@android:string/ok</string>
+    <string-array name="edit_art_dialog_info_background_checkered">
+        <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
+        <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
+    </string-array>
+    <string-array name="edit_art_dialog_info_background_transparent">
+        <item>A transparent background is like having no background at all.</item>
+        <item>If you want to print your art on something (like a t-shirt), a transparent background can be a great option!</item>
+    </string-array>
+    <string name="edit_art_dialog_info_dismiss">@android:string/ok</string>
     <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>

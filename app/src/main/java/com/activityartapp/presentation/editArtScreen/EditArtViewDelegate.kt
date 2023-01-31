@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
@@ -21,7 +22,7 @@ import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.SaveClicked
 import com.activityartapp.presentation.editArtScreen.EditArtDialogType.*
-import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogCheckeredPattern
+import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogInfo
 import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogNavigateUp
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.preview.EditArtPreview
@@ -33,8 +34,6 @@ import com.activityartapp.presentation.ui.theme.White
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
 import com.activityartapp.util.enums.BackgroundType
-import com.activityartapp.util.enums.EditArtSortDirectionType
-import com.activityartapp.util.enums.EditArtSortType
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 private const val DISABLED_ALPHA = 0.5f
@@ -174,8 +173,16 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
             viewModel.onEvent(NavigateUpClicked)
         }
 
+        println("Here, dialog active is $dialogActive")
         when (dialogActive) {
-            CHECKERED_BACKGROUND_INFO -> EditArtDialogCheckeredPattern(eventReceiver = viewModel)
+            INFO_CHECKERED_BACKGROUND -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
+                eventReceiver = viewModel
+            )
+            INFO_TRANSPARENT -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_info_background_transparent),
+                eventReceiver = viewModel
+            )
             NAVIGATE_UP -> EditArtDialogNavigateUp(eventReceiver = viewModel)
             NONE -> {} // No-op
         }

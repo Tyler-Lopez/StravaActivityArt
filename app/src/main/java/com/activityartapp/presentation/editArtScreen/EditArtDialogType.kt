@@ -1,7 +1,8 @@
 package com.activityartapp.presentation.editArtScreen
 
 enum class EditArtDialogType {
-    CHECKERED_BACKGROUND_INFO,
+    INFO_CHECKERED_BACKGROUND,
+    INFO_TRANSPARENT,
     NAVIGATE_UP,
     NONE
 }

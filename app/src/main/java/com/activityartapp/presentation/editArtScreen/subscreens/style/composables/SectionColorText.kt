@@ -11,17 +11,14 @@ import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWith
 import com.activityartapp.presentation.editArtScreen.composables.Section
 
 @Composable
-fun ColumnScope.SectionColorFont(
+fun ColumnScope.SectionColorText(
     color: ColorWrapper?,
     colorActivities: ColorWrapper,
     onColorChanged: (StyleColorFontChanged) -> Unit,
     onUseFontChanged: (StyleColorFontUseCustomChanged) -> Unit
 ) {
     val customEnabled = color != null
-    Section(
-        header = stringResource(R.string.edit_art_style_font_header),
-        description = stringResource(R.string.edit_art_style_font_description)
-    ) {
+    Section(header = stringResource(R.string.edit_art_style_text_header)) {
         ColorPreview(colorWrapper = color ?: colorActivities)
         ColumnSmallSpacing {
             RadioButtonWithContent(

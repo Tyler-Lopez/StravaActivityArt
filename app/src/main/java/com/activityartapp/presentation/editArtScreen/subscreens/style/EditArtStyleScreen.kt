@@ -1,13 +1,11 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.style
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
@@ -26,19 +24,24 @@ fun ColumnScope.EditArtStyleViewDelegate(
     backgroundColors: List<ColorWrapper>,
     backgroundType: BackgroundType,
     colorActivities: ColorWrapper,
-    colorFont: ColorWrapper?,
+    colorText: ColorWrapper?,
     strokeWidthType: StrokeWidthType,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
-    Section(
-        header = stringResource(R.string.edit_art_style_background_type_header),
-        description = stringResource(R.string.edit_art_style_background_type_description)
-    ) {
+    Section(header = stringResource(R.string.edit_art_style_background_type_header)) {
         ColumnSmallSpacing {
             BackgroundType.values().forEach {
                 RadioButtonWithContent(
                     isSelected = it == backgroundType,
-                    text = stringResource(it.strRes)
+                    text = stringResource(it.strRes),
+                    onHelpPressed = if (it == BackgroundType.TRANSPARENT) {
+                        {
+                            println("Sending event?")
+                            eventReceiver.onEvent(EditArtViewEvent.ClickedInfoTransparentBackground)
+                        }
+                    } else {
+                        null
+                    }
                 ) { eventReceiver.onEvent(StyleBackgroundTypeChanged(changedTo = it)) }
             }
         }
@@ -49,8 +52,8 @@ fun ColumnScope.EditArtStyleViewDelegate(
         onColorChanged = eventReceiver::onEvent
     )
     SectionColorActivities(color = colorActivities, onColorChanged = eventReceiver::onEvent)
-    SectionColorFont(
-        color = colorFont,
+    SectionColorText(
+        color = colorText,
         colorActivities = colorActivities,
         onColorChanged = eventReceiver::onEvent,
         onUseFontChanged = eventReceiver::onEvent

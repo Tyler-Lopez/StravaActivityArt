@@ -44,7 +44,7 @@ fun EditArtPreview(
                     LowEmphasisButton(
                         text = "Why is there a checkered pattern?",
                         size = ButtonSize.SMALL
-                    ) { eventReceiver.onEvent(EditArtViewEvent.ClickedInfoCheckeredPattern) }
+                    ) { eventReceiver.onEvent(EditArtViewEvent.ClickedInfoCheckeredBackground) }
                 }
             } ?: run {
                 CircularProgressIndicator()

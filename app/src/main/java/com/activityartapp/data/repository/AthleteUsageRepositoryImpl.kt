@@ -11,7 +11,7 @@ class AthleteUsageRepositoryImpl @Inject constructor(private val db: FirebaseDat
     AthleteUsageRepository {
 
     companion object {
-        private const val TIMEOUT_TASK_MS = 5000L
+        private const val TIMEOUT_TASK_MS = 7500L
     }
 
     override suspend fun getAthleteUsage(athleteId: String): Response<Int> {

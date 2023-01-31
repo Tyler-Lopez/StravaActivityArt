@@ -29,7 +29,8 @@ annotation class UnixMS
 
 sealed interface EditArtViewEvent : ViewEvent {
 
-    object ClickedInfoCheckeredPattern : EditArtViewEvent
+    object ClickedInfoCheckeredBackground : EditArtViewEvent
+    object ClickedInfoTransparentBackground : EditArtViewEvent
     object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
     object NavigateUpClicked : EditArtViewEvent
