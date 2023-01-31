@@ -17,6 +17,7 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.Do
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.util.enums.BackgroundType
 import com.activityartapp.util.enums.EditArtSortDirectionType
 import com.activityartapp.util.enums.EditArtSortType
 import com.activityartapp.util.enums.FontSizeType
@@ -43,8 +44,10 @@ class SaveArtViewModel @Inject constructor(
         List::class.java
     )
     private val activities = getActivitiesFromMemory()
+    private val backgroundType = BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
     private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
-    private val colorBackgroundArgb = ColorBackgroundArgb.rawArg(ssh).toInt()
+    private val colorsBackgroundArgb: List<Int> =
+        gson.fromJson<List<Int>>(ColorsBackgroundArgb.rawArg(ssh), List::class.java)
     private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()
     private val filterDateAfterMs = FilterDateAfterMs.rawArg(ssh).toLong()
     private val filterDateBeforeMs = FilterDateBeforeMs.rawArg(ssh).toLong()
@@ -86,7 +89,7 @@ class SaveArtViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             viewModelScope.launch(Dispatchers.Default) {
                 fileRepository
-                    .saveBitmapToGallery(createArtBitmapOfSize(sizePx))
+                    .saveBitmapToGallery(createArtBitmapOfSize(false, sizePx))
                     .doOnSuccess { pushUpdateToDownloadShareStatus(DOWNLOAD_SUCCESS) }
                     .doOnError { pushUpdateToDownloadShareStatus(DOWNLOAD_FAILURE) }
             }
@@ -114,7 +117,7 @@ class SaveArtViewModel @Inject constructor(
         pushUpdateToDownloadShareStatus(SHARE_IN_PROGRESS)
         viewModelScope.launch(Dispatchers.IO) {
             fileRepository
-                .saveBitmapToCache(createArtBitmapOfSize(sizePx))
+                .saveBitmapToCache(createArtBitmapOfSize(false, sizePx))
                 .doOnSuccess {
                     withContext(Dispatchers.Main) {
                         routeTo(ShareFile(data))
@@ -146,7 +149,8 @@ class SaveArtViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             Standby(
                 bitmapScreenSize = createArtBitmapOfSize(
-                    imageSizeUtils.sizeToMaximumSize(
+                    isPreview = true,
+                    size = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizePx,
                         maximumSize = event.size
                     )
@@ -155,7 +159,7 @@ class SaveArtViewModel @Inject constructor(
         }
     }
 
-    private fun createArtBitmapOfSize(size: Size): Bitmap {
+    private fun createArtBitmapOfSize(isPreview: Boolean, size: Size): Bitmap {
         return visualizationUtils.createBitmap(
             activities = activityFilterUtils.filterActivities(
                 activities = activities,
@@ -163,10 +167,12 @@ class SaveArtViewModel @Inject constructor(
                 unixMsRange = filterDateAfterMs..filterDateBeforeMs,
                 distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
             ),
+            backgroundType = backgroundType,
             fontAssetPath = fontAssetPath,
             fontSize = fontTypeSize,
+            isPreview = isPreview,
             colorActivitiesArgb = colorActivitiesArgb,
-            colorBackgroundArgb = colorBackgroundArgb,
+            backgroundColorsArgb = colorsBackgroundArgb,
             colorFontArgb = colorFontArgb,
             bitmapSize = size,
             sortType = sortType,

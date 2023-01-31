@@ -17,7 +17,6 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewState.Loading
 import com.activityartapp.presentation.editArtScreen.EditArtViewState.Standby
-import com.activityartapp.presentation.editArtScreen.StyleType.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
@@ -218,7 +217,8 @@ class EditArtViewModel @Inject constructor(
     override fun onEvent(event: EditArtViewEvent) {
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
-            is DialogNavigateUpCancelled -> onDialogNavigateUpCancelled()
+            is ClickedInfoCheckeredPattern -> onClickedInfoCheckeredPattern()
+            is DialogDismissed -> onDialogDismissed()
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is MakeFullscreenClicked -> onMakeFullscreenClicked()
             is NavigateUpClicked -> onNavigateUpClicked()
@@ -236,8 +236,10 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
-            is StyleBackgroundStyleChanged -> {} // todo
-            is StylesColorChanged -> onStylesColorChanged(event)
+            is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
+            is StyleColorActivitiesChanged -> onStyleColorActivitiesChanged(event)
+            is StyleColorsBackgroundChanged -> onStyleColorsBackgroundChanged(event)
+            is StyleColorFontChanged -> onStyleColorFontChanged(event)
             is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
@@ -282,12 +284,16 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun onDialogNavigateUpCancelled() {
-        copyLastState { copy(dialogNavigateUpActive = false) }.push()
+    private fun onClickedInfoCheckeredPattern() {
+        copyLastState { copy(dialogActive = EditArtDialogType.CHECKERED_BACKGROUND_INFO) }.push()
+    }
+
+    private fun onDialogDismissed() {
+        copyLastState { copy(dialogActive = EditArtDialogType.NONE) }.push()
     }
 
     private fun onDialogNavigateUpConfirmed() {
-        copyLastState { copy(dialogNavigateUpActive = false) }.push()
+        copyLastState { copy(dialogActive = EditArtDialogType.NONE) }.push()
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
@@ -353,7 +359,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onNavigateUpClicked() {
-        copyLastState { copy(dialogNavigateUpActive = true) }.push()
+        copyLastState { copy(dialogActive = EditArtDialogType.NAVIGATE_UP) }.push()
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -372,8 +378,9 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
+                        backgroundColorsArgb = styleBackgroundColors.map { it.color.toArgb() },
+                        backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.color.toArgb(),
-                        colorBackgroundArgb = styleBackground.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                         filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
                         filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
@@ -454,18 +461,64 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(sortTypeSelected = event.changedTo) }.push()
     }
 
+    private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
+        copyLastState { copy(styleBackgroundType = event.changedTo) }.push()
+    }
+
+    /*
     private fun onStylesColorChanged(event: StylesColorChanged) {
-        copyLastState {
-            event.run {
-                when (styleType) {
-                    BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
-                    ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
-                    FONT -> copy(
-                        styleFont = (styleFont ?: styleActivities).copyWithEvent(event)
+
+copyLastState {
+
+   event.run {
+       when (styleType) {
+           BACKGROUND -> copy(styleBackground = styleBackground.copyWithEvent(event))
+           ACTIVITIES -> copy(styleActivities = styleActivities.copyWithEvent(event))
+           FONT -> copy(
+               styleFont = (styleFont ?: styleActivities).copyWithEvent(event)
+           )
+       }
+   }
+}.push()
+
+    }
+ */
+    private fun onStyleColorActivitiesChanged(event: StyleColorActivitiesChanged) {
+        pushStateCopy {
+            copy(
+                styleActivities = styleActivities.copyWithChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
+                )
+            )
+        }
+    }
+
+    private fun onStyleColorsBackgroundChanged(event: StyleColorsBackgroundChanged) {
+        pushStateCopy {
+            copy(
+                styleBackgroundColors = styleBackgroundColors.toMutableList().apply {
+                    set(
+                        event.changedIndex,
+                        get(event.changedIndex).copyWithChange(
+                            event.changedColorType,
+                            event.changedTo
+                        )
                     )
                 }
-            }
-        }.push()
+            )
+        }
+    }
+
+    private fun onStyleColorFontChanged(event: StyleColorFontChanged) {
+        pushStateCopy {
+            copy(
+                styleFont = (styleFont ?: styleActivities).copyWithChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
+                )
+            )
+        }
     }
 
     private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
@@ -534,14 +587,15 @@ class EditArtViewModel @Inject constructor(
 
     /** @return Copy of an reflecting a [StylesColorChanged] change event
      *  to a [ColorWrapper]. **/
-    private fun ColorWrapper.copyWithEvent(event: StylesColorChanged): ColorWrapper {
-        return event.let {
-            when (it.colorType) {
-                ALPHA -> copy(alpha = it.changedTo)
-                BLUE -> copy(blue = it.changedTo)
-                GREEN -> copy(green = it.changedTo)
-                RED -> copy(red = it.changedTo)
-            }
+    private fun ColorWrapper.copyWithChange(
+        colorType: ColorType,
+        changedTo: Float
+    ): ColorWrapper {
+        return when (colorType) {
+            ALPHA -> copy(alpha = changedTo)
+            BLUE -> copy(blue = changedTo)
+            GREEN -> copy(green = changedTo)
+            RED -> copy(red = changedTo)
         }
     }
 
@@ -552,8 +606,9 @@ class EditArtViewModel @Inject constructor(
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered, // todo...
+                    backgroundType = styleBackgroundType,
+                    backgroundColorsArgb = styleBackgroundColors.map { it.color.toArgb() },
                     colorActivitiesArgb = styleActivities.color.toArgb(),
-                    colorBackgroundArgb = styleBackground.color.toArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                     strokeWidth = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
@@ -570,6 +625,7 @@ class EditArtViewModel @Inject constructor(
                         italicized = typeFontItalicized
                     ),
                     fontSize = typeFontSizeSelected,
+                    isPreview = true,
                     sortType = sortTypeSelected,
                     sortDirectionType = sortDirectionTypeSelected,
                     textLeft = LEFT.text,
@@ -583,6 +639,13 @@ class EditArtViewModel @Inject constructor(
 
     private inline fun copyLastState(block: Standby.() -> Standby): Standby {
         return (lastPushedState as? Standby)?.run(block) ?: error("Last state was not standby")
+    }
+
+    private inline fun pushStateCopy(block: Standby.() -> Standby): Unit {
+        ((lastPushedState as? Standby)
+            ?.run(block)
+            ?: error("Last state was not standby"))
+            .push()
     }
 
     private inline fun withLastState(block: Standby.() -> Unit) {

@@ -162,7 +162,12 @@
         Which range of distances should be used?
     </string>
 
+    <string name="edit_art_style_background_type_header">Background Type</string>
+    <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
+    <string name="edit_art_style_background_type_transparent">Transparent</string>
+    <string name="edit_art_style_background_type_solid">Solid Color</string>
     <string name="edit_art_style_background_header">Background</string>
+    <string name="edit_art_style_background_type_solid_description">What solid color should the background of the art be?</string>
     <string name="edit_art_style_background_description">
         What color should the background of the art be?
     </string>
@@ -243,6 +248,13 @@
     <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
     <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
+    <string name="edit_art_dialog_checkered_background_prompt_one">
+        We added a checkerboard pattern to help you see your art with a transparent background.
+    </string>
+    <string name="edit_art_dialog_checkered_background_prompt_two">
+        Don\'t worry - we\'ll remove it when you download or share it!
+    </string>
+    <string name="edit_art_dialog_checkered_background_dismiss">@android:string/ok</string>
     <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>

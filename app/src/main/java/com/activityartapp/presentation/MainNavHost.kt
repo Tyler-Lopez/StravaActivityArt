@@ -69,8 +69,9 @@ fun MainNavHost(
             screen = SaveArt,
             navArgSpecifications = listOf(
                 ActivityTypes,
+                BackgroundType,
                 ColorActivitiesArgb,
-                ColorBackgroundArgb,
+                ColorsBackgroundArgb,
                 ColorFontArgb,
                 FilterDateAfterMs,
                 FilterDateBeforeMs,

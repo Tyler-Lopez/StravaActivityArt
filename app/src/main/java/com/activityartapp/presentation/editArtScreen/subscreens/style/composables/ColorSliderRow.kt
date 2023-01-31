@@ -1,4 +1,4 @@
-package com.activityartapp.activityart.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Slider
@@ -32,11 +32,11 @@ fun ColorSlider(
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = {
                 eventReceiver.onEvent(
-                    StylesColorChanged(
-                        styleType = styleType,
-                        colorType = colorType,
-                        changedTo = it
-                    )
+                    when (styleType) {
+                        StyleType.ACTIVITIES -> StyleColorActivitiesChanged(colorType, it)
+                        StyleType.BACKGROUND -> StyleColorsBackgroundChanged(0, colorType, it)
+                        StyleType.FONT -> StyleColorFontChanged(colorType, it)
+                    }
                 )
             }
         )

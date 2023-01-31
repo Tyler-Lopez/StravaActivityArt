@@ -1,5 +1,6 @@
 package com.activityartapp.presentation.editArtScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -19,6 +20,8 @@ import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.SaveClicked
+import com.activityartapp.presentation.editArtScreen.EditArtDialogType.*
+import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogCheckeredPattern
 import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogNavigateUp
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.preview.EditArtPreview
@@ -29,6 +32,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.ui.theme.White
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
+import com.activityartapp.util.enums.BackgroundType
 import com.activityartapp.util.enums.EditArtSortDirectionType
 import com.activityartapp.util.enums.EditArtSortType
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -100,7 +104,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         when (it) {
                             PREVIEW -> EditArtPreview(
                                 atLeastOneActivitySelected,
-                                bitmap
+                                styleBackgroundType == BackgroundType.TRANSPARENT,
+                                bitmap,
+                                viewModel
                             )
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
@@ -120,9 +126,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 )
                             }
                             STYLE -> EditArtStyleViewDelegate(
-                                styleBackgroundStyle,
+                                styleBackgroundColors,
+                                styleBackgroundType,
                                 styleActivities,
-                                styleBackground,
                                 styleFont,
                                 styleStrokeWidthType,
                                 viewModel
@@ -162,6 +168,16 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 }
             }
         }
-        EditArtDialogNavigateUp(eventReceiver = viewModel, isVisible = dialogNavigateUpActive)
+
+        /** Only intercept when the dialog box is not visible **/
+        BackHandler(enabled = dialogActive == NONE) {
+            viewModel.onEvent(NavigateUpClicked)
+        }
+
+        when (dialogActive) {
+            CHECKERED_BACKGROUND_INFO -> EditArtDialogCheckeredPattern(eventReceiver = viewModel)
+            NAVIGATE_UP -> EditArtDialogNavigateUp(eventReceiver = viewModel)
+            NONE -> {} // No-op
+        }
     }
 }
