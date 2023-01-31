@@ -331,24 +331,6 @@ sealed interface DateSelection : Parcelable {
     }
 }
 
-enum class StyleType(
-    @StringRes val headerStrRes: Int,
-    @StringRes val descriptionStrRes: Int
-) {
-    BACKGROUND(
-        R.string.edit_art_style_background_header,
-        R.string.edit_art_style_background_description
-    ),
-    ACTIVITIES(
-        R.string.edit_art_style_activities_header,
-        R.string.edit_art_style_activities_description
-    ),
-    FONT(
-        R.string.edit_art_style_font_header,
-        R.string.edit_art_style_font_description
-    );
-}
-
 enum class ColorType {
     RED,
     GREEN,

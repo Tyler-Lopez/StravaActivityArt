@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class SaveArtViewModel @Inject constructor(
@@ -44,10 +45,12 @@ class SaveArtViewModel @Inject constructor(
         List::class.java
     )
     private val activities = getActivitiesFromMemory()
-    private val backgroundType = BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
+    private val backgroundType =
+        BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
     private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
-    private val colorsBackgroundArgb: List<Int> =
-        gson.fromJson<List<Int>>(ColorsBackgroundArgb.rawArg(ssh), List::class.java)
+    private val colorsBackgroundArgb: List<Int> = gson
+        .fromJson<List<Double>>(ColorsBackgroundArgb.rawArg(ssh), List::class.java)
+        .map { it.roundToInt() } // Gson treats the List<Int> as a List<Double> initially
     private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()
     private val filterDateAfterMs = FilterDateAfterMs.rawArg(ssh).toLong()
     private val filterDateBeforeMs = FilterDateBeforeMs.rawArg(ssh).toLong()

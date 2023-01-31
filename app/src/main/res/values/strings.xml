@@ -166,17 +166,14 @@
     <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
     <string name="edit_art_style_background_type_transparent">Transparent</string>
     <string name="edit_art_style_background_type_solid">Solid Color</string>
-    <string name="edit_art_style_background_type_gradient">Gradient</string>
     <string name="edit_art_style_background_header">Background Color</string>
     <string name="edit_art_style_background_type_solid_description">What solid color should the background of the art be?</string>
-    <string name="edit_art_style_background_type_gradient_description">What colors should be used in the gradient background of the art be?</string>
-    <string name="edit_art_style_background_description">What color should the background of the art be?</string>
     <string name="edit_art_style_activities_header">Activities Color</string>
     <string name="edit_art_style_activities_description">What color should the activities of the art be?</string>
     <string name="edit_art_style_font_header">Font Color</string>
-    <string name="edit_art_style_font_description">
-        What color should any text be?
-    </string>
+    <string name="edit_art_style_font_description">What color should any text be?</string>
+    <string name="edit_art_style_font_use_activities">Use the same color as your activities</string>
+    <string name="edit_art_style_font_use_custom">Choose a different color</string>
     <string name="edit_art_style_color_red">Red: %d</string>
     <string name="edit_art_style_color_green">Green: %d</string>
     <string name="edit_art_style_color_blue">Blue: %d</string>

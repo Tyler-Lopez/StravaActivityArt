@@ -5,6 +5,8 @@ import android.graphics.*
 import android.util.Size
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.SweepGradientShader
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.util.enums.BackgroundType
@@ -85,14 +87,13 @@ class VisualizationUtils @Inject constructor(
             Bitmap.Config.ARGB_8888
         ).also { bitmap ->
             Canvas(bitmap).apply {
-
                 when (backgroundType) {
                     BackgroundType.TRANSPARENT -> if (isPreview) {
-                        drawGridBackground(colorActivitiesArgb)
+                        drawBackgroundGrid(colorActivitiesArgb)
                     }
                     BackgroundType.SOLID -> backgroundColorsArgb
                         .firstOrNull()
-                        ?.let { drawBackground(it) }
+                        ?.let { drawBackgroundSolid(it) }
                 }
 
                 val padding = paddingFraction * minOf(width, height)
@@ -213,7 +214,7 @@ class VisualizationUtils @Inject constructor(
         }
     }
 
-    private fun Canvas.drawBackground(argb: Int) {
+    private fun Canvas.drawBackgroundSolid(argb: Int) {
         drawRect(
             OFFSET_ZERO_PX,
             OFFSET_ZERO_PX,
@@ -223,7 +224,7 @@ class VisualizationUtils @Inject constructor(
         )
     }
 
-    private fun Canvas.drawGridBackground(@ColorInt colorActivities: Int) {
+    private fun Canvas.drawBackgroundGrid(@ColorInt colorActivities: Int) {
         val paints = colorBrightnessUtils.selectPaintsRelativeToColor(
             color = colorActivities,
             colorWhenDarkOne = Color.WHITE,
