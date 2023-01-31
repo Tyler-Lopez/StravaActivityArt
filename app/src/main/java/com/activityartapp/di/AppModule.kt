@@ -141,6 +141,9 @@ object AppModule {
     fun provideActivitySortUtils(timeUtils: TimeUtils) = ActivitySortUtils(timeUtils)
 
     @Provides
+    fun provideColorBrightnessUtils() = ColorBrightnessUtils()
+
+    @Provides
     fun provideImageSizeUtils() = ImageSizeUtils()
 
     @Provides
@@ -155,9 +158,10 @@ object AppModule {
     @Provides
     fun provideVisualizationUtils(
         activitySortUtils: ActivitySortUtils,
+        colorBrightnessUtils: ColorBrightnessUtils,
         @ApplicationContext appContext: Context
     ) =
-        VisualizationUtils(appContext, activitySortUtils)
+        VisualizationUtils(appContext, activitySortUtils, colorBrightnessUtils)
 
     @Provides
     fun provideFileRepository(@ApplicationContext appContext: Context): FileRepository =

@@ -168,8 +168,9 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 route = SaveArt.withArgs(
                     args = arrayOf(
                         ActivityTypes to gson.toJson(activityTypes),
+                        BackgroundType to backgroundType.toString(),
                         ColorActivitiesArgb to colorActivitiesArgb.toString(),
-                        ColorBackgroundArgb to colorBackgroundArgb.toString(),
+                        ColorsBackgroundArgb to gson.toJson(backgroundColorsArgb),
                         ColorFontArgb to colorFontArgb.toString(),
                         FilterDateAfterMs to filterAfterMs.toString(),
                         FilterDateBeforeMs to filterBeforeMs.toString(),

@@ -7,20 +7,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.button.LowEmphasisButton
 import com.activityartapp.presentation.common.type.Body
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.DialogNavigateUpConfirmed
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.*
 import com.activityartapp.presentation.ui.theme.spacing
+import com.activityartapp.R
 
 @Composable
-fun EditArtDialogNavigateUp(eventReceiver: EventReceiver<EditArtViewEvent>) {
+fun EditArtDialogInfo(
+    body: Array<String>,
+    eventReceiver: EventReceiver<EditArtViewEvent>
+) {
     Dialog(
         onDismissRequest = {
-            eventReceiver.onEvent(EditArtViewEvent.DialogDismissed)
+            eventReceiver.onEvent(DialogDismissed)
         },
         content = {
             Card {
@@ -33,22 +36,16 @@ fun EditArtDialogNavigateUp(eventReceiver: EventReceiver<EditArtViewEvent>) {
                     ),
                     verticalArrangement = Arrangement.spacedBy(spacing.medium)
                 ) {
-                    Body(text = stringResource(R.string.edit_art_dialog_exit_confirmation_prompt))
+                    body.forEach { Body(text = it) }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         LowEmphasisButton(
-                            modifier = Modifier,
                             size = ButtonSize.SMALL,
-                            text = stringResource(R.string.edit_art_dialog_exit_confirmation_no)
-                        ) { eventReceiver.onEvent(EditArtViewEvent.DialogDismissed) }
-                        Spacer(modifier = Modifier.width(spacing.medium))
-                        LowEmphasisButton(
                             modifier = Modifier,
-                            size = ButtonSize.SMALL,
-                            text = stringResource(R.string.edit_art_dialog_exit_confirmation_yes)
-                        ) { eventReceiver.onEvent(DialogNavigateUpConfirmed) }
+                            text = stringResource(R.string.edit_art_dialog_info_dismiss)
+                        ) { eventReceiver.onEvent(DialogDismissed) }
                     }
                 }
             }

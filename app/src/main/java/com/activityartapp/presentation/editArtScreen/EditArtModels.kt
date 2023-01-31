@@ -9,7 +9,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -30,9 +29,10 @@ annotation class UnixMS
 
 sealed interface EditArtViewEvent : ViewEvent {
 
-    object DialogNavigateUpCancelled : EditArtViewEvent
+    object ClickedInfoCheckeredBackground : EditArtViewEvent
+    object ClickedInfoTransparentBackground : EditArtViewEvent
+    object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
-    object MakeFullscreenClicked : EditArtViewEvent
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
@@ -82,12 +82,24 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
-        data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
-        data class StylesColorChanged(
-            val styleType: StyleType,
+        data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
+        data class StyleColorActivitiesChanged(
             val colorType: ColorType,
             val changedTo: Float
         ) : ArtMutatingEvent
+
+        data class StyleColorsBackgroundChanged(
+            val changedIndex: Int,
+            val changedColorType: ColorType,
+            val changedTo: Float
+        ) : ArtMutatingEvent
+
+        data class StyleColorFontChanged(
+            val colorType: ColorType,
+            val changedTo: Float
+        ) : ArtMutatingEvent
+
+        data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
 
         data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
         data class TypeCustomTextChanged(
@@ -112,11 +124,11 @@ sealed interface EditArtViewState : ViewState {
         private const val FADE_LENGTH_MS = 1000
     }
 
-    val dialogNavigateUpActive: Boolean
+    val dialogActive: EditArtDialogType
     val pagerStateWrapper: PagerStateWrapper
 
     data class Loading(
-        override val dialogNavigateUpActive: Boolean = false,
+        override val dialogActive: EditArtDialogType = EditArtDialogType.NONE,
         override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
             pagerState = PagerState(EditArtHeaderType.values().toList().size),
@@ -133,7 +145,7 @@ sealed interface EditArtViewState : ViewState {
     @Parcelize
     data class Standby(
         @IgnoredOnParcel val bitmap: Bitmap? = null,
-        @IgnoredOnParcel override val dialogNavigateUpActive: Boolean = false,
+        @IgnoredOnParcel override val dialogActive: EditArtDialogType = EditArtDialogType.NONE,
         val filterActivitiesCountDate: Int = 0,
         val filterActivitiesCountDistance: Int = 0,
         val filterActivitiesCountType: Int = 0,
@@ -166,11 +178,14 @@ sealed interface EditArtViewState : ViewState {
             green = INIT_ACTIVITIES_GREEN,
             red = INIT_ACTIVITIES_RED
         ),
-        val styleBackground: ColorWrapper = ColorWrapper(
-            alpha = INIT_BACKGROUND_ALPHA,
-            blue = INIT_BACKGROUND_BLUE,
-            green = INIT_BACKGROUND_GREEN,
-            red = INIT_BACKGROUND_RED
+        val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
+        val styleBackgroundColors: List<ColorWrapper> = listOf(
+            ColorWrapper(
+                alpha = INIT_BACKGROUND_ALPHA,
+                blue = INIT_BACKGROUND_BLUE,
+                green = INIT_BACKGROUND_GREEN,
+                red = INIT_BACKGROUND_RED
+            )
         ),
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
@@ -315,24 +330,6 @@ sealed interface DateSelection : Parcelable {
         val dateTotal: LongProgression
             get() = dateTotalStartUnixMs..dateTotalEndUnixMs
     }
-}
-
-enum class StyleType(
-    @StringRes val headerStrRes: Int,
-    @StringRes val descriptionStrRes: Int
-) {
-    BACKGROUND(
-        R.string.edit_art_style_background_header,
-        R.string.edit_art_style_background_description
-    ),
-    ACTIVITIES(
-        R.string.edit_art_style_activities_header,
-        R.string.edit_art_style_activities_description
-    ),
-    FONT(
-        R.string.edit_art_style_font_header,
-        R.string.edit_art_style_font_description
-    );
 }
 
 enum class ColorType {

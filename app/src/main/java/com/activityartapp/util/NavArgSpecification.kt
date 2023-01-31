@@ -11,8 +11,9 @@ sealed interface NavArgSpecification {
         private const val ACTIVITY_TYPES_KEY = "activityTypes"
         private const val ATHLETE_ID_KEY = "athleteId"
         private const val ACCESS_TOKEN_KEY = "accessToken"
+        private const val BACKGROUND_TYPE_KEY = "backgroundType"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
-        private const val COLOR_BACKGROUND_KEY = "colorBackground"
+        private const val COLORS_BACKGROUND_KEY = "colorsBackground"
         private const val COLOR_FONT_KEY = "colorFont"
         private const val ERROR_SCREEN_TYPE = "errorScreenType"
         private const val FILTER_DATE_AFTER_MS_KEY = "filterDateAfterMs"
@@ -60,12 +61,16 @@ sealed interface NavArgSpecification {
         override val name = ACCESS_TOKEN_KEY
     }
 
+    object BackgroundType : NavArgSpecification {
+        override val name = BACKGROUND_TYPE_KEY
+    }
+    
     object ColorActivitiesArgb : NavArgSpecification {
         override val name = COLOR_ACTIVITIES_KEY
     }
 
-    object ColorBackgroundArgb : NavArgSpecification {
-        override val name = COLOR_BACKGROUND_KEY
+    object ColorsBackgroundArgb : NavArgSpecification {
+        override val name = COLORS_BACKGROUND_KEY
     }
 
     object ColorFontArgb : NavArgSpecification {

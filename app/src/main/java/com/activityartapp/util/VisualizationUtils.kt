@@ -3,9 +3,13 @@ package com.activityartapp.util
 import android.content.Context
 import android.graphics.*
 import android.util.Size
+import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.SweepGradientShader
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
+import com.activityartapp.util.enums.BackgroundType
 import com.activityartapp.util.enums.EditArtSortDirectionType
 import com.activityartapp.util.enums.EditArtSortType
 import com.activityartapp.util.enums.FontSizeType
@@ -13,11 +17,13 @@ import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 class VisualizationUtils @Inject constructor(
     private val context: Context,
-    private val activitySortUtils: ActivitySortUtils
+    private val activitySortUtils: ActivitySortUtils,
+    private val colorBrightnessUtils: ColorBrightnessUtils
 ) {
 
     companion object {
@@ -26,16 +32,19 @@ class VisualizationUtils @Inject constructor(
         private const val ACTIVITY_STROKE_MEDIUM_REDUCE_FRACTION = 0.25f
         private const val ACTIVITY_STROKE_LARGE_REDUCE_FRACTION = 0.50f
         private const val OFFSET_ZERO_PX = 0f
+        private const val TRANSPARENT_GRID_SIZE_PX = 50
     }
 
     fun createBitmap(
         activities: List<Activity>,
+        backgroundType: BackgroundType,
+        backgroundColorsArgb: List<Int>,
         colorActivitiesArgb: Int,
-        colorBackgroundArgb: Int,
         colorFontArgb: Int,
         bitmapSize: Size,
         fontAssetPath: String,
         fontSize: FontSizeType,
+        isPreview: Boolean,
         sortType: EditArtSortType,
         sortDirectionType: EditArtSortDirectionType,
         strokeWidth: StrokeWidthType,
@@ -78,7 +87,14 @@ class VisualizationUtils @Inject constructor(
             Bitmap.Config.ARGB_8888
         ).also { bitmap ->
             Canvas(bitmap).apply {
-                drawBackground(colorBackgroundArgb)
+                when (backgroundType) {
+                    BackgroundType.TRANSPARENT -> if (isPreview) {
+                        drawBackgroundGrid(colorActivitiesArgb)
+                    }
+                    BackgroundType.SOLID -> backgroundColorsArgb
+                        .firstOrNull()
+                        ?.let { drawBackgroundSolid(it) }
+                }
 
                 val padding = paddingFraction * minOf(width, height)
                 val paddingOnEachSide = (padding * 2f).toInt()
@@ -198,7 +214,7 @@ class VisualizationUtils @Inject constructor(
         }
     }
 
-    private fun Canvas.drawBackground(argb: Int) {
+    private fun Canvas.drawBackgroundSolid(argb: Int) {
         drawRect(
             OFFSET_ZERO_PX,
             OFFSET_ZERO_PX,
@@ -206,6 +222,36 @@ class VisualizationUtils @Inject constructor(
             height.toFloat(),
             Paint().apply { color = argb }
         )
+    }
+
+    private fun Canvas.drawBackgroundGrid(@ColorInt colorActivities: Int) {
+        val paints = colorBrightnessUtils.selectPaintsRelativeToColor(
+            color = colorActivities,
+            colorWhenDarkOne = Color.WHITE,
+            colorWhenDarkTwo = Color.argb(255, 240, 240, 240),
+            colorWhenLightOne = Color.BLACK,
+            colorWhenLightTwo = Color.DKGRAY
+        )
+
+        val rows = (height.toFloat() / TRANSPARENT_GRID_SIZE_PX).roundToInt()
+        val cols = (width.toFloat() / TRANSPARENT_GRID_SIZE_PX).roundToInt()
+
+        var offsetY = OFFSET_ZERO_PX
+        for (row in 0..rows) {
+            var offsetX = OFFSET_ZERO_PX
+            for (col in 0..cols) {
+                drawRect(
+                    offsetX,
+                    offsetY,
+                    offsetX + TRANSPARENT_GRID_SIZE_PX,
+                    offsetY + TRANSPARENT_GRID_SIZE_PX,
+                    if ((row + col) % 2 == 0) paints.first else paints.second
+                )
+                offsetX += TRANSPARENT_GRID_SIZE_PX
+            }
+            offsetY += TRANSPARENT_GRID_SIZE_PX
+        }
+
     }
 
     private data class DrawingSpecification(

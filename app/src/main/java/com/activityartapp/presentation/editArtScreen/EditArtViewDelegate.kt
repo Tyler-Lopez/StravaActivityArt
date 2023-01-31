@@ -1,5 +1,6 @@
 package com.activityartapp.presentation.editArtScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
@@ -19,6 +21,8 @@ import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.SaveClicked
+import com.activityartapp.presentation.editArtScreen.EditArtDialogType.*
+import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogInfo
 import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogNavigateUp
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.preview.EditArtPreview
@@ -29,8 +33,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.ui.theme.White
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
-import com.activityartapp.util.enums.EditArtSortDirectionType
-import com.activityartapp.util.enums.EditArtSortType
+import com.activityartapp.util.enums.BackgroundType
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 private const val DISABLED_ALPHA = 0.5f
@@ -100,7 +103,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         when (it) {
                             PREVIEW -> EditArtPreview(
                                 atLeastOneActivitySelected,
-                                bitmap
+                                styleBackgroundType == BackgroundType.TRANSPARENT,
+                                bitmap,
+                                viewModel
                             )
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
@@ -120,8 +125,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 )
                             }
                             STYLE -> EditArtStyleViewDelegate(
+                                styleBackgroundColors,
+                                styleBackgroundType,
                                 styleActivities,
-                                styleBackground,
                                 styleFont,
                                 styleStrokeWidthType,
                                 viewModel
@@ -161,6 +167,24 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 }
             }
         }
-        EditArtDialogNavigateUp(eventReceiver = viewModel, isVisible = dialogNavigateUpActive)
+
+        /** Only intercept when the dialog box is not visible **/
+        BackHandler(enabled = dialogActive == NONE) {
+            viewModel.onEvent(NavigateUpClicked)
+        }
+
+        println("Here, dialog active is $dialogActive")
+        when (dialogActive) {
+            INFO_CHECKERED_BACKGROUND -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
+                eventReceiver = viewModel
+            )
+            INFO_TRANSPARENT -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_info_background_transparent),
+                eventReceiver = viewModel
+            )
+            NAVIGATE_UP -> EditArtDialogNavigateUp(eventReceiver = viewModel)
+            NONE -> {} // No-op
+        }
     }
 }

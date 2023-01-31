@@ -10,11 +10,11 @@ import com.activityartapp.presentation.ui.theme.spacing
 @Composable
 fun ColumnScope.Section(
     header: String,
-    description: String,
     modifier: Modifier = Modifier,
+    description: String? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     TitleTwo(text = header)
-    Body(text = description)
+    description?.let { Body(text = it) }
     content()
 }
