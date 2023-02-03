@@ -309,6 +309,7 @@ data class ColorWrapper(
 
 
 sealed interface DateSelection : Parcelable {
+
     @Parcelize
     object All : DateSelection
 

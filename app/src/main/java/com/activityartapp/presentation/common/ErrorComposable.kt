@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.HighEmphasisButton
+import com.activityartapp.presentation.common.button.HighEmphasisButtonLegacy
 import com.activityartapp.presentation.common.button.LowEmphasisButton
-import com.activityartapp.presentation.common.button.MediumEmphasisButton
+import com.activityartapp.presentation.common.button.MediumEmphasisButtonLegacy
 import com.activityartapp.presentation.common.type.Body
 import com.activityartapp.presentation.common.type.TitleTwo
 
@@ -158,7 +158,7 @@ private fun buttonWithEmphasis(
     }
 
     when (emphasis) {
-        ButtonEmphasisType.HIGH -> HighEmphasisButton(
+        ButtonEmphasisType.HIGH -> HighEmphasisButtonLegacy(
             size = ButtonSize.LARGE,
             enabled = enabled,
             isLoading = isLoading,
@@ -166,7 +166,7 @@ private fun buttonWithEmphasis(
             text = text,
             onClick = onClick
         )
-        ButtonEmphasisType.MEDIUM -> MediumEmphasisButton(
+        ButtonEmphasisType.MEDIUM -> MediumEmphasisButtonLegacy(
             size = ButtonSize.LARGE,
             enabled = enabled,
             isLoading = isLoading,

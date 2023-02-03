@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorFontChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorFontUseCustomChanged

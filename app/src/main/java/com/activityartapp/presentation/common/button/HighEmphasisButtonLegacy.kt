@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 
 @Composable
-fun HighEmphasisButton(
+fun HighEmphasisButtonLegacy(
     size: ButtonSize,
     modifier: Modifier = Modifier,
     text: String? = null,

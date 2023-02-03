@@ -1,22 +1,19 @@
 package com.activityartapp.presentation.welcomeScreen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import com.activityartapp.BuildConfig
 import com.activityartapp.R
 import com.activityartapp.presentation.AppLogo
 import com.activityartapp.presentation.common.ScreenBackground
+import com.activityartapp.presentation.common.button.Button
+import com.activityartapp.presentation.common.button.ButtonEmphasis
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.HighEmphasisButton
-import com.activityartapp.presentation.common.button.LowEmphasisButton
-import com.activityartapp.presentation.common.button.MediumEmphasisButton
-import com.activityartapp.presentation.common.type.SubheadHeavy
-import com.activityartapp.util.constants.StringConstants.APP_VERSION
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 
 /**
  * If an athlete is authenticated they are automatically routed to this screen.
@@ -28,40 +25,33 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
             when (this) {
                 is WelcomeViewState.Loading -> CircularProgressIndicator()
                 is WelcomeViewState.Standby -> {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(
-                            8.dp,
-                            Alignment.CenterVertically
-                        ),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                    ColumnSmallSpacing {
                         AppLogo()
-                        SubheadHeavy(
+                        Text(
                             text = stringResource(
                                 id = R.string.app_version,
-                                APP_VERSION
-                            )
+                                BuildConfig.VERSION_NAME
+                            ),
+                            style = MaterialTheme.typography.subtitle2
                         )
                         if (!versionIsLatest) {
-                            SubheadHeavy(text = stringResource(R.string.welcome_new_version_available))
+                            Text(
+                                text = stringResource(R.string.welcome_new_version_available),
+                                style = MaterialTheme.typography.subtitle1
+                            )
                         }
-                    }
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(
-                            8.dp,
-                            Alignment.CenterVertically
-                        ),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        HighEmphasisButton(
+                        Button(
+                            emphasis = ButtonEmphasis.HIGH,
                             size = ButtonSize.LARGE,
-                            text = stringResource(id = R.string.welcome_button_make_art),
+                            text = stringResource(id = R.string.welcome_button_make_art)
                         ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedMakeArt) }
-                        MediumEmphasisButton(
+                        Button(
+                            emphasis = ButtonEmphasis.MEDIUM,
                             size = ButtonSize.LARGE,
                             text = stringResource(id = R.string.welcome_button_about),
                         ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedAbout) }
-                        LowEmphasisButton(
+                        Button(
+                            emphasis = ButtonEmphasis.LOW,
                             size = ButtonSize.LARGE,
                             text = stringResource(id = R.string.welcome_button_logout),
                         ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedLogout) }

@@ -49,36 +49,34 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         // Install Splash Screen before content is setContent
         val splashScreen = installSplashScreen()
         setContent {
-            AthleteApiArtTheme {
-                viewModel = hiltViewModel()
+            viewModel = hiltViewModel()
 
-                viewModel.apply {
-                    /** Set splash screen to on while loading authentication **/
-                    splashScreen.setKeepOnScreenCondition {
-                        viewState.value == null
+            viewModel.apply {
+                /** Set splash screen to on while loading authentication **/
+                splashScreen.setKeepOnScreenCondition {
+                    viewState.value == null
+                }
+                /** Push event to [MainViewModel] to determine authentication **/
+                LaunchedEffect(key1 = intentUri) {
+                    println("Intent uri is $intentUri")
+                    onEvent(LoadAuthentication(intentUri))
+                }
+                /** Set global nav controller for [routeTo] **/
+                navController = rememberAnimatedNavController()
+
+
+                viewState.collectAsState().value?.let {
+                    val startScreen = if (it is Authenticated) {
+                        Welcome.route
+                    } else {
+                        Login.route
                     }
-                    /** Push event to [MainViewModel] to determine authentication **/
-                    LaunchedEffect(key1 = intentUri) {
-                        println("Intent uri is $intentUri")
-                        onEvent(LoadAuthentication(intentUri))
-                    }
-                    /** Set global nav controller for [routeTo] **/
-                    navController = rememberAnimatedNavController()
-
-
-                    viewState.collectAsState().value?.let {
-                        val startScreen = if (it is Authenticated) {
-                            Welcome.route
-                        } else {
-                            Login.route
-                        }
-                        AthleteApiArtTheme {
-                            MainNavHost(
-                                navController = navController,
-                                startRoute = startScreen,
-                                router = this@MainActivity,
-                            )
-                        }
+                    AthleteApiArtTheme {
+                        MainNavHost(
+                            navController = navController,
+                            startRoute = startScreen,
+                            router = this@MainActivity,
+                        )
                     }
                 }
             }

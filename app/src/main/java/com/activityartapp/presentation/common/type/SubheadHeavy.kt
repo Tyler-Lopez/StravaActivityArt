@@ -8,14 +8,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import com.activityartapp.R
-import com.activityartapp.presentation.ui.theme.LightTextSecondary
 
 @Composable
 fun SubheadHeavy(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign? = null,
-    textColor: Color? = LightTextSecondary
+    textColor: Color? = Color.Black // TODO
 ) {
     Text(
         text = text,

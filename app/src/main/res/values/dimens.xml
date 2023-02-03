@@ -21,6 +21,8 @@
     <dimen name="button_text_extra_small">10sp</dimen>
 
     <dimen name="button_min_width">164dp</dimen>
+    <dimen name="loading_icon_size">16dp</dimen>
+    <dimen name="loading_icon_stroke_width">2dp</dimen>
     <dimen name="profile_picture_size">32dp</dimen>
     <dimen name="rounded_picture_stroke_width">1dp</dimen>
     <!-- 16dp is the default gutter value in the app -->

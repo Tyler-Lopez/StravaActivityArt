@@ -20,7 +20,7 @@ import com.activityartapp.domain.useCase.athleteUsage.InsertAthleteUsageIntoRemo
 import com.activityartapp.domain.useCase.authentication.ClearAccessTokenFromDisk
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.util.*
-import com.activityartapp.util.constants.StringConstants.BASE_URL
+import com.activityartapp.util.constants.TokenConstants
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -37,7 +37,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Singleton
     @Provides
     fun provideAthleteDatabase(@ApplicationContext appContext: Context): AthleteDatabase {
@@ -126,7 +125,7 @@ object AppModule {
     fun provideAthleteApi(): AthleteApi {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
+            .baseUrl(TokenConstants.BASE_URL)
             .build()
             .create(AthleteApi::class.java) // Creates singleton implementation of interface
     }

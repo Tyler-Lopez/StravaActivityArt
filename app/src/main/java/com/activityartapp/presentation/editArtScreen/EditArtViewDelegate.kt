@@ -30,7 +30,6 @@ import com.activityartapp.presentation.editArtScreen.subscreens.resize.EditArtRe
 import com.activityartapp.presentation.editArtScreen.subscreens.sort.EditArtSortScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.style.EditArtStyleViewDelegate
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
-import com.activityartapp.presentation.ui.theme.White
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
 import com.activityartapp.util.enums.BackgroundType
@@ -59,6 +58,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         text = stringResource(
                             R.string.button_continue_uppercase
                         ),
+                        /*
                         textColor = White.copy(
                             alpha = if (continueEnabled == true) {
                                 ENABLED_ALPHA
@@ -66,6 +66,8 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 DISABLED_ALPHA
                             }
                         )
+
+                         */
                     )
                 }
                 Spacer(modifier = Modifier.width(spacing.medium))

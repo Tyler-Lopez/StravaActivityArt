@@ -1,8 +1,6 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.resize
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Slider
 import androidx.compose.material.icons.Icons
@@ -22,7 +20,7 @@ import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.ext.toFloatRange
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.MediumEmphasisButton
+import com.activityartapp.presentation.common.button.MediumEmphasisButtonLegacy
 import com.activityartapp.presentation.common.type.Body
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.composables.Section
@@ -94,7 +92,7 @@ fun ColumnScope.EditArtResizeScreen(
                     }
 
                     if (res is RotatingResolution && res.swappingChangesSize) {
-                        MediumEmphasisButton(
+                        MediumEmphasisButtonLegacy(
                             imageVector = Icons.Default.RotateRight,
                             modifier = Modifier,
                             size = ButtonSize.MEDIUM,

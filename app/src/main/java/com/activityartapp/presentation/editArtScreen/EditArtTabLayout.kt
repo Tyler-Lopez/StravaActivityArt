@@ -8,8 +8,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PageHeaderClicked
-import com.activityartapp.presentation.ui.theme.Rust
-import com.activityartapp.presentation.ui.theme.White
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
@@ -33,10 +31,10 @@ fun EditArtTabLayout(
 
         // on below line we are
         // specifying background color.
-        backgroundColor = Rust,
+      //  backgroundColor = Rust,
 
         // on below line we are specifying content color.
-        contentColor = Color.White,
+      //  contentColor = Color.White,
 
         // on below line we are specifying
         // the indicator for the tab
@@ -71,8 +69,8 @@ fun EditArtTabLayout(
                         contentDescription = stringResource(header.contentDescription)
                     )
                 },
-                unselectedContentColor = Color(1f, 1f, 1f, .5f),
-                selectedContentColor = White
+          //      unselectedContentColor = Color(1f, 1f, 1f, .5f),
+         //       selectedContentColor = White
             )
         }
     }

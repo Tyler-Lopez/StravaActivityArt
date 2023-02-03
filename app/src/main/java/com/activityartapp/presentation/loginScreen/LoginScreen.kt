@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.ConnectWithStravaButton
 import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.common.ScreenBackground
-import com.activityartapp.presentation.ui.theme.StravaOrange
 
 /**
  * When the athlete is determined as unauthenticated,
@@ -77,7 +75,7 @@ fun LandscapeContent(viewModel: LoginViewModel) {
             modifier = Modifier
                 .fillMaxHeight()
                 .width(1.dp)
-                .background(StravaOrange)
+             //   .background(StravaOrange)
         )
         Column(
             modifier = Modifier
@@ -125,7 +123,7 @@ fun PortraitContent(viewModel: LoginViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(StravaOrange)
+           //     .background(StravaOrange)
         )
         Column(
             modifier = Modifier

@@ -11,6 +11,7 @@ object TokenConstants {
     private const val SCOPE_QUERY = "scope"
 
     const val CLIENT_ID = 75992
+    const val BASE_URL = "https://www.strava.com/"
     private const val CLIENT_ID_STRING = CLIENT_ID.toString()
     private const val REDIRECT_URI = "com.activityartapp://myapp.com"
     private const val RESPONSE_TYPE = "code"

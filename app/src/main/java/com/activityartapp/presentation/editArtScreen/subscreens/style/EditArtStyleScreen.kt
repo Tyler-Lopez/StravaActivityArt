@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleBackgroundTypeChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StylesStrokeWidthChanged
@@ -29,21 +30,19 @@ fun ColumnScope.EditArtStyleViewDelegate(
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     Section(header = stringResource(R.string.edit_art_style_background_type_header)) {
-        ColumnSmallSpacing {
-            BackgroundType.values().forEach {
-                RadioButtonWithContent(
-                    isSelected = it == backgroundType,
-                    text = stringResource(it.strRes),
-                    onHelpPressed = if (it == BackgroundType.TRANSPARENT) {
-                        {
-                            println("Sending event?")
-                            eventReceiver.onEvent(EditArtViewEvent.ClickedInfoTransparentBackground)
-                        }
-                    } else {
-                        null
+        BackgroundType.values().forEach {
+            RadioButtonWithContent(
+                isSelected = it == backgroundType,
+                text = stringResource(it.strRes),
+                onHelpPressed = if (it == BackgroundType.TRANSPARENT) {
+                    {
+                        println("Sending event?")
+                        eventReceiver.onEvent(EditArtViewEvent.ClickedInfoTransparentBackground)
                     }
-                ) { eventReceiver.onEvent(StyleBackgroundTypeChanged(changedTo = it)) }
-            }
+                } else {
+                    null
+                }
+            ) { eventReceiver.onEvent(StyleBackgroundTypeChanged(changedTo = it)) }
         }
     }
     SectionColorBackground(
@@ -62,19 +61,17 @@ fun ColumnScope.EditArtStyleViewDelegate(
         header = stringResource(R.string.edit_art_style_stroke_width_header),
         description = stringResource(R.string.edit_art_style_stroke_width_description)
     ) {
-        ColumnSmallSpacing {
-            StrokeWidthType.values().forEach {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(selected = strokeWidthType == it, onClick = {
-                        eventReceiver.onEvent(
-                            StylesStrokeWidthChanged(it)
-                        )
-                    })
-                    Subhead(text = stringResource(id = it.headerId))
-                }
+        StrokeWidthType.values().forEach {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(selected = strokeWidthType == it, onClick = {
+                    eventReceiver.onEvent(
+                        StylesStrokeWidthChanged(it)
+                    )
+                })
+                Subhead(text = stringResource(id = it.headerId))
             }
         }
     }

@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.activityartapp.R
 import com.activityartapp.presentation.editArtScreen.composables.Section
-import com.activityartapp.presentation.ui.theme.Typography
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -36,7 +35,6 @@ fun ColumnScope.FilterSection(
                     count
                 )
             } ?: stringResource(id = R.string.edit_art_filters_activities_filtered_zero),
-            style = Typography.subtitle1,
             fontWeight = FontWeight.Normal,
             color = colorResource(R.color.pumpkin)
         )

@@ -14,9 +14,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
-import com.activityartapp.presentation.ui.theme.Pumpkin
-import com.activityartapp.presentation.ui.theme.StravaOrange
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
@@ -61,7 +58,7 @@ fun RadioButtonWithContent(
                     Icon(
                         imageVector = Icons.Default.HelpOutline,
                         contentDescription = null,
-                        tint = Pumpkin
+                      //  tint = Pumpkin
                     )
                 }
             }
