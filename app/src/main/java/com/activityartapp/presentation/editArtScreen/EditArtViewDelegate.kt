@@ -78,7 +78,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 ) {
                     ScreenBackground(
                         horizontalAlignment = if (it != PREVIEW) Alignment.Start else Alignment.CenterHorizontally,
-                        padding = if (it != PREVIEW) spacing.medium else 0.dp,
+                        padding = 0.dp,
                         scrollState = when (it) {
                             FILTERS -> scrollStateFilter
                             STYLE -> scrollStateStyle

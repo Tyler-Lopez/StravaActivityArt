@@ -24,7 +24,6 @@ fun ColumnScope.FilterSection(
     Section(
         header = header,
         description = description,
-        modifier = modifier
     ) {
         content()
         Text(

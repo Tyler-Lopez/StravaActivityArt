@@ -34,7 +34,7 @@
     <color name="secondary_dark_color">#0081ab</color>
     <color name="primary_text_color">#ffffff</color>
     <color name="secondary_text_color">#000000</color>
-    <color name="background_color">#ffffffff</color>
+    <color name="background_color">#ffDFDFE8</color>
     <color name="surface_color">#ffffffff</color>
     <color name="error_color">#ffb00020</color>
     <color name="on_background_color">#ff000000</color>
