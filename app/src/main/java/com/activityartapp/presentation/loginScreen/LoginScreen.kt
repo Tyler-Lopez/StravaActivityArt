@@ -5,6 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.ConnectWithStravaButton
-import com.activityartapp.presentation.common.type.Subhead
 
 /**
  * When the athlete is determined as unauthenticated,
@@ -75,7 +76,7 @@ fun LandscapeContent(viewModel: LoginViewModel) {
             modifier = Modifier
                 .fillMaxHeight()
                 .width(1.dp)
-             //   .background(StravaOrange)
+            //   .background(StravaOrange)
         )
         Column(
             modifier = Modifier
@@ -89,9 +90,10 @@ fun LandscapeContent(viewModel: LoginViewModel) {
                 painter = painterResource(id = R.drawable.ic_activity_art_logo),
                 contentDescription = stringResource(R.string.app_logo_content_description)
             )
-            Subhead(
+            Text(
                 text = stringResource(id = R.string.app_description),
-                modifier = Modifier.sizeIn(maxWidth = 254.dp)
+                modifier = Modifier.sizeIn(maxWidth = 254.dp),
+                style = MaterialTheme.typography.body2
             )
             ConnectWithStravaButton {
                 viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)
@@ -123,7 +125,7 @@ fun PortraitContent(viewModel: LoginViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-           //     .background(StravaOrange)
+            //     .background(StravaOrange)
         )
         Column(
             modifier = Modifier
@@ -137,9 +139,10 @@ fun PortraitContent(viewModel: LoginViewModel) {
                 painter = painterResource(id = R.drawable.ic_activity_art_logo),
                 contentDescription = stringResource(R.string.app_logo_content_description)
             )
-            Subhead(
+            Text(
                 text = stringResource(id = R.string.app_description),
-                modifier = Modifier.sizeIn(maxWidth = 254.dp)
+                modifier = Modifier.sizeIn(maxWidth = 254.dp),
+                style = MaterialTheme.typography.body2
             )
             ConnectWithStravaButton {
                 viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)

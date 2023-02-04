@@ -4,12 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Checkbox
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
-import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSection
@@ -39,7 +40,10 @@ fun ColumnScope.FilterSectionActivityType(
                             )
                         )
                     })
-                Subhead(typeMap.first)
+                Text(
+                    text = typeMap.first,
+                    style = MaterialTheme.typography.body1
+                )
             }
         }
     }

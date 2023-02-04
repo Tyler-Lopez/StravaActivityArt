@@ -11,8 +11,6 @@ import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.textField.MediumEmphasisTextField
-import com.activityartapp.presentation.common.type.Body
-import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 
 @OptIn(ExperimentalMaterialApi::class)

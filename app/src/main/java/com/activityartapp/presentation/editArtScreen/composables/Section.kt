@@ -1,13 +1,14 @@
 package com.activityartapp.presentation.editArtScreen.composables
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
-import com.activityartapp.presentation.common.type.Body
-import com.activityartapp.presentation.common.type.TitleTwo
-import com.activityartapp.presentation.ui.theme.spacing
+
 
 @Composable
 fun ColumnScope.Section(
@@ -16,8 +17,15 @@ fun ColumnScope.Section(
     description: String? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    TitleTwo(text = header)
-    description?.let { Body(text = it) }
+    Text(
+        text = header,
+        style = MaterialTheme.typography.h5
+    )
+    Divider()
+    description?.let { Text(
+        text = it,
+        style = MaterialTheme.typography.body1
+    ) }
     ColumnSmallSpacing(horizontalAlignment = Alignment.Start) {
         content()
     }

@@ -21,9 +21,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ScreenBackground
+import com.activityartapp.presentation.common.button.Button
+import com.activityartapp.presentation.common.button.ButtonEmphasis
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.HighEmphasisButtonLegacy
-import com.activityartapp.presentation.common.button.MediumEmphasisButtonLegacy
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.DownloadShareStatusType.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -97,7 +97,8 @@ fun SaveArtStandby(
                 contentScale = ContentScale.Fit
             )
             Column {
-                HighEmphasisButtonLegacy(
+                Button(
+                    emphasis = ButtonEmphasis.HIGH,
                     enabled = statusIsStandby,
                     isLoading = statusIsDownloading,
                     size = ButtonSize.MEDIUM,
@@ -118,8 +119,8 @@ fun SaveArtStandby(
                         }
                     }
                 }
-                MediumEmphasisButtonLegacy(
-                    enabled = statusIsStandby,
+                Button(
+                    emphasis = ButtonEmphasis.MEDIUM,
                     size = ButtonSize.MEDIUM,
                     isLoading = statusIsSharing,
                     text = stringResource(R.string.save_art_share_art)

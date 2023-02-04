@@ -1,19 +1,15 @@
 package com.activityartapp.presentation.editArtScreen.composables
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.RadioButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
@@ -50,7 +46,10 @@ fun RadioButtonWithContent(
                     Alignment.CenterVertically
                 )
             ) {
-                Subhead(text = text)
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.body1
+                )
                 content()
             }
             onHelpPressed?.let {

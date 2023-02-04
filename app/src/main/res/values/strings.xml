@@ -147,19 +147,19 @@
     <string name="edit_art_filters_date_custom_range">Choose a custom date range</string>
     <string name="edit_art_filters_date_header">Date</string>
     <string name="edit_art_filters_date_description">
-        Which window of time should activities be selected from?
+        Select a time filter to view only activities that took place before or after a specific time frame.
     </string>
     <string name="edit_art_filters_date_start">Start</string>
     <string name="edit_art_filters_date_end">End</string>
 
     <string name="edit_art_filters_activity_type_header">Activity Type</string>
     <string name="edit_art_filters_activity_type_description">
-        Which types of activities should be used?
+        Which types of activities do you want to use to make art with?
     </string>
 
     <string name="edit_art_filters_distance_header">Distance</string>
     <string name="edit_art_filters_distance_description">
-        Which range of distances should be used?
+        Choose a distance filter to view only activities with a total distance within your selected range.
     </string>
 
     <string name="edit_art_style_background_type_header">Background Type</string>
@@ -248,9 +248,8 @@
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
     </string-array>
     <string-array name="edit_art_dialog_info_background_transparent">
-        <item>A transparent background is like having no background at all.</item>
-        <item>If you want to print your art on something (like a t-shirt), a transparent background can be a great option!</item>
-    </string-array>
+        <item>Have you ever created a piece of art with a transparent background? It\'s pretty cool!</item>
+        <item>When the background is transparent, you can see right through it to what\'s behind it, making it easy to place your artwork on top of other images or even clothes and have it look like it\'s part of them. It\'s like having a clear window, where you can see right through to what\'s behind it. Isn\'t that neat?</item>    </string-array>
     <string name="edit_art_dialog_info_dismiss">@android:string/ok</string>
     <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>

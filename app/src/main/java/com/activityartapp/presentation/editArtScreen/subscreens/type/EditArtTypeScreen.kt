@@ -4,10 +4,7 @@ import android.graphics.Typeface
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import com.activityartapp.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,8 +18,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.architecture.EventReceiver
-import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.ui.theme.spacing
@@ -34,7 +29,7 @@ import kotlin.math.roundToInt
 @Composable
 fun ColumnScope.EditArtTypeScreen(
     activitiesDistanceMetersSummed: Int,
- //   athleteName: String,
+    //   athleteName: String,
     customTextCenter: String,
     customTextLeft: String,
     customTextRight: String,
@@ -76,15 +71,20 @@ fun ColumnScope.EditArtTypeScreen(
                             )
                         })
                     Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                        Subhead(text = stringResource(type.header))
+                        Text(
+                            text = stringResource(type.header),
+                            style = MaterialTheme.typography.body1
+                        )
                         when (type) {
                             EditArtTypeType.NONE -> {}
-              //              EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
-                            EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(
-                                text = activitiesDistanceMetersSummed.meterToMilesStr()
+                            //              EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
+                            EditArtTypeType.DISTANCE_MILES -> Text(
+                                text = activitiesDistanceMetersSummed.meterToMilesStr(),
+                                style = MaterialTheme.typography.subtitle2
                             )
-                            EditArtTypeType.DISTANCE_KILOMETERS -> SubheadHeavy(
-                                text = activitiesDistanceMetersSummed.meterToKilometerStr()
+                            EditArtTypeType.DISTANCE_KILOMETERS -> Text(
+                                text = activitiesDistanceMetersSummed.meterToKilometerStr(),
+                                style = MaterialTheme.typography.subtitle2
                             )
                             EditArtTypeType.CUSTOM -> {
                                 OutlinedTextField(
@@ -118,14 +118,15 @@ fun ColumnScope.EditArtTypeScreen(
                                     },
                                     modifier = Modifier.sizeIn(maxWidth = 254.dp)
                                 )
-                                SubheadHeavy(
+                                Text(
                                     text = "${
                                         when (section) {
                                             EditArtTypeSection.LEFT -> customTextLeft.length
                                             EditArtTypeSection.CENTER -> customTextCenter.length
                                             EditArtTypeSection.RIGHT -> customTextRight.length
                                         }
-                                    } / $maximumCustomTextLength"
+                                    } / $maximumCustomTextLength",
+                                    style = MaterialTheme.typography.subtitle2
                                 )
                             }
                         }
@@ -239,7 +240,8 @@ fun ColumnScope.EditArtTypeScreen(
                         )
                     }
                 )
-                Subhead(text = stringResource(it.strRes))
+                // todo replace
+                //Subhead(text = stringResource(it.strRes))
             }
         }
     }

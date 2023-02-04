@@ -3,6 +3,8 @@
 package com.activityartapp.presentation.loadActivitiesScreen
 
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -13,7 +15,6 @@ import com.activityartapp.data.remote.responses.ActivityResponse
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.ErrorComposable
-import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.classes.ApiError.*
@@ -75,13 +76,14 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                     }
                     is Loading -> {
                         CircularProgressIndicator()
-                        SubheadHeavy(
+                        Text(
                             text = totalActivitiesLoaded.takeIf { it > 0 }?.let {
                                 pluralStringResource(
                                     id = R.plurals.loading_activities_count,
                                     count = it, it
                                 )
-                            } ?: stringResource(id = R.string.loading_activities_zero_count)
+                            } ?: stringResource(id = R.string.loading_activities_zero_count),
+                            style = MaterialTheme.typography.body1
                         )
                     }
                 }

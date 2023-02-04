@@ -9,8 +9,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.button.Button
+import com.activityartapp.presentation.common.button.ButtonEmphasis
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.MediumEmphasisButtonLegacy
 import com.activityartapp.presentation.editArtScreen.DateSelection
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterChanged.*
@@ -107,16 +108,18 @@ fun ColumnScope.FilterSectionDate(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             selection.apply {
-                                MediumEmphasisButtonLegacy(
-                                    label = stringResource(R.string.edit_art_filters_date_start),
+                                Button(
+                                    emphasis = ButtonEmphasis.MEDIUM,
+                                    //   label = stringResource(R.string.edit_art_filters_date_start),
                                     size = ButtonSize.LARGE,
                                     enabled = enabled,
                                     text = ymdSelectedStart.toString()
                                 ) {
                                     startDialog.show()
                                 }
-                                MediumEmphasisButtonLegacy(
-                                    label = stringResource(R.string.edit_art_filters_date_end),
+                                Button(
+                                    emphasis = ButtonEmphasis.MEDIUM,
+                                  //  label = stringResource(R.string.edit_art_filters_date_end),
                                     size = ButtonSize.LARGE,
                                     enabled = enabled,
                                     text = ymdSelectedEnd.toString()

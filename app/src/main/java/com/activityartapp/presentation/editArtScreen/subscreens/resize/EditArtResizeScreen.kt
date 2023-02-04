@@ -1,8 +1,10 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.resize
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Slider
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RotateRight
 import androidx.compose.runtime.Composable
@@ -19,17 +21,14 @@ import com.activityartapp.presentation.editArtScreen.Resolution.RotatingResoluti
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.ext.toFloatRange
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.button.Button
+import com.activityartapp.presentation.common.button.ButtonEmphasis
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.MediumEmphasisButtonLegacy
-import com.activityartapp.presentation.common.type.Body
-import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import kotlin.math.roundToInt
 
 @Composable
 fun ColumnScope.EditArtResizeScreen(
-    // customHeightPx: Int,
-    //  customWidthPx: Int,
     customRangePx: IntRange,
     resolutionList: List<Resolution>,
     selectedResolutionIndex: Int,
@@ -55,15 +54,19 @@ fun ColumnScope.EditArtResizeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                        Body(text = res.displayTextResolution())
+                        Text(
+                            text = res.displayTextResolution(),
+                            style = MaterialTheme.typography.body1
+                        )
                         when (res) {
                             is CustomResolution -> {
-                                SubheadHeavy(
+                                Text(
                                     text = stringResource(
                                         R.string.edit_art_resize_pixels_width,
                                         //customWidthPx
                                         res.widthPx
                                     ),
+                                    style = MaterialTheme.typography.subtitle2,
                                     modifier = Modifier.padding(start = spacing.small)
                                 )
                                 CustomDimensionRangeSlider(
@@ -73,10 +76,11 @@ fun ColumnScope.EditArtResizeScreen(
                                     value = res.widthPx,
                                     valueRange = customRangePx
                                 )
-                                SubheadHeavy(
+                                Text(
                                     text = stringResource(
                                         R.string.edit_art_resize_pixels_height, res.heightPx
                                     ),
+                                    style = MaterialTheme.typography.subtitle2,
                                     modifier = Modifier.padding(start = spacing.small)
                                 )
                                 CustomDimensionRangeSlider(
@@ -87,13 +91,18 @@ fun ColumnScope.EditArtResizeScreen(
                                     valueRange = customRangePx
                                 )
                             }
-                            is RotatingResolution -> SubheadHeavy(text = res.displayTextPixels())
+                            is RotatingResolution -> Text(
+                                text = res.displayTextPixels()
+
+                            )
                         }
                     }
 
                     if (res is RotatingResolution && res.swappingChangesSize) {
-                        MediumEmphasisButtonLegacy(
-                            imageVector = Icons.Default.RotateRight,
+                        Button(
+                            emphasis = ButtonEmphasis.MEDIUM,
+                            text = "todo",
+                       //     imageVector = Icons.Default.RotateRight,
                             modifier = Modifier,
                             size = ButtonSize.MEDIUM,
                             onClick = {

@@ -9,8 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
-import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
-import com.activityartapp.presentation.common.type.Subhead
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleBackgroundTypeChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StylesStrokeWidthChanged
 import com.activityartapp.presentation.editArtScreen.composables.Section
@@ -62,6 +60,7 @@ fun ColumnScope.EditArtStyleViewDelegate(
         description = stringResource(R.string.edit_art_style_stroke_width_description)
     ) {
         StrokeWidthType.values().forEach {
+            // todo replace with radio row
             Row(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
@@ -71,7 +70,7 @@ fun ColumnScope.EditArtStyleViewDelegate(
                         StylesStrokeWidthChanged(it)
                     )
                 })
-                Subhead(text = stringResource(id = it.headerId))
+            //    Subhead(text = stringResource(id = it.headerId))
             }
         }
     }
