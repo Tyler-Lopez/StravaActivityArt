@@ -16,7 +16,6 @@ import com.activityartapp.R
 fun AthleteApiArtTheme(content: @Composable () -> Unit) {
     val colors = lightColors(
         primary = colorResource(R.color.primary_color),
-        /*
         primaryVariant = colorResource(R.color.primary_dark_color),
         secondary = colorResource(R.color.secondary_color),
         secondaryVariant = colorResource(R.color.primary_dark_color),
@@ -28,8 +27,6 @@ fun AthleteApiArtTheme(content: @Composable () -> Unit) {
         onBackground = colorResource(R.color.on_background_color),
         onSurface = colorResource(R.color.on_surface_color),
         onError = colorResource(R.color.on_error_color)
-
-         */
     )
 
     CompositionLocalProvider(

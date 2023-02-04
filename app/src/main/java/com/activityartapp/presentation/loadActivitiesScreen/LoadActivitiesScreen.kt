@@ -12,7 +12,7 @@ import com.activityartapp.R
 import com.activityartapp.data.remote.responses.ActivityResponse
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.common.ScreenBackground
-import com.activityartapp.presentation.common.ErrorScreen
+import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.util.classes.ApiError
@@ -36,7 +36,7 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
             viewState.collectAsState().value?.apply {
                 when (this) {
                     is ErrorApi -> {
-                        ErrorScreen(
+                        ErrorComposable(
                             header = error.getHeader(),
                             description = error.getDescription(),
                             prompt = error.getPrompt(totalActivitiesLoaded),
@@ -63,7 +63,7 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                         )
                     }
                     is ErrorNoActivities -> {
-                        ErrorScreen(
+                        ErrorComposable(
                             header = stringResource(R.string.loading_activities_no_activities_header),
                             description = stringResource(R.string.loading_activities_no_activities_description),
                             prompt = stringResource(R.string.loading_activities_no_activities_prompt),
