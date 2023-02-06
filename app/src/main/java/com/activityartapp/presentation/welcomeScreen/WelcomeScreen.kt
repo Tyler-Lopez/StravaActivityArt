@@ -1,10 +1,8 @@
 package com.activityartapp.presentation.welcomeScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -17,18 +15,19 @@ import com.activityartapp.presentation.common.button.Button
 import com.activityartapp.presentation.common.button.ButtonEmphasis
 import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
+import com.activityartapp.presentation.ui.theme.spacing
 
 /**
  * If an athlete is authenticated they are automatically routed to this screen.
  */
 @Composable
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
-    Surface {
-        ScreenBackground {
-            viewModel.viewState.collectAsState().value?.apply {
-                when (this) {
-                    is WelcomeViewState.Loading -> CircularProgressIndicator()
-                    is WelcomeViewState.Standby -> {
+    ScreenBackground {
+        viewModel.viewState.collectAsState().value?.apply {
+            when (this) {
+                is WelcomeViewState.Loading -> CircularProgressIndicator()
+                is WelcomeViewState.Standby -> {
+                    Card(modifier = Modifier.padding(spacing.medium)) {
                         ColumnSmallSpacing {
                             AppLogo()
                             Text(
