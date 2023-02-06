@@ -1,10 +1,13 @@
 package com.activityartapp.presentation.welcomeScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.BuildConfig
 import com.activityartapp.R
@@ -20,41 +23,43 @@ import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
  */
 @Composable
 fun WelcomeScreen(viewModel: WelcomeViewModel) {
-    ScreenBackground {
-        viewModel.viewState.collectAsState().value?.apply {
-            when (this) {
-                is WelcomeViewState.Loading -> CircularProgressIndicator()
-                is WelcomeViewState.Standby -> {
-                    ColumnSmallSpacing {
-                        AppLogo()
-                        Text(
-                            text = stringResource(
-                                id = R.string.app_version,
-                                BuildConfig.VERSION_NAME
-                            ),
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                        if (!versionIsLatest) {
+    Surface {
+        ScreenBackground {
+            viewModel.viewState.collectAsState().value?.apply {
+                when (this) {
+                    is WelcomeViewState.Loading -> CircularProgressIndicator()
+                    is WelcomeViewState.Standby -> {
+                        ColumnSmallSpacing {
+                            AppLogo()
                             Text(
-                                text = stringResource(R.string.welcome_new_version_available),
-                                style = MaterialTheme.typography.subtitle1
+                                text = stringResource(
+                                    id = R.string.app_version,
+                                    BuildConfig.VERSION_NAME
+                                ),
+                                style = MaterialTheme.typography.subtitle2
                             )
+                            if (!versionIsLatest) {
+                                Text(
+                                    text = stringResource(R.string.welcome_new_version_available),
+                                    style = MaterialTheme.typography.subtitle1
+                                )
+                            }
+                            Button(
+                                emphasis = ButtonEmphasis.HIGH,
+                                size = ButtonSize.LARGE,
+                                text = stringResource(id = R.string.welcome_button_make_art)
+                            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedMakeArt) }
+                            Button(
+                                emphasis = ButtonEmphasis.MEDIUM,
+                                size = ButtonSize.LARGE,
+                                text = stringResource(id = R.string.welcome_button_about),
+                            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedAbout) }
+                            Button(
+                                emphasis = ButtonEmphasis.LOW,
+                                size = ButtonSize.LARGE,
+                                text = stringResource(id = R.string.welcome_button_logout),
+                            ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedLogout) }
                         }
-                        Button(
-                            emphasis = ButtonEmphasis.HIGH,
-                            size = ButtonSize.LARGE,
-                            text = stringResource(id = R.string.welcome_button_make_art)
-                        ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedMakeArt) }
-                        Button(
-                            emphasis = ButtonEmphasis.MEDIUM,
-                            size = ButtonSize.LARGE,
-                            text = stringResource(id = R.string.welcome_button_about),
-                        ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedAbout) }
-                        Button(
-                            emphasis = ButtonEmphasis.LOW,
-                            size = ButtonSize.LARGE,
-                            text = stringResource(id = R.string.welcome_button_logout),
-                        ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedLogout) }
                     }
                 }
             }
