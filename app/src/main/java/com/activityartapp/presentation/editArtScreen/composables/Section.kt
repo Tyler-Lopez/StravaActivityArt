@@ -48,12 +48,4 @@ fun Section(
             content()
         }
     }
-    if (includeDivider) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(spacing.medium)
-                .background(MaterialTheme.colors.background)
-        )
-    }
 }

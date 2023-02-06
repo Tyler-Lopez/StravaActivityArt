@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Horizontal
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -37,7 +38,7 @@ fun ScreenBackground(
         horizontalAlignment = horizontalAlignment,
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colors.background)
             .run { if (scrollingEnabled) scrollState?.let { verticalScroll(it) } ?: this else this }
             .padding(padding),
         verticalArrangement = verticalArrangement

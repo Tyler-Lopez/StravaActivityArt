@@ -52,5 +52,4 @@ fun ColumnScope.EditArtFiltersScreen(
             }
         }
     }
-    Spacer(modifier = Modifier.height(16.dp))
 }
