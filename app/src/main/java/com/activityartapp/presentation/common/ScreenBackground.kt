@@ -38,7 +38,6 @@ fun ScreenBackground(
         horizontalAlignment = horizontalAlignment,
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
             .run { if (scrollingEnabled) scrollState?.let { verticalScroll(it) } ?: this else this }
             .padding(padding),
         verticalArrangement = verticalArrangement
