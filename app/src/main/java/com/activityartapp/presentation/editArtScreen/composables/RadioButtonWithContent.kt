@@ -9,13 +9,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
 fun RadioButtonWithContent(
     isSelected: Boolean,
     text: String,
+    subtext: String? = null,
+    fontFamily: FontFamily? = null,
     content: @Composable ColumnScope.() -> Unit = {},
     onHelpPressed: (() -> Unit)? = null,
     onSelected: () -> Unit = {}
@@ -46,10 +50,20 @@ fun RadioButtonWithContent(
                     Alignment.CenterVertically
                 )
             ) {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.body1
-                )
+                ColumnSmallSpacing(horizontalAlignment = Alignment.Start) {
+                    Text(
+                        text = text,
+                        fontFamily = fontFamily,
+                        style = MaterialTheme.typography.body1
+                    )
+                    subtext?.let {
+                        Text(
+                            text = it,
+                            fontFamily = fontFamily,
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
+                }
                 content()
             }
             onHelpPressed?.let {
@@ -57,7 +71,7 @@ fun RadioButtonWithContent(
                     Icon(
                         imageVector = Icons.Default.HelpOutline,
                         contentDescription = null,
-                      //  tint = Pumpkin
+                        //  tint = Pumpkin
                     )
                 }
             }

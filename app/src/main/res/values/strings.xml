@@ -250,8 +250,13 @@
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
     </string-array>
     <string-array name="edit_art_dialog_info_background_transparent">
-        <item>Have you ever created a piece of art with a transparent background? It\'s pretty cool!</item>
-        <item>When the background is transparent, you can see right through it to what\'s behind it, making it easy to place your artwork on top of other images or even clothes and have it look like it\'s part of them. It\'s like having a clear window, where you can see right through to what\'s behind it. Isn\'t that neat?</item>    </string-array>
+        <item>Have you tried making art with a transparent background? It\'s like making your art a
+        sticker on a clear window.
+        </item>
+        <item>You can place art with a transparent background on top of other images, clothing, and
+        more! It makes it appear as though it\'s a part of them.
+        </item>
+    </string-array>
     <string name="edit_art_dialog_info_dismiss">@android:string/ok</string>
     <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWithContent
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.enums.FontSizeType
@@ -174,11 +175,8 @@ fun ColumnScope.EditArtTypeScreen(
                     horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(
-                        selected = fontWeightSelected == it,
-                        onClick = { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
-                    )
-                    Text(
+                    RadioButtonWithContent(
+                        isSelected = fontWeightSelected == it,
                         text = stringResource(it.stringRes),
                         fontFamily = FontFamily(
                             Typeface.createFromAsset(
@@ -186,7 +184,7 @@ fun ColumnScope.EditArtTypeScreen(
                                 fontSelected.getAssetPath(it)
                             )
                         )
-                    )
+                    ) { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
                 }
             }
         }
@@ -221,6 +219,7 @@ fun ColumnScope.EditArtTypeScreen(
             }
         }
     }
+
     Section(
         header = stringResource(R.string.edit_art_type_size_header),
         description = stringResource(R.string.edit_art_type_size_description)
@@ -230,18 +229,16 @@ fun ColumnScope.EditArtTypeScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(
-                    selected = fontSizeSelected == it,
-                    onClick = {
-                        eventReceiver.onEvent(
-                            TypeFontSizeChanged(
-                                it
-                            )
+                RadioButtonWithContent(
+                    isSelected = fontSizeSelected == it,
+                    text = stringResource(it.strRes)
+                ) {
+                    eventReceiver.onEvent(
+                        TypeFontSizeChanged(
+                            it
                         )
-                    }
-                )
-                // todo replace
-                //Subhead(text = stringResource(it.strRes))
+                    )
+                }
             }
         }
     }

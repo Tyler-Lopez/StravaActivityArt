@@ -10,6 +10,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWithContent
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.enums.EditArtSortDirectionType
@@ -55,30 +56,16 @@ fun ColumnScope.EditArtSortScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(
-                    selected = sortDirectionType == sortDirectionSelected,
-                    onClick = {
-                        eventReceiver.onEvent(
-                            EditArtViewEvent.ArtMutatingEvent.SortDirectionChanged(
-                                sortDirectionType
-                            )
+                RadioButtonWithContent(
+                    isSelected = sortDirectionType == sortDirectionSelected,
+                    text = stringResource(sortDirectionType.headerStrRes),
+                    subtext = stringResource(sortDirectionType.description(sortTypeSelected))
+                ) {
+                    eventReceiver.onEvent(
+                        EditArtViewEvent.ArtMutatingEvent.SortDirectionChanged(
+                            sortDirectionType
                         )
-                    }
-                )
-                // todo replace this all with the radio row
-                Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                    /*
-                    Subhead(text = stringResource(sortDirectionType.headerStrRes))
-                    SubheadHeavy(
-                        text = stringResource(
-                            id = sortDirectionType.description(
-                                sortTypeSelected
-                            )
-                        ),
-                        textAlign = TextAlign.Start
                     )
-
-                     */
                 }
             }
         }

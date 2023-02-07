@@ -60,18 +60,10 @@ fun ColumnScope.EditArtStyleViewDelegate(
         description = stringResource(R.string.edit_art_style_stroke_width_description)
     ) {
         StrokeWidthType.values().forEach {
-            // todo replace with radio row
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(selected = strokeWidthType == it, onClick = {
-                    eventReceiver.onEvent(
-                        StylesStrokeWidthChanged(it)
-                    )
-                })
-            //    Subhead(text = stringResource(id = it.headerId))
-            }
+            RadioButtonWithContent(
+                isSelected = strokeWidthType == it,
+                text = stringResource(id = it.headerId)
+            ) { eventReceiver.onEvent(StylesStrokeWidthChanged(it)) }
         }
     }
 }

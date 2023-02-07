@@ -23,7 +23,8 @@ fun Section(
     ColumnMediumSpacing(
         modifier = Modifier
             .background(MaterialTheme.colors.surface)
-            .padding(spacing.medium)
+            .padding(spacing.medium),
+        horizontalAlignment = Alignment.Start
     ) {
         ColumnSmallSpacing(
             horizontalAlignment = Alignment.Start,
