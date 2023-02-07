@@ -22,7 +22,7 @@ fun Button(
     val content: @Composable RowScope.() -> Unit = {
         if (isLoading) {
             CircularProgressIndicator(
-                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colors.primary,
                 modifier = Modifier.size(dimensionResource(id = R.dimen.loading_icon_size)),
                 strokeWidth = dimensionResource(id = R.dimen.loading_icon_stroke_width)
             )
