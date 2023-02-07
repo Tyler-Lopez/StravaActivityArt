@@ -1,6 +1,7 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.filters.composables
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,7 +36,7 @@ fun ColumnScope.FilterSection(
                 )
             } ?: stringResource(id = R.string.edit_art_filters_activities_filtered_zero),
             fontWeight = FontWeight.Normal,
-            color = colorResource(R.color.pumpkin)
+            color = MaterialTheme.colors.primary
         )
     }
 }

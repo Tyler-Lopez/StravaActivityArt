@@ -2,20 +2,28 @@
 
 package com.activityartapp.presentation.loadActivitiesScreen
 
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.data.remote.responses.ActivityResponse
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.ErrorComposable
+import com.activityartapp.presentation.common.layout.ColumnMediumSpacing
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
+import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.classes.ApiError.*
 
@@ -74,22 +82,63 @@ fun LoadActivitiesScreen(viewModel: LoadActivitiesViewModel) {
                             }
                         )
                     }
-                    is Loading -> {
-                        CircularProgressIndicator()
-                        Text(
-                            text = totalActivitiesLoaded.takeIf { it > 0 }?.let {
-                                pluralStringResource(
-                                    id = R.plurals.loading_activities_count,
-                                    count = it, it
+                    is Loaded -> {
+                        Card {
+                            ColumnMediumSpacing(modifier = Modifier.padding(spacing.medium)) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    tint = MaterialTheme.colors.primary,
+                                    modifier = Modifier.size(44.dp),
+                                    contentDescription = null
                                 )
-                            } ?: stringResource(id = R.string.loading_activities_zero_count),
-                            style = MaterialTheme.typography.body1
-                        )
+                                LoadingActivitiesSectionWithDescription(
+                                    activitiesCount = totalActivitiesLoaded,
+                                    descriptionStrRes = R.string.loaded_activities_description
+                                )
+                            }
+                        }
+                    }
+                    is Loading -> {
+                        Card {
+                            ColumnMediumSpacing(modifier = Modifier.padding(spacing.medium)) {
+                                CircularProgressIndicator()
+                                LoadingActivitiesSectionWithDescription(
+                                    activitiesCount = totalActivitiesLoaded,
+                                    descriptionStrRes = R.string.loading_activities_description
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun LoadingActivitiesSectionWithDescription(
+    activitiesCount: Int,
+    descriptionStrRes: Int
+) {
+    ColumnSmallSpacing {
+        Text(
+            text = activitiesCount.takeIf { it > 0 }?.let {
+                pluralStringResource(
+                    id = R.plurals.loading_activities_count,
+                    count = it, it
+                )
+            }
+                ?: stringResource(id = R.string.loading_activities_zero_count),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.h6
+        )
+        Divider()
+    }
+    Text(
+        text = stringResource(descriptionStrRes),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.body1
+    )
 }
 
 

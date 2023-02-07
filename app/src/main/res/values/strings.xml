@@ -46,6 +46,8 @@
         <item quantity="one">%d Activity Loaded</item>
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
+    <string name="loading_activities_description">We\'re getting your activities from Strava</string>
+    <string name="loaded_activities_description">Let\'s start making Activity Art!</string>
     <string name="loading_activities_error_header">Oops! An Error Occurred</string>
     <!-- If there was no internet connection while loading activities, present the user a prompt
     depending on how many activities were loaded to either continue with the partial load or to retry -->

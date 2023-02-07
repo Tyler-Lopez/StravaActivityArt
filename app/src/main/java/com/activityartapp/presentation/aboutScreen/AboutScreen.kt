@@ -2,6 +2,7 @@ package com.activityartapp.presentation.aboutScreen
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,15 +24,17 @@ fun AboutScreen(
         text = stringResource(R.string.action_bar_about_header),
         onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) }
     ) {
-        ScreenBackground {
-            viewModel.viewState.collectAsState().value?.apply {
-                AppLogo()
-                stringArrayResource(id = R.array.about_screen_content).forEach {
-                    Text(
-                        text = it,
-                        modifier = Modifier.padding(horizontal = spacing.medium),
-                        style = MaterialTheme.typography.body1
-                    )
+        viewModel.viewState.collectAsState().value?.apply {
+            Surface {
+                ScreenBackground {
+                    AppLogo()
+                    stringArrayResource(id = R.array.about_screen_content).forEach {
+                        Text(
+                            text = it,
+                            modifier = Modifier.padding(horizontal = spacing.medium),
+                            style = MaterialTheme.typography.body1
+                        )
+                    }
                 }
             }
         }

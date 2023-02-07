@@ -37,6 +37,8 @@ class LoadActivitiesViewModel @Inject constructor(
     companion object {
         /** Artificial delay to make the RETRY button feel better when pressed **/
         private const val DELAY_MS = 500L
+
+        private const val DELAY_MS_SUCCESSFULLY_LOADED = 1000L
         private const val NO_ACTIVITIES_COUNT = 0
         private const val YEAR_START = 2018
         private val YEAR_NOW = Year.now().value
@@ -134,7 +136,11 @@ class LoadActivitiesViewModel @Inject constructor(
                 )
             }?.push()
             activitiesCount == NO_ACTIVITIES_COUNT -> ErrorNoActivities.push()
-            else -> routeTo(NavigateEditArt(fromLoad = true))
+            else -> {
+                Loaded(totalActivitiesLoaded = activitiesCount).push()
+                delay(timeMillis = DELAY_MS_SUCCESSFULLY_LOADED)
+                routeTo(NavigateEditArt(fromLoad = true))
+            }
         }
     }
 

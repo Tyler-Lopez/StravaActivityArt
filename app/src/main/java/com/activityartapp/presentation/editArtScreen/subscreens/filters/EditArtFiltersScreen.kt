@@ -1,11 +1,7 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.filters
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.activityartapp.activityart.presentation.editArtScreen.subscreens.filters.composables.FilterSectionActivityType
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.DateSelection
