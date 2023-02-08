@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
-import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWithContent
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.enums.FontSizeType
@@ -155,7 +155,6 @@ fun ColumnScope.EditArtTypeScreen(
                         context.assets,
                         it.getAssetPath(
                             /** Provides a loud failure if missing regular font **/
-                            /** Provides a loud failure if missing regular font **/
                             it.fontWeightTypes.firstOrNull {
                                 it == FontWeightType.REGULAR
                             } ?: error("Missing REGULAR font for font $it.")
@@ -175,7 +174,7 @@ fun ColumnScope.EditArtTypeScreen(
                     horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButtonWithContent(
+                    RadioButtonContentRow(
                         isSelected = fontWeightSelected == it,
                         text = stringResource(it.stringRes),
                         fontFamily = FontFamily(
@@ -229,7 +228,7 @@ fun ColumnScope.EditArtTypeScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButtonWithContent(
+                RadioButtonContentRow(
                     isSelected = fontSizeSelected == it,
                     text = stringResource(it.strRes)
                 ) {

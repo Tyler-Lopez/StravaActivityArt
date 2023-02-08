@@ -15,7 +15,7 @@ import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.editArtScreen.DateSelection
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterChanged.*
-import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWithContent
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
 
@@ -93,7 +93,7 @@ fun ColumnScope.FilterSectionDate(
         description = stringResource(R.string.edit_art_filters_date_description),
     ) {
         dateSelections.forEachIndexed { index, selection ->
-            RadioButtonWithContent(
+            RadioButtonContentRow(
                 isSelected = index == dateSelectionSelectedIndex,
                 text = when (selection) {
                     is DateSelection.All -> stringResource(R.string.edit_art_filters_date_include_all)

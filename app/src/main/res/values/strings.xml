@@ -242,9 +242,13 @@
     <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
     <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
     <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
-    <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
-    <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
+    <string name="edit_art_resize_pixels_width">Width Pixels</string>
+    <string name="edit_art_resize_pixels_height">Height Pixels</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
+    <string name="edit_art_resize_pixels_custom_too_small_error">Oops! %d is smaller than the smallest value allowed %d.</string>
+    <string name="edit_art_resize_pixels_custom_too_large_error">Oops! %d is larger than the largest value allowed %d.</string>
+    <string name="edit_art_resize_pixels_custom_error_prompt">Until you fix it, we\'ll use %d instead.</string>
+    <string name="edit_art_resize_rotate_right_content_description">Rotate Right</string>
     <string-array name="edit_art_dialog_info_background_checkered">
         <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>

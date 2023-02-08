@@ -36,12 +36,6 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
-    sealed interface SizeCustomChanged : EditArtViewEvent {
-        val changedToPx: Int
-
-        data class HeightChanged(override val changedToPx: Int) : SizeCustomChanged
-        data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
-    }
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
 
@@ -78,7 +72,13 @@ sealed interface EditArtViewEvent : ViewEvent {
         }
 
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
-        object SizeCustomChangeDone : ArtMutatingEvent
+        sealed interface SizeCustomChanged : ArtMutatingEvent {
+            val changedToPx: Int
+
+            data class HeightChanged(override val changedToPx: Int) : SizeCustomChanged
+            data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
+        }
+
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
@@ -170,6 +170,8 @@ sealed interface EditArtViewState : ViewState {
         val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
         @IgnoredOnParcel val sizeCustomMaxPx: Int = CUSTOM_SIZE_MAXIMUM_PX,
         @IgnoredOnParcel val sizeCustomMinPx: Int = CUSTOM_SIZE_MINIMUM_PX,
+        @IgnoredOnParcel val sizeCustomOutOfBoundsWidth: Int? = null,
+        @IgnoredOnParcel val sizeCustomOutOfBoundsHeight: Int? = null,
         val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
         val sortDirectionTypeSelected: EditArtSortDirectionType = EditArtSortDirectionType.ASCENDING,
         val styleActivities: ColorWrapper = ColorWrapper(

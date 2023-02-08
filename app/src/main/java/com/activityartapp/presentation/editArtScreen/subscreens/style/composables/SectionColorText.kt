@@ -8,7 +8,7 @@ import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorFontChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorFontUseCustomChanged
-import com.activityartapp.presentation.editArtScreen.composables.RadioButtonWithContent
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.composables.Section
 
 @Composable
@@ -22,11 +22,11 @@ fun ColumnScope.SectionColorText(
     Section(header = stringResource(R.string.edit_art_style_text_header)) {
         ColorPreview(colorWrapper = color ?: colorActivities)
         ColumnSmallSpacing {
-            RadioButtonWithContent(
+            RadioButtonContentRow(
                 isSelected = !customEnabled,
                 text = stringResource(R.string.edit_art_style_font_use_activities)
             ) { onUseFontChanged(StyleColorFontUseCustomChanged(useCustom = false)) }
-            RadioButtonWithContent(
+            RadioButtonContentRow(
                 isSelected = customEnabled,
                 text = stringResource(R.string.edit_art_style_font_use_custom),
                 content = {

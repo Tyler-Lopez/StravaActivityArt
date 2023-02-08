@@ -223,7 +223,6 @@ class EditArtViewModel @Inject constructor(
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
-            is SizeCustomChanged -> onSizeCustomChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
         }
     }
@@ -232,7 +231,7 @@ class EditArtViewModel @Inject constructor(
         when (event) {
             is FilterChanged -> onFilterChangeEvent(event)
             is SizeChanged -> onSizeChanged(event)
-            is SizeCustomChangeDone -> onSizeCustomChangeDone()
+            is SizeCustomChanged -> onSizeCustomChanged(event)
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
@@ -415,21 +414,29 @@ class EditArtViewModel @Inject constructor(
         }.push()
     }
 
-    private fun onSizeCustomChangeDone() {
-        // No-op, this event is necessary as it is Art Mutating where SizeCustomChanged is not.
-    }
-
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
         copyLastState {
+            val customRange = sizeCustomMinPx..sizeCustomMaxPx
             copy(
+                sizeCustomOutOfBoundsWidth = if (event is SizeCustomChanged.WidthChanged) {
+                    event.changedToPx.takeIf { it !in customRange }
+                } else {
+                    sizeCustomOutOfBoundsWidth
+                },
+                sizeCustomOutOfBoundsHeight = if (event is SizeCustomChanged.HeightChanged) {
+                    event.changedToPx.takeIf { it !in customRange }
+                } else {
+                    sizeCustomOutOfBoundsHeight
+                },
                 sizeResolutionList = sizeResolutionList
                     .toMutableList()
                     .apply {
                         val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
                         set(tarIndex, get(tarIndex).run {
+                            val adjPx = event.changedToPx.coerceIn(customRange)
                             Resolution.CustomResolution(
-                                widthPx = if (event is SizeCustomChanged.WidthChanged) event.changedToPx else widthPx,
-                                heightPx = if (event is SizeCustomChanged.HeightChanged) event.changedToPx else heightPx
+                                widthPx = if (event is SizeCustomChanged.WidthChanged) adjPx else widthPx,
+                                heightPx = if (event is SizeCustomChanged.HeightChanged) adjPx else heightPx
                             )
                         })
                     }

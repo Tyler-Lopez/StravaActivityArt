@@ -149,6 +149,8 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             RESIZE -> EditArtResizeScreen(
                                 //     sizeCustomHeightPx,
                                 //    sizeCustomWidthPx,
+                                sizeCustomOutOfBoundsWidth,
+                                sizeCustomOutOfBoundsHeight,
                                 sizeCustomMinPx..sizeCustomMaxPx,
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,
