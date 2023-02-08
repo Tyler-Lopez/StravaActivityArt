@@ -14,8 +14,7 @@ import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
 fun ColorSlider(
-    colorName: String,
-    colorValue: Float,
+    color: ColorWrapper,
     colorType: ColorType,
     enabled: Boolean,
     onColorChanged: (Pair<ColorType, Float>) -> Unit
@@ -27,11 +26,28 @@ fun ColorSlider(
             style = MaterialTheme.typography.subtitle2
         )
         Slider(
-            modifier = Modifier.weight(1f, true),
-            value = colorValue,
+            value = color.colorFromType(colorType),
             enabled = enabled,
             valueRange = ColorWrapper.VALUE_RANGE,
             onValueChange = { onColorChanged(colorType to it) }
         )
+    }
+}
+
+private fun ColorWrapper.textFieldValueFromType(colorType: ColorType): Int {
+    return when (colorType) {
+        ColorType.RED -> red
+        ColorType.GREEN -> green
+        ColorType.BLUE -> blue
+        ColorType.ALPHA -> alpha
+    }
+}
+
+private fun ColorWrapper.colorFromType(colorType: ColorType): Float {
+    return when (colorType) {
+        ColorType.RED -> red
+        ColorType.GREEN -> green
+        ColorType.BLUE -> blue
+        ColorType.ALPHA -> alpha
     }
 }

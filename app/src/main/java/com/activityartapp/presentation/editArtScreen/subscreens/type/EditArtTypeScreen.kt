@@ -29,9 +29,8 @@ import com.activityartapp.util.enums.FontWeightType
 import kotlin.math.roundToInt
 
 @Composable
-fun ColumnScope.EditArtTypeScreen(
+fun EditArtTypeScreen(
     activitiesDistanceMetersSummed: Int,
-    //   athleteName: String,
     customTextCenter: String,
     customTextLeft: String,
     customTextRight: String,
@@ -62,7 +61,7 @@ fun ColumnScope.EditArtTypeScreen(
                     },
                     content = type.takeIf { it == EditArtTypeType.CUSTOM }?.let {
                         {
-                            ColumnSmallSpacing {
+                            ColumnSmallSpacing(horizontalAlignment = Alignment.Start) {
                                 OutlinedTextField(
                                     value = when (section) {
                                         EditArtTypeSection.LEFT -> customTextLeft

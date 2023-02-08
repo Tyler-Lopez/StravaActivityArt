@@ -4,7 +4,6 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.os.Parcelable
-import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -288,21 +287,24 @@ data class ColorWrapper(
     val alpha: Float,
     val blue: Float,
     val green: Float,
-    val red: Float
+    val red: Float,
+    @IgnoredOnParcel val outOfBoundsAlpha: String? = null,
+    @IgnoredOnParcel val outOfBoundsBlue: String? = null,
+    @IgnoredOnParcel val outOfBoundsGreen: String? = null,
+    @IgnoredOnParcel val outOfBoundsRed: String? = null
 ) : Parcelable {
 
     companion object {
-        private const val VALUE_NONE = 0f
-        private const val VALUE_MAX = 1f
+        private const val LIMIT_LOWER = 0f
+        private const val LIMIT_UPPER = 1f
         private const val EIGHT_BIT_CHANNEL_LIMIT = 255
-        val VALUE_RANGE = VALUE_NONE..VALUE_MAX
+        val VALUE_RANGE = LIMIT_LOWER..LIMIT_UPPER
     }
 
     val color get() = Color(red, green, blue, alpha)
     val redAsEightBit get() = red.toEightBitRepresentation()
     val greenAsEightBit get() = green.toEightBitRepresentation()
     val blueAsEightBit get() = blue.toEightBitRepresentation()
-    val alphaAsEightBit get() = alpha.toEightBitRepresentation()
 
     private fun Float.toEightBitRepresentation(): Int {
         return (this * EIGHT_BIT_CHANNEL_LIMIT).toInt()
