@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.composables.Section
@@ -53,41 +54,15 @@ fun ColumnScope.EditArtTypeScreen(
             description = stringResource(section.description)
         ) {
             EditArtTypeType.values().forEach { type ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = type == when (section) {
-                            EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
-                            EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
-                            EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
-                        },
-                        onClick = {
-                            eventReceiver.onEvent(
-                                TypeSelectionChanged(
-                                    section = section,
-                                    typeSelected = type
-                                )
-                            )
-                        })
-                    Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                        Text(
-                            text = stringResource(type.header),
-                            style = MaterialTheme.typography.body1
-                        )
-                        when (type) {
-                            EditArtTypeType.NONE -> {}
-                            //              EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
-                            EditArtTypeType.DISTANCE_MILES -> Text(
-                                text = activitiesDistanceMetersSummed.meterToMilesStr(),
-                                style = MaterialTheme.typography.subtitle2
-                            )
-                            EditArtTypeType.DISTANCE_KILOMETERS -> Text(
-                                text = activitiesDistanceMetersSummed.meterToKilometerStr(),
-                                style = MaterialTheme.typography.subtitle2
-                            )
-                            EditArtTypeType.CUSTOM -> {
+                RadioButtonContentRow(
+                    isSelected = type == when (section) {
+                        EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
+                        EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
+                        EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
+                    },
+                    content = type.takeIf { it == EditArtTypeType.CUSTOM }?.let {
+                        {
+                            ColumnSmallSpacing {
                                 OutlinedTextField(
                                     value = when (section) {
                                         EditArtTypeSection.LEFT -> customTextLeft
@@ -127,11 +102,24 @@ fun ColumnScope.EditArtTypeScreen(
                                             EditArtTypeSection.RIGHT -> customTextRight.length
                                         }
                                     } / $maximumCustomTextLength",
-                                    style = MaterialTheme.typography.subtitle2
+                                    style = MaterialTheme.typography.caption
                                 )
                             }
                         }
+                    },
+                    text = stringResource(type.header),
+                    subtext = when (type) {
+                        EditArtTypeType.DISTANCE_MILES -> activitiesDistanceMetersSummed.meterToMilesStr()
+                        EditArtTypeType.DISTANCE_KILOMETERS -> activitiesDistanceMetersSummed.meterToKilometerStr()
+                        else -> null
                     }
+                ) {
+                    eventReceiver.onEvent(
+                        TypeSelectionChanged(
+                            section = section,
+                            typeSelected = type
+                        )
+                    )
                 }
             }
         }

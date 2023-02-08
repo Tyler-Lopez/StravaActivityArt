@@ -73,9 +73,6 @@ fun EditArtResizeScreen(
                                         onValueChanged = {
                                             eventReceiver.onEvent(SizeCustomChanged.WidthChanged(it))
                                         },
-                                        onValueChangeDone = {
-                                            eventReceiver.onEvent(SizeCustomChangeDone)
-                                        },
                                         value = it.widthPx
                                     )
                                     CustomDimensionController(
@@ -85,9 +82,6 @@ fun EditArtResizeScreen(
                                         onTextFieldDone = focusManager::clearFocus,
                                         onValueChanged = {
                                             eventReceiver.onEvent(SizeCustomChanged.HeightChanged(it))
-                                        },
-                                        onValueChangeDone = {
-                                            eventReceiver.onEvent(SizeCustomChangeDone)
                                         },
                                         value = it.heightPx
                                     )
@@ -111,7 +105,6 @@ private fun CustomDimensionController(
     range: IntRange,
     onTextFieldDone: () -> Unit,
     onValueChanged: (Int) -> Unit,
-    onValueChangeDone: () -> Unit,
     value: Int,
 ) {
     OutlinedTextField(
@@ -172,7 +165,6 @@ private fun CustomDimensionController(
         valueRange = range.toFloatRange(),
         onValueChange = {
             onValueChanged(it.roundToInt())
-        },
-        onValueChangeFinished = onValueChangeDone
+        }
     )
 }
