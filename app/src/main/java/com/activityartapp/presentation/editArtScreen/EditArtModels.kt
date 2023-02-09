@@ -4,6 +4,7 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -337,11 +338,11 @@ sealed interface DateSelection : Parcelable {
     }
 }
 
-enum class ColorType {
-    RED,
-    GREEN,
-    BLUE,
-    ALPHA
+enum class ColorType(@StringRes val strRes: Int) {
+    RED(R.string.edit_art_style_color_red),
+    GREEN(R.string.edit_art_style_color_green),
+    BLUE(R.string.edit_art_style_color_blue),
+    ALPHA(R.string.edit_art_style_color_alpha)
 }
 
 enum class StrokeWidthType(val headerId: Int) {

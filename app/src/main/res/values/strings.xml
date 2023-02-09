@@ -176,9 +176,10 @@
     <string name="edit_art_style_font_description">What color should any text be?</string>
     <string name="edit_art_style_font_use_activities">Use the same color as your activities</string>
     <string name="edit_art_style_font_use_custom">Choose a different color</string>
-    <string name="edit_art_style_color_red">Red: %d</string>
-    <string name="edit_art_style_color_green">Green: %d</string>
-    <string name="edit_art_style_color_blue">Blue: %d</string>
+    <string name="edit_art_style_color_red">RED</string>
+    <string name="edit_art_style_color_green">GREEN</string>
+    <string name="edit_art_style_color_blue">BLUE</string>
+    <string name="edit_art_style_color_alpha">ALPHA</string>
     <string name="edit_art_style_stroke_width_header">Activity Thickness</string>
     <string name="edit_art_style_stroke_width_description">
         How thick should the lines of each activity be?
