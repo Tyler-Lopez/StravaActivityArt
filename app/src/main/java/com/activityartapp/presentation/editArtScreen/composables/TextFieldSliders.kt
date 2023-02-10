@@ -2,10 +2,7 @@ package com.activityartapp.presentation.editArtScreen.composables
 
 import androidx.annotation.Px
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,7 +49,7 @@ fun TextFieldSliders(
 
     specifications.forEach { spec ->
         val interactionSource = remember { MutableInteractionSource() }
-        ColumnMediumSpacing {
+        ColumnMediumSpacing(modifier = Modifier.padding(spacing.small)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(spacing.small)

@@ -11,7 +11,7 @@ import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.util.enums.BackgroundType
 
 @Composable
-fun ColumnScope.SectionColorBackground(
+fun SectionColorBackground(
     backgroundType: BackgroundType,
     colors: List<ColorWrapper>,
     onColorChanged: (StyleColorsBackgroundChanged) -> Unit
@@ -26,12 +26,12 @@ fun ColumnScope.SectionColorBackground(
                 ColorSlidersRGB(
                     color = color,
                     enabled = true,
-                    onColorChanged = {
+                    onColorChanged = { colorType, changedTo ->
                         onColorChanged(
                             StyleColorsBackgroundChanged(
                                 changedIndex = index,
-                                changedColorType = it.first,
-                                changedTo = it.second
+                                changedColorType = colorType,
+                                changedTo = changedTo
                             )
                         )
                     }

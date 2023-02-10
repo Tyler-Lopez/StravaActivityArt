@@ -33,11 +33,11 @@ fun ColumnScope.SectionColorText(
                     ColorSlidersRGB(
                         color = color ?: colorActivities,
                         enabled = customEnabled,
-                        onColorChanged = {
+                        onColorChanged = { colorType, changedTo ->
                             onColorChanged(
                                 StyleColorFontChanged(
-                                    colorType = it.first,
-                                    changedTo = it.second
+                                    colorType = colorType,
+                                    changedTo = changedTo
                                 )
                             )
                         }

@@ -289,10 +289,10 @@ data class ColorWrapper(
     val blue: Float,
     val green: Float,
     val red: Float,
-    @IgnoredOnParcel val outOfBoundsAlpha: String? = null,
-    @IgnoredOnParcel val outOfBoundsBlue: String? = null,
-    @IgnoredOnParcel val outOfBoundsGreen: String? = null,
-    @IgnoredOnParcel val outOfBoundsRed: String? = null
+    @IgnoredOnParcel val outOfBoundsAlpha: Float? = null,
+    @IgnoredOnParcel val outOfBoundsBlue: Float? = null,
+    @IgnoredOnParcel val outOfBoundsGreen: Float? = null,
+    @IgnoredOnParcel val outOfBoundsRed: Float? = null
 ) : Parcelable {
 
     companion object {
