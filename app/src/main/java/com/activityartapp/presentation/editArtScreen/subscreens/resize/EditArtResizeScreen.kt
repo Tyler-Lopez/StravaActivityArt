@@ -60,26 +60,10 @@ fun EditArtResizeScreen(
                                     specifications = listOf(
                                         TextFieldSliderSpecification(
                                             enabled = true,
-                                            errorMessages = customOutOfBoundsWidthPx?.let { oob ->
-                                                val errorIsTooLarge = oob > customRangePx.last
-                                                listOf(
-                                                    stringResource(
-                                                        if (errorIsTooLarge) {
-                                                            R.string.edit_art_resize_pixels_custom_too_large_error
-                                                        } else {
-                                                            R.string.edit_art_resize_pixels_custom_too_small_error
-                                                        },
-                                                        oob,
-                                                        if (errorIsTooLarge) {
-                                                            customRangePx.last
-                                                        } else {
-                                                            customRangePx.first
-                                                        }
-                                                    ),
-                                                    stringResource(
-                                                        id = R.string.edit_art_resize_pixels_custom_error_prompt,
-                                                        it.widthPx
-                                                    )
+                                            errorMessage = customOutOfBoundsWidthPx?.let { oob ->
+                                                GetOutOfBoundsErrorMessage(
+                                                    outOfBoundsValue = oob,
+                                                    range = customRangePx
                                                 )
                                             },
                                             keyboardType = KeyboardType.Number,
@@ -107,26 +91,10 @@ fun EditArtResizeScreen(
                                         ),
                                         TextFieldSliderSpecification(
                                             enabled = true,
-                                            errorMessages = customOutOfBoundsHeightPx?.let { oob ->
-                                                val errorIsTooLarge = oob > customRangePx.last
-                                                listOf(
-                                                    stringResource(
-                                                        if (errorIsTooLarge) {
-                                                            R.string.edit_art_resize_pixels_custom_too_large_error
-                                                        } else {
-                                                            R.string.edit_art_resize_pixels_custom_too_small_error
-                                                        },
-                                                        oob,
-                                                        if (errorIsTooLarge) {
-                                                            customRangePx.last
-                                                        } else {
-                                                            customRangePx.first
-                                                        }
-                                                    ),
-                                                    stringResource(
-                                                        id = R.string.edit_art_resize_pixels_custom_error_prompt,
-                                                        it.heightPx
-                                                    )
+                                            errorMessage = customOutOfBoundsHeightPx?.let { oob ->
+                                                GetOutOfBoundsErrorMessage(
+                                                    outOfBoundsValue = oob,
+                                                    range = customRangePx
                                                 )
                                             },
                                             keyboardType = KeyboardType.Number,
@@ -163,5 +131,21 @@ fun EditArtResizeScreen(
                 ) { eventReceiver.onEvent(SizeChanged(index)) }
             }
         }
+    }
+}
+
+@Composable
+private fun GetOutOfBoundsErrorMessage(outOfBoundsValue: Int, range: IntRange): String {
+    val errorIsTooLarge = outOfBoundsValue > range.last
+    return if (errorIsTooLarge) {
+        stringResource(
+            id = R.string.edit_art_resize_pixels_custom_too_large_error,
+            range.last
+        )
+    } else {
+        stringResource(
+            id = R.string.edit_art_resize_pixels_custom_too_small_error,
+            range.first
+        )
     }
 }

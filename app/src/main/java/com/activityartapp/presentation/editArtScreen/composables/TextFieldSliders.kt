@@ -20,13 +20,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.common.layout.ColumnMediumSpacing
 import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.ui.theme.spacing
 
 data class TextFieldSliderSpecification(
     val enabled: Boolean,
-    val errorMessages: List<String>?,
+    val errorMessage: String?,
     val keyboardType: KeyboardType,
     val textFieldLabel: String,
     val textFieldValue: String,
@@ -41,10 +42,6 @@ data class TextFieldSliderSpecification(
 fun TextFieldSliders(
     specifications: List<TextFieldSliderSpecification>
 ) {
-    var globalPositionedCount = 0
-    @Px var textFieldWidthMaxPx = 0
-    val textFieldWidthDp: MutableState<Dp?> = remember { mutableStateOf(null) }
-    val localDensity = LocalDensity.current
     val focusManager = LocalFocusManager.current
 
     specifications.forEach { spec ->
@@ -62,28 +59,16 @@ fun TextFieldSliders(
                         keyboardType = spec.keyboardType,
                         imeAction = ImeAction.Done
                     ),
+                    modifier = Modifier.width(88.dp),
                     keyboardActions = KeyboardActions(onDone = {
                         focusManager.clearFocus()
                     }),
                     interactionSource = interactionSource,
-                    modifier = Modifier
-                        .run {
-                            textFieldWidthDp.value?.let { width(it) } ?: width(IntrinsicSize.Min)
-                        }
-                        .onGloballyPositioned {
-                            textFieldWidthMaxPx = textFieldWidthMaxPx.coerceAtLeast(it.size.width)
-                            globalPositionedCount++
-                            if (globalPositionedCount >= specifications.size) {
-                                textFieldWidthDp.value =
-                                    localDensity.run { textFieldWidthMaxPx.toDp() }
-                            }
-                        },
                     decorationBox = {
                         TextFieldDefaults.OutlinedTextFieldDecorationBox(
                             value = spec.textFieldValue,
                             visualTransformation = VisualTransformation.None,
                             innerTextField = it,
-
                             singleLine = true,
                             enabled = spec.enabled,
                             label = {
@@ -103,7 +88,7 @@ fun TextFieldSliders(
                 )
             }
         }
-        spec.errorMessages?.forEach { errorMessage ->
+        spec.errorMessage?.let { errorMessage ->
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colors.error,

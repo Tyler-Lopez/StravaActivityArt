@@ -19,46 +19,19 @@ fun ColorSlidersRGB(
     TextFieldSliders(specifications = listOf(
         TextFieldSliderSpecification(
             enabled = enabled,
-            errorMessages = null,
+            errorMessage = color.outOfBoundsRed?.let {
+                stringResource(R.string.edit_art_style_color_too_large_error, 255)
+            },
             keyboardType = KeyboardType.Number,
             textFieldLabel = stringResource(R.string.edit_art_style_color_red),
             sliderValue = color.red,
-            textFieldValue = color.outOfBoundsRed?.times(255f)?.roundToInt()?.toString() ?: color.redAsEightBit.toString(),
+            textFieldValue = color.outOfBoundsRed?.times(255f)?.roundToInt()?.toString()
+                ?: color.redAsEightBit.toString(),
             sliderRange = ColorWrapper.VALUE_RANGE,
             onSliderChanged = { onColorChanged(ColorType.RED, it) },
             onTextFieldChanged = { str ->
                 str.toFloatOrNull()?.div(255f)?.let {
                     onColorChanged(ColorType.RED, it)
-                }
-            }
-        ),
-        TextFieldSliderSpecification(
-            enabled = enabled,
-            errorMessages = null,
-            keyboardType = KeyboardType.Number,
-            textFieldLabel = stringResource(R.string.edit_art_style_color_green),
-            sliderValue = color.green,
-            textFieldValue = color.outOfBoundsGreen?.times(255f)?.roundToInt()?.toString() ?: color.greenAsEightBit.toString(),
-            sliderRange = ColorWrapper.VALUE_RANGE,
-            onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
-            onTextFieldChanged = { str ->
-                str.toFloatOrNull()?.div(255f)?.let {
-                    onColorChanged(ColorType.GREEN, it)
-                }
-            }
-        ),
-        TextFieldSliderSpecification(
-            enabled = enabled,
-            errorMessages = null,
-            keyboardType = KeyboardType.Number,
-            textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
-            sliderValue = color.blue,
-            textFieldValue = color.outOfBoundsBlue?.times(255f)?.roundToInt()?.toString() ?: color.blueAsEightBit.toString(),
-            sliderRange = ColorWrapper.VALUE_RANGE,
-            onSliderChanged = { onColorChanged(ColorType.BLUE, it) },
-            onTextFieldChanged = { str ->
-                str.toFloatOrNull()?.div(255f)?.let {
-                    onColorChanged(ColorType.BLUE, it)
                 }
             }
         )
