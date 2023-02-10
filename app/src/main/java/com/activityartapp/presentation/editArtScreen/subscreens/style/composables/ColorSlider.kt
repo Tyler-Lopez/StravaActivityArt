@@ -36,8 +36,6 @@ fun ColorSlider(
 ) {
     val focusManager = LocalFocusManager.current
 
-
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(spacing.small)

@@ -243,8 +243,8 @@
     <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
     <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
     <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
-    <string name="edit_art_resize_pixels_width">Width Pixels</string>
-    <string name="edit_art_resize_pixels_height">Height Pixels</string>
+    <string name="edit_art_resize_pixels_width">WIDTH</string>
+    <string name="edit_art_resize_pixels_height">HEIGHT</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
     <string name="edit_art_resize_pixels_custom_too_small_error">Oops! %d is smaller than the smallest value allowed %d.</string>
     <string name="edit_art_resize_pixels_custom_too_large_error">Oops! %d is larger than the largest value allowed %d.</string>

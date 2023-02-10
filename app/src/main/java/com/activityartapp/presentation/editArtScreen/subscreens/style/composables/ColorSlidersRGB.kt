@@ -5,6 +5,8 @@ import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.presentation.editArtScreen.ColorType
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
+import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliderSpecification
+import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliders
 
 @Composable
 fun ColorSlidersRGB(
