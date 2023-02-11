@@ -43,57 +43,58 @@ fun TextFieldSliders(
     specifications: List<TextFieldSliderSpecification>
 ) {
     val focusManager = LocalFocusManager.current
-
-    specifications.forEach { spec ->
-        val interactionSource = remember { MutableInteractionSource() }
-        ColumnMediumSpacing(modifier = Modifier.padding(spacing.small)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(spacing.small)
-            ) {
-                // https://stackoverflow.com/questions/72886062/outlinedtextfield-doesnt-resize-to-a-minimumwidth-in-compose
-                BasicTextField(
-                    value = spec.textFieldValue,
-                    onValueChange = spec.onTextFieldChanged,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = spec.keyboardType,
-                        imeAction = ImeAction.Done
-                    ),
-                    modifier = Modifier.width(88.dp),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    interactionSource = interactionSource,
-                    decorationBox = {
-                        TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                            value = spec.textFieldValue,
-                            visualTransformation = VisualTransformation.None,
-                            innerTextField = it,
-                            singleLine = true,
-                            enabled = spec.enabled,
-                            label = {
-                                Text(
-                                    text = spec.textFieldLabel,
-                                    style = MaterialTheme.typography.overline
-                                )
-                            },
-                            interactionSource = interactionSource,
-                        )
-                    }
-                )
-                Slider(
-                    value = spec.sliderValue,
-                    onValueChange = spec.onSliderChanged,
-                    valueRange = spec.sliderRange
-                )
+    ColumnMediumSpacing(modifier = Modifier.padding(spacing.small)) {
+        specifications.forEach { spec ->
+            val interactionSource = remember { MutableInteractionSource() }
+            ColumnSmallSpacing {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.small)
+                ) {
+                    // https://stackoverflow.com/questions/72886062/outlinedtextfield-doesnt-resize-to-a-minimumwidth-in-compose
+                    BasicTextField(
+                        value = spec.textFieldValue,
+                        onValueChange = spec.onTextFieldChanged,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = spec.keyboardType,
+                            imeAction = ImeAction.Done
+                        ),
+                        modifier = Modifier.width(88.dp),
+                        keyboardActions = KeyboardActions(onDone = {
+                            focusManager.clearFocus()
+                        }),
+                        interactionSource = interactionSource,
+                        decorationBox = {
+                            TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                                value = spec.textFieldValue,
+                                visualTransformation = VisualTransformation.None,
+                                innerTextField = it,
+                                singleLine = true,
+                                enabled = spec.enabled,
+                                label = {
+                                    Text(
+                                        text = spec.textFieldLabel,
+                                        style = MaterialTheme.typography.overline
+                                    )
+                                },
+                                interactionSource = interactionSource,
+                            )
+                        }
+                    )
+                    Slider(
+                        value = spec.sliderValue,
+                        onValueChange = spec.onSliderChanged,
+                        valueRange = spec.sliderRange
+                    )
+                }
+                spec.errorMessage?.let { errorMessage ->
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colors.error,
+                        style = MaterialTheme.typography.subtitle2
+                    )
+                }
             }
-        }
-        spec.errorMessage?.let { errorMessage ->
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.subtitle2
-            )
         }
     }
 }

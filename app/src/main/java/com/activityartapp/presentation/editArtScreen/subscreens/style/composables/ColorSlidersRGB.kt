@@ -34,6 +34,42 @@ fun ColorSlidersRGB(
                     onColorChanged(ColorType.RED, it)
                 }
             }
+        ),
+        TextFieldSliderSpecification(
+            enabled = enabled,
+            errorMessage = color.outOfBoundsGreen?.let {
+                stringResource(R.string.edit_art_style_color_too_large_error, 255)
+            },
+            keyboardType = KeyboardType.Number,
+            textFieldLabel = stringResource(R.string.edit_art_style_color_green),
+            sliderValue = color.green,
+            textFieldValue = color.outOfBoundsGreen?.times(255f)?.roundToInt()?.toString()
+                ?: color.greenAsEightBit.toString(),
+            sliderRange = ColorWrapper.VALUE_RANGE,
+            onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
+            onTextFieldChanged = { str ->
+                str.toFloatOrNull()?.div(255f)?.let {
+                    onColorChanged(ColorType.GREEN, it)
+                }
+            }
+        ),
+        TextFieldSliderSpecification(
+            enabled = enabled,
+            errorMessage = color.outOfBoundsBlue?.let {
+                stringResource(R.string.edit_art_style_color_too_large_error, 255)
+            },
+            keyboardType = KeyboardType.Number,
+            textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
+            sliderValue = color.blue,
+            textFieldValue = color.outOfBoundsBlue?.times(255f)?.roundToInt()?.toString()
+                ?: color.blueAsEightBit.toString(),
+            sliderRange = ColorWrapper.VALUE_RANGE,
+            onSliderChanged = { onColorChanged(ColorType.BLUE, it) },
+            onTextFieldChanged = { str ->
+                str.toFloatOrNull()?.div(255f)?.let {
+                    onColorChanged(ColorType.BLUE, it)
+                }
+            }
         )
     ))
 }
