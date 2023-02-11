@@ -582,24 +582,24 @@ class EditArtViewModel @Inject constructor(
     ): ColorWrapper {
         return when (colorType) {
             ALPHA -> copy(
-                alpha = changedTo.coerceIn(ColorWrapper.VALUE_RANGE),
+                alpha = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
                 outOfBoundsAlpha = changedTo
-                    .takeIf { !ColorWrapper.VALUE_RANGE.contains(it) }
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
             )
             BLUE -> copy(
-                blue = changedTo.coerceIn(ColorWrapper.VALUE_RANGE),
+                blue = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
                 outOfBoundsBlue = changedTo
-                    .takeIf { !ColorWrapper.VALUE_RANGE.contains(it) }
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
             )
             GREEN -> copy(
-                green = changedTo.coerceIn(ColorWrapper.VALUE_RANGE),
+                green = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
                 outOfBoundsGreen = changedTo
-                    .takeIf { !ColorWrapper.VALUE_RANGE.contains(it) }
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
             )
             RED -> copy(
-                red = changedTo.coerceIn(ColorWrapper.VALUE_RANGE),
+                red = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
                 outOfBoundsRed = changedTo
-                    .takeIf { !ColorWrapper.VALUE_RANGE.contains(it) }
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
             )
         }
     }

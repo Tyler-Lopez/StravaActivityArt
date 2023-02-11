@@ -20,54 +20,69 @@ fun ColorSlidersRGB(
         TextFieldSliderSpecification(
             enabled = enabled,
             errorMessage = color.outOfBoundsRed?.let {
-                stringResource(R.string.edit_art_style_color_too_large_error, 255)
+                stringResource(
+                    id = R.string.edit_art_style_color_too_large_error,
+                    ColorWrapper.EIGHT_BIT_RANGE.last
+                )
             },
             keyboardType = KeyboardType.Number,
             textFieldLabel = stringResource(R.string.edit_art_style_color_red),
             sliderValue = color.red,
-            textFieldValue = color.outOfBoundsRed?.times(255f)?.roundToInt()?.toString()
+            textFieldValue = color
+                .outOfBoundsRed
+                ?.let { ColorWrapper.ratioToEightBit(it).toString() }
                 ?: color.redAsEightBit.toString(),
-            sliderRange = ColorWrapper.VALUE_RANGE,
+            sliderRange = ColorWrapper.RATIO_RANGE,
             onSliderChanged = { onColorChanged(ColorType.RED, it) },
             onTextFieldChanged = { str ->
-                str.toFloatOrNull()?.div(255f)?.let {
-                    onColorChanged(ColorType.RED, it)
+                str.toIntOrNull()?.let {
+                    onColorChanged(ColorType.RED, ColorWrapper.eightBitToRatio(it))
                 }
             }
         ),
         TextFieldSliderSpecification(
             enabled = enabled,
             errorMessage = color.outOfBoundsGreen?.let {
-                stringResource(R.string.edit_art_style_color_too_large_error, 255)
+                stringResource(
+                    id = R.string.edit_art_style_color_too_large_error,
+                    ColorWrapper.EIGHT_BIT_RANGE.last
+                )
             },
             keyboardType = KeyboardType.Number,
             textFieldLabel = stringResource(R.string.edit_art_style_color_green),
             sliderValue = color.green,
-            textFieldValue = color.outOfBoundsGreen?.times(255f)?.roundToInt()?.toString()
+            textFieldValue = color
+                .outOfBoundsGreen
+                ?.let { ColorWrapper.ratioToEightBit(it).toString() }
                 ?: color.greenAsEightBit.toString(),
-            sliderRange = ColorWrapper.VALUE_RANGE,
+            sliderRange = ColorWrapper.RATIO_RANGE,
             onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
             onTextFieldChanged = { str ->
-                str.toFloatOrNull()?.div(255f)?.let {
-                    onColorChanged(ColorType.GREEN, it)
+                str.toIntOrNull()?.let {
+                    onColorChanged(ColorType.GREEN, ColorWrapper.eightBitToRatio(it))
                 }
             }
         ),
         TextFieldSliderSpecification(
             enabled = enabled,
             errorMessage = color.outOfBoundsBlue?.let {
-                stringResource(R.string.edit_art_style_color_too_large_error, 255)
+                stringResource(
+                    id = R.string.edit_art_style_color_too_large_error,
+                    ColorWrapper.EIGHT_BIT_RANGE.last
+                )
             },
             keyboardType = KeyboardType.Number,
             textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
             sliderValue = color.blue,
-            textFieldValue = color.outOfBoundsBlue?.times(255f)?.roundToInt()?.toString()
+            textFieldValue = color
+                .outOfBoundsBlue
+                ?.let { ColorWrapper.ratioToEightBit(it).toString() }
                 ?: color.blueAsEightBit.toString(),
-            sliderRange = ColorWrapper.VALUE_RANGE,
+            sliderRange = ColorWrapper.RATIO_RANGE,
             onSliderChanged = { onColorChanged(ColorType.BLUE, it) },
             onTextFieldChanged = { str ->
-                str.toFloatOrNull()?.div(255f)?.let {
-                    onColorChanged(ColorType.BLUE, it)
+                str.toIntOrNull()?.let {
+                    onColorChanged(ColorType.BLUE, ColorWrapper.eightBitToRatio(it))
                 }
             }
         )

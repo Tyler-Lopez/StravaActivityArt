@@ -296,22 +296,28 @@ data class ColorWrapper(
 ) : Parcelable {
 
     companion object {
-        private const val LIMIT_LOWER = 0f
-        private const val LIMIT_UPPER = 1f
-        private const val EIGHT_BIT_CHANNEL_LIMIT = 255
-        val VALUE_RANGE = LIMIT_LOWER..LIMIT_UPPER
+        private const val RATIO_LIMIT_LOWER = 0f
+        private const val RATIO_LIMIT_UPPER = 1f
+        private const val EIGHT_BIT_LIMIT_LOWER = 0
+        private const val EIGHT_BIT_LIMIT_UPPER = 255
+
+        fun ratioToEightBit(ratio: Float): Int {
+            return (ratio * EIGHT_BIT_LIMIT_UPPER).toInt()
+        }
+
+        fun eightBitToRatio(eightBit: Int): Float {
+            return (eightBit / EIGHT_BIT_LIMIT_UPPER.toFloat())
+        }
+
+        val RATIO_RANGE = RATIO_LIMIT_LOWER..RATIO_LIMIT_UPPER
+        val EIGHT_BIT_RANGE = EIGHT_BIT_LIMIT_LOWER..EIGHT_BIT_LIMIT_UPPER
     }
 
     val color get() = Color(red, green, blue, alpha)
-    val redAsEightBit get() = red.toEightBitRepresentation()
-    val greenAsEightBit get() = green.toEightBitRepresentation()
-    val blueAsEightBit get() = blue.toEightBitRepresentation()
-
-    private fun Float.toEightBitRepresentation(): Int {
-        return (this * EIGHT_BIT_CHANNEL_LIMIT).toInt()
-    }
+    val redAsEightBit get() = ratioToEightBit(red)
+    val greenAsEightBit get() = ratioToEightBit(green)
+    val blueAsEightBit get() = ratioToEightBit(blue)
 }
-
 
 sealed interface DateSelection : Parcelable {
 
