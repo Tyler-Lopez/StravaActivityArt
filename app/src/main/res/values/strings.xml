@@ -141,8 +141,8 @@
     <plurals name="edit_art_filters_activities_filtered">
         <!-- Android ignores 'zero' and this must be implemented programmatically -->
         <item quantity="zero">@string/edit_art_filters_activities_filtered_zero</item>
-        <item quantity="one">Includes %d activity</item>
-        <item quantity="other">Includes %d activities</item>
+        <item quantity="one">%d activity</item>
+        <item quantity="other">%d activities</item>
     </plurals>
 
     <string name="edit_art_filters_date_include_all">Include all activities</string>

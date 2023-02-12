@@ -1,6 +1,9 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.filters.composables
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,16 +30,25 @@ fun ColumnScope.FilterSection(
         description = description,
     ) {
         content()
-        Text(
-            text = count.takeIf { it > 0 }?.let {
-                pluralStringResource(
-                    id = R.plurals.edit_art_filters_activities_filtered,
-                    count = count,
-                    count
-                )
-            } ?: stringResource(id = R.string.edit_art_filters_activities_filtered_zero),
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colors.primary
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = count.takeIf { it > 0 }?.let {
+                    pluralStringResource(
+                        id = R.plurals.edit_art_filters_activities_filtered,
+                        count = count,
+                        count
+                    )
+                } ?: stringResource(id = R.string.edit_art_filters_activities_filtered_zero),
+                style = MaterialTheme.typography.caption,
+                color = if (count > 0) {
+                    MaterialTheme.colors.primary
+                } else {
+                    MaterialTheme.colors.error
+                }
+            )
+        }
     }
 }

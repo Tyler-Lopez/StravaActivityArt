@@ -20,6 +20,8 @@ fun ColumnScope.EditArtFiltersScreen(
     filterDateSelectionIndex: Int,
     distanceSelected: ClosedFloatingPointRange<Double>?,
     distanceTotal: ClosedFloatingPointRange<Double>?,
+    distancePendingChangeStart: String?,
+    distancePendingChangeEnd: String?,
     typesWithSelectedFlag: List<Pair<String, Boolean>>?,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
@@ -43,6 +45,8 @@ fun ColumnScope.EditArtFiltersScreen(
                     count = activitiesCountDistance,
                     distanceSelected = distanceSelected,
                     distanceTotal = distanceTotal,
+                    distancePendingChangeStart = distancePendingChangeStart,
+                    distancePendingChangeEnd = distancePendingChangeEnd,
                     eventReceiver = eventReceiver
                 )
             }

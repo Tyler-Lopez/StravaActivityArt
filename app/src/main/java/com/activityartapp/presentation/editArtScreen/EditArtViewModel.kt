@@ -221,6 +221,7 @@ class EditArtViewModel @Inject constructor(
             is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
             is DialogDismissed -> onDialogDismissed()
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
+            is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
             is PageHeaderClicked -> onPageHeaderClicked(event)
@@ -260,6 +261,9 @@ class EditArtViewModel @Inject constructor(
             is FilterChanged.FilterDateSelectionChanged -> onFilterDateSelectionChanged(event)
             is FilterChanged.FilterDateCustomChanged -> onFilterDateCustomChanged(event)
             is FilterChanged.FilterDistanceChanged -> onFilterDistanceChanged(event)
+            is FilterChanged.FilterDistancePendingChangeConfirmed -> onFilterDistancePendingChangeConfirmed(
+                event
+            )
             is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
         }
 
@@ -343,9 +347,71 @@ class EditArtViewModel @Inject constructor(
         copyLastState {
             copy(
                 filterDistanceSelectedStart = event.changedTo.start,
-                filterDistanceSelectedEnd = event.changedTo.endInclusive
+                filterDistanceSelectedEnd = event.changedTo.endInclusive,
+                filterDistancePendingChangeStart = null,
+                filterDistancePendingChangeEnd = null
             )
         }.push()
+    }
+
+    private fun onFilterDistancePendingChange(event: FilterDistancePendingChange) {
+        pushStateCopy {
+            if (event is FilterDistancePendingChange.FilterDistancePendingChangeShortest) {
+                copy(filterDistancePendingChangeStart = event.changedTo)
+            } else {
+                copy(filterDistancePendingChangeEnd = event.changedTo)
+            }
+        }
+    }
+
+    private fun onFilterDistancePendingChangeConfirmed(event: FilterChanged.FilterDistancePendingChangeConfirmed) {
+        pushStateCopy {
+            val pendingChange =
+                if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
+                    filterDistancePendingChangeStart
+                } else {
+                    filterDistancePendingChangeEnd
+                }
+
+            val parsedValue = pendingChange
+                // Keeps only the first occurrence of a decimal
+                ?.fold(StringBuilder()) { total, new ->
+                    if (new == '.' && total.contains('.')) {
+                        total
+                    } else {
+                        total.append(new)
+                    }
+                }
+                ?.toString()
+                ?.toDoubleOrNull()
+                ?.milesToMeters()
+
+            if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
+
+                val finalValue =
+                    filterDistanceSelectedEnd ?: filterDistanceTotalEnd ?: Double.MAX_VALUE
+                val changedTo = parsedValue
+                    ?.coerceIn((filterDistanceTotalStart ?: 0.0).rangeTo(finalValue))
+
+                copy(
+                    filterDistanceSelectedStart = changedTo ?: filterDistanceSelectedStart,
+                    filterDistanceSelectedEnd = filterDistanceSelectedEnd ?: filterDistanceTotalEnd,
+                    filterDistancePendingChangeStart = null
+                )
+            } else {
+                val valueStart =
+                    filterDistanceSelectedStart ?: filterDistanceTotalStart ?: 0.0
+                val changedTo = parsedValue
+                    ?.coerceIn(valueStart.rangeTo(filterDistanceTotalEnd ?: Double.MAX_VALUE))
+
+                copy(
+                    filterDistanceSelectedStart = filterDistanceSelectedStart
+                        ?: filterDistanceTotalStart,
+                    filterDistanceSelectedEnd = changedTo ?: filterDistanceSelectedEnd,
+                    filterDistancePendingChangeEnd = null
+                )
+            }
+        }
     }
 
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
@@ -677,6 +743,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
+    private fun Double.milesToMeters(): Double = this / 0.000621371192
 
     private val state: Standby? get() = lastPushedState as? Standby
 }

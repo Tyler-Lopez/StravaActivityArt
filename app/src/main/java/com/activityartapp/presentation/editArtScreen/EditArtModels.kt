@@ -9,6 +9,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -33,6 +34,16 @@ sealed interface EditArtViewEvent : ViewEvent {
     object ClickedInfoTransparentBackground : EditArtViewEvent
     object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
+    sealed interface FilterDistancePendingChange : EditArtViewEvent {
+        val changedTo: String
+
+        data class FilterDistancePendingChangeShortest(override val changedTo: String) :
+            FilterDistancePendingChange
+
+        data class FilterDistancePendingChangeLongest(override val changedTo: String) :
+            FilterDistancePendingChange
+    }
+
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
@@ -63,6 +74,17 @@ sealed interface EditArtViewEvent : ViewEvent {
                 FilterChanged {
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.DISTANCE
+            }
+
+            sealed interface FilterDistancePendingChangeConfirmed : FilterChanged {
+                object StartConfirmed : FilterDistancePendingChangeConfirmed {
+                    override val filterType: EditArtFilterType
+                        get() = EditArtFilterType.DISTANCE
+                }
+                object EndConfirmed : FilterDistancePendingChangeConfirmed {
+                    override val filterType: EditArtFilterType
+                        get() = EditArtFilterType.DISTANCE
+                }
             }
 
             data class FilterTypeToggled(val type: String) : FilterChanged {
@@ -155,6 +177,8 @@ sealed interface EditArtViewState : ViewState {
         val filterDistanceSelectedEnd: Double? = null,
         val filterDistanceTotalStart: Double? = null,
         val filterDistanceTotalEnd: Double? = null,
+        @IgnoredOnParcel val filterDistancePendingChangeStart: String? = null,
+        @IgnoredOnParcel val filterDistancePendingChangeEnd: String? = null,
         val filterTypes: Map<String, Boolean>? = null,
         @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
