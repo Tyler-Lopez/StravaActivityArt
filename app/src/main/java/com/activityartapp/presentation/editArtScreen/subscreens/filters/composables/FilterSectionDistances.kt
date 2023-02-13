@@ -1,23 +1,30 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.filters.composables
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import android.util.MutableInt
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.button.ButtonEmphasis
+import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.textField.MediumEmphasisTextField
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.FilterDistancePendingChange
@@ -34,6 +41,7 @@ fun ColumnScope.FilterSectionDistances(
     distanceTotal: ClosedFloatingPointRange<Double>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
+    val focus = LocalFocusManager.current
     val adjDistanceSelected = distanceSelected?.run {
         start.toFloat()..endInclusive.toFloat()
     }
@@ -45,121 +53,71 @@ fun ColumnScope.FilterSectionDistances(
         description = stringResource(R.string.edit_art_filters_distance_description),
     ) {
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spacing.small)
+        ) {
             val range = (distanceSelected ?: distanceTotal)
-            OutlinedTextField(
-                value = distancePendingChangeStart ?: "%.2f".format(range.start.meterToMiles()),
-                onValueChange = { str ->
+            DistanceTextField(
+                textFieldValue = distancePendingChangeStart
+                    ?: "%.2f".format(range.start.meterToMiles()),
+                labelString = stringResource(R.string.edit_art_filters_distance_label_shortest),
+                onDone = {
+                    eventReceiver.onEvent(
+                        event = FilterDistancePendingChangeConfirmed.StartConfirmed
+                    )
+                    focus.clearFocus()
+                },
+                onValueChanged = { str ->
                     eventReceiver.onEvent(
                         event = FilterDistancePendingChange.FilterDistancePendingChangeShortest(
                             changedTo = str
                         )
                     )
-                },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        eventReceiver.onEvent(
-                            event = FilterDistancePendingChangeConfirmed.StartConfirmed
-                        )
-                    }
-                ),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Done
-                ),
-                label = {
-                    Text(
-                        text = "SHORTEST",
-                        style = MaterialTheme.typography.overline
-                    )
-                },
-                modifier = Modifier
-                    .weight(1f, false),
-                trailingIcon = {
-                    Text(
-                        text = "MI",
-                        style = MaterialTheme.typography.subtitle2
-                    )
                 }
             )
-            OutlinedTextField(
-                value = distancePendingChangeEnd ?: "%.2f".format(range.endInclusive.meterToMiles()),
-                onValueChange = { str ->
+            DistanceTextField(
+                textFieldValue = distancePendingChangeEnd
+                    ?: "%.2f".format(range.endInclusive.meterToMiles()),
+                labelString = stringResource(R.string.edit_art_filters_distance_label_shortest),
+                onDone = {
+                    eventReceiver.onEvent(
+                        event = FilterDistancePendingChangeConfirmed.EndConfirmed
+                    )
+                    focus.clearFocus()
+                },
+                onValueChanged = { str ->
                     eventReceiver.onEvent(
                         event = FilterDistancePendingChange.FilterDistancePendingChangeLongest(
                             changedTo = str
                         )
                     )
-                },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        eventReceiver.onEvent(
-                            event = FilterDistancePendingChangeConfirmed.EndConfirmed
-                        )
-                    }
-                ),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Done
-                ),
-                label = {
-                    Text(
-                        text = "LONGEST",
-                        style = MaterialTheme.typography.overline
-                    )
-                },
-                modifier = Modifier
-                    .weight(1f, false),
-                trailingIcon = {
-                    Text(
-                        text = "MI",
-                        style = MaterialTheme.typography.subtitle2
-                    )
                 }
             )
-            /*
-            OutlinedTextField(
-                value = "%.2f".format(it.endInclusive.meterToMiles()),
-                modifier = Modifier.weight(1f, false),
-                onValueChange = { str ->
-                    eventReceiver.onEvent(
-                        EditArtViewEvent.ArtMutatingEvent.FilterChanged.FilterDistanceChanged(
-                            it.run { start..str.toDouble().coerceAtLeast(start) }
-                        )
-                    )
-                },
-                label = {
-                    Text(
-                        text = "LONGEST",
-                        style = MaterialTheme.typography.overline
-                    )
-                },
-                trailingIcon = {
-                    Text(
-                        text = "MI",
-                        style = MaterialTheme.typography.subtitle2
-                    )
+        }
+        if (distancePendingChangeStart != null || distancePendingChangeEnd != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.small, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.edit_art_filters_distance_pending_change_prompt),
+                    modifier = Modifier.weight(1f, false),
+                    style = MaterialTheme.typography.caption
+                )
+                com.activityartapp.presentation.common.button.Button(
+                    emphasis = ButtonEmphasis.MEDIUM,
+                    size = ButtonSize.SMALL,
+                    text = stringResource(R.string.edit_art_filters_distance_pending_change_prompt_accept),
+                ) {
+                    listOf(
+                        FilterDistancePendingChangeConfirmed.StartConfirmed,
+                        FilterDistancePendingChangeConfirmed.EndConfirmed
+                    ).forEach { eventReceiver.onEvent(it) }
                 }
-            )
-
-             */
-            /*
-            MediumEmphasisTextField(
-                modifier = Modifier.weight(1f, false),
-                text = "%.2f".format(it.start.meterToMiles()) + " mi",
-                label = "Shortest"
-            ) {
-
             }
-            MediumEmphasisTextField(
-                modifier = Modifier.weight(1f, false),
-                text = "%.2f".format(it.endInclusive.meterToMiles()) + " mi",
-                label = "Longest"
-            ) {
-
-            }
-
-             */
         }
         RangeSlider(
             value = adjDistanceSelected ?: adjDistanceTotal,
@@ -173,5 +131,42 @@ fun ColumnScope.FilterSectionDistances(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun RowScope.DistanceTextField(
+    textFieldValue: String,
+    labelString: String,
+    onDone: () -> Unit,
+    onValueChanged: (String) -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    BasicTextField(
+        value = textFieldValue,
+        onValueChange = onValueChanged,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Done
+        ),
+        modifier = Modifier.weight(1f, true),
+        keyboardActions = KeyboardActions(onDone = { onDone() }),
+        interactionSource = interactionSource,
+        decorationBox = {
+            TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                value = textFieldValue,
+                visualTransformation = VisualTransformation.None,
+                innerTextField = it,
+                singleLine = true,
+                enabled = true,
+                label = {
+                    Text(
+                        text = labelString,
+                        style = MaterialTheme.typography.overline
+                    )
+                },
+                interactionSource = interactionSource,
+            )
+        }
+    )
+}
+
 private fun Double.meterToMiles(): Double = this * 0.000621371192
-private fun Double.milesToMeters(): Double = this / 0.000621371192

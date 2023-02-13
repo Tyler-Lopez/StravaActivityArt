@@ -163,7 +163,11 @@
     <string name="edit_art_filters_distance_description">
         Choose a distance filter to view only activities with a total distance within your selected range.
     </string>
-
+    <string name="edit_art_filters_distance_label_shortest">SHORTEST</string>
+    <string name="edit_art_filters_distance_label_longest">LONGEST</string>
+    <string name="edit_art_filters_distance_label_miles">MI</string>
+    <string name="edit_art_filters_distance_pending_change_prompt">Do you want to apply the new distances you input?</string>
+    <string name="edit_art_filters_distance_pending_change_prompt_accept">Apply</string>
     <string name="edit_art_style_background_type_header">Background Type</string>
     <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
     <string name="edit_art_style_background_type_transparent">Transparent</string>
