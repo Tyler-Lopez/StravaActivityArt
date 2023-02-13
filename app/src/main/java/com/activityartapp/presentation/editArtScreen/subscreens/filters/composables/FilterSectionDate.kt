@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
@@ -110,7 +111,8 @@ fun ColumnScope.FilterSectionDate(
                             selection.apply {
                                 Button(
                                     emphasis = ButtonEmphasis.MEDIUM,
-                                    //   label = stringResource(R.string.edit_art_filters_date_start),
+                                    modifier = Modifier.weight(1f, true),
+                                    labelText = stringResource(R.string.edit_art_filters_date_start),
                                     size = ButtonSize.LARGE,
                                     enabled = enabled,
                                     text = ymdSelectedStart.toString()
@@ -119,7 +121,8 @@ fun ColumnScope.FilterSectionDate(
                                 }
                                 Button(
                                     emphasis = ButtonEmphasis.MEDIUM,
-                                  //  label = stringResource(R.string.edit_art_filters_date_end),
+                                    modifier = Modifier.weight(1f, true),
+                                    labelText = stringResource(R.string.edit_art_filters_date_end),
                                     size = ButtonSize.LARGE,
                                     enabled = enabled,
                                     text = ymdSelectedEnd.toString()

@@ -151,8 +151,8 @@
     <string name="edit_art_filters_date_description">
         Select a time filter to view only activities that took place before or after a specific time frame.
     </string>
-    <string name="edit_art_filters_date_start">Start</string>
-    <string name="edit_art_filters_date_end">End</string>
+    <string name="edit_art_filters_date_start">START</string>
+    <string name="edit_art_filters_date_end">END</string>
 
     <string name="edit_art_filters_activity_type_header">Activity Type</string>
     <string name="edit_art_filters_activity_type_description">
