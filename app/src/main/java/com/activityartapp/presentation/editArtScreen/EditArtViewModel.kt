@@ -156,6 +156,8 @@ class EditArtViewModel @Inject constructor(
                         adjStart..adjEnd
                     }
                     copy(
+                        filterDistancePendingChangeStart = null,
+                        filterDistancePendingChangeEnd = null,
                         filterDistanceSelectedStart = newRangeSelected?.start,
                         filterDistanceSelectedEnd = newRangeSelected?.endInclusive,
                         filterDistanceTotalStart = newRangeTotal?.start,
