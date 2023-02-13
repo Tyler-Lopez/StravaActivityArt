@@ -2,7 +2,6 @@ package com.activityartapp.presentation.editArtScreen.subscreens.filters.composa
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -103,7 +102,6 @@ fun ColumnScope.FilterSectionDate(
                 },
                 content = {
                     if (selection is DateSelection.Custom) {
-                        val enabled = index == dateSelectionSelectedIndex
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(spacing.small),
                             verticalAlignment = Alignment.CenterVertically
@@ -114,7 +112,6 @@ fun ColumnScope.FilterSectionDate(
                                     modifier = Modifier.weight(1f, true),
                                     labelText = stringResource(R.string.edit_art_filters_date_start),
                                     size = ButtonSize.LARGE,
-                                    enabled = enabled,
                                     text = ymdSelectedStart.toString()
                                 ) {
                                     startDialog.show()
@@ -124,7 +121,6 @@ fun ColumnScope.FilterSectionDate(
                                     modifier = Modifier.weight(1f, true),
                                     labelText = stringResource(R.string.edit_art_filters_date_end),
                                     size = ButtonSize.LARGE,
-                                    enabled = enabled,
                                     text = ymdSelectedEnd.toString()
                                 ) {
                                     endDialog.show()
