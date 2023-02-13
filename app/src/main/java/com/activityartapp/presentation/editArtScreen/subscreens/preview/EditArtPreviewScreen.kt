@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.common.button.Button
 import com.activityartapp.presentation.common.button.ButtonEmphasis
@@ -28,15 +29,11 @@ fun EditArtPreview(
     ScreenBackground {
 
         if (!atLeastOneActivitySelected) {
-            Text(
-                text = stringResource(R.string.edit_art_preview_activities_zero_count_header),
-                style = MaterialTheme.typography.h3
+            ErrorComposable(
+                header = "No Activities",
+                description = stringResource(R.string.edit_art_preview_activities_zero_count_header),
+                prompt = stringResource(R.string.edit_art_preview_activities_zero_count_description)
             )
-            Text(
-                text = stringResource(R.string.edit_art_preview_activities_zero_count_description),
-                style = MaterialTheme.typography.subtitle1
-            )
-
         } else {
             bitmap?.let {
                 Image(
