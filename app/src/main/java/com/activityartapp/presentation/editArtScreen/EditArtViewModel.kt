@@ -156,6 +156,8 @@ class EditArtViewModel @Inject constructor(
                         adjStart..adjEnd
                     }
                     copy(
+                        filterDistancePendingChangeStart = null,
+                        filterDistancePendingChangeEnd = null,
                         filterDistanceSelectedStart = newRangeSelected?.start,
                         filterDistanceSelectedEnd = newRangeSelected?.endInclusive,
                         filterDistanceTotalStart = newRangeTotal?.start,
@@ -221,9 +223,9 @@ class EditArtViewModel @Inject constructor(
             is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
             is DialogDismissed -> onDialogDismissed()
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
+            is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
-            is SizeCustomChanged -> onSizeCustomChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
         }
     }
@@ -232,7 +234,7 @@ class EditArtViewModel @Inject constructor(
         when (event) {
             is FilterChanged -> onFilterChangeEvent(event)
             is SizeChanged -> onSizeChanged(event)
-            is SizeCustomChangeDone -> onSizeCustomChangeDone()
+            is SizeCustomChanged -> onSizeCustomChanged(event)
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
@@ -261,6 +263,9 @@ class EditArtViewModel @Inject constructor(
             is FilterChanged.FilterDateSelectionChanged -> onFilterDateSelectionChanged(event)
             is FilterChanged.FilterDateCustomChanged -> onFilterDateCustomChanged(event)
             is FilterChanged.FilterDistanceChanged -> onFilterDistanceChanged(event)
+            is FilterChanged.FilterDistancePendingChangeConfirmed -> onFilterDistancePendingChangeConfirmed(
+                event
+            )
             is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
         }
 
@@ -309,7 +314,7 @@ class EditArtViewModel @Inject constructor(
         withLastState {
             val replacementCustom: DateSelection.Custom =
                 (filterDateSelections
-                    ?.get(filterDateSelectionIndex) as? DateSelection.Custom
+                    ?.firstOrNull { it is DateSelection.Custom } as? DateSelection.Custom
                     ?: error("ApiError retrieving DateSelection as Custom from selected index."))
                     .run {
                         copy(
@@ -332,10 +337,12 @@ class EditArtViewModel @Inject constructor(
                         )
                     }
 
+            val customIndex = filterDateSelections.indexOfFirst { it is DateSelection.Custom }
             copy(
+                filterDateSelectionIndex = customIndex,
                 filterDateSelections = filterDateSelections
                     .toMutableList()
-                    .apply { set(filterDateSelectionIndex, replacementCustom) }
+                    .apply { set(customIndex, replacementCustom) }
             ).push()
         }
     }
@@ -344,9 +351,71 @@ class EditArtViewModel @Inject constructor(
         copyLastState {
             copy(
                 filterDistanceSelectedStart = event.changedTo.start,
-                filterDistanceSelectedEnd = event.changedTo.endInclusive
+                filterDistanceSelectedEnd = event.changedTo.endInclusive,
+                filterDistancePendingChangeStart = null,
+                filterDistancePendingChangeEnd = null
             )
         }.push()
+    }
+
+    private fun onFilterDistancePendingChange(event: FilterDistancePendingChange) {
+        pushStateCopy {
+            if (event is FilterDistancePendingChange.FilterDistancePendingChangeShortest) {
+                copy(filterDistancePendingChangeStart = event.changedTo)
+            } else {
+                copy(filterDistancePendingChangeEnd = event.changedTo)
+            }
+        }
+    }
+
+    private fun onFilterDistancePendingChangeConfirmed(event: FilterChanged.FilterDistancePendingChangeConfirmed) {
+        pushStateCopy {
+            val pendingChange =
+                if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
+                    filterDistancePendingChangeStart
+                } else {
+                    filterDistancePendingChangeEnd
+                }
+
+            val parsedValue = pendingChange
+                // Keeps only the first occurrence of a decimal
+                ?.fold(StringBuilder()) { total, new ->
+                    if (new == '.' && total.contains('.')) {
+                        total
+                    } else {
+                        total.append(new)
+                    }
+                }
+                ?.toString()
+                ?.toDoubleOrNull()
+                ?.milesToMeters()
+
+            if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
+
+                val finalValue =
+                    filterDistanceSelectedEnd ?: filterDistanceTotalEnd ?: Double.MAX_VALUE
+                val changedTo = parsedValue
+                    ?.coerceIn((filterDistanceTotalStart ?: 0.0).rangeTo(finalValue))
+
+                copy(
+                    filterDistanceSelectedStart = changedTo ?: filterDistanceSelectedStart,
+                    filterDistanceSelectedEnd = filterDistanceSelectedEnd ?: filterDistanceTotalEnd,
+                    filterDistancePendingChangeStart = null
+                )
+            } else {
+                val valueStart =
+                    filterDistanceSelectedStart ?: filterDistanceTotalStart ?: 0.0
+                val changedTo = parsedValue
+                    ?.coerceIn(valueStart.rangeTo(filterDistanceTotalEnd ?: Double.MAX_VALUE))
+
+                copy(
+                    filterDistanceSelectedStart = filterDistanceSelectedStart
+                        ?: filterDistanceTotalStart,
+                    filterDistanceSelectedEnd = changedTo ?: filterDistanceSelectedEnd,
+                    filterDistancePendingChangeEnd = null
+                )
+            }
+        }
     }
 
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
@@ -415,21 +484,30 @@ class EditArtViewModel @Inject constructor(
         }.push()
     }
 
-    private fun onSizeCustomChangeDone() {
-        // No-op, this event is necessary as it is Art Mutating where SizeCustomChanged is not.
-    }
-
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
         copyLastState {
+            val customRange = sizeCustomMinPx..sizeCustomMaxPx
             copy(
+                sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
+                sizeCustomOutOfBoundsWidth = if (event is SizeCustomChanged.WidthChanged) {
+                    event.changedToPx.takeIf { it !in customRange }
+                } else {
+                    sizeCustomOutOfBoundsWidth
+                },
+                sizeCustomOutOfBoundsHeight = if (event is SizeCustomChanged.HeightChanged) {
+                    event.changedToPx.takeIf { it !in customRange }
+                } else {
+                    sizeCustomOutOfBoundsHeight
+                },
                 sizeResolutionList = sizeResolutionList
                     .toMutableList()
                     .apply {
                         val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
                         set(tarIndex, get(tarIndex).run {
+                            val adjPx = event.changedToPx.coerceIn(customRange)
                             Resolution.CustomResolution(
-                                widthPx = if (event is SizeCustomChanged.WidthChanged) event.changedToPx else widthPx,
-                                heightPx = if (event is SizeCustomChanged.HeightChanged) event.changedToPx else heightPx
+                                widthPx = if (event is SizeCustomChanged.WidthChanged) adjPx else widthPx,
+                                heightPx = if (event is SizeCustomChanged.HeightChanged) adjPx else heightPx
                             )
                         })
                     }
@@ -574,10 +652,26 @@ class EditArtViewModel @Inject constructor(
         changedTo: Float
     ): ColorWrapper {
         return when (colorType) {
-            ALPHA -> copy(alpha = changedTo)
-            BLUE -> copy(blue = changedTo)
-            GREEN -> copy(green = changedTo)
-            RED -> copy(red = changedTo)
+            ALPHA -> copy(
+                alpha = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
+                outOfBoundsAlpha = changedTo
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
+            )
+            BLUE -> copy(
+                blue = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
+                outOfBoundsBlue = changedTo
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
+            )
+            GREEN -> copy(
+                green = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
+                outOfBoundsGreen = changedTo
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
+            )
+            RED -> copy(
+                red = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
+                outOfBoundsRed = changedTo
+                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
+            )
         }
     }
 
@@ -654,6 +748,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
+    private fun Double.milesToMeters(): Double = this / 0.000621371192
 
     private val state: Standby? get() = lastPushedState as? Standby
 }

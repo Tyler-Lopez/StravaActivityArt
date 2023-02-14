@@ -5,6 +5,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -16,12 +20,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
+import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ConnectWithStravaButton
-import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.common.ScreenBackground
-import com.activityartapp.presentation.ui.theme.StravaOrange
+import com.activityartapp.presentation.ui.theme.spacing
+import com.google.maps.android.data.Feature
 
 /**
  * When the athlete is determined as unauthenticated,
@@ -43,109 +48,92 @@ fun LoginScreen(viewModel: LoginViewModel) {
             .collect { orientation = it }
     }
 
-    when (orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            LandscapeContent(viewModel)
-        }
-        else -> {
-            PortraitContent(viewModel)
-        }
-    }
-}
-
-
-@Composable
-fun LandscapeContent(viewModel: LoginViewModel) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f, false)
-        ) {
-            Image(
-                painterResource(R.drawable.display_image),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                alignment = Alignment.Center,
-                contentDescription = stringResource(R.string.content_description_feature_graphic)
-            )
-        }
-        Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(1.dp)
-                .background(StravaOrange)
-        )
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_activity_art_logo),
-                contentDescription = stringResource(R.string.app_logo_content_description)
-            )
-            Subhead(
-                text = stringResource(id = R.string.app_description),
-                modifier = Modifier.sizeIn(maxWidth = 254.dp)
-            )
-            ConnectWithStravaButton {
-                viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)
+    Surface {
+        when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    Content(
+                        imageBoxModifier = Modifier.weight(1f, false),
+                        isLandscape = true,
+                        viewModel = viewModel
+                    )
+                }
+            }
+            else -> {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Content(
+                        imageBoxModifier = Modifier.weight(1f, false),
+                        isLandscape = false,
+                        viewModel = viewModel
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun PortraitContent(viewModel: LoginViewModel) {
+private fun FeatureGraphic() {
+    Image(
+        painterResource(R.drawable.display_image),
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
+        alignment = Alignment.Center,
+        contentDescription = stringResource(R.string.content_description_feature_graphic)
+    )
+}
+
+@Composable
+private fun ConnectWithStravaSection(
+    viewModel: EventReceiver<LoginViewEvent>
+) {
+    Image(
+        painter = painterResource(id = R.drawable.ic_activity_art_logo),
+        contentDescription = stringResource(R.string.app_logo_content_description)
+    )
+    Text(
+        text = stringResource(id = R.string.app_description),
+        modifier = Modifier.sizeIn(maxWidth = 254.dp),
+        style = MaterialTheme.typography.body1,
+        textAlign = TextAlign.Center
+    )
+    ConnectWithStravaButton {
+        viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)
+    }
+}
+
+
+@Composable
+private fun Content(
+    imageBoxModifier: Modifier,
+    isLandscape: Boolean,
+    viewModel: LoginViewModel
+) {
+    Box(modifier = imageBoxModifier) {
+        FeatureGraphic()
+    }
+    Spacer(modifier = Modifier
+        .run {
+            if (isLandscape) {
+                width(1.dp).fillMaxHeight()
+            } else {
+                height(1.dp).fillMaxWidth()
+            }
+        }
+        .background(MaterialTheme.colors.primary))
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
+            .padding(spacing.medium)
+            .run {
+                if (isLandscape) {
+                    fillMaxHeight()
+                } else {
+                    fillMaxWidth()
+                }
+            },
+        verticalArrangement = Arrangement.spacedBy(spacing.medium, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .weight(1f, false)
-        ) {
-            Image(
-                painterResource(R.drawable.display_image),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                alignment = Alignment.BottomCenter,
-                contentDescription = stringResource(R.string.content_description_feature_graphic)
-            )
-        }
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(StravaOrange)
-        )
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_activity_art_logo),
-                contentDescription = stringResource(R.string.app_logo_content_description)
-            )
-            Subhead(
-                text = stringResource(id = R.string.app_description),
-                modifier = Modifier.sizeIn(maxWidth = 254.dp)
-            )
-            ConnectWithStravaButton {
-                viewModel.onEvent(LoginViewEvent.ConnectWithStravaClicked)
-            }
-        }
+        ConnectWithStravaSection(viewModel = viewModel)
     }
 }

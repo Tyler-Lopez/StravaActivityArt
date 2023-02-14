@@ -46,6 +46,8 @@
         <item quantity="one">%d Activity Loaded</item>
         <item quantity="other">%d Activities Loaded</item>
     </plurals>
+    <string name="loading_activities_description">We\'re getting your activities from Strava</string>
+    <string name="loaded_activities_description">Let\'s start making Activity Art!</string>
     <string name="loading_activities_error_header">Oops! An Error Occurred</string>
     <!-- If there was no internet connection while loading activities, present the user a prompt
     depending on how many activities were loaded to either continue with the partial load or to retry -->
@@ -139,29 +141,33 @@
     <plurals name="edit_art_filters_activities_filtered">
         <!-- Android ignores 'zero' and this must be implemented programmatically -->
         <item quantity="zero">@string/edit_art_filters_activities_filtered_zero</item>
-        <item quantity="one">Includes %d activity</item>
-        <item quantity="other">Includes %d activities</item>
+        <item quantity="one">%d activity</item>
+        <item quantity="other">%d activities</item>
     </plurals>
 
     <string name="edit_art_filters_date_include_all">Include all activities</string>
     <string name="edit_art_filters_date_custom_range">Choose a custom date range</string>
     <string name="edit_art_filters_date_header">Date</string>
     <string name="edit_art_filters_date_description">
-        Which window of time should activities be selected from?
+        Select a time filter to view only activities that took place before or after a specific time frame.
     </string>
-    <string name="edit_art_filters_date_start">Start</string>
-    <string name="edit_art_filters_date_end">End</string>
+    <string name="edit_art_filters_date_start">START</string>
+    <string name="edit_art_filters_date_end">END</string>
 
     <string name="edit_art_filters_activity_type_header">Activity Type</string>
     <string name="edit_art_filters_activity_type_description">
-        Which types of activities should be used?
+        Which types of activities do you want to use to make art with?
     </string>
 
     <string name="edit_art_filters_distance_header">Distance</string>
     <string name="edit_art_filters_distance_description">
-        Which range of distances should be used?
+        Choose a distance filter to view only activities with a total distance within your selected range.
     </string>
-
+    <string name="edit_art_filters_distance_label_shortest">SHORTEST</string>
+    <string name="edit_art_filters_distance_label_longest">LONGEST</string>
+    <string name="edit_art_filters_distance_label_miles">MI</string>
+    <string name="edit_art_filters_distance_pending_change_prompt">Do you want to apply the new distances you input?</string>
+    <string name="edit_art_filters_distance_pending_change_prompt_accept">Apply</string>
     <string name="edit_art_style_background_type_header">Background Type</string>
     <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
     <string name="edit_art_style_background_type_transparent">Transparent</string>
@@ -174,9 +180,11 @@
     <string name="edit_art_style_font_description">What color should any text be?</string>
     <string name="edit_art_style_font_use_activities">Use the same color as your activities</string>
     <string name="edit_art_style_font_use_custom">Choose a different color</string>
-    <string name="edit_art_style_color_red">Red: %d</string>
-    <string name="edit_art_style_color_green">Green: %d</string>
-    <string name="edit_art_style_color_blue">Blue: %d</string>
+    <string name="edit_art_style_color_red">RED</string>
+    <string name="edit_art_style_color_green">GREEN</string>
+    <string name="edit_art_style_color_blue">BLUE</string>
+    <string name="edit_art_style_color_alpha">ALPHA</string>
+    <string name="edit_art_style_color_too_large_error">Oops - that\'s too large! We\'ll use %d instead.</string>
     <string name="edit_art_style_stroke_width_header">Activity Thickness</string>
     <string name="edit_art_style_stroke_width_description">
         How thick should the lines of each activity be?
@@ -240,16 +248,23 @@
     <string name="edit_art_resize_option_computer_ultra_wide_wallpaper">Computer Ultra-wide Wallpaper</string>
     <string name="edit_art_resize_option_print">%d%s x %d%s Print</string>
     <string name="edit_art_resize_option_custom">Use Custom Resolution</string>
-    <string name="edit_art_resize_pixels_height">Height: %d pixels</string>
-    <string name="edit_art_resize_pixels_width">Width: %d pixels</string>
+    <string name="edit_art_resize_pixels_width">WIDTH</string>
+    <string name="edit_art_resize_pixels_height">HEIGHT</string>
     <string name="edit_art_resize_pixels_placeholder">%d x %d pixels</string>
+    <string name="edit_art_resize_pixels_custom_too_small_error">Oops - that\'s too small! We\'ll use %d instead.</string>
+    <string name="edit_art_resize_pixels_custom_too_large_error">Oops - that\'s too large! We\'ll use %d instead.</string>
+    <string name="edit_art_resize_rotate_right_content_description">Rotate Right</string>
     <string-array name="edit_art_dialog_info_background_checkered">
         <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
     </string-array>
     <string-array name="edit_art_dialog_info_background_transparent">
-        <item>A transparent background is like having no background at all.</item>
-        <item>If you want to print your art on something (like a t-shirt), a transparent background can be a great option!</item>
+        <item>Have you tried making art with a transparent background? It\'s like making your art a
+        sticker on a clear window.
+        </item>
+        <item>You can place art with a transparent background on top of other images, clothing, and
+        more! It makes it appear as though it\'s a part of them.
+        </item>
     </string-array>
     <string name="edit_art_dialog_info_dismiss">@android:string/ok</string>
     <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>

@@ -14,6 +14,7 @@ sealed interface LoadActivitiesViewEvent : ViewEvent {
 sealed interface LoadActivitiesViewState : ViewState {
     val totalActivitiesLoaded: Int
 
+    data class Loaded(override val totalActivitiesLoaded: Int) : LoadActivitiesViewState
     data class Loading(override val totalActivitiesLoaded: Int = 0) : LoadActivitiesViewState
 
     data class ErrorApi(

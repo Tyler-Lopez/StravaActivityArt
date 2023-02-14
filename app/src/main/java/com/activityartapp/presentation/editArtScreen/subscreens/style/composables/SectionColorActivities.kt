@@ -10,7 +10,7 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatin
 import com.activityartapp.presentation.editArtScreen.composables.Section
 
 @Composable
-fun ColumnScope.SectionColorActivities(
+fun SectionColorActivities(
     color: ColorWrapper,
     onColorChanged: (StyleColorActivitiesChanged) -> Unit
 ) {
@@ -19,11 +19,11 @@ fun ColumnScope.SectionColorActivities(
         description = stringResource(R.string.edit_art_style_activities_description)
     ) {
         ColorPreview(colorWrapper = color)
-        ColorSlidersRGB(color = color, enabled = true) {
+        ColorSlidersRGB(color = color, enabled = true) { colorType, changedTo ->
             onColorChanged(
                 StyleColorActivitiesChanged(
-                    colorType = it.first,
-                    changedTo = it.second
+                    colorType = colorType,
+                    changedTo = changedTo
                 )
             )
         }

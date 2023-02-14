@@ -2,26 +2,20 @@ package com.activityartapp.presentation.editArtScreen.subscreens.filters.composa
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.RadioButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.button.Button
+import com.activityartapp.presentation.common.button.ButtonEmphasis
 import com.activityartapp.presentation.common.button.ButtonSize
-import com.activityartapp.presentation.common.button.MediumEmphasisButton
-import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.common.type.SubheadHeavy
 import com.activityartapp.presentation.editArtScreen.DateSelection
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterChanged.*
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
 
@@ -99,77 +93,48 @@ fun ColumnScope.FilterSectionDate(
         description = stringResource(R.string.edit_art_filters_date_description),
     ) {
         dateSelections.forEachIndexed { index, selection ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                verticalAlignment = Alignment.Top
-            ) {
-                var heightRadioButton by remember { mutableStateOf(0.dp) }
-                val localDensity = LocalDensity.current
-                RadioButton(
-                    selected = index == dateSelectionSelectedIndex,
-                    onClick = {
-                        eventReceiver.onEvent(
-                            FilterDateSelectionChanged(
-                                index
-                            )
-                        )
-                    },
-                    modifier = Modifier
-                        .onGloballyPositioned {
-                            heightRadioButton = localDensity.run { it.size.height.toDp() }
-                        }
-                )
-                println("Here, height radio button is $heightRadioButton")
-                Column(
-                    modifier = Modifier.defaultMinSize(minHeight = heightRadioButton),
-                    verticalArrangement = Arrangement.spacedBy(
-                        spacing.medium,
-                        Alignment.CenterVertically
-                    )
-                ) {
-                    when (selection) {
-                        is DateSelection.All -> Subhead(text = stringResource(R.string.edit_art_filters_date_include_all))
-                        is DateSelection.Year -> Subhead(text = "${selection.year}")
-                        is DateSelection.Custom -> {
-                            val enabled = index == dateSelectionSelectedIndex
-
-                            Subhead(text = stringResource(R.string.edit_art_filters_date_custom_range))
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(spacing.small),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                selection.apply {
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.spacedBy(spacing.small)
-                                    ) {
-                                        SubheadHeavy(text = stringResource(R.string.edit_art_filters_date_start))
-                                        MediumEmphasisButton(
-                                            size = ButtonSize.LARGE,
-                                            enabled = enabled,
-                                            text = "$ymdSelectedStart"
-                                        ) {
-                                            startDialog.show()
-                                        }
-                                    }
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.spacedBy(spacing.small)
-                                    ) {
-                                        SubheadHeavy(text = stringResource(R.string.edit_art_filters_date_end))
-                                        MediumEmphasisButton(
-                                            size = ButtonSize.LARGE,
-                                            enabled = enabled,
-                                            text = "$ymdSelectedEnd"
-                                        ) {
-                                            endDialog.show()
-                                        }
-                                    }
+            RadioButtonContentRow(
+                isSelected = index == dateSelectionSelectedIndex,
+                text = when (selection) {
+                    is DateSelection.All -> stringResource(R.string.edit_art_filters_date_include_all)
+                    is DateSelection.Year -> selection.year.toString()
+                    is DateSelection.Custom -> stringResource(R.string.edit_art_filters_date_custom_range)
+                },
+                content = {
+                    if (selection is DateSelection.Custom) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            selection.apply {
+                                Button(
+                                    emphasis = ButtonEmphasis.MEDIUM,
+                                    modifier = Modifier.weight(1f, true),
+                                    labelText = stringResource(R.string.edit_art_filters_date_start),
+                                    size = ButtonSize.LARGE,
+                                    text = ymdSelectedStart.toString()
+                                ) {
+                                    startDialog.show()
+                                }
+                                Button(
+                                    emphasis = ButtonEmphasis.MEDIUM,
+                                    modifier = Modifier.weight(1f, true),
+                                    labelText = stringResource(R.string.edit_art_filters_date_end),
+                                    size = ButtonSize.LARGE,
+                                    text = ymdSelectedEnd.toString()
+                                ) {
+                                    endDialog.show()
                                 }
                             }
                         }
                     }
                 }
+            ) {
+                eventReceiver.onEvent(
+                    FilterDateSelectionChanged(
+                        index
+                    )
+                )
             }
         }
     }

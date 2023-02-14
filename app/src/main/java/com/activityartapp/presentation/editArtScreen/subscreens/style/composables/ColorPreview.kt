@@ -20,7 +20,7 @@ fun ColorPreview(colorWrapper: ColorWrapper) {
             .height(dimensionResource(id = R.dimen.color_preview_height))
             .border(
                 width = dimensionResource(R.dimen.color_preview_stroke_width),
-                color = colorResource(R.color.n30_silver)
+                color = colorResource(R.color.primary_dark_color)
             )
     ) {
         drawRect(

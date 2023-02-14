@@ -9,6 +9,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -33,15 +34,19 @@ sealed interface EditArtViewEvent : ViewEvent {
     object ClickedInfoTransparentBackground : EditArtViewEvent
     object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
+    sealed interface FilterDistancePendingChange : EditArtViewEvent {
+        val changedTo: String
+
+        data class FilterDistancePendingChangeShortest(override val changedTo: String) :
+            FilterDistancePendingChange
+
+        data class FilterDistancePendingChangeLongest(override val changedTo: String) :
+            FilterDistancePendingChange
+    }
+
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
-    sealed interface SizeCustomChanged : EditArtViewEvent {
-        val changedToPx: Int
-
-        data class HeightChanged(override val changedToPx: Int) : SizeCustomChanged
-        data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
-    }
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
 
@@ -71,6 +76,17 @@ sealed interface EditArtViewEvent : ViewEvent {
                     get() = EditArtFilterType.DISTANCE
             }
 
+            sealed interface FilterDistancePendingChangeConfirmed : FilterChanged {
+                object StartConfirmed : FilterDistancePendingChangeConfirmed {
+                    override val filterType: EditArtFilterType
+                        get() = EditArtFilterType.DISTANCE
+                }
+                object EndConfirmed : FilterDistancePendingChangeConfirmed {
+                    override val filterType: EditArtFilterType
+                        get() = EditArtFilterType.DISTANCE
+                }
+            }
+
             data class FilterTypeToggled(val type: String) : FilterChanged {
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.TYPE
@@ -78,7 +94,13 @@ sealed interface EditArtViewEvent : ViewEvent {
         }
 
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
-        object SizeCustomChangeDone : ArtMutatingEvent
+        sealed interface SizeCustomChanged : ArtMutatingEvent {
+            val changedToPx: Int
+
+            data class HeightChanged(override val changedToPx: Int) : SizeCustomChanged
+            data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
+        }
+
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
@@ -155,6 +177,8 @@ sealed interface EditArtViewState : ViewState {
         val filterDistanceSelectedEnd: Double? = null,
         val filterDistanceTotalStart: Double? = null,
         val filterDistanceTotalEnd: Double? = null,
+        @IgnoredOnParcel val filterDistancePendingChangeStart: String? = null,
+        @IgnoredOnParcel val filterDistancePendingChangeEnd: String? = null,
         val filterTypes: Map<String, Boolean>? = null,
         @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
@@ -170,6 +194,8 @@ sealed interface EditArtViewState : ViewState {
         val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
         @IgnoredOnParcel val sizeCustomMaxPx: Int = CUSTOM_SIZE_MAXIMUM_PX,
         @IgnoredOnParcel val sizeCustomMinPx: Int = CUSTOM_SIZE_MINIMUM_PX,
+        @IgnoredOnParcel val sizeCustomOutOfBoundsWidth: Int? = null,
+        @IgnoredOnParcel val sizeCustomOutOfBoundsHeight: Int? = null,
         val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
         val sortDirectionTypeSelected: EditArtSortDirectionType = EditArtSortDirectionType.ASCENDING,
         val styleActivities: ColorWrapper = ColorWrapper(
@@ -286,29 +312,39 @@ data class ColorWrapper(
     val alpha: Float,
     val blue: Float,
     val green: Float,
-    val red: Float
+    val red: Float,
+    @IgnoredOnParcel val outOfBoundsAlpha: Float? = null,
+    @IgnoredOnParcel val outOfBoundsBlue: Float? = null,
+    @IgnoredOnParcel val outOfBoundsGreen: Float? = null,
+    @IgnoredOnParcel val outOfBoundsRed: Float? = null
 ) : Parcelable {
 
     companion object {
-        private const val VALUE_NONE = 0f
-        private const val VALUE_MAX = 1f
-        private const val EIGHT_BIT_CHANNEL_LIMIT = 255
-        val VALUE_RANGE = VALUE_NONE..VALUE_MAX
+        private const val RATIO_LIMIT_LOWER = 0f
+        private const val RATIO_LIMIT_UPPER = 1f
+        private const val EIGHT_BIT_LIMIT_LOWER = 0
+        private const val EIGHT_BIT_LIMIT_UPPER = 255
+
+        fun ratioToEightBit(ratio: Float): Int {
+            return (ratio * EIGHT_BIT_LIMIT_UPPER).toInt()
+        }
+
+        fun eightBitToRatio(eightBit: Int): Float {
+            return (eightBit / EIGHT_BIT_LIMIT_UPPER.toFloat())
+        }
+
+        val RATIO_RANGE = RATIO_LIMIT_LOWER..RATIO_LIMIT_UPPER
+        val EIGHT_BIT_RANGE = EIGHT_BIT_LIMIT_LOWER..EIGHT_BIT_LIMIT_UPPER
     }
 
     val color get() = Color(red, green, blue, alpha)
-    val redAsEightBit get() = red.toEightBitRepresentation()
-    val greenAsEightBit get() = green.toEightBitRepresentation()
-    val blueAsEightBit get() = blue.toEightBitRepresentation()
-    val alphaAsEightBit get() = alpha.toEightBitRepresentation()
-
-    private fun Float.toEightBitRepresentation(): Int {
-        return (this * EIGHT_BIT_CHANNEL_LIMIT).toInt()
-    }
+    val redAsEightBit get() = ratioToEightBit(red)
+    val greenAsEightBit get() = ratioToEightBit(green)
+    val blueAsEightBit get() = ratioToEightBit(blue)
 }
 
-
 sealed interface DateSelection : Parcelable {
+
     @Parcelize
     object All : DateSelection
 
@@ -332,11 +368,11 @@ sealed interface DateSelection : Parcelable {
     }
 }
 
-enum class ColorType {
-    RED,
-    GREEN,
-    BLUE,
-    ALPHA
+enum class ColorType(@StringRes val strRes: Int) {
+    RED(R.string.edit_art_style_color_red),
+    GREEN(R.string.edit_art_style_color_green),
+    BLUE(R.string.edit_art_style_color_blue),
+    ALPHA(R.string.edit_art_style_color_alpha)
 }
 
 enum class StrokeWidthType(val headerId: Int) {

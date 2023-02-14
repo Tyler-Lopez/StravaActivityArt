@@ -1,51 +1,53 @@
 package com.activityartapp.presentation.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
+import androidx.compose.material.Typography
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.graphics.Color
-
-private val DarkColorPalette = darkColors(
-    primary = Rust,
-    primaryVariant = Rust,
-    secondary = Rust
-)
-
-private val LightColorPalette = lightColors(
-    primary = Rust,
-    primaryVariant = Rust,
-    secondary = Rust,
-    background = Color(242, 242, 242),
-
-    /* Other default colors to override
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
-)
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import com.activityartapp.R
 
 @Composable
-fun AthleteApiArtTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
-) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
+fun AthleteApiArtTheme(content: @Composable () -> Unit) {
+    val colors = lightColors(
+        primary = colorResource(R.color.primary_color),
+        primaryVariant = colorResource(R.color.primary_dark_color),
+        secondary = colorResource(R.color.secondary_color),
+        secondaryVariant = colorResource(R.color.primary_dark_color),
+        background = colorResource(R.color.background_color),
+        surface = colorResource(R.color.surface_color),
+        error = colorResource(R.color.error_color),
+        onPrimary = colorResource(R.color.on_primary_color),
+        onSecondary = colorResource(R.color.on_secondary_color),
+        onBackground = colorResource(R.color.on_background_color),
+        onSurface = colorResource(R.color.on_surface_color),
+        onError = colorResource(R.color.on_error_color)
+    )
 
     CompositionLocalProvider(
         LocalSpacing provides Spacing()
     ) {
         MaterialTheme(
             colors = colors,
-            typography = Typography,
+            typography = Typography(
+                defaultFontFamily = FontFamily(
+                    Font(R.font.roboto_black, FontWeight.Black),
+                    Font(R.font.roboto_bold, FontWeight.Bold),
+                    Font(R.font.roboto_medium, FontWeight.Medium),
+                    Font(R.font.roboto_regular, FontWeight.Normal),
+                    Font(R.font.roboto_light, FontWeight.Light),
+                    Font(R.font.roboto_blackitalic, FontWeight.Black, style = FontStyle.Italic),
+                    Font(R.font.roboto_bolditalic, FontWeight.Bold, style = FontStyle.Italic),
+                    Font(R.font.roboto_mediumitalic, FontWeight.Medium, style = FontStyle.Italic),
+                    Font(R.font.roboto_italic, FontWeight.Normal, style = FontStyle.Italic),
+                    Font(R.font.roboto_lightitalic, FontWeight.Light, style = FontStyle.Italic)
+                )
+            ),
             shapes = Shapes,
             content = content
         )

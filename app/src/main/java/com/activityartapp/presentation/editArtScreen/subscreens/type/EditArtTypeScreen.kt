@@ -4,10 +4,7 @@ import android.graphics.Typeface
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import com.activityartapp.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,9 +18,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.architecture.EventReceiver
-import com.activityartapp.presentation.common.type.Subhead
-import com.activityartapp.presentation.common.type.SubheadHeavy
+import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
+import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.enums.FontSizeType
@@ -32,9 +29,8 @@ import com.activityartapp.util.enums.FontWeightType
 import kotlin.math.roundToInt
 
 @Composable
-fun ColumnScope.EditArtTypeScreen(
+fun EditArtTypeScreen(
     activitiesDistanceMetersSummed: Int,
- //   athleteName: String,
     customTextCenter: String,
     customTextLeft: String,
     customTextRight: String,
@@ -57,36 +53,15 @@ fun ColumnScope.EditArtTypeScreen(
             description = stringResource(section.description)
         ) {
             EditArtTypeType.values().forEach { type ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = type == when (section) {
-                            EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
-                            EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
-                            EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
-                        },
-                        onClick = {
-                            eventReceiver.onEvent(
-                                TypeSelectionChanged(
-                                    section = section,
-                                    typeSelected = type
-                                )
-                            )
-                        })
-                    Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
-                        Subhead(text = stringResource(type.header))
-                        when (type) {
-                            EditArtTypeType.NONE -> {}
-              //              EditArtTypeType.NAME -> SubheadHeavy(text = athleteName)
-                            EditArtTypeType.DISTANCE_MILES -> SubheadHeavy(
-                                text = activitiesDistanceMetersSummed.meterToMilesStr()
-                            )
-                            EditArtTypeType.DISTANCE_KILOMETERS -> SubheadHeavy(
-                                text = activitiesDistanceMetersSummed.meterToKilometerStr()
-                            )
-                            EditArtTypeType.CUSTOM -> {
+                RadioButtonContentRow(
+                    isSelected = type == when (section) {
+                        EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
+                        EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
+                        EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
+                    },
+                    content = type.takeIf { it == EditArtTypeType.CUSTOM }?.let {
+                        {
+                            ColumnSmallSpacing(horizontalAlignment = Alignment.Start) {
                                 OutlinedTextField(
                                     value = when (section) {
                                         EditArtTypeSection.LEFT -> customTextLeft
@@ -118,18 +93,32 @@ fun ColumnScope.EditArtTypeScreen(
                                     },
                                     modifier = Modifier.sizeIn(maxWidth = 254.dp)
                                 )
-                                SubheadHeavy(
+                                Text(
                                     text = "${
                                         when (section) {
                                             EditArtTypeSection.LEFT -> customTextLeft.length
                                             EditArtTypeSection.CENTER -> customTextCenter.length
                                             EditArtTypeSection.RIGHT -> customTextRight.length
                                         }
-                                    } / $maximumCustomTextLength"
+                                    } / $maximumCustomTextLength",
+                                    style = MaterialTheme.typography.caption
                                 )
                             }
                         }
+                    },
+                    text = stringResource(type.header),
+                    subtext = when (type) {
+                        EditArtTypeType.DISTANCE_MILES -> activitiesDistanceMetersSummed.meterToMilesStr()
+                        EditArtTypeType.DISTANCE_KILOMETERS -> activitiesDistanceMetersSummed.meterToKilometerStr()
+                        else -> null
                     }
+                ) {
+                    eventReceiver.onEvent(
+                        TypeSelectionChanged(
+                            section = section,
+                            typeSelected = type
+                        )
+                    )
                 }
             }
         }
@@ -153,7 +142,6 @@ fun ColumnScope.EditArtTypeScreen(
                         context.assets,
                         it.getAssetPath(
                             /** Provides a loud failure if missing regular font **/
-                            /** Provides a loud failure if missing regular font **/
                             it.fontWeightTypes.firstOrNull {
                                 it == FontWeightType.REGULAR
                             } ?: error("Missing REGULAR font for font $it.")
@@ -173,11 +161,8 @@ fun ColumnScope.EditArtTypeScreen(
                     horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(
-                        selected = fontWeightSelected == it,
-                        onClick = { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
-                    )
-                    Text(
+                    RadioButtonContentRow(
+                        isSelected = fontWeightSelected == it,
                         text = stringResource(it.stringRes),
                         fontFamily = FontFamily(
                             Typeface.createFromAsset(
@@ -185,7 +170,7 @@ fun ColumnScope.EditArtTypeScreen(
                                 fontSelected.getAssetPath(it)
                             )
                         )
-                    )
+                    ) { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
                 }
             }
         }
@@ -220,6 +205,7 @@ fun ColumnScope.EditArtTypeScreen(
             }
         }
     }
+
     Section(
         header = stringResource(R.string.edit_art_type_size_header),
         description = stringResource(R.string.edit_art_type_size_description)
@@ -229,17 +215,16 @@ fun ColumnScope.EditArtTypeScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(
-                    selected = fontSizeSelected == it,
-                    onClick = {
-                        eventReceiver.onEvent(
-                            TypeFontSizeChanged(
-                                it
-                            )
+                RadioButtonContentRow(
+                    isSelected = fontSizeSelected == it,
+                    text = stringResource(it.strRes)
+                ) {
+                    eventReceiver.onEvent(
+                        TypeFontSizeChanged(
+                            it
                         )
-                    }
-                )
-                Subhead(text = stringResource(it.strRes))
+                    )
+                }
             }
         }
     }

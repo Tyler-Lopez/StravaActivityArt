@@ -41,7 +41,7 @@ data class YearMonthDay(
             MIN_LENGTH,
             PADDING_CHAR
         )
-        return "$paddedMonth / $paddedDay / $year"
+        return "$paddedMonth / $paddedDay / ${year % 100}"
     }
 
     /**
