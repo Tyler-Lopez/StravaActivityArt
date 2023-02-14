@@ -314,7 +314,7 @@ class EditArtViewModel @Inject constructor(
         withLastState {
             val replacementCustom: DateSelection.Custom =
                 (filterDateSelections
-                    ?.get(filterDateSelectionIndex) as? DateSelection.Custom
+                    ?.firstOrNull { it is DateSelection.Custom } as? DateSelection.Custom
                     ?: error("ApiError retrieving DateSelection as Custom from selected index."))
                     .run {
                         copy(
@@ -337,10 +337,12 @@ class EditArtViewModel @Inject constructor(
                         )
                     }
 
+            val customIndex = filterDateSelections.indexOfFirst { it is DateSelection.Custom }
             copy(
+                filterDateSelectionIndex = customIndex,
                 filterDateSelections = filterDateSelections
                     .toMutableList()
-                    .apply { set(filterDateSelectionIndex, replacementCustom) }
+                    .apply { set(customIndex, replacementCustom) }
             ).push()
         }
     }
@@ -486,6 +488,7 @@ class EditArtViewModel @Inject constructor(
         copyLastState {
             val customRange = sizeCustomMinPx..sizeCustomMaxPx
             copy(
+                sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
                 sizeCustomOutOfBoundsWidth = if (event is SizeCustomChanged.WidthChanged) {
                     event.changedToPx.takeIf { it !in customRange }
                 } else {

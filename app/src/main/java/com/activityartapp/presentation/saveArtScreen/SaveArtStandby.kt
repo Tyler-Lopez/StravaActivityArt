@@ -122,6 +122,7 @@ fun SaveArtStandby(
                 Button(
                     emphasis = ButtonEmphasis.MEDIUM,
                     size = ButtonSize.MEDIUM,
+                    enabled = statusIsStandby,
                     isLoading = statusIsSharing,
                     text = stringResource(R.string.save_art_share_art)
                 ) { eventReceiver.onEventDebounced(ClickedShare) }
