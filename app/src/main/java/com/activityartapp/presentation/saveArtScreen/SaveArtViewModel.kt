@@ -176,7 +176,7 @@ class SaveArtViewModel @Inject constructor(
             fontSize = fontTypeSize,
             isPreview = isPreview,
             colorActivitiesArgb = colorActivitiesArgb,
-            backgroundColorsArgb = colorsBackgroundArgb,
+            backgroundColorArgb = colorsBackgroundArgb,
             colorFontArgb = colorFontArgb,
             bitmapSize = size,
             sortType = sortType,

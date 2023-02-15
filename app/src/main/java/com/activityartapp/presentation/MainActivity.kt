@@ -169,7 +169,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         ActivityTypes to gson.toJson(activityTypes.map { it.toString() }),
                         BackgroundType to backgroundType.toString(),
                         ColorActivitiesArgb to colorActivitiesArgb.toString(),
-                        ColorsBackgroundArgb to gson.toJson(backgroundColorsArgb),
+                        ColorsBackgroundArgb to gson.toJson(backgroundColorArgb),
                         ColorFontArgb to colorFontArgb.toString(),
                         FilterDateAfterMs to filterAfterMs.toString(),
                         FilterDateBeforeMs to filterBeforeMs.toString(),

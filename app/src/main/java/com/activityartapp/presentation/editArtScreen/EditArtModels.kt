@@ -81,6 +81,7 @@ sealed interface EditArtViewEvent : ViewEvent {
                     override val filterType: EditArtFilterType
                         get() = EditArtFilterType.DISTANCE
                 }
+
                 object EndConfirmed : FilterDistancePendingChangeConfirmed {
                     override val filterType: EditArtFilterType
                         get() = EditArtFilterType.DISTANCE
@@ -111,7 +112,6 @@ sealed interface EditArtViewEvent : ViewEvent {
         ) : ArtMutatingEvent
 
         data class StyleColorsBackgroundChanged(
-            val changedIndex: Int,
             val changedColorType: ColorType,
             val changedTo: Float
         ) : ArtMutatingEvent
@@ -205,13 +205,11 @@ sealed interface EditArtViewState : ViewState {
             red = INIT_ACTIVITIES_RED
         ),
         val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleBackgroundColors: List<ColorWrapper> = listOf(
-            ColorWrapper(
-                alpha = INIT_BACKGROUND_ALPHA,
-                blue = INIT_BACKGROUND_BLUE,
-                green = INIT_BACKGROUND_GREEN,
-                red = INIT_BACKGROUND_RED
-            )
+        val styleBackgroundColor: ColorWrapper = ColorWrapper(
+            alpha = INIT_BACKGROUND_ALPHA,
+            blue = INIT_BACKGROUND_BLUE,
+            green = INIT_BACKGROUND_GREEN,
+            red = INIT_BACKGROUND_RED
         ),
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
@@ -310,10 +308,10 @@ data class ColorWrapper(
     val blue: Float,
     val green: Float,
     val red: Float,
-    @IgnoredOnParcel val outOfBoundsAlpha: Float? = null,
-    @IgnoredOnParcel val outOfBoundsBlue: Float? = null,
-    @IgnoredOnParcel val outOfBoundsGreen: Float? = null,
-    @IgnoredOnParcel val outOfBoundsRed: Float? = null
+    @IgnoredOnParcel val pendingAlpha: String? = null,
+    @IgnoredOnParcel val pendingBlue: String? = null,
+    @IgnoredOnParcel val pendingGreen: String? = null,
+    @IgnoredOnParcel val pendingRed: String? = null
 ) : Parcelable {
 
     companion object {
@@ -363,6 +361,13 @@ sealed interface DateSelection : Parcelable {
         val dateTotal: LongProgression
             get() = dateTotalStartUnixMs..dateTotalEndUnixMs
     }
+}
+
+
+enum class StyleType {
+    BACKGROUND,
+    ACTIVITIES,
+    FONT
 }
 
 enum class ColorType(@StringRes val strRes: Int) {

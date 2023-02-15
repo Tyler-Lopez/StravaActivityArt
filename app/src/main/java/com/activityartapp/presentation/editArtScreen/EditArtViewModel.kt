@@ -431,7 +431,7 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
-                        backgroundColorsArgb = styleBackgroundColors.map { it.color.toArgb() },
+                        backgroundColorArgb = styleBackgroundColor.color.toArgb(),
                         backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
@@ -541,15 +541,10 @@ class EditArtViewModel @Inject constructor(
     private fun onStyleColorsBackgroundChanged(event: StyleColorsBackgroundChanged) {
         pushStateCopy {
             copy(
-                styleBackgroundColors = styleBackgroundColors.toMutableList().apply {
-                    set(
-                        event.changedIndex,
-                        get(event.changedIndex).copyWithChange(
-                            event.changedColorType,
-                            event.changedTo
-                        )
-                    )
-                }
+                styleBackgroundColor = styleBackgroundColor.copyWithChange(
+                    colorType = event.changedColorType,
+                    changedTo = event.changedTo
+                )
             )
         }
     }
@@ -667,7 +662,7 @@ class EditArtViewModel @Inject constructor(
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered, // todo...
                     backgroundType = styleBackgroundType,
-                    backgroundColorsArgb = styleBackgroundColors.map { it.color.toArgb() },
+                    backgroundColorArgb = styleBackgroundColor.color.toArgb(),
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                     strokeWidth = styleStrokeWidthType,
