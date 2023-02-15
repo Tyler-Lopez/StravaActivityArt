@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.AppLogo
 import com.activityartapp.presentation.common.ConnectWithStravaButton
 import com.activityartapp.presentation.ui.theme.spacing
 import com.google.maps.android.data.Feature
@@ -87,10 +88,7 @@ private fun FeatureGraphic() {
 private fun ConnectWithStravaSection(
     viewModel: EventReceiver<LoginViewEvent>
 ) {
-    Image(
-        painter = painterResource(id = R.drawable.ic_activity_art_logo),
-        contentDescription = stringResource(R.string.app_logo_content_description)
-    )
+    AppLogo()
     Text(
         text = stringResource(id = R.string.app_description),
         modifier = Modifier.sizeIn(maxWidth = 254.dp),
@@ -123,7 +121,7 @@ private fun Content(
         .background(MaterialTheme.colors.primary))
     Column(
         modifier = Modifier
-            .padding(spacing.medium)
+            .padding(spacing.large)
             .run {
                 if (isLandscape) {
                     fillMaxHeight()
