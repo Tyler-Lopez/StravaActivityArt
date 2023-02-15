@@ -21,10 +21,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
-import com.activityartapp.util.ActivityFilterUtils
-import com.activityartapp.util.ImageSizeUtils
-import com.activityartapp.util.TimeUtils
-import com.activityartapp.util.VisualizationUtils
+import com.activityartapp.util.*
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,6 +41,7 @@ class EditArtViewModel @Inject constructor(
     private val timeUtils: TimeUtils,
     private val visualizationUtils: VisualizationUtils,
     private val savedStateHandle: SavedStateHandle,
+    private val parseNumberFromStringUtils: ParseNumberFromStringUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
@@ -370,50 +368,38 @@ class EditArtViewModel @Inject constructor(
 
     private fun onFilterDistancePendingChangeConfirmed(event: FilterChanged.FilterDistancePendingChangeConfirmed) {
         pushStateCopy {
-            val pendingChange =
-                if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
-                    filterDistancePendingChangeStart
-                } else {
-                    filterDistancePendingChangeEnd
-                }
+            val totalValueSmallest = filterDistanceTotalStart ?: 0.0
+            val totalValueLargest = filterDistanceTotalEnd ?: Double.MAX_VALUE
 
-            val parsedValue = pendingChange
-                // Keeps only the first occurrence of a decimal
-                ?.fold(StringBuilder()) { total, new ->
-                    if (new == '.' && total.contains('.')) {
-                        total
-                    } else {
-                        total.append(new)
+            when (event) {
+                is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed -> {
+                    filterDistancePendingChangeStart?.let {
+                        val coerceAtMost = filterDistanceSelectedEnd ?: totalValueLargest
+
+                        copy(
+                            filterDistanceSelectedStart = parseNumberFromStringUtils.parse(
+                                string = it,
+                                coerceIn = totalValueSmallest.rangeTo(coerceAtMost)
+                            ),
+                            filterDistanceSelectedEnd = coerceAtMost,
+                            filterDistancePendingChangeStart = null
+                        )
                     }
                 }
-                ?.toString()
-                ?.toDoubleOrNull()
-                ?.milesToMeters()
+                is FilterChanged.FilterDistancePendingChangeConfirmed.EndConfirmed -> {
+                    filterDistancePendingChangeEnd?.let {
+                        val coerceAtLeast = filterDistanceSelectedStart ?: totalValueSmallest
 
-            if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
-
-                val finalValue =
-                    filterDistanceSelectedEnd ?: filterDistanceTotalEnd ?: Double.MAX_VALUE
-                val changedTo = parsedValue
-                    ?.coerceIn((filterDistanceTotalStart ?: 0.0).rangeTo(finalValue))
-
-                copy(
-                    filterDistanceSelectedStart = changedTo ?: filterDistanceSelectedStart,
-                    filterDistanceSelectedEnd = filterDistanceSelectedEnd ?: filterDistanceTotalEnd,
-                    filterDistancePendingChangeStart = null
-                )
-            } else {
-                val valueStart =
-                    filterDistanceSelectedStart ?: filterDistanceTotalStart ?: 0.0
-                val changedTo = parsedValue
-                    ?.coerceIn(valueStart.rangeTo(filterDistanceTotalEnd ?: Double.MAX_VALUE))
-
-                copy(
-                    filterDistanceSelectedStart = filterDistanceSelectedStart
-                        ?: filterDistanceTotalStart,
-                    filterDistanceSelectedEnd = changedTo ?: filterDistanceSelectedEnd,
-                    filterDistancePendingChangeEnd = null
-                )
+                        copy(
+                            filterDistanceSelectedStart = coerceAtLeast,
+                            filterDistanceSelectedEnd = parseNumberFromStringUtils.parse(
+                                string = it,
+                                coerceIn = coerceAtLeast.rangeTo(totalValueLargest)
+                            ),
+                            filterDistancePendingChangeEnd = null
+                        )
+                    }
+                }
             }
         }
     }
@@ -717,11 +703,10 @@ class EditArtViewModel @Inject constructor(
         return (lastPushedState as? Standby)?.run(block) ?: error("Last state was not standby")
     }
 
-    private inline fun pushStateCopy(block: Standby.() -> Standby): Unit {
-        ((lastPushedState as? Standby)
+    private inline fun pushStateCopy(block: Standby.() -> Standby?) {
+        (lastPushedState as? Standby)
             ?.run(block)
-            ?: error("Last state was not standby"))
-            .push()
+            ?.push()
     }
 
     private inline fun withLastState(block: Standby.() -> Unit) {

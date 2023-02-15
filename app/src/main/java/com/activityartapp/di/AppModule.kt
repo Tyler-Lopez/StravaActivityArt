@@ -152,6 +152,9 @@ object AppModule {
     fun provideTimeUtils() = TimeUtils()
 
     @Provides
+    fun provideParseNumberFromStringUtils() = ParseNumberFromStringUtils()
+
+    @Provides
     fun provideGson() = Gson()
 
     @Provides
