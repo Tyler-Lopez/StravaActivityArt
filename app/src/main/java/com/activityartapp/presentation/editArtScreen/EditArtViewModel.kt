@@ -377,10 +377,9 @@ class EditArtViewModel @Inject constructor(
                         val coerceAtMost = filterDistanceSelectedEnd ?: totalValueLargest
 
                         copy(
-                            filterDistanceSelectedStart = parseNumberFromStringUtils.parse(
-                                string = it,
-                                coerceIn = totalValueSmallest.rangeTo(coerceAtMost)
-                            ),
+                            filterDistanceSelectedStart = parseNumberFromStringUtils.parse(it)
+                                .milesToMeters()
+                                .coerceIn(totalValueSmallest.rangeTo(coerceAtMost)),
                             filterDistanceSelectedEnd = coerceAtMost,
                             filterDistancePendingChangeStart = null
                         )
@@ -392,10 +391,9 @@ class EditArtViewModel @Inject constructor(
 
                         copy(
                             filterDistanceSelectedStart = coerceAtLeast,
-                            filterDistanceSelectedEnd = parseNumberFromStringUtils.parse(
-                                string = it,
-                                coerceIn = coerceAtLeast.rangeTo(totalValueLargest)
-                            ),
+                            filterDistanceSelectedEnd = parseNumberFromStringUtils.parse(it)
+                                .milesToMeters()
+                                .coerceIn(coerceAtLeast.rangeTo(totalValueLargest)),
                             filterDistancePendingChangeEnd = null
                         )
                     }
