@@ -10,6 +10,7 @@ import com.activityartapp.presentation.editArtScreen.EditArtFilterType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSectionDate
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSectionDistances
+import com.activityartapp.util.enums.SportType
 
 @Composable
 fun ColumnScope.EditArtFiltersScreen(
@@ -22,7 +23,7 @@ fun ColumnScope.EditArtFiltersScreen(
     distanceTotal: ClosedFloatingPointRange<Double>?,
     distancePendingChangeStart: String?,
     distancePendingChangeEnd: String?,
-    typesWithSelectedFlag: List<Pair<String, Boolean>>?,
+    typesWithSelectedFlag: List<Pair<SportType, Boolean>>?,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     EditArtFilterType.values().onEach {

@@ -14,11 +14,12 @@ import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterSection
+import com.activityartapp.util.enums.SportType
 
 @Composable
 fun ColumnScope.FilterSectionActivityType(
     count: Int,
-    typesWithSelectedFlag: List<Pair<String, Boolean>>,
+    typesWithSelectedFlag: List<Pair<SportType, Boolean>>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     FilterSection(
@@ -41,7 +42,7 @@ fun ColumnScope.FilterSectionActivityType(
                         )
                     })
                 Text(
-                    text = typeMap.first,
+                    text = stringResource(typeMap.first.stringRes),
                     style = MaterialTheme.typography.body1
                 )
             }

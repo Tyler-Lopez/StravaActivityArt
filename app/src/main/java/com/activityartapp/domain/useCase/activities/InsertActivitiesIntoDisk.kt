@@ -42,7 +42,7 @@ class InsertActivitiesIntoDisk @Inject constructor(
                         sufferScore,
                         iso8601LocalDate,
                         summaryPolyline,
-                        type
+                        sportType
                     )
                 }
             }

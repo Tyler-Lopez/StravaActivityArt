@@ -18,7 +18,7 @@ class ActivitySortUtils @Inject constructor(
                 when (sortType) {
                     EditArtSortType.DATE -> timeUtils.iso8601StringToUnixSecond(it.iso8601LocalDate)
                     EditArtSortType.DISTANCE -> it.distance
-                    EditArtSortType.TYPE -> it.type
+                    EditArtSortType.TYPE -> it.sportType
                 }
             })
             .run {

@@ -74,6 +74,7 @@ class GetActivitiesByYearFromRemote @Inject constructor(
                     activities.addAll(data)
                 }
                 .doOnError {
+                    println("Here, an error occurred, that error was ${this.exception}")
                     return Response.Error(data = activities, exception = this.exception)
                 }
         }

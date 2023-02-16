@@ -1,9 +1,8 @@
 package com.activityartapp.util
 
-import android.util.Range
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.DateSelection
-import com.activityartapp.presentation.editArtScreen.EditArtViewModel
+import com.activityartapp.util.enums.SportType
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -18,12 +17,13 @@ class ActivityFilterUtils @Inject constructor(
 
     fun filterActivities(
         activities: List<Activity>,
-        includeActivityTypes: Collection<String>,
+        includeActivityTypes: Collection<SportType>,
         unixMsRange: LongProgression,
         distanceRange: IntRange
     ): List<Activity> {
         println(unixMsRange)
         return activities.filter {
+            println("checking to see if ${it.sportType} is in $includeActivityTypes")
             activityWithinDistanceRange(it, distanceRange) &&
                     activityWithinUnixMs(it, unixMsRange) &&
                     activityTypeContainedWithinTypes(it, includeActivityTypes)
@@ -46,8 +46,12 @@ class ActivityFilterUtils @Inject constructor(
 
     fun activityTypeContainedWithinTypes(
         activity: Activity,
-        types: Collection<String>
-    ): Boolean = types.contains(activity.type)
+        types: Collection<SportType>
+    ): Boolean = types.contains(activity.sportType).also {
+        println("result $it types was $types")
+        println("activity sport type ${activity.sportType}")
+        println("sport type in types: ${types.contains(activity.sportType)}")
+    }
 
     /**
      * Provided a [List] of [Activity], returns all possible [DateSelection]. Returns null
@@ -96,12 +100,12 @@ class ActivityFilterUtils @Inject constructor(
 
     fun getPossibleActivityTypes(
         activities: List<Activity>,
-        filterTypesPrevious: Map<String, Boolean>?
-    ): Map<String, Boolean>? {
+        filterTypesPrevious: Map<SportType, Boolean>?
+    ): Map<SportType, Boolean>? {
         return activities
             .takeIf { it.isNotEmpty() }
-            ?.distinctBy(Activity::type)
-            ?.map(Activity::type)
+            ?.distinctBy(Activity::sportType)
+            ?.map(Activity::sportType)
             ?.sorted()
             ?.associateWith {
                 filterTypesPrevious?.get(it) ?: DEFAULT_ACTIVITY_TYPE_SELECTION

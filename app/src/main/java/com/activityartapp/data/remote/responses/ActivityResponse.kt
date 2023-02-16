@@ -1,6 +1,7 @@
 package com.activityartapp.data.remote.responses
 
 import com.activityartapp.domain.models.Activity
+import com.activityartapp.util.enums.SportType
 import com.google.gson.annotations.SerializedName
 
 data class ActivityResponse(
@@ -26,54 +27,21 @@ data class ActivityResponse(
     override val movingTime: Int,
     @SerializedName("name")
     override val name: String,
-    @SerializedName("type")
-    override val type: String,
+    @SerializedName("sport_type")
+    val sportTypeRaw: String,
     @SerializedName("start_date_local")
     override val iso8601LocalDate: String,
     @SerializedName("suffer_score")
     override val sufferScore: Int?,
-
-    val achievement_count: Int,
     val athlete: AthleteWithResourceState,
-    val athlete_count: Int,
-    val average_cadence: Double,
-    val comment_count: Int,
-    val commute: Boolean,
-    val display_hide_heartrate_option: Boolean,
-    val elapsed_time: Int,
-    val elev_high: Double,
-    val elev_low: Double,
-    val end_latlng: List<Double>,
-    val external_id: String,
-    val flagged: Boolean,
-    val from_accepted_tag: Boolean,
-    val has_heartrate: Boolean,
-    val has_kudoed: Boolean,
-    val heartrate_opt_out: Boolean,
-    val manual: Boolean,
-    val map: Map?,
-    val photo_count: Int,
-    val pr_count: Int,
-    val `private`: Boolean,
-    val resource_state: Int,
-    val start_date: String,
-    val start_latitude: Double,
-    val start_latlng: List<Double>,
-    val start_longitude: Double,
-    val timezone: String,
-    val total_elevation_gain: Double,
-    val total_photo_count: Int,
-    val trainer: Boolean,
-    val upload_id: Long,
-    val upload_id_str: String,
-    val utc_offset: Double,
-    val visibility: String,
-    val workout_type: Int
+    val map: Map?
 ) : Activity {
-
     override val athleteId: Long
         get() = athlete.id
 
     override val summaryPolyline: String?
         get() = map?.summary_polyline
+
+    override val sportType: SportType
+        get() = SportType.fromSportTypeString(sportTypeRaw)
 }

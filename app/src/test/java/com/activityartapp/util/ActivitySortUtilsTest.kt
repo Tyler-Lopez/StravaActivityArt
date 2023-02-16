@@ -3,6 +3,7 @@ package com.activityartapp.util
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.util.enums.EditArtSortDirectionType
 import com.activityartapp.util.enums.EditArtSortType
+import com.activityartapp.util.enums.SportType
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -26,16 +27,16 @@ class ActivitySortUtilsTest {
 
         private const val ACTIVITY_ONE_DISTANCE = 5.0
         private const val ACTIVITY_ONE_ISO8601_LOCAL_DATE = "2018-05-02T05:15:09Z"
-        private const val ACTIVITY_ONE_TYPE = "Walk"
+        private val ACTIVITY_ONE_TYPE = SportType.WALK
         private const val ACTIVITY_TWO_DISTANCE = 10.0
         private const val ACTIVITY_TWO_ISO8601_LOCAL_DATE = "2019-05-02T05:15:09Z"
-        private const val ACTIVITY_TWO_TYPE = "Ride"
+        private val ACTIVITY_TWO_TYPE = SportType.RIDE
         private const val ACTIVITY_THREE_DISTANCE = 15.0
         private const val ACTIVITY_THREE_ISO8601_LOCAL_DATE = "2020-05-02T05:15:09Z"
-        private const val ACTIVITY_THREE_TYPE = "Kayaking"
+        private val ACTIVITY_THREE_TYPE = SportType.KAYAKING
         private const val ACTIVITY_FOUR_DISTANCE = 5.0
         private const val ACTIVITY_FOUR_ISO8601_LOCAL_DATE = "2022-05-02T05:15:09Z"
-        private const val ACTIVITY_FOUR_TYPE = "Ride"
+        private val ACTIVITY_FOUR_TYPE = SportType.RIDE
     }
 
     private lateinit var activitySortUtils: ActivitySortUtils
@@ -65,7 +66,7 @@ class ActivitySortUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_ONE_TYPE
+            override val sportType: SportType = ACTIVITY_ONE_TYPE
         }
         activityTwo = object : Activity {
             override val athleteId: Long = CONSTANT_ATHLETE_ID
@@ -83,7 +84,7 @@ class ActivitySortUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_TWO_TYPE
+            override val sportType: SportType = ACTIVITY_TWO_TYPE
         }
         activityThree = object : Activity {
             override val athleteId: Long = CONSTANT_ATHLETE_ID
@@ -101,7 +102,7 @@ class ActivitySortUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_THREE_TYPE
+            override val sportType: SportType = ACTIVITY_THREE_TYPE
         }
         activityFour = object : Activity {
             override val athleteId: Long = CONSTANT_ATHLETE_ID
@@ -119,7 +120,7 @@ class ActivitySortUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_FOUR_TYPE
+            override val sportType: SportType = ACTIVITY_FOUR_TYPE
         }
         activitiesIncludingOnlyActivityOne = listOf(activityOne)
         activities = listOf(activityOne, activityThree, activityTwo, activityFour)

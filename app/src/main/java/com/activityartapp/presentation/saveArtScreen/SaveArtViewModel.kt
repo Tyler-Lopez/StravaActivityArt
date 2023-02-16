@@ -17,10 +17,8 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.Do
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.util.enums.*
 import com.activityartapp.util.enums.BackgroundType
-import com.activityartapp.util.enums.EditArtSortDirectionType
-import com.activityartapp.util.enums.EditArtSortType
-import com.activityartapp.util.enums.FontSizeType
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -40,10 +38,12 @@ class SaveArtViewModel @Inject constructor(
     ssh: SavedStateHandle,
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
 
-    private val activityTypes = gson.fromJson<List<String>>(
-        ActivityTypes.rawArg(ssh),
-        List::class.java
-    )
+    private val activityTypes = gson
+        .fromJson<List<String>>(
+            ActivityTypes.rawArg(ssh),
+            List::class.java
+        )
+        .map { SportType.valueOf(it) }
     private val activities = getActivitiesFromMemory()
     private val backgroundType =
         BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
@@ -163,6 +163,7 @@ class SaveArtViewModel @Inject constructor(
     }
 
     private fun createArtBitmapOfSize(isPreview: Boolean, size: Size): Bitmap {
+        println("here, activity types are $activityTypes")
         return visualizationUtils.createBitmap(
             activities = activityFilterUtils.filterActivities(
                 activities = activities,

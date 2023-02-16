@@ -2,6 +2,7 @@ package com.activityartapp.util
 
 import android.os.Parcelable
 import com.activityartapp.domain.models.Activity
+import com.activityartapp.util.enums.SportType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -21,5 +22,5 @@ data class ParcelableActivity(
     override val name: String,
     override val sufferScore: Int?,
     override val summaryPolyline: String?,
-    override val type: String
+    override val sportType: SportType
 ) : Activity, Parcelable

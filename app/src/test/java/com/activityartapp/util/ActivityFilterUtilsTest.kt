@@ -2,6 +2,7 @@ package com.activityartapp.util
 
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.DateSelection
+import com.activityartapp.util.enums.SportType
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -26,16 +27,16 @@ class ActivityFilterUtilsTest {
 
         private const val ACTIVITY_ONE_DISTANCE = 5.0
         private const val ACTIVITY_ONE_ISO8601_LOCAL_DATE = "2018-05-02T05:15:09Z"
-        private const val ACTIVITY_ONE_TYPE = "Walk"
+        private val ACTIVITY_ONE_TYPE = SportType.WALK
         private const val ACTIVITY_TWO_DISTANCE = 5.0
         private const val ACTIVITY_TWO_ISO8601_LOCAL_DATE = "2019-05-02T05:15:09Z"
-        private const val ACTIVITY_TWO_TYPE = "Ride"
+        private val ACTIVITY_TWO_TYPE = SportType.RIDE
         private const val ACTIVITY_THREE_DISTANCE = 5.0
         private const val ACTIVITY_THREE_ISO8601_LOCAL_DATE = "2020-05-02T05:15:09Z"
-        private const val ACTIVITY_THREE_TYPE = "Ride"
+        private val ACTIVITY_THREE_TYPE = SportType.RIDE
         private const val ACTIVITY_FOUR_DISTANCE = 5.0
         private const val ACTIVITY_FOUR_ISO8601_LOCAL_DATE = "2022-05-02T05:15:09Z"
-        private const val ACTIVITY_FOUR_TYPE = "Ride"
+        private val ACTIVITY_FOUR_TYPE = SportType.RIDE
 
     }
     private lateinit var activityFilterUtils: ActivityFilterUtils
@@ -65,7 +66,7 @@ class ActivityFilterUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_ONE_TYPE
+            override val sportType: SportType = ACTIVITY_ONE_TYPE
         }
         activityTwo = object : Activity {
             override val athleteId: Long = CONSTANT_ATHLETE_ID
@@ -83,7 +84,7 @@ class ActivityFilterUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_TWO_TYPE
+            override val sportType: SportType = ACTIVITY_TWO_TYPE
         }
         activityThree = object : Activity {
             override val athleteId: Long = CONSTANT_ATHLETE_ID
@@ -101,7 +102,7 @@ class ActivityFilterUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_THREE_TYPE
+            override val sportType: SportType = ACTIVITY_THREE_TYPE
         }
         activityFour = object : Activity {
             override val athleteId: Long = CONSTANT_ATHLETE_ID
@@ -119,7 +120,7 @@ class ActivityFilterUtilsTest {
             override val name: String = CONSTANT_NAME
             override val sufferScore: Int = CONSTANT_SUFFER_SCORE
             override val summaryPolyline: String = CONSTANT_SUMMARY_POLYLINE
-            override val type: String = ACTIVITY_FOUR_TYPE
+            override val sportType: SportType = ACTIVITY_FOUR_TYPE
         }
         activitiesIncludingOnlyActivityOne = listOf(activityOne)
         activities = listOf(activityOne, activityTwo, activityThree, activityFour)
@@ -128,7 +129,7 @@ class ActivityFilterUtilsTest {
     /** Test [ActivityFilterUtils.filterActivities] **/
     @Test
     fun `Filtering activities when all activities satisfy all criteria is equal to original size`() {
-        val includeActivityTypes = listOf("Walk")
+        val includeActivityTypes = listOf(SportType.WALK)
         val unixRangeMs = Long.MIN_VALUE..Long.MAX_VALUE
         val distanceRange = Int.MIN_VALUE..Int.MAX_VALUE
         val filteredActivities = activityFilterUtils.filterActivities(
@@ -311,7 +312,7 @@ class ActivityFilterUtilsTest {
     /** Test [ActivityFilterUtils.activityTypeContainedWithinTypes] **/
     @Test
     fun `Activity type contained within an empty list of types is false`() {
-        val types: List<String> = listOf()
+        val types: List<SportType> = listOf()
         assertFalse(
             activityFilterUtils.activityTypeContainedWithinTypes(
                 activityOne,
@@ -322,7 +323,7 @@ class ActivityFilterUtilsTest {
 
     @Test
     fun `Activity type contained within a list of other types is false`() {
-        val types: List<String> = listOf("Ride", "Hike")
+        val types: List<SportType> = listOf(SportType.RIDE, SportType.HIKE)
         assertFalse(
             activityFilterUtils.activityTypeContainedWithinTypes(
                 activityOne,
@@ -333,7 +334,7 @@ class ActivityFilterUtilsTest {
 
     @Test
     fun `Activity type contained within a list of types which include the type is true`() {
-        val types: List<String> = listOf("Ride", "Walk", "Hike")
+        val types: List<SportType> = listOf(SportType.RIDE, SportType.WALK, SportType.HIKE)
         assertTrue(
             activityFilterUtils.activityTypeContainedWithinTypes(
                 activityOne,
@@ -344,7 +345,7 @@ class ActivityFilterUtilsTest {
 
     @Test
     fun `Activity type contained within a list of types that only contains the type is true`() {
-        val types: List<String> = listOf("Walk")
+        val types: List<SportType> = listOf(SportType.WALK)
         assertTrue(
             activityFilterUtils.activityTypeContainedWithinTypes(
                 activityOne,
