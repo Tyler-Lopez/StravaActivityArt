@@ -59,12 +59,16 @@ fun EditArtResizeScreen(
                                 TextFieldSliders(
                                     specifications = listOf(
                                         TextFieldSliderSpecification(
+                                            /*
                                             errorMessage = customOutOfBoundsWidthPx?.let { oob ->
                                                 GetOutOfBoundsErrorMessage(
                                                     outOfBoundsValue = oob,
                                                     range = customRangePx
                                                 )
                                             },
+
+                                             */
+                                            pendingChangesMessage = null,
                                             keyboardType = KeyboardType.Number,
                                             textFieldLabel = stringResource(R.string.edit_art_resize_pixels_width),
                                             textFieldValue = customOutOfBoundsWidthPx?.toString()
@@ -90,12 +94,16 @@ fun EditArtResizeScreen(
                                             onTextFieldDone = {}
                                         ),
                                         TextFieldSliderSpecification(
+                                            /*
                                             errorMessage = customOutOfBoundsHeightPx?.let { oob ->
                                                 GetOutOfBoundsErrorMessage(
                                                     outOfBoundsValue = oob,
                                                     range = customRangePx
                                                 )
                                             },
+
+                                             */
+                                            pendingChangesMessage = null,
                                             keyboardType = KeyboardType.Number,
                                             textFieldLabel = stringResource(R.string.edit_art_resize_pixels_height),
                                             textFieldValue = customOutOfBoundsHeightPx?.toString()

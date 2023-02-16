@@ -19,9 +19,11 @@ fun ColorSlidersRGB(
     TextFieldSliders(
         specifications = listOf(
             TextFieldSliderSpecification(
-                errorMessage = null,
                 keyboardType = KeyboardType.Number,
                 textFieldLabel = stringResource(R.string.edit_art_style_color_red),
+                pendingChangesMessage = color.pendingRed?.let {
+                    stringResource(R.string.edit_art_style_color_pending_change_prompt)
+                },
                 sliderValue = color.red,
                 textFieldValue = color.pendingRed ?: color.redAsEightBit.toString(),
                 sliderRange = ColorWrapper.RATIO_RANGE,
@@ -30,10 +32,12 @@ fun ColorSlidersRGB(
                 onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.RED) }
             ),
             TextFieldSliderSpecification(
-                errorMessage = null,
                 keyboardType = KeyboardType.Number,
                 textFieldLabel = stringResource(R.string.edit_art_style_color_green),
                 sliderValue = color.green,
+                pendingChangesMessage = color.pendingGreen?.let {
+                    stringResource(R.string.edit_art_style_color_pending_change_prompt)
+                },
                 textFieldValue = color.pendingGreen ?: color.greenAsEightBit.toString(),
                 sliderRange = ColorWrapper.RATIO_RANGE,
                 onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
@@ -41,10 +45,12 @@ fun ColorSlidersRGB(
                 onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.GREEN) }
             ),
             TextFieldSliderSpecification(
-                errorMessage = null,
                 keyboardType = KeyboardType.Number,
                 textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
                 sliderValue = color.blue,
+                pendingChangesMessage = color.pendingBlue?.let {
+                    stringResource(R.string.edit_art_style_color_pending_change_prompt)
+                },
                 textFieldValue = color.pendingBlue ?: color.blueAsEightBit.toString(),
                 sliderRange = ColorWrapper.RATIO_RANGE,
                 onSliderChanged = { onColorChanged(ColorType.BLUE, it) },

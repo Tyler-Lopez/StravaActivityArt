@@ -185,6 +185,7 @@
     <string name="edit_art_style_color_blue">BLUE</string>
     <string name="edit_art_style_color_alpha">ALPHA</string>
     <string name="edit_art_style_color_too_large_error">Oops - that\'s too large! We\'ll use %d instead.</string>
+    <string name="edit_art_style_color_pending_change_prompt">Do you want to apply the new color you input?</string>
     <string name="edit_art_style_stroke_width_header">Activity Thickness</string>
     <string name="edit_art_style_stroke_width_description">
         How thick should the lines of each activity be?
@@ -254,6 +255,8 @@
     <string name="edit_art_resize_pixels_custom_too_small_error">Oops - that\'s too small! We\'ll use %d instead.</string>
     <string name="edit_art_resize_pixels_custom_too_large_error">Oops - that\'s too large! We\'ll use %d instead.</string>
     <string name="edit_art_resize_rotate_right_content_description">Rotate Right</string>
+    <string name="edit_art_resize_custom_pending_change_prompt">Do you want to apply the new size you input?</string>
+
     <string-array name="edit_art_dialog_info_background_checkered">
         <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>

@@ -24,10 +24,10 @@ import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.ui.theme.spacing
 
 data class TextFieldSliderSpecification(
-    val errorMessage: String?,
     val keyboardType: KeyboardType,
     val textFieldLabel: String,
     val textFieldValue: String,
+    val pendingChangesMessage: String?,
     val sliderValue: Float,
     val sliderRange: ClosedFloatingPointRange<Float>,
     val onSliderChanged: (Float) -> Unit,
@@ -76,11 +76,13 @@ fun TextFieldSliders(
                         valueRange = spec.sliderRange
                     )
                 }
-                spec.errorMessage?.let { errorMessage ->
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colors.error,
-                        style = MaterialTheme.typography.subtitle2
+                spec.pendingChangesMessage?.let {
+                    ApplyPendingChangesButton(
+                        prompt = it,
+                        onClickedApply = {
+                            spec.onTextFieldDone()
+                            focusManager.clearFocus()
+                        }
                     )
                 }
             }
