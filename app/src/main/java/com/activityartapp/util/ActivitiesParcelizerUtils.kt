@@ -20,7 +20,7 @@ fun List<Activity>.parcelize(): List<ParcelableActivity> {
             it.name,
             it.sufferScore,
             it.summaryPolyline,
-            it.type
+            it.sportType
         )
     }
 }

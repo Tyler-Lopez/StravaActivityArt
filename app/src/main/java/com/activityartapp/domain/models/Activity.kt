@@ -1,5 +1,7 @@
 package com.activityartapp.domain.models
 
+import com.activityartapp.util.enums.SportType
+
 interface Activity {
     val athleteId: Long
     val averageSpeed: Double
@@ -16,5 +18,6 @@ interface Activity {
     val name: String // "Happy Friday"
     val sufferScore: Int?
     val summaryPolyline: String?
-    val type: String // "Ride"
+    val sportType: SportType
+
 }

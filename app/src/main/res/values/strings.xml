@@ -312,6 +312,58 @@
     <string name="font_size_type_large">Large</string><!-- XL is short for extra-large -->
     <string name="font_size_type_xl">XL</string>
 
+    <!-- SPORT TYPE -->
+    <string name="sport_type_alpine_ski">Alpine Ski</string>
+    <string name="sport_type_backcountry_ski">Backcountry Ski</string>
+    <string name="sport_type_badminton">Badminton</string>
+    <string name="sport_type_canoeing">Canoe</string>
+    <string name="sport_type_crossfit">CrossFit</string>
+    <string name="sport_type_ebike_ride">Electric Bike Ride</string>
+    <string name="sport_type_elliptical">Elliptical</string>
+    <string name="sport_type_emountainbike_ride">Electric Mountain Bike Ride</string>
+    <string name="sport_type_golf">Golf</string>
+    <string name="sport_type_gravel_ride">Gravel Ride</string>
+    <string name="sport_type_hand_cycle">Handcycle</string>
+    <string name="sport_type_high_intensity_interval_training">High-Intensity Interval Training</string>
+    <string name="sport_type_hike">Hike</string>
+    <string name="sport_type_ice_skate">Ice Skate</string>
+    <string name="sport_type_inline_skate">Inline Skate</string>
+    <string name="sport_type_kayaking">Kayak</string>
+    <string name="sport_type_kite_surf">Kite Surf</string>
+    <string name="sport_type_mountainbike_ride">Mountain Bike Ride</string>
+    <string name="sport_type_nordic_ski">Nordic Ski</string>
+    <string name="sport_type_pickle_ball">Pickleball</string>
+    <string name="sport_type_pilates">Pilates</string>
+    <string name="sport_type_racquetball">Racquetball</string>
+    <string name="sport_type_ride">Ride</string>
+    <string name="sport_type_rock_climbing">Rock Climb</string>
+    <string name="sport_type_roller_ski">Roller Ski</string>
+    <string name="sport_type_rowing">Row</string>
+    <string name="sport_type_run">Run</string>
+    <string name="sport_type_sail">Sail</string>
+    <string name="sport_type_skateboard">Skateboard</string>
+    <string name="sport_type_snowboard">Snowboard</string>
+    <string name="sport_type_snowshoe">Snowshoe</string>
+    <string name="sport_type_soccer">Soccer</string>
+    <string name="sport_type_squash">Squash</string>
+    <string name="sport_type_stair_stepper">Stair Stepper</string>
+    <string name="sport_type_stand_up_paddling">Stand Up Paddle Board</string>
+    <string name="sport_type_surfing">Surf</string>
+    <string name="sport_type_swim">Swim</string>
+    <string name="sport_type_table_tennis">Table Tennis</string>
+    <string name="sport_type_tennis">Tennis</string>
+    <string name="sport_type_trail_run">Trail Run</string>
+    <string name="sport_type_velo_mobile">Velomobile</string>
+    <string name="sport_type_virtual_ride">Virtual Ride</string>
+    <string name="sport_type_virtual_row">Virtual Row</string>
+    <string name="sport_type_virtual_run">Virtual Run</string>
+    <string name="sport_type_walk">Walk</string>
+    <string name="sport_type_weight_training">Weight Train</string>
+    <string name="sport_type_wheel_chair">Wheelchair</string>
+    <string name="sport_type_wind_surf">Wind Surf</string>
+    <string name="sport_type_workout">Workout</string>
+    <string name="sport_type_yoga">Yoga</string>
+
     <!-- GENERIC ERRORS -->
     <string name="error_reconnect_button">Reconnect with Strava</string>
     <string name="error_continue_button">Make Art</string>
@@ -324,4 +376,5 @@
     <string name="error_permission_denied_header">Unable to Download</string>
     <string name="error_permission_denied_description">We need permission to download your art. When we asked for this permission earlier, you denied it. We aren\'t able to request it again.</string>
     <string name="error_permission_denied_prompt">To grant this permission, open your device\'s settings, find Activity Art, and enable the storage permission.</string>
+
 </resources>

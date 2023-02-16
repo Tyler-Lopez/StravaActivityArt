@@ -162,10 +162,11 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateSaveArt(destination: NavigateSaveArt) {
         destination.apply {
+            println("yo here, the json is ${gson.toJson(activityTypes)}")
             navController.navigate(
                 route = SaveArt.withArgs(
                     args = arrayOf(
-                        ActivityTypes to gson.toJson(activityTypes),
+                        ActivityTypes to gson.toJson(activityTypes.map { it.toString() }),
                         BackgroundType to backgroundType.toString(),
                         ColorActivitiesArgb to colorActivitiesArgb.toString(),
                         ColorsBackgroundArgb to gson.toJson(backgroundColorsArgb),

@@ -87,7 +87,7 @@ sealed interface EditArtViewEvent : ViewEvent {
                 }
             }
 
-            data class FilterTypeToggled(val type: String) : FilterChanged {
+            data class FilterTypeToggled(val type: SportType) : FilterChanged {
                 override val filterType: EditArtFilterType
                     get() = EditArtFilterType.TYPE
             }
@@ -179,7 +179,7 @@ sealed interface EditArtViewState : ViewState {
         val filterDistanceTotalEnd: Double? = null,
         @IgnoredOnParcel val filterDistancePendingChangeStart: String? = null,
         @IgnoredOnParcel val filterDistancePendingChangeEnd: String? = null,
-        val filterTypes: Map<String, Boolean>? = null,
+        val filterTypes: Map<SportType, Boolean>? = null,
         @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
             pagerState = PagerState(EditArtHeaderType.values().toList().size),
@@ -274,10 +274,7 @@ sealed interface EditArtViewState : ViewState {
             ) != NO_ACTIVITIES_COUNT
 
         @IgnoredOnParcel
-        val filterDateSelectionUnset = filterDateSelectionIndex == INIT_SELECTION_INDEX
-
-        @IgnoredOnParcel
-        val filteredTypes: List<String>
+        val filteredTypes: List<SportType>
             get() = filterTypes?.entries?.filter { it.value }?.map { it.key } ?: emptyList()
 
         val filteredDistanceRangeMeters: IntRange

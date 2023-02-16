@@ -3,6 +3,7 @@ package com.activityartapp.data.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.activityartapp.domain.models.Activity
+import com.activityartapp.util.enums.SportType
 
 @Entity
 data class ActivityEntity(
@@ -22,5 +23,5 @@ data class ActivityEntity(
     override val sufferScore: Int?,
     override val iso8601LocalDate: String,
     override val summaryPolyline: String?,
-    override val type: String, // "Ride"
+    override val sportType: SportType,
 ) : Activity

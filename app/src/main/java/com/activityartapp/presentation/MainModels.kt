@@ -6,10 +6,7 @@ import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
-import com.activityartapp.util.enums.BackgroundType
-import com.activityartapp.util.enums.EditArtSortDirectionType
-import com.activityartapp.util.enums.EditArtSortType
-import com.activityartapp.util.enums.FontSizeType
+import com.activityartapp.util.enums.*
 
 sealed interface MainViewState : ViewState {
     object Unauthenticated : MainViewState
@@ -34,7 +31,7 @@ sealed interface MainDestination : Destination {
     ) : MainDestination
 
     data class NavigateSaveArt(
-        val activityTypes: List<String>,
+        val activityTypes: List<SportType>,
         val backgroundType: BackgroundType,
         val backgroundColorsArgb: List<Int>,
         val colorActivitiesArgb: Int,

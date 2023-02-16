@@ -87,7 +87,7 @@ class EditArtViewModel @Inject constructor(
     private val activitiesSummedDistance: Double get() = activitiesFiltered.sumOf { it.distance }
 
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
-     * Designates which activities this particular filter type is in-charge of filtering. **/
+     * Designates which activities this particular filter sportType is in-charge of filtering. **/
     private fun EditArtFilterType.updateFilteredActivities() {
         withLastState {
             val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
@@ -203,7 +203,7 @@ class EditArtViewModel @Inject constructor(
                      * the various saved filters. **/
                     it.updateFilteredActivities()
                 } else {
-                    /** Otherwise, simply initialize filtered activities for each type as all activities and
+                    /** Otherwise, simply initialize filtered activities for each sportType as all activities and
                      * initialize filters. **/
                     activitiesFilteredByFilterType[it] = activities
                     it.pushUpdatedFilteredActivityCountToView()
