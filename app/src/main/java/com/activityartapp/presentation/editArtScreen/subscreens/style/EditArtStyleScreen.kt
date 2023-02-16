@@ -15,7 +15,7 @@ import com.activityartapp.util.enums.BackgroundType
 
 @Composable
 fun ColumnScope.EditArtStyleViewDelegate(
-    backgroundColors: List<ColorWrapper>,
+    colorBackground: ColorWrapper,
     backgroundType: BackgroundType,
     colorActivities: ColorWrapper,
     colorText: ColorWrapper?,
@@ -29,7 +29,6 @@ fun ColumnScope.EditArtStyleViewDelegate(
                 text = stringResource(it.strRes),
                 onHelpPressed = if (it == BackgroundType.TRANSPARENT) {
                     {
-                        println("Sending event?")
                         eventReceiver.onEvent(EditArtViewEvent.ClickedInfoTransparentBackground)
                     }
                 } else {
@@ -40,15 +39,24 @@ fun ColumnScope.EditArtStyleViewDelegate(
     }
     SectionColorBackground(
         backgroundType = backgroundType,
-        colors = backgroundColors,
-        onColorChanged = eventReceiver::onEvent
+        color = colorBackground,
+        onColorChanged = eventReceiver::onEvent,
+        onColorPendingChanged = eventReceiver::onEvent,
+        onColorPendingChangeConfirmed = eventReceiver::onEvent
     )
-    SectionColorActivities(color = colorActivities, onColorChanged = eventReceiver::onEvent)
+    SectionColorActivities(
+        color = colorActivities,
+        onColorChanged = eventReceiver::onEvent,
+        onColorPendingChanged = eventReceiver::onEvent,
+        onColorPendingChangeConfirmed = eventReceiver::onEvent
+    )
     SectionColorText(
         color = colorText,
         colorActivities = colorActivities,
         onColorChanged = eventReceiver::onEvent,
-        onUseFontChanged = eventReceiver::onEvent
+        onUseFontChanged = eventReceiver::onEvent,
+        onColorPendingChanged = eventReceiver::onEvent,
+        onColorPendingChangeConfirmed = eventReceiver::onEvent
     )
     Section(
         header = stringResource(R.string.edit_art_style_stroke_width_header),

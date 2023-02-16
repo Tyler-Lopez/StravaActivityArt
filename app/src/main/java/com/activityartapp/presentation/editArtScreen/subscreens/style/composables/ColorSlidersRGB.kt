@@ -8,83 +8,49 @@ import com.activityartapp.presentation.editArtScreen.ColorType
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliderSpecification
 import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliders
-import kotlin.math.roundToInt
 
 @Composable
 fun ColorSlidersRGB(
     color: ColorWrapper,
-    enabled: Boolean,
-    onColorChanged: (ColorType, Float) -> Unit
+    onColorChanged: (ColorType, Float) -> Unit,
+    onColorPendingChanged: (ColorType, String) -> Unit,
+    onColorPendingChangeConfirmed: (ColorType) -> Unit
 ) {
-    TextFieldSliders(specifications = listOf(
-        TextFieldSliderSpecification(
-            enabled = enabled,
-            errorMessage = color.outOfBoundsRed?.let {
-                stringResource(
-                    id = R.string.edit_art_style_color_too_large_error,
-                    ColorWrapper.EIGHT_BIT_RANGE.last
-                )
-            },
-            keyboardType = KeyboardType.Number,
-            textFieldLabel = stringResource(R.string.edit_art_style_color_red),
-            sliderValue = color.red,
-            textFieldValue = color
-                .outOfBoundsRed
-                ?.let { ColorWrapper.ratioToEightBit(it).toString() }
-                ?: color.redAsEightBit.toString(),
-            sliderRange = ColorWrapper.RATIO_RANGE,
-            onSliderChanged = { onColorChanged(ColorType.RED, it) },
-            onTextFieldChanged = { str ->
-                str.toIntOrNull()?.let {
-                    onColorChanged(ColorType.RED, ColorWrapper.eightBitToRatio(it))
-                }
-            }
-        ),
-        TextFieldSliderSpecification(
-            enabled = enabled,
-            errorMessage = color.outOfBoundsGreen?.let {
-                stringResource(
-                    id = R.string.edit_art_style_color_too_large_error,
-                    ColorWrapper.EIGHT_BIT_RANGE.last
-                )
-            },
-            keyboardType = KeyboardType.Number,
-            textFieldLabel = stringResource(R.string.edit_art_style_color_green),
-            sliderValue = color.green,
-            textFieldValue = color
-                .outOfBoundsGreen
-                ?.let { ColorWrapper.ratioToEightBit(it).toString() }
-                ?: color.greenAsEightBit.toString(),
-            sliderRange = ColorWrapper.RATIO_RANGE,
-            onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
-            onTextFieldChanged = { str ->
-                str.toIntOrNull()?.let {
-                    onColorChanged(ColorType.GREEN, ColorWrapper.eightBitToRatio(it))
-                }
-            }
-        ),
-        TextFieldSliderSpecification(
-            enabled = enabled,
-            errorMessage = color.outOfBoundsBlue?.let {
-                stringResource(
-                    id = R.string.edit_art_style_color_too_large_error,
-                    ColorWrapper.EIGHT_BIT_RANGE.last
-                )
-            },
-            keyboardType = KeyboardType.Number,
-            textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
-            sliderValue = color.blue,
-            textFieldValue = color
-                .outOfBoundsBlue
-                ?.let { ColorWrapper.ratioToEightBit(it).toString() }
-                ?: color.blueAsEightBit.toString(),
-            sliderRange = ColorWrapper.RATIO_RANGE,
-            onSliderChanged = { onColorChanged(ColorType.BLUE, it) },
-            onTextFieldChanged = { str ->
-                str.toIntOrNull()?.let {
-                    onColorChanged(ColorType.BLUE, ColorWrapper.eightBitToRatio(it))
-                }
-            }
+    TextFieldSliders(
+        specifications = listOf(
+            TextFieldSliderSpecification(
+                errorMessage = null,
+                keyboardType = KeyboardType.Number,
+                textFieldLabel = stringResource(R.string.edit_art_style_color_red),
+                sliderValue = color.red,
+                textFieldValue = color.pendingRed ?: color.redAsEightBit.toString(),
+                sliderRange = ColorWrapper.RATIO_RANGE,
+                onSliderChanged = { onColorChanged(ColorType.RED, it) },
+                onTextFieldChanged = { onColorPendingChanged(ColorType.RED, it) },
+                onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.RED) }
+            ),
+            TextFieldSliderSpecification(
+                errorMessage = null,
+                keyboardType = KeyboardType.Number,
+                textFieldLabel = stringResource(R.string.edit_art_style_color_green),
+                sliderValue = color.green,
+                textFieldValue = color.pendingGreen ?: color.greenAsEightBit.toString(),
+                sliderRange = ColorWrapper.RATIO_RANGE,
+                onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
+                onTextFieldChanged = { onColorPendingChanged(ColorType.GREEN, it) },
+                onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.GREEN) }
+            ),
+            TextFieldSliderSpecification(
+                errorMessage = null,
+                keyboardType = KeyboardType.Number,
+                textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
+                sliderValue = color.blue,
+                textFieldValue = color.pendingBlue ?: color.blueAsEightBit.toString(),
+                sliderRange = ColorWrapper.RATIO_RANGE,
+                onSliderChanged = { onColorChanged(ColorType.BLUE, it) },
+                onTextFieldChanged = { onColorPendingChanged(ColorType.BLUE, it) },
+                onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.BLUE) }
+            )
         )
-    ))
+    )
 }

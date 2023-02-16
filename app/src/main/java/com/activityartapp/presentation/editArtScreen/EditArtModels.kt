@@ -47,6 +47,11 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
+    data class StyleColorPendingChanged(
+        val styleType: StyleType,
+        val colorType: ColorType,
+        val changedTo: String
+    ) : EditArtViewEvent
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
 
@@ -106,23 +111,18 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
-        data class StyleColorActivitiesChanged(
+        data class StyleColorChanged(
+            val styleType: StyleType,
             val colorType: ColorType,
             val changedTo: Float
         ) : ArtMutatingEvent
 
-        data class StyleColorsBackgroundChanged(
-            val changedColorType: ColorType,
-            val changedTo: Float
-        ) : ArtMutatingEvent
-
-        data class StyleColorFontChanged(
-            val colorType: ColorType,
-            val changedTo: Float
+        data class StyleColorPendingChangeConfirmed(
+            val styleType: StyleType,
+            val colorType: ColorType
         ) : ArtMutatingEvent
 
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
-
         data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
         data class TypeCustomTextChanged(
             val section: EditArtTypeSection,
@@ -205,7 +205,7 @@ sealed interface EditArtViewState : ViewState {
             red = INIT_ACTIVITIES_RED
         ),
         val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleBackgroundColor: ColorWrapper = ColorWrapper(
+        val styleBackground: ColorWrapper = ColorWrapper(
             alpha = INIT_BACKGROUND_ALPHA,
             blue = INIT_BACKGROUND_BLUE,
             green = INIT_BACKGROUND_GREEN,

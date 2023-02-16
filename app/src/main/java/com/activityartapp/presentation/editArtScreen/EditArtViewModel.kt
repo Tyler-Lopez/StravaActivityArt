@@ -224,6 +224,7 @@ class EditArtViewModel @Inject constructor(
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
+            is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
         }
     }
@@ -237,9 +238,8 @@ class EditArtViewModel @Inject constructor(
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
-            is StyleColorActivitiesChanged -> onStyleColorActivitiesChanged(event)
-            is StyleColorsBackgroundChanged -> onStyleColorsBackgroundChanged(event)
-            is StyleColorFontChanged -> onStyleColorFontChanged(event)
+            is StyleColorChanged -> onStyleColorChanged(event)
+            is StyleColorPendingChangeConfirmed -> onStyleColorPendingChangeConfirmed(event)
             is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
@@ -431,7 +431,7 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
-                        backgroundColorArgb = styleBackgroundColor.color.toArgb(),
+                        backgroundColorArgb = styleBackground.color.toArgb(),
                         backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.color.toArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
@@ -458,6 +458,20 @@ class EditArtViewModel @Inject constructor(
                         textFontSize = typeFontSizeSelected
                     )
                 )
+            }
+        }
+    }
+
+    private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
+        pushStateCopy {
+            println("here, style color pending changed invoked with $event")
+            when (event.styleType) {
+                StyleType.ACTIVITIES -> copy(styleActivities = styleActivities
+                    .copyWithPendingChange(event.colorType, event.changedTo))
+                StyleType.BACKGROUND -> copy(styleBackground = styleBackground
+                    .copyWithPendingChange(event.colorType, event.changedTo))
+                StyleType.FONT -> copy(styleFont = (styleFont ?: styleActivities)
+                    .copyWithPendingChange(event.colorType, event.changedTo))
             }
         }
     }
@@ -527,36 +541,38 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(styleBackgroundType = event.changedTo) }.push()
     }
 
-    private fun onStyleColorActivitiesChanged(event: StyleColorActivitiesChanged) {
+    private fun onStyleColorChanged(event: StyleColorChanged) {
         pushStateCopy {
-            copy(
-                styleActivities = styleActivities.copyWithChange(
-                    colorType = event.colorType,
-                    changedTo = event.changedTo
+            when (event.styleType) {
+                StyleType.ACTIVITIES -> copy(
+                    styleActivities = styleActivities.copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
                 )
-            )
+                StyleType.BACKGROUND -> copy(
+                    styleBackground = styleBackground.copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                )
+                StyleType.FONT -> copy(
+                    styleFont = (styleFont ?: styleActivities).copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                )
+            }
         }
     }
 
-    private fun onStyleColorsBackgroundChanged(event: StyleColorsBackgroundChanged) {
+    private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
         pushStateCopy {
-            copy(
-                styleBackgroundColor = styleBackgroundColor.copyWithChange(
-                    colorType = event.changedColorType,
-                    changedTo = event.changedTo
-                )
-            )
-        }
-    }
-
-    private fun onStyleColorFontChanged(event: StyleColorFontChanged) {
-        pushStateCopy {
-            copy(
-                styleFont = (styleFont ?: styleActivities).copyWithChange(
-                    colorType = event.colorType,
-                    changedTo = event.changedTo
-                )
-            )
+            when (event.styleType) {
+                StyleType.ACTIVITIES -> copy(styleActivities = styleActivities.confirmPendingChanges())
+                StyleType.BACKGROUND -> copy(styleBackground = styleBackground.confirmPendingChanges())
+                StyleType.FONT -> copy(styleFont = styleFont?.confirmPendingChanges())
+            }
         }
     }
 
@@ -624,45 +640,55 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(typeFontItalicized = event.changedTo) }.push()
     }
 
-    /** @return Copy of an reflecting a [StylesColorChanged] change event
-     *  to a [ColorWrapper]. **/
     private fun ColorWrapper.copyWithChange(
         colorType: ColorType,
         changedTo: Float
     ): ColorWrapper {
         return when (colorType) {
-            ALPHA -> copy(
-                alpha = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsAlpha = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
-            BLUE -> copy(
-                blue = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsBlue = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
-            GREEN -> copy(
-                green = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsGreen = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
-            RED -> copy(
-                red = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsRed = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
+            ALPHA -> copy(alpha = changedTo, pendingAlpha = null)
+            BLUE -> copy(blue = changedTo, pendingBlue = null)
+            GREEN -> copy(green = changedTo, pendingGreen = null)
+            RED -> copy(red = changedTo, pendingRed = null)
         }
     }
 
+    private fun ColorWrapper.copyWithPendingChange(
+        colorType: ColorType,
+        changedTo: String
+    ): ColorWrapper {
+        return when (colorType) {
+            ALPHA -> copy(pendingAlpha = changedTo)
+            BLUE -> copy(pendingBlue = changedTo)
+            GREEN -> copy(pendingGreen = changedTo)
+            RED -> copy(pendingRed = changedTo)
+        }
+    }
+
+    private fun ColorWrapper.confirmPendingChanges(): ColorWrapper {
+        println("here, confirm pending changes invoked for $this")
+        val parseEightBitColorToRatio: (String) -> Float = {
+            parseNumberFromStringUtils.parse(it).div(255).coerceIn(0.0..1.0).toFloat()
+        }
+        return copy(
+            alpha = pendingAlpha?.let { parseEightBitColorToRatio(it) } ?: alpha,
+            blue = pendingBlue?.let { parseEightBitColorToRatio(it) } ?: blue,
+            green = pendingGreen?.let { parseEightBitColorToRatio(it) } ?: green,
+            red = pendingRed?.let { parseEightBitColorToRatio(it) } ?: red,
+            pendingAlpha = null,
+            pendingBlue = null,
+            pendingGreen = null,
+            pendingRed = null
+        )
+    }
+
     private fun updateBitmap() {
-        println("Here, update bitmap invoked, final filtered is ${activitiesFiltered.size} size")
         imageProcessingDispatcher.cancelChildren()
         viewModelScope.launch(imageProcessingDispatcher) {
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered, // todo...
                     backgroundType = styleBackgroundType,
-                    backgroundColorArgb = styleBackgroundColor.color.toArgb(),
+                    backgroundColorArgb = styleBackground.color.toArgb(),
                     colorActivitiesArgb = styleActivities.color.toArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
                     strokeWidth = styleStrokeWidthType,

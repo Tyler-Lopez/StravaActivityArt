@@ -69,7 +69,7 @@ sealed interface NavArgSpecification {
         override val name = COLOR_ACTIVITIES_KEY
     }
 
-    object ColorsBackgroundArgb : NavArgSpecification {
+    object ColorBackgroundArgb : NavArgSpecification {
         override val name = COLORS_BACKGROUND_KEY
     }
 

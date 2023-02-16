@@ -59,7 +59,6 @@ fun EditArtResizeScreen(
                                 TextFieldSliders(
                                     specifications = listOf(
                                         TextFieldSliderSpecification(
-                                            enabled = true,
                                             errorMessage = customOutOfBoundsWidthPx?.let { oob ->
                                                 GetOutOfBoundsErrorMessage(
                                                     outOfBoundsValue = oob,
@@ -87,10 +86,10 @@ fun EditArtResizeScreen(
                                                         )
                                                     )
                                                 }
-                                            }
+                                            },
+                                            onTextFieldDone = {}
                                         ),
                                         TextFieldSliderSpecification(
-                                            enabled = true,
                                             errorMessage = customOutOfBoundsHeightPx?.let { oob ->
                                                 GetOutOfBoundsErrorMessage(
                                                     outOfBoundsValue = oob,
@@ -118,7 +117,8 @@ fun EditArtResizeScreen(
                                                         )
                                                     )
                                                 }
-                                            }
+                                            },
+                                            onTextFieldDone = {}
                                         )
                                     )
                                 )
