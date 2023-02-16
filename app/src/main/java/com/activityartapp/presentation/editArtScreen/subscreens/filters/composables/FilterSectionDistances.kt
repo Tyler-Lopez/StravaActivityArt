@@ -80,7 +80,7 @@ fun ColumnScope.FilterSectionDistances(
             DistanceTextField(
                 textFieldValue = distancePendingChangeEnd
                     ?: "%.2f".format(range.endInclusive.meterToMiles()),
-                labelString = stringResource(R.string.edit_art_filters_distance_label_shortest),
+                labelString = stringResource(R.string.edit_art_filters_distance_label_longest),
                 onDone = {
                     eventReceiver.onEvent(
                         event = FilterDistancePendingChangeConfirmed.EndConfirmed
