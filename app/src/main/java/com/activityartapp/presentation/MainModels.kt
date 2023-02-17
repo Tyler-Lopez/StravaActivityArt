@@ -33,7 +33,7 @@ sealed interface MainDestination : Destination {
     data class NavigateSaveArt(
         val activityTypes: List<SportType>,
         val backgroundType: BackgroundType,
-        val backgroundColorsArgb: List<Int>,
+        val backgroundColorArgb: Int,
         val colorActivitiesArgb: Int,
         val colorFontArgb: Int,
         val filterBeforeMs: Long,

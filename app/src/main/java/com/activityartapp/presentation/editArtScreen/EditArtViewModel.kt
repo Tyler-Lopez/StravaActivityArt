@@ -21,10 +21,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
-import com.activityartapp.util.ActivityFilterUtils
-import com.activityartapp.util.ImageSizeUtils
-import com.activityartapp.util.TimeUtils
-import com.activityartapp.util.VisualizationUtils
+import com.activityartapp.util.*
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,6 +41,7 @@ class EditArtViewModel @Inject constructor(
     private val timeUtils: TimeUtils,
     private val visualizationUtils: VisualizationUtils,
     private val savedStateHandle: SavedStateHandle,
+    private val parseNumberFromStringUtils: ParseNumberFromStringUtils
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
@@ -226,6 +224,8 @@ class EditArtViewModel @Inject constructor(
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
+            is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
+            is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
         }
     }
@@ -235,13 +235,13 @@ class EditArtViewModel @Inject constructor(
             is FilterChanged -> onFilterChangeEvent(event)
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChanged -> onSizeCustomChanged(event)
+            is SizeCustomPendingChangeConfirmed -> onSizeCustomPendingChangeConfirmed()
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
-            is StyleColorActivitiesChanged -> onStyleColorActivitiesChanged(event)
-            is StyleColorsBackgroundChanged -> onStyleColorsBackgroundChanged(event)
-            is StyleColorFontChanged -> onStyleColorFontChanged(event)
+            is StyleColorChanged -> onStyleColorChanged(event)
+            is StyleColorPendingChangeConfirmed -> onStyleColorPendingChangeConfirmed(event)
             is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
             is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
@@ -370,50 +370,36 @@ class EditArtViewModel @Inject constructor(
 
     private fun onFilterDistancePendingChangeConfirmed(event: FilterChanged.FilterDistancePendingChangeConfirmed) {
         pushStateCopy {
-            val pendingChange =
-                if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
-                    filterDistancePendingChangeStart
-                } else {
-                    filterDistancePendingChangeEnd
-                }
+            val totalValueSmallest = filterDistanceTotalStart ?: 0.0
+            val totalValueLargest = filterDistanceTotalEnd ?: Double.MAX_VALUE
 
-            val parsedValue = pendingChange
-                // Keeps only the first occurrence of a decimal
-                ?.fold(StringBuilder()) { total, new ->
-                    if (new == '.' && total.contains('.')) {
-                        total
-                    } else {
-                        total.append(new)
+            when (event) {
+                is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed -> {
+                    filterDistancePendingChangeStart?.let {
+                        val coerceAtMost = filterDistanceSelectedEnd ?: totalValueLargest
+
+                        copy(
+                            filterDistanceSelectedStart = parseNumberFromStringUtils.parse(it)
+                                .milesToMeters()
+                                .coerceIn(totalValueSmallest.rangeTo(coerceAtMost)),
+                            filterDistanceSelectedEnd = coerceAtMost,
+                            filterDistancePendingChangeStart = null
+                        )
                     }
                 }
-                ?.toString()
-                ?.toDoubleOrNull()
-                ?.milesToMeters()
+                is FilterChanged.FilterDistancePendingChangeConfirmed.EndConfirmed -> {
+                    filterDistancePendingChangeEnd?.let {
+                        val coerceAtLeast = filterDistanceSelectedStart ?: totalValueSmallest
 
-            if (event is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed) {
-
-                val finalValue =
-                    filterDistanceSelectedEnd ?: filterDistanceTotalEnd ?: Double.MAX_VALUE
-                val changedTo = parsedValue
-                    ?.coerceIn((filterDistanceTotalStart ?: 0.0).rangeTo(finalValue))
-
-                copy(
-                    filterDistanceSelectedStart = changedTo ?: filterDistanceSelectedStart,
-                    filterDistanceSelectedEnd = filterDistanceSelectedEnd ?: filterDistanceTotalEnd,
-                    filterDistancePendingChangeStart = null
-                )
-            } else {
-                val valueStart =
-                    filterDistanceSelectedStart ?: filterDistanceTotalStart ?: 0.0
-                val changedTo = parsedValue
-                    ?.coerceIn(valueStart.rangeTo(filterDistanceTotalEnd ?: Double.MAX_VALUE))
-
-                copy(
-                    filterDistanceSelectedStart = filterDistanceSelectedStart
-                        ?: filterDistanceTotalStart,
-                    filterDistanceSelectedEnd = changedTo ?: filterDistanceSelectedEnd,
-                    filterDistancePendingChangeEnd = null
-                )
+                        copy(
+                            filterDistanceSelectedStart = coerceAtLeast,
+                            filterDistanceSelectedEnd = parseNumberFromStringUtils.parse(it)
+                                .milesToMeters()
+                                .coerceIn(coerceAtLeast.rangeTo(totalValueLargest)),
+                            filterDistancePendingChangeEnd = null
+                        )
+                    }
+                }
             }
         }
     }
@@ -447,10 +433,10 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
-                        backgroundColorsArgb = styleBackgroundColors.map { it.color.toArgb() },
+                        backgroundColorArgb = styleBackground.toColorArgb(),
                         backgroundType = styleBackgroundType,
-                        colorActivitiesArgb = styleActivities.color.toArgb(),
-                        colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
+                        colorActivitiesArgb = styleActivities.toColorArgb(),
+                        colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
                         filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
                         filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
                         filterDistanceLessThanMeters = filterDistanceSelectedEnd
@@ -478,6 +464,25 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
+    private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
+        pushStateCopy {
+            when (event.styleType) {
+                StyleType.ACTIVITIES -> copy(
+                    styleActivities = styleActivities
+                        .copyWithPendingChange(event.colorType, event.changedTo)
+                )
+                StyleType.BACKGROUND -> copy(
+                    styleBackground = styleBackground
+                        .copyWithPendingChange(event.colorType, event.changedTo)
+                )
+                StyleType.FONT -> copy(
+                    styleFont = (styleFont ?: styleActivities)
+                        .copyWithPendingChange(event.colorType, event.changedTo)
+                )
+            }
+        }
+    }
+
     private fun onSizeChanged(event: SizeChanged) {
         copyLastState {
             copy(sizeResolutionListSelectedIndex = event.changedIndex)
@@ -485,34 +490,69 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
-        copyLastState {
+        pushStateCopy {
             val customRange = sizeCustomMinPx..sizeCustomMaxPx
             copy(
                 sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
-                sizeCustomOutOfBoundsWidth = if (event is SizeCustomChanged.WidthChanged) {
-                    event.changedToPx.takeIf { it !in customRange }
-                } else {
-                    sizeCustomOutOfBoundsWidth
-                },
-                sizeCustomOutOfBoundsHeight = if (event is SizeCustomChanged.HeightChanged) {
-                    event.changedToPx.takeIf { it !in customRange }
-                } else {
-                    sizeCustomOutOfBoundsHeight
-                },
                 sizeResolutionList = sizeResolutionList
                     .toMutableList()
                     .apply {
                         val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
-                        set(tarIndex, get(tarIndex).run {
-                            val adjPx = event.changedToPx.coerceIn(customRange)
+                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
                             Resolution.CustomResolution(
-                                widthPx = if (event is SizeCustomChanged.WidthChanged) adjPx else widthPx,
-                                heightPx = if (event is SizeCustomChanged.HeightChanged) adjPx else heightPx
+                                widthPx = if (event is SizeCustomChanged.WidthChanged) event.changedToPx else widthPx,
+                                heightPx = if (event is SizeCustomChanged.HeightChanged) event.changedToPx else heightPx,
+                                pendingWidth = if (event is SizeCustomChanged.WidthChanged) null else pendingWidth,
+                                pendingHeight = if (event is SizeCustomChanged.HeightChanged) null else pendingHeight
                             )
                         })
                     }
             )
-        }.push()
+        }
+    }
+
+    private fun onSizeCustomPendingChangeConfirmed() {
+        pushStateCopy {
+            val range = sizeCustomMinPx..sizeCustomMaxPx
+            copy(
+                sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
+                sizeResolutionList = sizeResolutionList
+                    .toMutableList()
+                    .apply {
+                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
+                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
+                            Resolution.CustomResolution(
+                                widthPx = pendingWidth?.let {
+                                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                                } ?: widthPx,
+                                heightPx = pendingHeight?.let {
+                                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                                } ?: heightPx,
+                                pendingWidth = null,
+                                pendingHeight = null
+                            )
+                        })
+                    }
+            )
+        }
+    }
+
+    private fun onSizeCustomPendingChanged(event: SizeCustomPendingChanged) {
+        pushStateCopy {
+            copy(
+                sizeResolutionList = sizeResolutionList
+                    .toMutableList()
+                    .apply {
+                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
+                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
+                            copy(
+                                pendingWidth = if (event is SizeCustomPendingChanged.WidthChanged) event.changedTo else pendingWidth,
+                                pendingHeight = if (event is SizeCustomPendingChanged.HeightChanged) event.changedTo else pendingHeight
+                            )
+                        })
+                    }
+            )
+        }
     }
 
     private fun onSizeRotated(event: SizeRotated) {
@@ -543,41 +583,38 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(styleBackgroundType = event.changedTo) }.push()
     }
 
-    private fun onStyleColorActivitiesChanged(event: StyleColorActivitiesChanged) {
+    private fun onStyleColorChanged(event: StyleColorChanged) {
         pushStateCopy {
-            copy(
-                styleActivities = styleActivities.copyWithChange(
-                    colorType = event.colorType,
-                    changedTo = event.changedTo
-                )
-            )
-        }
-    }
-
-    private fun onStyleColorsBackgroundChanged(event: StyleColorsBackgroundChanged) {
-        pushStateCopy {
-            copy(
-                styleBackgroundColors = styleBackgroundColors.toMutableList().apply {
-                    set(
-                        event.changedIndex,
-                        get(event.changedIndex).copyWithChange(
-                            event.changedColorType,
-                            event.changedTo
-                        )
+            when (event.styleType) {
+                StyleType.ACTIVITIES -> copy(
+                    styleActivities = styleActivities.copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
                     )
-                }
-            )
+                )
+                StyleType.BACKGROUND -> copy(
+                    styleBackground = styleBackground.copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                )
+                StyleType.FONT -> copy(
+                    styleFont = (styleFont ?: styleActivities).copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                )
+            }
         }
     }
 
-    private fun onStyleColorFontChanged(event: StyleColorFontChanged) {
+    private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
         pushStateCopy {
-            copy(
-                styleFont = (styleFont ?: styleActivities).copyWithChange(
-                    colorType = event.colorType,
-                    changedTo = event.changedTo
-                )
-            )
+            when (event.styleType) {
+                StyleType.ACTIVITIES -> copy(styleActivities = styleActivities.confirmPendingChanges())
+                StyleType.BACKGROUND -> copy(styleBackground = styleBackground.confirmPendingChanges())
+                StyleType.FONT -> copy(styleFont = styleFont?.confirmPendingChanges())
+            }
         }
     }
 
@@ -645,47 +682,61 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(typeFontItalicized = event.changedTo) }.push()
     }
 
-    /** @return Copy of an reflecting a [StylesColorChanged] change event
-     *  to a [ColorWrapper]. **/
     private fun ColorWrapper.copyWithChange(
         colorType: ColorType,
         changedTo: Float
     ): ColorWrapper {
         return when (colorType) {
-            ALPHA -> copy(
-                alpha = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsAlpha = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
-            BLUE -> copy(
-                blue = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsBlue = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
-            GREEN -> copy(
-                green = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsGreen = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
-            RED -> copy(
-                red = changedTo.coerceIn(ColorWrapper.RATIO_RANGE),
-                outOfBoundsRed = changedTo
-                    .takeIf { !ColorWrapper.RATIO_RANGE.contains(it) }
-            )
+            ALPHA -> copy(alpha = changedTo, pendingAlpha = null)
+            BLUE -> copy(blue = changedTo, pendingBlue = null)
+            GREEN -> copy(green = changedTo, pendingGreen = null)
+            RED -> copy(red = changedTo, pendingRed = null)
         }
     }
 
+    private fun ColorWrapper.copyWithPendingChange(
+        colorType: ColorType,
+        changedTo: String
+    ): ColorWrapper {
+        return when (colorType) {
+            ALPHA -> copy(pendingAlpha = changedTo)
+            BLUE -> copy(pendingBlue = changedTo)
+            GREEN -> copy(pendingGreen = changedTo)
+            RED -> copy(pendingRed = changedTo)
+        }
+    }
+
+    private fun ColorWrapper.confirmPendingChanges(): ColorWrapper {
+        val parseEightBitColorToRatio: (String) -> Float = {
+            ColorWrapper.eightBitToRatio(
+                parseNumberFromStringUtils
+                    .parse(it)
+                    .toInt()
+                    .coerceIn(ColorWrapper.EIGHT_BIT_RANGE)
+            )
+        }
+        return copy(
+            alpha = pendingAlpha?.let { parseEightBitColorToRatio(it) } ?: alpha,
+            blue = pendingBlue?.let { parseEightBitColorToRatio(it) } ?: blue,
+            green = pendingGreen?.let { parseEightBitColorToRatio(it) } ?: green,
+            red = pendingRed?.let { parseEightBitColorToRatio(it) } ?: red,
+            pendingAlpha = null,
+            pendingBlue = null,
+            pendingGreen = null,
+            pendingRed = null
+        )
+    }
+
     private fun updateBitmap() {
-        println("Here, update bitmap invoked, final filtered is ${activitiesFiltered.size} size")
         imageProcessingDispatcher.cancelChildren()
         viewModelScope.launch(imageProcessingDispatcher) {
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFiltered, // todo...
+                    activities = activitiesFiltered,
                     backgroundType = styleBackgroundType,
-                    backgroundColorsArgb = styleBackgroundColors.map { it.color.toArgb() },
-                    colorActivitiesArgb = styleActivities.color.toArgb(),
-                    colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
+                    backgroundColorArgb = styleBackground.toColorArgb(),
+                    colorActivitiesArgb = styleActivities.toColorArgb(),
+                    colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
                     strokeWidth = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
@@ -717,11 +768,10 @@ class EditArtViewModel @Inject constructor(
         return (lastPushedState as? Standby)?.run(block) ?: error("Last state was not standby")
     }
 
-    private inline fun pushStateCopy(block: Standby.() -> Standby): Unit {
-        ((lastPushedState as? Standby)
+    private inline fun pushStateCopy(block: Standby.() -> Standby?) {
+        (lastPushedState as? Standby)
             ?.run(block)
-            ?: error("Last state was not standby"))
-            .push()
+            ?.push()
     }
 
     private inline fun withLastState(block: Standby.() -> Unit) {

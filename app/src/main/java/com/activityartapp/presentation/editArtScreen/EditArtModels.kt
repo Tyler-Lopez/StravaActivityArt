@@ -8,6 +8,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.room.Ignore
 import com.activityartapp.R
@@ -47,6 +49,18 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
+    sealed interface SizeCustomPendingChanged : EditArtViewEvent {
+        val changedTo: String
+
+        data class HeightChanged(override val changedTo: String) : SizeCustomPendingChanged
+        data class WidthChanged(override val changedTo: String) : SizeCustomPendingChanged
+    }
+
+    data class StyleColorPendingChanged(
+        val styleType: StyleType,
+        val colorType: ColorType,
+        val changedTo: String
+    ) : EditArtViewEvent
 
     sealed interface ArtMutatingEvent : EditArtViewEvent {
 
@@ -81,6 +95,7 @@ sealed interface EditArtViewEvent : ViewEvent {
                     override val filterType: EditArtFilterType
                         get() = EditArtFilterType.DISTANCE
                 }
+
                 object EndConfirmed : FilterDistancePendingChangeConfirmed {
                     override val filterType: EditArtFilterType
                         get() = EditArtFilterType.DISTANCE
@@ -101,28 +116,20 @@ sealed interface EditArtViewEvent : ViewEvent {
             data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
         }
 
+        object SizeCustomPendingChangeConfirmed : ArtMutatingEvent
+
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
-        data class StyleColorActivitiesChanged(
+        data class StyleColorChanged(
+            val styleType: StyleType,
             val colorType: ColorType,
             val changedTo: Float
         ) : ArtMutatingEvent
 
-        data class StyleColorsBackgroundChanged(
-            val changedIndex: Int,
-            val changedColorType: ColorType,
-            val changedTo: Float
-        ) : ArtMutatingEvent
-
-        data class StyleColorFontChanged(
-            val colorType: ColorType,
-            val changedTo: Float
-        ) : ArtMutatingEvent
-
+        data class StyleColorPendingChangeConfirmed(val styleType: StyleType) : ArtMutatingEvent
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
-
         data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
         data class TypeCustomTextChanged(
             val section: EditArtTypeSection,
@@ -194,8 +201,6 @@ sealed interface EditArtViewState : ViewState {
         val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
         @IgnoredOnParcel val sizeCustomMaxPx: Int = CUSTOM_SIZE_MAXIMUM_PX,
         @IgnoredOnParcel val sizeCustomMinPx: Int = CUSTOM_SIZE_MINIMUM_PX,
-        @IgnoredOnParcel val sizeCustomOutOfBoundsWidth: Int? = null,
-        @IgnoredOnParcel val sizeCustomOutOfBoundsHeight: Int? = null,
         val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
         val sortDirectionTypeSelected: EditArtSortDirectionType = EditArtSortDirectionType.ASCENDING,
         val styleActivities: ColorWrapper = ColorWrapper(
@@ -205,13 +210,11 @@ sealed interface EditArtViewState : ViewState {
             red = INIT_ACTIVITIES_RED
         ),
         val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleBackgroundColors: List<ColorWrapper> = listOf(
-            ColorWrapper(
-                alpha = INIT_BACKGROUND_ALPHA,
-                blue = INIT_BACKGROUND_BLUE,
-                green = INIT_BACKGROUND_GREEN,
-                red = INIT_BACKGROUND_RED
-            )
+        val styleBackground: ColorWrapper = ColorWrapper(
+            alpha = INIT_BACKGROUND_ALPHA,
+            blue = INIT_BACKGROUND_BLUE,
+            green = INIT_BACKGROUND_GREEN,
+            red = INIT_BACKGROUND_RED
         ),
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
@@ -310,10 +313,10 @@ data class ColorWrapper(
     val blue: Float,
     val green: Float,
     val red: Float,
-    @IgnoredOnParcel val outOfBoundsAlpha: Float? = null,
-    @IgnoredOnParcel val outOfBoundsBlue: Float? = null,
-    @IgnoredOnParcel val outOfBoundsGreen: Float? = null,
-    @IgnoredOnParcel val outOfBoundsRed: Float? = null
+    @IgnoredOnParcel val pendingAlpha: String? = null,
+    @IgnoredOnParcel val pendingBlue: String? = null,
+    @IgnoredOnParcel val pendingGreen: String? = null,
+    @IgnoredOnParcel val pendingRed: String? = null
 ) : Parcelable {
 
     companion object {
@@ -334,10 +337,17 @@ data class ColorWrapper(
         val EIGHT_BIT_RANGE = EIGHT_BIT_LIMIT_LOWER..EIGHT_BIT_LIMIT_UPPER
     }
 
-    val color get() = Color(red, green, blue, alpha)
-    val redAsEightBit get() = ratioToEightBit(red)
-    val greenAsEightBit get() = ratioToEightBit(green)
-    val blueAsEightBit get() = ratioToEightBit(blue)
+    fun toInvertedLuminanceGrayscaleColor() = (RATIO_LIMIT_UPPER - toColor().luminance()).let {
+        Color(it, it, it)
+    }
+
+    fun toColor() = Color(red, green, blue, alpha)
+    fun toColorArgb() = toColor().toArgb()
+    fun redToEightBitString() = ratioToEightBit(red).toString()
+    fun greenToEightBitString() = ratioToEightBit(green).toString()
+    fun blueToEightBitString() = ratioToEightBit(blue).toString()
+    fun alphaToEightBitString() = ratioToEightBit(alpha).toString()
+
 }
 
 sealed interface DateSelection : Parcelable {
@@ -363,6 +373,13 @@ sealed interface DateSelection : Parcelable {
         val dateTotal: LongProgression
             get() = dateTotalStartUnixMs..dateTotalEndUnixMs
     }
+}
+
+
+enum class StyleType {
+    BACKGROUND,
+    ACTIVITIES,
+    FONT
 }
 
 enum class ColorType(@StringRes val strRes: Int) {
@@ -471,9 +488,11 @@ sealed interface Resolution : Parcelable {
     data class CustomResolution(
         override val widthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
         override val heightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
+        @IgnoredOnParcel var pendingWidth: String? = null,
+        @IgnoredOnParcel var pendingHeight: String? = null
     ) : Resolution {
 
-        override val stringResourceId: Int
+        @IgnoredOnParcel override val stringResourceId: Int
             get() = R.string.edit_art_resize_option_custom
 
         @Composable

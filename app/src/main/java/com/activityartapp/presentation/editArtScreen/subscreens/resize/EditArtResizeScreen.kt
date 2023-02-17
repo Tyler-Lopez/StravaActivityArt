@@ -25,8 +25,6 @@ import kotlin.math.roundToInt
 
 @Composable
 fun EditArtResizeScreen(
-    customOutOfBoundsWidthPx: Int?,
-    customOutOfBoundsHeightPx: Int?,
     customRangePx: IntRange,
     resolutionList: List<Resolution>,
     selectedResolutionIndex: Int,
@@ -59,16 +57,12 @@ fun EditArtResizeScreen(
                                 TextFieldSliders(
                                     specifications = listOf(
                                         TextFieldSliderSpecification(
-                                            enabled = true,
-                                            errorMessage = customOutOfBoundsWidthPx?.let { oob ->
-                                                GetOutOfBoundsErrorMessage(
-                                                    outOfBoundsValue = oob,
-                                                    range = customRangePx
-                                                )
+                                            pendingChangesMessage = it.pendingWidth?.let {
+                                                stringResource(R.string.edit_art_resize_custom_pending_change_prompt)
                                             },
                                             keyboardType = KeyboardType.Number,
                                             textFieldLabel = stringResource(R.string.edit_art_resize_pixels_width),
-                                            textFieldValue = customOutOfBoundsWidthPx?.toString()
+                                            textFieldValue = it.pendingWidth
                                                 ?: it.widthPx.toString(),
                                             sliderValue = it.widthPx.toFloat(),
                                             sliderRange = customRangePx.toFloatRange(),
@@ -80,26 +74,25 @@ fun EditArtResizeScreen(
                                                 )
                                             },
                                             onTextFieldChanged = { str ->
-                                                str.toDoubleOrNull()?.roundToInt()?.let {
-                                                    eventReceiver.onEvent(
-                                                        SizeCustomChanged.WidthChanged(
-                                                            it
-                                                        )
+                                                eventReceiver.onEvent(
+                                                    EditArtViewEvent.SizeCustomPendingChanged.WidthChanged(
+                                                        changedTo = str
                                                     )
-                                                }
+                                                )
+                                            },
+                                            onTextFieldDone = {
+                                                eventReceiver.onEvent(
+                                                    SizeCustomPendingChangeConfirmed
+                                                )
                                             }
                                         ),
                                         TextFieldSliderSpecification(
-                                            enabled = true,
-                                            errorMessage = customOutOfBoundsHeightPx?.let { oob ->
-                                                GetOutOfBoundsErrorMessage(
-                                                    outOfBoundsValue = oob,
-                                                    range = customRangePx
-                                                )
+                                            pendingChangesMessage = it.pendingHeight?.let {
+                                                stringResource(R.string.edit_art_resize_custom_pending_change_prompt)
                                             },
                                             keyboardType = KeyboardType.Number,
                                             textFieldLabel = stringResource(R.string.edit_art_resize_pixels_height),
-                                            textFieldValue = customOutOfBoundsHeightPx?.toString()
+                                            textFieldValue = it.pendingHeight
                                                 ?: it.heightPx.toString(),
                                             sliderValue = it.heightPx.toFloat(),
                                             sliderRange = customRangePx.toFloatRange(),
@@ -111,13 +104,16 @@ fun EditArtResizeScreen(
                                                 )
                                             },
                                             onTextFieldChanged = { str ->
-                                                str.toDoubleOrNull()?.roundToInt()?.let {
-                                                    eventReceiver.onEvent(
-                                                        SizeCustomChanged.HeightChanged(
-                                                            it
-                                                        )
+                                                eventReceiver.onEvent(
+                                                    EditArtViewEvent.SizeCustomPendingChanged.HeightChanged(
+                                                        changedTo = str
                                                     )
-                                                }
+                                                )
+                                            },
+                                            onTextFieldDone = {
+                                                eventReceiver.onEvent(
+                                                    SizeCustomPendingChangeConfirmed
+                                                )
                                             }
                                         )
                                     )
@@ -131,21 +127,5 @@ fun EditArtResizeScreen(
                 ) { eventReceiver.onEvent(SizeChanged(index)) }
             }
         }
-    }
-}
-
-@Composable
-private fun GetOutOfBoundsErrorMessage(outOfBoundsValue: Int, range: IntRange): String {
-    val errorIsTooLarge = outOfBoundsValue > range.last
-    return if (errorIsTooLarge) {
-        stringResource(
-            id = R.string.edit_art_resize_pixels_custom_too_large_error,
-            range.last
-        )
-    } else {
-        stringResource(
-            id = R.string.edit_art_resize_pixels_custom_too_small_error,
-            range.first
-        )
     }
 }

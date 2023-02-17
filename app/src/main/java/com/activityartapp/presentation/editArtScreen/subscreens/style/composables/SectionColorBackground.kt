@@ -1,42 +1,54 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
-import com.activityartapp.presentation.editArtScreen.ColorType
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorsBackgroundChanged
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorChanged
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorPendingChangeConfirmed
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
+import com.activityartapp.presentation.editArtScreen.StyleType
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.util.enums.BackgroundType
 
 @Composable
 fun SectionColorBackground(
     backgroundType: BackgroundType,
-    colors: List<ColorWrapper>,
-    onColorChanged: (StyleColorsBackgroundChanged) -> Unit
+    color: ColorWrapper,
+    onColorChanged: (StyleColorChanged) -> Unit,
+    onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
+    onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
     if (backgroundType != BackgroundType.TRANSPARENT) {
         Section(
             header = stringResource(R.string.edit_art_style_background_header),
             description = stringResource(R.string.edit_art_style_background_type_solid_description)
         ) {
-            colors.forEachIndexed { index, color ->
-                ColorPreview(colorWrapper = color)
-                ColorSlidersRGB(
-                    color = color,
-                    enabled = true,
-                    onColorChanged = { colorType, changedTo ->
-                        onColorChanged(
-                            StyleColorsBackgroundChanged(
-                                changedIndex = index,
-                                changedColorType = colorType,
-                                changedTo = changedTo
-                            )
+            ColorPreview(colorWrapper = color)
+            ColorSlidersRGB(
+                color = color,
+                onColorChanged = { colorType, changedTo ->
+                    onColorChanged(
+                        StyleColorChanged(
+                            styleType = StyleType.BACKGROUND,
+                            colorType = colorType,
+                            changedTo = changedTo
                         )
-                    }
-                )
-            }
+                    )
+                },
+                onColorPendingChanged = { colorType, changedTo ->
+                    onColorPendingChanged(
+                        StyleColorPendingChanged(
+                            styleType = StyleType.BACKGROUND,
+                            colorType = colorType,
+                            changedTo = changedTo
+                        )
+                    )
+                },
+                onColorPendingChangeConfirmed = {
+                    onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.BACKGROUND))
+                }
+            )
         }
     }
 }

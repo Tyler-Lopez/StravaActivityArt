@@ -120,7 +120,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 )
                             }
                             STYLE -> EditArtStyleViewDelegate(
-                                styleBackgroundColors,
+                                styleBackground,
                                 styleBackgroundType,
                                 styleActivities,
                                 styleFont,
@@ -149,10 +149,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 eventReceiver = viewModel
                             )
                             RESIZE -> EditArtResizeScreen(
-                                //     sizeCustomHeightPx,
-                                //    sizeCustomWidthPx,
-                                sizeCustomOutOfBoundsWidth,
-                                sizeCustomOutOfBoundsHeight,
                                 sizeCustomMinPx..sizeCustomMaxPx,
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,
