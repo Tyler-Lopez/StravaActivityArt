@@ -224,6 +224,7 @@ class EditArtViewModel @Inject constructor(
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
+            is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
         }
@@ -234,6 +235,7 @@ class EditArtViewModel @Inject constructor(
             is FilterChanged -> onFilterChangeEvent(event)
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChanged -> onSizeCustomChanged(event)
+            is SizeCustomPendingChangeConfirmed -> onSizeCustomPendingChangeConfirmed()
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
@@ -431,10 +433,10 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
-                        backgroundColorArgb = styleBackground.color.toArgb(),
+                        backgroundColorArgb = styleBackground.toColorArgb(),
                         backgroundType = styleBackgroundType,
-                        colorActivitiesArgb = styleActivities.color.toArgb(),
-                        colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
+                        colorActivitiesArgb = styleActivities.toColorArgb(),
+                        colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
                         filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
                         filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
                         filterDistanceLessThanMeters = filterDistanceSelectedEnd
@@ -464,14 +466,19 @@ class EditArtViewModel @Inject constructor(
 
     private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
         pushStateCopy {
-            println("here, style color pending changed invoked with $event")
             when (event.styleType) {
-                StyleType.ACTIVITIES -> copy(styleActivities = styleActivities
-                    .copyWithPendingChange(event.colorType, event.changedTo))
-                StyleType.BACKGROUND -> copy(styleBackground = styleBackground
-                    .copyWithPendingChange(event.colorType, event.changedTo))
-                StyleType.FONT -> copy(styleFont = (styleFont ?: styleActivities)
-                    .copyWithPendingChange(event.colorType, event.changedTo))
+                StyleType.ACTIVITIES -> copy(
+                    styleActivities = styleActivities
+                        .copyWithPendingChange(event.colorType, event.changedTo)
+                )
+                StyleType.BACKGROUND -> copy(
+                    styleBackground = styleBackground
+                        .copyWithPendingChange(event.colorType, event.changedTo)
+                )
+                StyleType.FONT -> copy(
+                    styleFont = (styleFont ?: styleActivities)
+                        .copyWithPendingChange(event.colorType, event.changedTo)
+                )
             }
         }
     }
@@ -483,34 +490,69 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
-        copyLastState {
+        pushStateCopy {
             val customRange = sizeCustomMinPx..sizeCustomMaxPx
             copy(
                 sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
-                sizeCustomOutOfBoundsWidth = if (event is SizeCustomChanged.WidthChanged) {
-                    event.changedToPx.takeIf { it !in customRange }
-                } else {
-                    sizeCustomOutOfBoundsWidth
-                },
-                sizeCustomOutOfBoundsHeight = if (event is SizeCustomChanged.HeightChanged) {
-                    event.changedToPx.takeIf { it !in customRange }
-                } else {
-                    sizeCustomOutOfBoundsHeight
-                },
                 sizeResolutionList = sizeResolutionList
                     .toMutableList()
                     .apply {
                         val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
-                        set(tarIndex, get(tarIndex).run {
-                            val adjPx = event.changedToPx.coerceIn(customRange)
+                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
                             Resolution.CustomResolution(
-                                widthPx = if (event is SizeCustomChanged.WidthChanged) adjPx else widthPx,
-                                heightPx = if (event is SizeCustomChanged.HeightChanged) adjPx else heightPx
+                                widthPx = if (event is SizeCustomChanged.WidthChanged) event.changedToPx else widthPx,
+                                heightPx = if (event is SizeCustomChanged.HeightChanged) event.changedToPx else heightPx,
+                                pendingWidth = if (event is SizeCustomChanged.WidthChanged) null else pendingWidth,
+                                pendingHeight = if (event is SizeCustomChanged.HeightChanged) null else pendingHeight
                             )
                         })
                     }
             )
-        }.push()
+        }
+    }
+
+    private fun onSizeCustomPendingChangeConfirmed() {
+        pushStateCopy {
+            val range = sizeCustomMinPx..sizeCustomMaxPx
+            copy(
+                sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
+                sizeResolutionList = sizeResolutionList
+                    .toMutableList()
+                    .apply {
+                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
+                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
+                            Resolution.CustomResolution(
+                                widthPx = pendingWidth?.let {
+                                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                                } ?: widthPx,
+                                heightPx = pendingHeight?.let {
+                                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                                } ?: heightPx,
+                                pendingWidth = null,
+                                pendingHeight = null
+                            )
+                        })
+                    }
+            )
+        }
+    }
+
+    private fun onSizeCustomPendingChanged(event: SizeCustomPendingChanged) {
+        pushStateCopy {
+            copy(
+                sizeResolutionList = sizeResolutionList
+                    .toMutableList()
+                    .apply {
+                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
+                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
+                            copy(
+                                pendingWidth = if (event is SizeCustomPendingChanged.WidthChanged) event.changedTo else pendingWidth,
+                                pendingHeight = if (event is SizeCustomPendingChanged.HeightChanged) event.changedTo else pendingHeight
+                            )
+                        })
+                    }
+            )
+        }
     }
 
     private fun onSizeRotated(event: SizeRotated) {
@@ -665,9 +707,13 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun ColorWrapper.confirmPendingChanges(): ColorWrapper {
-        println("here, confirm pending changes invoked for $this")
         val parseEightBitColorToRatio: (String) -> Float = {
-            parseNumberFromStringUtils.parse(it).div(255).coerceIn(0.0..1.0).toFloat()
+            ColorWrapper.eightBitToRatio(
+                parseNumberFromStringUtils
+                    .parse(it)
+                    .toInt()
+                    .coerceIn(ColorWrapper.EIGHT_BIT_RANGE)
+            )
         }
         return copy(
             alpha = pendingAlpha?.let { parseEightBitColorToRatio(it) } ?: alpha,
@@ -686,11 +732,11 @@ class EditArtViewModel @Inject constructor(
         viewModelScope.launch(imageProcessingDispatcher) {
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFiltered, // todo...
+                    activities = activitiesFiltered,
                     backgroundType = styleBackgroundType,
-                    backgroundColorArgb = styleBackground.color.toArgb(),
-                    colorActivitiesArgb = styleActivities.color.toArgb(),
-                    colorFontArgb = (styleFont ?: styleActivities).color.toArgb(),
+                    backgroundColorArgb = styleBackground.toColorArgb(),
+                    colorActivitiesArgb = styleActivities.toColorArgb(),
+                    colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
                     strokeWidth = styleStrokeWidthType,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {

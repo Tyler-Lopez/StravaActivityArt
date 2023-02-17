@@ -17,46 +17,35 @@ fun ColorSlidersRGB(
     onColorPendingChangeConfirmed: (ColorType) -> Unit
 ) {
     TextFieldSliders(
-        specifications = listOf(
+        specifications = ColorType.values().filter { it != ColorType.ALPHA }.map { colorType ->
             TextFieldSliderSpecification(
                 keyboardType = KeyboardType.Number,
-                textFieldLabel = stringResource(R.string.edit_art_style_color_red),
-                pendingChangesMessage = color.pendingRed?.let {
+                textFieldLabel = stringResource(colorType.strRes),
+                pendingChangesMessage = when (colorType) {
+                    ColorType.RED -> color.pendingRed
+                    ColorType.GREEN -> color.pendingGreen
+                    ColorType.BLUE -> color.pendingBlue
+                    ColorType.ALPHA -> color.pendingAlpha
+                }?.let {
                     stringResource(R.string.edit_art_style_color_pending_change_prompt)
                 },
-                sliderValue = color.red,
-                textFieldValue = color.pendingRed ?: color.redAsEightBit.toString(),
-                sliderRange = ColorWrapper.RATIO_RANGE,
-                onSliderChanged = { onColorChanged(ColorType.RED, it) },
-                onTextFieldChanged = { onColorPendingChanged(ColorType.RED, it) },
-                onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.RED) }
-            ),
-            TextFieldSliderSpecification(
-                keyboardType = KeyboardType.Number,
-                textFieldLabel = stringResource(R.string.edit_art_style_color_green),
-                sliderValue = color.green,
-                pendingChangesMessage = color.pendingGreen?.let {
-                    stringResource(R.string.edit_art_style_color_pending_change_prompt)
+                sliderValue = when (colorType) {
+                    ColorType.RED -> color.red
+                    ColorType.GREEN -> color.green
+                    ColorType.BLUE -> color.blue
+                    else -> color.alpha
                 },
-                textFieldValue = color.pendingGreen ?: color.greenAsEightBit.toString(),
-                sliderRange = ColorWrapper.RATIO_RANGE,
-                onSliderChanged = { onColorChanged(ColorType.GREEN, it) },
-                onTextFieldChanged = { onColorPendingChanged(ColorType.GREEN, it) },
-                onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.GREEN) }
-            ),
-            TextFieldSliderSpecification(
-                keyboardType = KeyboardType.Number,
-                textFieldLabel = stringResource(R.string.edit_art_style_color_blue),
-                sliderValue = color.blue,
-                pendingChangesMessage = color.pendingBlue?.let {
-                    stringResource(R.string.edit_art_style_color_pending_change_prompt)
+                textFieldValue = when (colorType) {
+                    ColorType.RED -> color.pendingRed ?: color.redToEightBitString()
+                    ColorType.GREEN -> color.pendingGreen ?: color.greenToEightBitString()
+                    ColorType.BLUE -> color.pendingBlue ?: color.blueToEightBitString()
+                    else -> color.pendingAlpha ?: color.alphaToEightBitString()
                 },
-                textFieldValue = color.pendingBlue ?: color.blueAsEightBit.toString(),
                 sliderRange = ColorWrapper.RATIO_RANGE,
-                onSliderChanged = { onColorChanged(ColorType.BLUE, it) },
-                onTextFieldChanged = { onColorPendingChanged(ColorType.BLUE, it) },
-                onTextFieldDone = { onColorPendingChangeConfirmed(ColorType.BLUE) }
+                onSliderChanged = { onColorChanged(colorType, it) },
+                onTextFieldChanged = { onColorPendingChanged(colorType, it) },
+                onTextFieldDone = { onColorPendingChangeConfirmed(colorType) }
             )
-        )
+        }
     )
 }

@@ -53,12 +53,7 @@ fun SectionColorText(
                             )
                         },
                         onColorPendingChangeConfirmed = {
-                            onColorPendingChangeConfirmed(
-                                StyleColorPendingChangeConfirmed(
-                                    styleType = StyleType.FONT,
-                                    colorType = it
-                                )
-                            )
+                            onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.FONT))
                         }
                     )
                 }) { onUseFontChanged(StyleColorFontUseCustomChanged(useCustom = true)) }

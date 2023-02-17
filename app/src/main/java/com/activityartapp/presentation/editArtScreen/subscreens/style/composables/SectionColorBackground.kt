@@ -46,12 +46,7 @@ fun SectionColorBackground(
                     )
                 },
                 onColorPendingChangeConfirmed = {
-                    onColorPendingChangeConfirmed(
-                        StyleColorPendingChangeConfirmed(
-                            styleType = StyleType.BACKGROUND,
-                            colorType = it
-                        )
-                    )
+                    onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.BACKGROUND))
                 }
             )
         }

@@ -43,12 +43,7 @@ fun SectionColorActivities(
                 )
             },
             onColorPendingChangeConfirmed = {
-                onColorPendingChangeConfirmed(
-                    StyleColorPendingChangeConfirmed(
-                        styleType = StyleType.ACTIVITIES,
-                        colorType = it
-                    )
-                )
+                onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.ACTIVITIES))
             }
         )
     }
