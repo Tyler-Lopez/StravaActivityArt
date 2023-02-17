@@ -1,22 +1,24 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorFontChanged
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorFontUseCustomChanged
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
+import com.activityartapp.presentation.editArtScreen.StyleType
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.composables.Section
 
 @Composable
-fun ColumnScope.SectionColorText(
+fun SectionColorText(
     color: ColorWrapper?,
     colorActivities: ColorWrapper,
-    onColorChanged: (StyleColorFontChanged) -> Unit,
-    onUseFontChanged: (StyleColorFontUseCustomChanged) -> Unit
+    onColorChanged: (StyleColorChanged) -> Unit,
+    onUseFontChanged: (StyleColorFontUseCustomChanged) -> Unit,
+    onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
+    onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
     val customEnabled = color != null
     Section(header = stringResource(R.string.edit_art_style_text_header)) {
@@ -32,14 +34,26 @@ fun ColumnScope.SectionColorText(
                 content = {
                     ColorSlidersRGB(
                         color = color ?: colorActivities,
-                        enabled = customEnabled,
                         onColorChanged = { colorType, changedTo ->
                             onColorChanged(
-                                StyleColorFontChanged(
+                                StyleColorChanged(
+                                    styleType = StyleType.FONT,
                                     colorType = colorType,
                                     changedTo = changedTo
                                 )
                             )
+                        },
+                        onColorPendingChanged = { colorType, changedTo ->
+                            onColorPendingChanged(
+                                StyleColorPendingChanged(
+                                    styleType = StyleType.FONT,
+                                    colorType = colorType,
+                                    changedTo = changedTo
+                                )
+                            )
+                        },
+                        onColorPendingChangeConfirmed = {
+                            onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.FONT))
                         }
                     )
                 }) { onUseFontChanged(StyleColorFontUseCustomChanged(useCustom = true)) }

@@ -71,7 +71,7 @@ fun MainNavHost(
                 ActivityTypes,
                 BackgroundType,
                 ColorActivitiesArgb,
-                ColorsBackgroundArgb,
+                ColorBackgroundArgb,
                 ColorFontArgb,
                 FilterDateAfterMs,
                 FilterDateBeforeMs,

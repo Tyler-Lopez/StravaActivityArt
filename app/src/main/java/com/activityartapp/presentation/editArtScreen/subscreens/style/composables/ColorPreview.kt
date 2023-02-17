@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import com.activityartapp.R
@@ -20,14 +21,12 @@ fun ColorPreview(colorWrapper: ColorWrapper) {
             .height(dimensionResource(id = R.dimen.color_preview_height))
             .border(
                 width = dimensionResource(R.dimen.color_preview_stroke_width),
-                color = colorResource(R.color.primary_dark_color)
+                color = colorWrapper.toInvertedLuminanceGrayscaleColor()
             )
     ) {
         drawRect(
             size = size,
-            color = colorWrapper.run {
-                Color(red, green, blue, alpha)
-            }
+            color = colorWrapper.toColor()
         )
     }
 }
