@@ -1,6 +1,7 @@
 package com.activityartapp.domain.useCase.authentication
 
 import com.activityartapp.data.remote.AthleteApi
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.requiresRefresh
 import com.activityartapp.util.Response
@@ -11,7 +12,7 @@ import com.activityartapp.util.constants.TokenConstants
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
-/** Retrieves a non-expired [OAuth2] from the potentially-expired access token
+/** Retrieves a non-expired [Athlete] from the potentially-expired access token
  * and refresh token stored on disk. We refresh an expired access token by the
  * Strava API. Returns an [Error] if no token exists on disk or when unable
  * to refresh an expired token.**/
@@ -23,19 +24,19 @@ class GetAccessTokenWithRefreshTokenFromRemote @Inject constructor(
         private const val GRANT_TYPE = "refresh_token"
     }
 
-    suspend operator fun invoke(): Response<OAuth2> {
+    suspend operator fun invoke(): Response<Athlete> {
         getAccessTokenFromLocalUseCase().apply {
             return when {
                 this == null -> Error()
-                /** On refresh, pass in local athlete id as refresh does not incl AthleteCacheDictionary **/
+                /** On refresh, pass in local athlete id as refresh does not incl AthleteHasCached **/
                 requiresRefresh -> onRequiresRefresh(this)
                 else -> Success(this)
             }
         }
     }
 
-    private suspend fun onRequiresRefresh(prevOauth: OAuth2):
-            Response<OAuth2> {
+    private suspend fun onRequiresRefresh(prevOauth: Athlete):
+            Response<Athlete> {
         return try {
             Success(
                 athleteApi.getAccessTokenFromRefresh(
@@ -47,8 +48,9 @@ class GetAccessTokenWithRefreshTokenFromRemote @Inject constructor(
                     val expiresAtUnixSeconds = expiresAtUnixSeconds
                     val accessToken = accessToken
                     val refreshToken = refreshToken
-                    object : OAuth2 {
+                    object : Athlete {
                         override val athleteId: Long = prevOauth.athleteId
+                        override val lastCachedUnixMs: Long? = null
                         override val expiresAtUnixSeconds: Int = expiresAtUnixSeconds
                         override val accessToken: String = accessToken
                         override val refreshToken: String = refreshToken

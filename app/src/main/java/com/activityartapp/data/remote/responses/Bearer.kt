@@ -1,5 +1,6 @@
 package com.activityartapp.data.remote.responses
 
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.models.OAuth2
 import com.google.gson.annotations.SerializedName
 
@@ -14,7 +15,10 @@ data class Bearer(
     val athlete: AthleteResponse,
     val expires_in: Int,
     val token_type: String
-) : OAuth2 {
+) : Athlete {
     override val athleteId: Long
         get() = athlete.id
+
+    override val lastCachedUnixMs: Long?
+        get() = null
 }

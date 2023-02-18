@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.data.cache.ActivitiesCache
+import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
 import com.activityartapp.domain.useCase.authentication.GetAccessTokenFromDiskOrRemote
 import com.activityartapp.presentation.MainViewState.*
 import com.activityartapp.presentation.MainViewEvent.*
@@ -19,26 +20,24 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val activitiesCache: ActivitiesCache,
     private val getAccessTokenFromDiskOrRemote: GetAccessTokenFromDiskOrRemote,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val insertActivitiesIntoMemory: InsertActivitiesIntoMemory
 ) : BaseRoutingViewModel<
         MainViewState,
         MainViewEvent,
         MainDestination>() {
 
     companion object {
-        private val YEAR_NOW = Year.now().value
-        private const val YEAR_EARLIEST = 2018
+        private const val ACTIVITIES_KEY = "activities"
     }
-    
+
     var athleteId: Long? = null
     var accessToken: String? = null
 
     init {
-        (YEAR_EARLIEST..YEAR_NOW).forEach { year ->
-            val yearActivities: List<ParcelableActivity>? = savedStateHandle["$year"]
-            yearActivities?.map { it }?.let {
-                activitiesCache.cachedActivitiesByYear[year] = it
-            }
+        val activities: List<ParcelableActivity>? = savedStateHandle[ACTIVITIES_KEY]
+        if (activities != null) {
+            insertActivitiesIntoMemory(activities)
         }
     }
 
@@ -65,10 +64,9 @@ class MainViewModel @Inject constructor(
     }
 
     private fun onLoadedActivities() {
-        (YEAR_EARLIEST..YEAR_NOW).forEach { year ->
-            (activitiesCache.cachedActivitiesByYear[year])
-                ?.parcelize()
-                ?.let { savedStateHandle["$year"] = it }
-        }
+        activitiesCache
+            .cachedActivities
+            ?.parcelize()
+            ?.let { savedStateHandle[ACTIVITIES_KEY] = it }
     }
 }

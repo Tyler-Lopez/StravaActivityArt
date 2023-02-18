@@ -12,6 +12,20 @@ interface ActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllActivities(vararg activityEntity: ActivityEntity)
 
+
+    /**
+     * Retrieves all activities which match the year provided.
+     * Functions by pattern recognition of the iso8601 String.
+     */
+    @Query(
+        "SELECT * " +
+                "FROM activityEntity " +
+                "WHERE athleteId = :athleteId " +
+                "AND summaryPolyline IS NOT NULL"
+    )
+    suspend fun getActivities(athleteId: Long): List<ActivityEntity>
+
+
     /**
      * Retrieves all activities which match the year provided.
      * Functions by pattern recognition of the iso8601 String.

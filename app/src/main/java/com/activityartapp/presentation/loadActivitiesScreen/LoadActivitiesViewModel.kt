@@ -2,9 +2,10 @@ package com.activityartapp.presentation.loadActivitiesScreen
 
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
-import com.activityartapp.domain.models.OAuth2
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.models.Version
-import com.activityartapp.domain.useCase.activities.GetActivitiesByYearFromDiskOrRemote
+import com.activityartapp.domain.useCase.activities.GetActivities
+import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
 import com.activityartapp.domain.useCase.authentication.GetAccessTokenFromDiskOrRemote
 import com.activityartapp.domain.useCase.version.GetVersionFromRemote
 import com.activityartapp.presentation.MainDestination
@@ -29,9 +30,10 @@ import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class LoadActivitiesViewModel @Inject constructor(
-    private val getActivitiesByYearFromDiskOrRemote: GetActivitiesByYearFromDiskOrRemote,
+    private val getActivities: GetActivities,
     private val getAccessTokenFromDiskOrRemote: GetAccessTokenFromDiskOrRemote,
     private val getVersionFromRemote: GetVersionFromRemote,
+    private val insertActivitiesIntoMemory: InsertActivitiesIntoMemory
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
@@ -40,8 +42,6 @@ class LoadActivitiesViewModel @Inject constructor(
 
         private const val DELAY_MS_SUCCESSFULLY_LOADED = 1000L
         private const val NO_ACTIVITIES_COUNT = 0
-        private const val YEAR_START = 2018
-        private val YEAR_NOW = Year.now().value
     }
 
     override fun onEvent(event: LoadActivitiesViewEvent) {
@@ -104,28 +104,21 @@ class LoadActivitiesViewModel @Inject constructor(
         /** If we don't have internet to know if the version is supported, make sure we don't access the internet **/
         val internetEnabled: Boolean = versionResponse is Success
 
-        /* OAuth2 should never return null here */
-        val oAuth2 = getOAuth2() ?: error("OAuth2 is null for an unknown reason...")
-        val accessToken = oAuth2.accessToken
-        val athleteId = oAuth2.athleteId
+        /* Athlete should never return null here */
+        val oAuth2 = getOAuth2() ?: error("Athlete is null for an unknown reason...")
 
-        /** Load activities until complete or
-         * returned [Response] is an [Error] **/
-        (YEAR_NOW downTo YEAR_START).forEach { year ->
-            getActivitiesByYearFromDiskOrRemote(
-                accessToken = accessToken,
-                athleteId = athleteId,
-                year = year,
-                internetEnabled = internetEnabled
-            )
-                .doOnError { error = ApiError.valueOf(exception) }
-                .apply {
-                    data?.let { activitiesCount += it.size }
-                    activitiesCount
-                        .takeIf { it > NO_ACTIVITIES_COUNT }
-                        ?.let { Loading(activitiesCount).push() }
-                }
-        }
+        getActivities(
+            athlete = oAuth2,
+            internetEnabled = internetEnabled,
+            onActivitiesLoaded = { newNumberOfActivities ->
+                activitiesCount += newNumberOfActivities
+                activitiesCount.takeIf { it > NO_ACTIVITIES_COUNT }?.let { Loading(it).push() }
+            }
+        )
+            .apply { data?.let { insertActivitiesIntoMemory(it) } }
+            .doOnError {
+                error = ApiError.valueOf(exception)
+            }
 
         when {
             error != null -> error?.let {
@@ -144,7 +137,7 @@ class LoadActivitiesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getOAuth2(): OAuth2? {
+    private suspend fun getOAuth2(): Athlete? {
         return suspendCoroutine { continuation ->
             viewModelScope.launch(Dispatchers.IO) {
                 getAccessTokenFromDiskOrRemote()
