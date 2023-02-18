@@ -15,7 +15,6 @@ sealed interface MainViewState : ViewState {
 
 sealed interface MainViewEvent : ViewEvent {
     data class LoadAuthentication(val uri: Uri?) : MainViewEvent
-    object LoadedActivities : MainViewEvent
 }
 
 sealed interface MainDestination : Destination {
@@ -24,7 +23,7 @@ sealed interface MainDestination : Destination {
     object NavigateLogin : MainDestination
     object NavigateLoadActivities : MainDestination
 
-    data class NavigateEditArt(val fromLoad: Boolean = true) : MainDestination
+    data class NavigateEditArt(val athleteId: Long) : MainDestination
     data class NavigateError(
         val clearNavigationHistory: Boolean,
         val errorScreenType: ErrorScreenType
@@ -32,6 +31,7 @@ sealed interface MainDestination : Destination {
 
     data class NavigateSaveArt(
         val activityTypes: List<SportType>,
+        val athleteId: Long,
         val backgroundType: BackgroundType,
         val backgroundColorArgb: Int,
         val colorActivitiesArgb: Int,

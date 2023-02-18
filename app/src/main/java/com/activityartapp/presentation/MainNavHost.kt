@@ -60,7 +60,12 @@ fun MainNavHost(
                 attachRouter(router)
             })
         }
-        swipingInOutComposable(EditArt) {
+        swipingInOutComposable(
+            screen = EditArt,
+            navArgSpecifications = listOf(
+                AthleteId
+            )
+        ) {
             EditArtViewDelegate(viewModel = hiltViewModel<EditArtViewModel>().apply {
                 attachRouter(router)
             })
@@ -69,6 +74,7 @@ fun MainNavHost(
             screen = SaveArt,
             navArgSpecifications = listOf(
                 ActivityTypes,
+                AthleteId,
                 BackgroundType,
                 ColorActivitiesArgb,
                 ColorBackgroundArgb,
