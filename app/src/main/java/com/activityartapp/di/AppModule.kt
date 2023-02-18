@@ -8,16 +8,13 @@ import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.data.repository.AthleteUsageRepositoryImpl
 import com.activityartapp.data.repository.FileRepositoryImpl
 import com.activityartapp.data.repository.VersionRepositoryImpl
+import com.activityartapp.domain.models.ResolutionListFactory
 import com.activityartapp.domain.repository.AthleteUsageRepository
 import com.activityartapp.domain.repository.FileRepository
 import com.activityartapp.domain.repository.VersionRepository
-import com.activityartapp.domain.models.ResolutionListFactory
-import com.activityartapp.domain.useCase.activities.*
-import com.activityartapp.domain.useCase.athleteCacheDictionary.GetAthleteCacheDictionaryFromDisk
-import com.activityartapp.domain.useCase.athleteCacheDictionary.InsertAthleteCacheDictionaryIntoDisk
-import com.activityartapp.domain.useCase.athleteUsage.GetAthleteUsageFromRemote
-import com.activityartapp.domain.useCase.athleteUsage.InsertAthleteUsageIntoRemote
-import com.activityartapp.domain.useCase.authentication.ClearAccessTokenFromDisk
+import com.activityartapp.domain.useCase.activities.GetActivitiesByPageFromRemote
+import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
+import com.activityartapp.domain.useCase.authentication.ClearAthleteFromDisk
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.util.*
 import com.activityartapp.util.constants.TokenConstants
@@ -52,73 +49,21 @@ object AppModule {
     fun provideActivitiesCache() = ActivitiesCache()
 
     @Provides
-    fun providesGetAthleteFromLocalUseCase(athleteDatabase: AthleteDatabase) =
-        GetAthleteCacheDictionaryFromDisk(athleteDatabase)
-
-    @Provides
     fun providesGetActivitiesByPageFromRemoteUseCase(
         api: AthleteApi
     ): GetActivitiesByPageFromRemote =
         GetActivitiesByPageFromRemote(api)
 
     @Provides
-    fun providesGetActivitiesByYearFromRemoteUseCase(
-        getActivitiesByPageFromRemote: GetActivitiesByPageFromRemote,
-        getAthleteUsageFromRemote: GetAthleteUsageFromRemote,
-        insertAthleteUsageIntoRemote: InsertAthleteUsageIntoRemote,
-        timeUtils: TimeUtils
-    ) = GetActivitiesByYearFromRemote(
-        getActivitiesByPageFromRemote,
-        getAthleteUsageFromRemote,
-        insertAthleteUsageIntoRemote,
-        timeUtils
-    )
-
-    @Provides
-    fun providesGetActivitiesByYearFromLocalUseCase(
-        athleteDatabase: AthleteDatabase
-    ) = GetActivitiesByYearFromDisk(athleteDatabase)
-
-    @Provides
-    fun providesGetActivitiesByYearMonthFromLocalUseCase(
-        athleteDatabase: AthleteDatabase
-    ) = GetActivitiesByYearMonthFromDisk(athleteDatabase)
-
-    @Provides
-    fun providesGetActivitiesFromCacheUseCase(cache: ActivitiesCache) =
-        GetActivitiesByYearFromMemory(cache)
-
-    @Provides
     fun providesInsertActivitiesFromCacheUseCase(cache: ActivitiesCache) =
         InsertActivitiesIntoMemory(cache)
-
-    @Provides
-    fun providesGetActivitiesByYear(
-        getAthleteCacheDictionaryFromDisk: GetAthleteCacheDictionaryFromDisk,
-        getActivitiesByYearMonthFromDisk: GetActivitiesByYearMonthFromDisk,
-        getActivitiesByYearFromRemote: GetActivitiesByYearFromRemote,
-        insertActivitiesIntoDisk: InsertActivitiesIntoDisk,
-        insertActivitiesIntoMemory: InsertActivitiesIntoMemory,
-        timeUtils: TimeUtils
-    ) = GetActivitiesByYearFromDiskOrRemote(
-        getAthleteCacheDictionaryFromDisk,
-        getActivitiesByYearMonthFromDisk,
-        getActivitiesByYearFromRemote,
-        insertActivitiesIntoDisk,
-        insertActivitiesIntoMemory,
-        timeUtils
-    )
-
-    @Provides
-    fun providesInsertAthleteFromRemoteUseCase(athleteDatabase: AthleteDatabase) =
-        InsertAthleteCacheDictionaryIntoDisk(athleteDatabase)
 
     @Provides
     fun clearAccessTokenUseCase(
         athleteDatabase: AthleteDatabase,
         cache: ActivitiesCache
     ) =
-        ClearAccessTokenFromDisk(athleteDatabase, cache)
+        ClearAthleteFromDisk(athleteDatabase, cache)
 
     @Singleton
     @Provides

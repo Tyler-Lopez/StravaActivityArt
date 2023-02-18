@@ -54,7 +54,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     /** All activities cached in Singleton memory **/
-    private val activities: List<Activity> = getActivitiesFromMemory()
+    private val activities: List<Activity> = getActivitiesFromMemory() ?: error("Activities missing!")
 
     /** The list of activities for each [EditArtFilterType] **/
     private val activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>> =

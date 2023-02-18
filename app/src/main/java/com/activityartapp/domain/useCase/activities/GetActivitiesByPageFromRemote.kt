@@ -7,27 +7,26 @@ import com.google.maps.android.PolyUtil
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
-/** Retrieves a [List] of [Activity] by Strava's API which occurs within a window of time
- * and is on a certain page of specified pagination.
+/** Retrieves a [List] of [Activity] by Strava's API by page without specifying before and
+ * after epoch timestamp parameters.
  *
  * Intended for internal abstracted use within [GetActivitiesByYearFromRemote].*/
 class GetActivitiesByPageFromRemote @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
+    companion object {
+        private const val ACTIVITIES_PER_PAGE = 200
+    }
+
     suspend operator fun invoke(
         code: String,
-        page: Int,
-        activitiesPerPage: Int,
-        beforeUnixSeconds: Int,
-        afterUnixSeconds: Int
+        page: Int
     ): Response<List<Activity>> {
         return try {
             Response.Success(data = api.getActivities(
                 authHeader = "Bearer $code",
                 page = page,
-                perPage = activitiesPerPage,
-                before = beforeUnixSeconds,
-                after = afterUnixSeconds
+                perPage = ACTIVITIES_PER_PAGE
             )
                 .toList()
                 .filter {
@@ -36,6 +35,7 @@ class GetActivitiesByPageFromRemote @Inject constructor(
                     } == true
                 })
         } catch (e: Exception) {
+            println("Exception in by page for page $page and code was $code")
             /* When using try catch in a suspend block,
             ensure we do not catch CancellationException */
             if (e is CancellationException) throw e

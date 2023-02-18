@@ -19,5 +19,4 @@ interface Activity {
     val sufferScore: Int?
     val summaryPolyline: String?
     val sportType: SportType
-
 }

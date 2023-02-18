@@ -33,7 +33,7 @@ data class ActivityResponse(
     override val iso8601LocalDate: String,
     @SerializedName("suffer_score")
     override val sufferScore: Int?,
-    val athlete: AthleteWithResourceState,
+    val athlete: AthleteResponse,
     val map: Map?
 ) : Activity {
     override val athleteId: Long

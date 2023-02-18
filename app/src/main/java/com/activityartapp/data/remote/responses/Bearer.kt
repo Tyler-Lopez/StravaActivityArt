@@ -14,7 +14,4 @@ data class Bearer(
     val athlete: AthleteResponse,
     val expires_in: Int,
     val token_type: String
-) : OAuth2 {
-    override val athleteId: Long
-        get() = athlete.id
-}
+) : OAuth2

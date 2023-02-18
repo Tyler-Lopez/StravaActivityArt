@@ -163,7 +163,7 @@ class SaveArtViewModel @Inject constructor(
         println("here, activity types are $activityTypes")
         return visualizationUtils.createBitmap(
             activities = activityFilterUtils.filterActivities(
-                activities = activities,
+                activities = activities ?: error("Activities missing!"),
                 includeActivityTypes = activityTypes.toSet(),
                 unixMsRange = filterDateAfterMs..filterDateBeforeMs,
                 distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters

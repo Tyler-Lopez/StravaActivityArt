@@ -1,6 +1,6 @@
 package com.activityartapp.data.remote.responses
 
-import com.activityartapp.domain.models.OAuth2WithoutAthlete
+import com.activityartapp.domain.models.OAuth2
 import com.google.gson.annotations.SerializedName
 
 data class BearerWithoutAthlete(
@@ -12,4 +12,4 @@ data class BearerWithoutAthlete(
     override val refreshToken: String,
     val expires_in: Int,
     val token_type: String
-) : OAuth2WithoutAthlete
+) : OAuth2

@@ -1,14 +1,14 @@
 package com.activityartapp.domain.useCase.authentication
 
 import com.activityartapp.data.remote.AthleteApi
-import com.activityartapp.domain.models.OAuth2
+import com.activityartapp.domain.models.Athlete
 import com.activityartapp.util.Response
 import com.activityartapp.util.constants.CLIENT_SECRET
 import com.activityartapp.util.constants.TokenConstants.CLIENT_ID
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
-/** Retrieves an [OAuth2] by sending an authorization code to the Strava API. **/
+/** Retrieves an [Athlete] by sending an authorization code to the Strava API. **/
 class GetAccessTokenWithAuthorizationCodeFromRemote @Inject constructor(private val api: AthleteApi) {
     companion object {
         private const val GRANT_TYPE = "authorization_code"
@@ -16,7 +16,7 @@ class GetAccessTokenWithAuthorizationCodeFromRemote @Inject constructor(private 
 
     suspend operator fun invoke(
         authorizationCode: String
-    ): Response<OAuth2> {
+    ): Response<Athlete> {
         return try {
             val bearer = api.getAccessToken(
                 clientId = CLIENT_ID,
@@ -24,7 +24,13 @@ class GetAccessTokenWithAuthorizationCodeFromRemote @Inject constructor(private 
                 code = authorizationCode,
                 grantType = GRANT_TYPE
             )
-            Response.Success(bearer)
+            Response.Success(object : Athlete {
+                override val athleteId: Long = bearer.athlete.id
+                override val lastCachedUnixMs: Long? = null
+                override val expiresAtUnixSeconds = bearer.expiresAtUnixSeconds
+                override val accessToken: String = bearer.accessToken
+                override val refreshToken: String = bearer.refreshToken
+            })
         } catch (e: Exception) {
             /* When using try catch in a suspend block,
             ensure we do not catch CancellationException */
