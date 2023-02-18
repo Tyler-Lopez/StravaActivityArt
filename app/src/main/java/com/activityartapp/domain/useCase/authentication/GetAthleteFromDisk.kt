@@ -6,10 +6,10 @@ import javax.inject.Inject
 
 /** Retrieves the POTENTIALLY-EXPIRED [Athlete] from on-disk storage
  * or null if one does not exist. **/
-class GetAccessTokenFromDisk @Inject constructor(private val athleteDatabase: AthleteDatabase) {
+class GetAthleteFromDisk @Inject constructor(private val athleteDatabase: AthleteDatabase) {
     suspend operator fun invoke(): Athlete? {
         return athleteDatabase
-            .oAuth2Dao
-            .getCurrAuth()
+            .athleteDao
+            .getCurrAthlete()
     }
 }

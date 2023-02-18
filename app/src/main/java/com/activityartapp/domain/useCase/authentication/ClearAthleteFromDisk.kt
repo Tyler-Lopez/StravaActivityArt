@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 /** Clears all access tokens [Athlete] which exist in on-disk storage
  *  and any [Activity] which exist in memory.**/
-class ClearAccessTokenFromDisk @Inject constructor(
+class ClearAthleteFromDisk @Inject constructor(
     private val athleteDatabase: AthleteDatabase,
     private val cache: ActivitiesCache
 ) {
@@ -18,7 +18,7 @@ class ClearAccessTokenFromDisk @Inject constructor(
         cache.cachedActivities = null
         /** Clear ROOM storage entry containing current authentication **/
         return athleteDatabase
-            .oAuth2Dao
-            .clearOauth2()
+            .athleteDao
+            .clearAthlete()
     }
 }

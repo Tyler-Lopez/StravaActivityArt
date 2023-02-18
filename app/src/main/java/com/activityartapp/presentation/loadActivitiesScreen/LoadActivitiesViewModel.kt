@@ -4,9 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.models.Version
-import com.activityartapp.domain.useCase.activities.GetActivities
-import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
-import com.activityartapp.domain.useCase.authentication.GetAccessTokenFromDiskOrRemote
+import com.activityartapp.domain.useCase.activities.GetActivitiesFromDiskAndRemote
+import com.activityartapp.domain.useCase.authentication.GetAthleteFromDiskOrRemote
 import com.activityartapp.domain.useCase.version.GetVersionFromRemote
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
@@ -14,7 +13,6 @@ import com.activityartapp.presentation.errorScreen.ErrorScreenType
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewEvent.*
 import com.activityartapp.presentation.loadActivitiesScreen.LoadActivitiesViewState.*
 import com.activityartapp.util.Response
-import com.activityartapp.util.Response.Error
 import com.activityartapp.util.Response.Success
 import com.activityartapp.util.classes.ApiError
 import com.activityartapp.util.doOnError
@@ -23,17 +21,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.Year
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class LoadActivitiesViewModel @Inject constructor(
-    private val getActivities: GetActivities,
-    private val getAccessTokenFromDiskOrRemote: GetAccessTokenFromDiskOrRemote,
+    private val getActivitiesFromDiskAndRemote: GetActivitiesFromDiskAndRemote,
+    private val getAthleteFromDiskOrRemote: GetAthleteFromDiskOrRemote,
     private val getVersionFromRemote: GetVersionFromRemote,
-    private val insertActivitiesIntoMemory: InsertActivitiesIntoMemory
 ) : BaseRoutingViewModel<LoadActivitiesViewState, LoadActivitiesViewEvent, MainDestination>() {
 
     companion object {
@@ -107,7 +103,7 @@ class LoadActivitiesViewModel @Inject constructor(
         /* Athlete should never return null here */
         val oAuth2 = getOAuth2() ?: error("Athlete is null for an unknown reason...")
 
-        getActivities(
+        getActivitiesFromDiskAndRemote(
             athlete = oAuth2,
             internetEnabled = internetEnabled,
             onActivitiesLoaded = { newNumberOfActivities ->
@@ -115,7 +111,6 @@ class LoadActivitiesViewModel @Inject constructor(
                 activitiesCount.takeIf { it > NO_ACTIVITIES_COUNT }?.let { Loading(it).push() }
             }
         )
-            .apply { data?.let { insertActivitiesIntoMemory(it) } }
             .doOnError {
                 error = ApiError.valueOf(exception)
             }
@@ -140,7 +135,7 @@ class LoadActivitiesViewModel @Inject constructor(
     private suspend fun getOAuth2(): Athlete? {
         return suspendCoroutine { continuation ->
             viewModelScope.launch(Dispatchers.IO) {
-                getAccessTokenFromDiskOrRemote()
+                getAthleteFromDiskOrRemote()
                     .doOnSuccess {
                         continuation.resume(data)
                     }

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.data.cache.ActivitiesCache
 import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
-import com.activityartapp.domain.useCase.authentication.GetAccessTokenFromDiskOrRemote
+import com.activityartapp.domain.useCase.authentication.GetAthleteFromDiskOrRemote
 import com.activityartapp.presentation.MainViewState.*
 import com.activityartapp.presentation.MainViewEvent.*
 import com.activityartapp.util.ParcelableActivity
@@ -13,15 +13,14 @@ import com.activityartapp.util.Response.*
 import com.activityartapp.util.parcelize
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.Year
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val activitiesCache: ActivitiesCache,
-    private val getAccessTokenFromDiskOrRemote: GetAccessTokenFromDiskOrRemote,
+    private val getAthleteFromDiskOrRemote: GetAthleteFromDiskOrRemote,
     private val savedStateHandle: SavedStateHandle,
-    private val insertActivitiesIntoMemory: InsertActivitiesIntoMemory
+    insertActivitiesIntoMemory: InsertActivitiesIntoMemory
 ) : BaseRoutingViewModel<
         MainViewState,
         MainViewEvent,
@@ -51,7 +50,7 @@ class MainViewModel @Inject constructor(
     private fun onLoadAuthentication(event: LoadAuthentication) {
         viewModelScope.launch {
             pushState(
-                when (val response = getAccessTokenFromDiskOrRemote(event.uri)) {
+                when (val response = getAthleteFromDiskOrRemote(event.uri)) {
                     is Success -> Authenticated
                     is Error -> if (response.data != null) {
                         Authenticated

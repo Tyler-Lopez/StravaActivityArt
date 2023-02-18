@@ -10,5 +10,5 @@ val Athlete.requiresRefresh: Boolean
         val currSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
         println("--> currSeconds: $currSeconds")
         println("--> expiresAtUnixSeconds: ${expiresAtUnixSeconds}")
-        return expiresAtUnixSeconds < currSeconds + EXPIRE_BUFFER_SECONDS
+        return true
     }

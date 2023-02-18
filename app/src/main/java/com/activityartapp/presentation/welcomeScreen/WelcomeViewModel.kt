@@ -2,7 +2,7 @@ package com.activityartapp.presentation.welcomeScreen
 
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
-import com.activityartapp.domain.useCase.authentication.ClearAccessTokenFromDisk
+import com.activityartapp.domain.useCase.authentication.ClearAthleteFromDisk
 import com.activityartapp.domain.useCase.version.GetVersionFromRemote
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
-    private val clearAccessTokenFromDiskUseCase: ClearAccessTokenFromDisk,
+    private val clearAthleteFromDisk: ClearAthleteFromDisk,
     private val getVersionFromRemote: GetVersionFromRemote
 ) :
     BaseRoutingViewModel<WelcomeViewState, WelcomeViewEvent, MainDestination>() {
@@ -27,7 +27,6 @@ class WelcomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getVersionFromRemote()
                 .doOnSuccess {
-                    println("Version received ${data.isLatest} ${data.isSupported}")
                     if (!data.isSupported) {
                         routeTo(
                             NavigateError(
@@ -71,7 +70,7 @@ class WelcomeViewModel @Inject constructor(
 
     private fun onClickedLogout() {
         viewModelScope.launch {
-            clearAccessTokenFromDiskUseCase()
+            clearAthleteFromDisk()
             routeTo(NavigateLogin)
         }
     }

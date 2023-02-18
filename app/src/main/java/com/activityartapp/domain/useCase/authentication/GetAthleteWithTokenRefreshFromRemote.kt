@@ -2,7 +2,6 @@ package com.activityartapp.domain.useCase.authentication
 
 import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.domain.models.Athlete
-import com.activityartapp.domain.models.OAuth2
 import com.activityartapp.domain.models.requiresRefresh
 import com.activityartapp.util.Response
 import com.activityartapp.util.Response.Error
@@ -16,9 +15,9 @@ import javax.inject.Inject
  * and refresh token stored on disk. We refresh an expired access token by the
  * Strava API. Returns an [Error] if no token exists on disk or when unable
  * to refresh an expired token.**/
-class GetAccessTokenWithRefreshTokenFromRemote @Inject constructor(
+class GetAthleteWithTokenRefreshFromRemote @Inject constructor(
     private val athleteApi: AthleteApi,
-    private val getAccessTokenFromLocalUseCase: GetAccessTokenFromDisk,
+    private val getAccessTokenFromLocalUseCase: GetAthleteFromDisk,
 ) {
     companion object {
         private const val GRANT_TYPE = "refresh_token"
@@ -38,6 +37,7 @@ class GetAccessTokenWithRefreshTokenFromRemote @Inject constructor(
     private suspend fun onRequiresRefresh(prevOauth: Athlete):
             Response<Athlete> {
         return try {
+            println("refresh required, refreshing...")
             Success(
                 athleteApi.getAccessTokenFromRefresh(
                     clientId = TokenConstants.CLIENT_ID,

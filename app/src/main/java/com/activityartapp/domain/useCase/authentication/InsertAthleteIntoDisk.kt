@@ -1,18 +1,17 @@
 package com.activityartapp.domain.useCase.authentication
 
 import com.activityartapp.data.database.AthleteDatabase
-import com.activityartapp.data.entities.OAuth2Entity
+import com.activityartapp.data.entities.AthleteEntity
 import com.activityartapp.domain.models.Athlete
-import com.activityartapp.domain.models.OAuth2
 import javax.inject.Inject
 
 /** Inserts an [Athlete] into on-disk storage. **/
-class InsertAccessTokenIntoDisk @Inject constructor(
+class InsertAthleteIntoDisk @Inject constructor(
     private val athleteDatabase: AthleteDatabase
 ) {
     suspend operator fun invoke(auth: Athlete) {
         val entity = auth.run {
-            OAuth2Entity(
+            AthleteEntity(
                 athleteId = athleteId,
                 lastCachedUnixMs = null,
                 expiresAtUnixSeconds = auth.expiresAtUnixSeconds,
@@ -20,6 +19,6 @@ class InsertAccessTokenIntoDisk @Inject constructor(
                 refreshToken = auth.refreshToken
             )
         }
-        athleteDatabase.oAuth2Dao.insertOauth2(entity)
+        athleteDatabase.athleteDao.insertAthlete(entity)
     }
 }

@@ -6,7 +6,7 @@ import com.activityartapp.domain.models.Athlete
 import com.activityartapp.domain.models.OAuth2
 
 @Entity
-data class OAuth2Entity(
+data class AthleteEntity(
     @PrimaryKey
     override val athleteId: Long,
     override val lastCachedUnixMs: Long?,

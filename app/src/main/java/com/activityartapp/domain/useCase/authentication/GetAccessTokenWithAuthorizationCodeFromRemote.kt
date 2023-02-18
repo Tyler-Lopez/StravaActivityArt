@@ -24,7 +24,13 @@ class GetAccessTokenWithAuthorizationCodeFromRemote @Inject constructor(private 
                 code = authorizationCode,
                 grantType = GRANT_TYPE
             )
-            Response.Success(bearer)
+            Response.Success(object : Athlete {
+                override val athleteId: Long = bearer.athlete.id
+                override val lastCachedUnixMs: Long? = null
+                override val expiresAtUnixSeconds = bearer.expiresAtUnixSeconds
+                override val accessToken: String = bearer.accessToken
+                override val refreshToken: String = bearer.refreshToken
+            })
         } catch (e: Exception) {
             /* When using try catch in a suspend block,
             ensure we do not catch CancellationException */

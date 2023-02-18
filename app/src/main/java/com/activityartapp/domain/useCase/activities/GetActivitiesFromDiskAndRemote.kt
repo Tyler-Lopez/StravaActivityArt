@@ -11,12 +11,13 @@ import com.activityartapp.util.errors.AthleteRateLimitedException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
-class GetActivities @Inject constructor(
+class GetActivitiesFromDiskAndRemote @Inject constructor(
     private val getActivitiesByPageFromRemote: GetActivitiesByPageFromRemote,
     private val getActivitiesFromDisk: GetActivitiesFromDisk,
     private val getAthleteUsageFromRemote: GetAthleteUsageFromRemote,
     private val insertAthleteUsageIntoRemote: InsertAthleteUsageIntoRemote,
     private val insertActivitiesIntoDisk: InsertActivitiesIntoDisk,
+    private val insertActivitiesIntoMemory: InsertActivitiesIntoMemory
 ) {
     companion object {
         private const val MAXIMUM_USAGE = 25
@@ -30,16 +31,13 @@ class GetActivities @Inject constructor(
         onActivitiesLoaded: (Int) -> Unit
     ): Response<List<Activity>> {
         return athlete.run {
-            println("Here, before getting cached activities")
             /** If there are cached activities, add them to activities **/
             val cachedActivities = getActivitiesFromDisk(athleteId)
             onActivitiesLoaded(cachedActivities.size)
             val cachedActivitiesIds = cachedActivities.map { it.id }.toSet()
 
-            println("Got cached activities of size ${cachedActivities.size}")
             /** If we've reached this point and internet access is disabled, send back [UnknownHostException] **/
             if (!internetEnabled) {
-                println("Internet wasn't enabled")
                 return@run Response.Error(
                     data = cachedActivities.toList(),
                     exception = UnknownHostException()
@@ -83,7 +81,10 @@ class GetActivities @Inject constructor(
                         onActivitiesLoaded(newActivities.size)
                     }
                     .doOnError {
-                        return@run Response.Error(data = cachedActivities, exception = this.exception)
+                        return@run Response.Error(
+                            data = cachedActivities,
+                            exception = this.exception
+                        )
                     }
             }
 
@@ -106,6 +107,8 @@ class GetActivities @Inject constructor(
             }
 
             return@run Response.Success(data = allActivities)
+        }.also { response ->
+            response.data?.let { insertActivitiesIntoMemory(it) }
         }
     }
 }

@@ -4,18 +4,18 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.activityartapp.data.entities.OAuth2Entity
+import com.activityartapp.data.entities.AthleteEntity
 
 @Dao
-interface OAuth2Dao {
+interface AthleteDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOauth2(oAuth2Entity: OAuth2Entity)
+    suspend fun insertAthlete(AthleteEntity: AthleteEntity)
 
     // https://stackoverflow.com/questions/44244508/room-persistance-library-delete-all
-    @Query("DELETE FROM oAuth2Entity")
-    suspend fun clearOauth2()
+    @Query("DELETE FROM athleteEntity")
+    suspend fun clearAthlete()
 
-    @Query("SELECT * FROM oAuth2Entity")
-    suspend fun getCurrAuth(): OAuth2Entity?
+    @Query("SELECT * FROM athleteEntity")
+    suspend fun getCurrAthlete(): AthleteEntity?
 }

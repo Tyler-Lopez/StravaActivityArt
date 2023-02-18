@@ -14,7 +14,7 @@ import com.activityartapp.domain.repository.FileRepository
 import com.activityartapp.domain.repository.VersionRepository
 import com.activityartapp.domain.useCase.activities.GetActivitiesByPageFromRemote
 import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
-import com.activityartapp.domain.useCase.authentication.ClearAccessTokenFromDisk
+import com.activityartapp.domain.useCase.authentication.ClearAthleteFromDisk
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.util.*
 import com.activityartapp.util.constants.TokenConstants
@@ -63,7 +63,7 @@ object AppModule {
         athleteDatabase: AthleteDatabase,
         cache: ActivitiesCache
     ) =
-        ClearAccessTokenFromDisk(athleteDatabase, cache)
+        ClearAthleteFromDisk(athleteDatabase, cache)
 
     @Singleton
     @Provides

@@ -14,24 +14,22 @@ import javax.inject.Inject
  *  refresh token to Strava API.
  *
  *  On success, the [Athlete] is automatically inserted into on disk storage. **/
-class GetAccessTokenFromDiskOrRemote @Inject constructor(
-    private val getAccessTokenWithRefreshUseCase: GetAccessTokenWithRefreshTokenFromRemote,
+class GetAthleteFromDiskOrRemote @Inject constructor(
+    private val getAccessTokenWithRefreshUseCase: GetAthleteWithTokenRefreshFromRemote,
     private val getAccessTokenFromRemoteUseCase: GetAccessTokenWithAuthorizationCodeFromRemote,
-    private val insertAccessTokenIntoDisk: InsertAccessTokenIntoDisk,
+    private val insertAthleteIntoDisk: InsertAthleteIntoDisk,
     private val uriUtils: UriUtils
 ) {
     suspend operator fun invoke(uri: Uri? = null): Response<Athlete> {
         /** If URI was provided, parse out authorization code **/
         val authCode: String? = uri?.let { uriUtils.parseUri(it) }
-        println("Here, auth code was $authCode")
         return when {
             /** Receive access token from provided auth code **/
             authCode != null -> getAccessTokenFromRemoteUseCase(authCode)
             /** Read from locally-stored access token, refresh if needed **/
             else -> getAccessTokenWithRefreshUseCase()
         }.doOnSuccess {
-            println("Here, response is $data")
-            insertAccessTokenIntoDisk(data)
+            insertAthleteIntoDisk(data)
         }
     }
 }
