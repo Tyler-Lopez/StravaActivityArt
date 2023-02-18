@@ -2,7 +2,6 @@ package com.activityartapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.activityartapp.data.cache.ActivitiesCache
 import com.activityartapp.data.database.AthleteDatabase
 import com.activityartapp.data.remote.AthleteApi
 import com.activityartapp.data.repository.AthleteUsageRepositoryImpl
@@ -13,7 +12,6 @@ import com.activityartapp.domain.repository.AthleteUsageRepository
 import com.activityartapp.domain.repository.FileRepository
 import com.activityartapp.domain.repository.VersionRepository
 import com.activityartapp.domain.useCase.activities.GetActivitiesByPageFromRemote
-import com.activityartapp.domain.useCase.activities.InsertActivitiesIntoMemory
 import com.activityartapp.domain.useCase.authentication.ClearAthleteFromDisk
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.util.*
@@ -44,10 +42,6 @@ object AppModule {
         ).fallbackToDestructiveMigration().build()
     }
 
-    @Singleton
-    @Provides
-    fun provideActivitiesCache() = ActivitiesCache()
-
     @Provides
     fun providesGetActivitiesByPageFromRemoteUseCase(
         api: AthleteApi
@@ -55,15 +49,10 @@ object AppModule {
         GetActivitiesByPageFromRemote(api)
 
     @Provides
-    fun providesInsertActivitiesFromCacheUseCase(cache: ActivitiesCache) =
-        InsertActivitiesIntoMemory(cache)
-
-    @Provides
     fun clearAccessTokenUseCase(
-        athleteDatabase: AthleteDatabase,
-        cache: ActivitiesCache
+        athleteDatabase: AthleteDatabase
     ) =
-        ClearAthleteFromDisk(athleteDatabase, cache)
+        ClearAthleteFromDisk(athleteDatabase)
 
     @Singleton
     @Provides

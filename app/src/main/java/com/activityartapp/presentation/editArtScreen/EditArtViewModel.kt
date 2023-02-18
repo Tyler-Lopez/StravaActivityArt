@@ -1,12 +1,11 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.util.Size
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
-import com.activityartapp.domain.useCase.activities.GetActivitiesFromMemory
+import com.activityartapp.domain.useCase.activities.GetActivitiesFromDisk
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.NavigateSaveArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
@@ -35,13 +34,13 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
 class EditArtViewModel @Inject constructor(
-    getActivitiesFromMemory: GetActivitiesFromMemory,
+    private val getActivitiesFromDisk: GetActivitiesFromDisk,
     private val activityFilterUtils: ActivityFilterUtils,
     private val imageSizeUtils: ImageSizeUtils,
     private val timeUtils: TimeUtils,
     private val visualizationUtils: VisualizationUtils,
-    private val savedStateHandle: SavedStateHandle,
-    private val parseNumberFromStringUtils: ParseNumberFromStringUtils
+    private val parseNumberFromStringUtils: ParseNumberFromStringUtils,
+    private val ssh: SavedStateHandle
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
@@ -53,8 +52,10 @@ class EditArtViewModel @Inject constructor(
         private const val INDEX_FIRST = 0
     }
 
-    /** All activities cached in Singleton memory **/
-    private val activities: List<Activity> = getActivitiesFromMemory() ?: error("Activities missing!")
+    /** All activities stored on-disk **/
+    private lateinit var activities: List<Activity>
+
+    private val athleteId = NavArgSpecification.AthleteId.rawArg(ssh).toLong()
 
     /** The list of activities for each [EditArtFilterType] **/
     private val activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>> =
@@ -190,9 +191,11 @@ class EditArtViewModel @Inject constructor(
 
     init {
         Loading().push()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
+            activities = getActivitiesFromDisk(athleteId)
+
             /** Push either a previously-saved (if available) or constructed Standby state **/
-            val prevState: Standby? = savedStateHandle[STANDBY_SAVE_STATE_KEY]
+            val prevState: Standby? = ssh[STANDBY_SAVE_STATE_KEY]
             (prevState ?: Standby()).push()
 
             EditArtFilterType.values().forEach {
@@ -253,7 +256,7 @@ class EditArtViewModel @Inject constructor(
         }
         if (event !is FilterChanged) {
             updateBitmap()
-            savedStateHandle[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
+            ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
         }
     }
 
@@ -285,7 +288,7 @@ class EditArtViewModel @Inject constructor(
                 }
             }
             updateBitmap()
-            savedStateHandle[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
+            ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
         }
     }
 
@@ -433,6 +436,7 @@ class EditArtViewModel @Inject constructor(
                 routeTo(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
+                        athleteId = athleteId,
                         backgroundColorArgb = styleBackground.toColorArgb(),
                         backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.toColorArgb(),
@@ -491,7 +495,6 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
         pushStateCopy {
-            val customRange = sizeCustomMinPx..sizeCustomMaxPx
             copy(
                 sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
                 sizeResolutionList = sizeResolutionList

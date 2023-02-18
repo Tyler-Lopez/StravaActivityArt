@@ -5,8 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import android.util.Size
 import com.activityartapp.architecture.BaseRoutingViewModel
+import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.repository.FileRepository
-import com.activityartapp.domain.useCase.activities.GetActivitiesFromMemory
+import com.activityartapp.domain.useCase.activities.GetActivitiesFromDisk
 import com.activityartapp.presentation.MainDestination
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
@@ -32,7 +33,7 @@ class SaveArtViewModel @Inject constructor(
     private val fileRepository: FileRepository,
     private val imageSizeUtils: ImageSizeUtils,
     private val visualizationUtils: VisualizationUtils,
-    getActivitiesFromMemory: GetActivitiesFromMemory,
+    private val getActivitiesFromDisk: GetActivitiesFromDisk,
     gson: Gson,
     ssh: SavedStateHandle,
 ) : BaseRoutingViewModel<SaveArtViewState, SaveArtViewEvent, MainDestination>() {
@@ -43,7 +44,8 @@ class SaveArtViewModel @Inject constructor(
             List::class.java
         )
         .map { SportType.valueOf(it) }
-    private val activities = getActivitiesFromMemory()
+    private lateinit var activities: List<Activity>
+    private val athleteId = AthleteId.rawArg(ssh).toLong()
     private val backgroundType =
         BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
     private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
@@ -147,6 +149,7 @@ class SaveArtViewModel @Inject constructor(
     private fun onScreenMeasured(event: ScreenMeasured) {
         Loading.push()
         viewModelScope.launch(Dispatchers.Default) {
+            activities = getActivitiesFromDisk(athleteId)
             Standby(
                 bitmapScreenSize = createArtBitmapOfSize(
                     isPreview = true,
@@ -160,10 +163,9 @@ class SaveArtViewModel @Inject constructor(
     }
 
     private fun createArtBitmapOfSize(isPreview: Boolean, size: Size): Bitmap {
-        println("here, activity types are $activityTypes")
         return visualizationUtils.createBitmap(
             activities = activityFilterUtils.filterActivities(
-                activities = activities ?: error("Activities missing!"),
+                activities = activities,
                 includeActivityTypes = activityTypes.toSet(),
                 unixMsRange = filterDateAfterMs..filterDateBeforeMs,
                 distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters

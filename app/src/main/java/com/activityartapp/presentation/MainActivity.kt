@@ -13,7 +13,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.activityartapp.architecture.Router
-import com.activityartapp.data.cache.ActivitiesCache
 import com.activityartapp.presentation.MainDestination.*
 import com.activityartapp.presentation.MainViewEvent.LoadAuthentication
 import com.activityartapp.presentation.MainViewState.Authenticated
@@ -32,9 +31,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private lateinit var navController: NavHostController
-
-    @Inject
-    lateinit var activitiesCache: ActivitiesCache
 
     @Inject
     lateinit var gson: Gson
@@ -122,12 +118,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
 
     private fun navigateLogin() {
         navController.navigate(route = Login.route) {
-            popUpTo(
-                route = Welcome.route
-                // todo identify what this was doing
-                //+
-                //     "?${athleteIdNavSpec.route}&${accessTokenNavSpec.route}"
-            ) {
+            popUpTo(route = Welcome.route) {
                 inclusive = true
             }
         }
@@ -145,17 +136,24 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 popUpTo(route = Welcome.route) {
                     inclusive = true
                 }
+                val a = ""
+                  val b: List<String> =  a.mapIndexed { index, _ ->
+                      a.substring(index, a.lastIndex)
+                  }
             }
         }
     }
 
     private fun navigateMakeArt(destination: NavigateEditArt) {
-        viewModel.onEvent(MainViewEvent.LoadedActivities)
-        navController.navigate(EditArt.route) {
+        navController.navigate(
+            route = EditArt.withArgs(
+                args = arrayOf(
+                    AthleteId to destination.athleteId.toString(),
+                )
+            )
+        ) {
             destination.apply {
-                if (fromLoad) {
-                    popUpTo(route = LoadActivities.route) { inclusive = true }
-                }
+                popUpTo(route = LoadActivities.route) { inclusive = true }
             }
         }
     }
@@ -166,6 +164,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                 route = SaveArt.withArgs(
                     args = arrayOf(
                         ActivityTypes to gson.toJson(activityTypes.map { it.toString() }),
+                        AthleteId to athleteId.toString(),
                         BackgroundType to backgroundType.toString(),
                         ColorActivitiesArgb to colorActivitiesArgb.toString(),
                         ColorBackgroundArgb to backgroundColorArgb.toString(),

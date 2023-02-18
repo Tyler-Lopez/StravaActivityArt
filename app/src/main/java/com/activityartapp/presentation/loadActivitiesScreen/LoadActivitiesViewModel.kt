@@ -40,6 +40,8 @@ class LoadActivitiesViewModel @Inject constructor(
         private const val NO_ACTIVITIES_COUNT = 0
     }
 
+    private lateinit var athlete: Athlete
+
     override fun onEvent(event: LoadActivitiesViewEvent) {
         when (event) {
             is ClickedContinue -> onClickedContinue()
@@ -50,7 +52,7 @@ class LoadActivitiesViewModel @Inject constructor(
     }
 
     private fun onClickedContinue() {
-        viewModelScope.launch { routeTo(NavigateEditArt(fromLoad = true)) }
+        viewModelScope.launch { routeTo(NavigateEditArt(athleteId = athlete.athleteId)) }
     }
 
     private fun onClickedReconnectWithStrava() {
@@ -101,10 +103,10 @@ class LoadActivitiesViewModel @Inject constructor(
         val internetEnabled: Boolean = versionResponse is Success
 
         /* Athlete should never return null here */
-        val oAuth2 = getOAuth2() ?: error("Athlete is null for an unknown reason...")
+        athlete = getAthlete() ?: error("Athlete is null for an unknown reason...")
 
         getActivitiesFromDiskAndRemote(
-            athlete = oAuth2,
+            athlete = athlete,
             internetEnabled = internetEnabled,
             onActivitiesLoaded = { newNumberOfActivities ->
                 activitiesCount += newNumberOfActivities
@@ -127,12 +129,12 @@ class LoadActivitiesViewModel @Inject constructor(
             else -> {
                 Loaded(totalActivitiesLoaded = activitiesCount).push()
                 delay(timeMillis = DELAY_MS_SUCCESSFULLY_LOADED)
-                routeTo(NavigateEditArt(fromLoad = true))
+                routeTo(NavigateEditArt(athleteId = athlete.athleteId))
             }
         }
     }
 
-    private suspend fun getOAuth2(): Athlete? {
+    private suspend fun getAthlete(): Athlete? {
         return suspendCoroutine { continuation ->
             viewModelScope.launch(Dispatchers.IO) {
                 getAthleteFromDiskOrRemote()
