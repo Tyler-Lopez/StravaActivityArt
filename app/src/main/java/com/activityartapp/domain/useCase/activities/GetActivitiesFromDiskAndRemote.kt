@@ -22,6 +22,7 @@ class GetActivitiesFromDiskAndRemote @Inject constructor(
         private const val MAXIMUM_USAGE = 25
         private const val MAXIMUM_PAGE = 10
         private const val PAGE_FIRST = 1
+        private const val ACTIVITIES_PER_PAGE = 200
     }
 
     suspend operator fun invoke(
@@ -56,23 +57,28 @@ class GetActivitiesFromDiskAndRemote @Inject constructor(
                 }
             }
 
-        println("got usage, it was $usage")
-
         var page = PAGE_FIRST
-        var activitiesFromRemoteUnique = true
+        var continueReadingFromRemote = true
         val remoteActivities = mutableListOf<Activity>()
-        while (usage < MAXIMUM_USAGE && page < MAXIMUM_PAGE && activitiesFromRemoteUnique) {
+        while (usage < MAXIMUM_USAGE && page < MAXIMUM_PAGE && continueReadingFromRemote) {
             /** Load this page of activities from remote **/
-            getActivitiesByPageFromRemote(code = athlete.accessToken, page = page)
+            getActivitiesByPageFromRemote(
+                code = athlete.accessToken,
+                page = page,
+                activitiesPerPage = ACTIVITIES_PER_PAGE
+            )
                 .doOnSuccess {
                     page++
                     insertAthleteUsageIntoRemote(athlete.athleteId, ++usage)
+
                     /** If there are no common activities between remote & cache, continue loading **/
                     val newActivities = data.filter {
                         !cachedActivitiesIds.contains(it.id)
                     }
 
-                    activitiesFromRemoteUnique = newActivities.size == data.size
+                    val activitiesAreAllUnique = newActivities.size == data.size
+                    val activityResponseWasEmpty = data.isNotEmpty()
+                    continueReadingFromRemote = activitiesAreAllUnique && activityResponseWasEmpty
 
                     /** Add all activities **/
                     remoteActivities.addAll(newActivities)
