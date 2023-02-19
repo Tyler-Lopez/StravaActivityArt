@@ -5,6 +5,12 @@ import android.net.Uri
 import com.activityartapp.util.Response
 
 interface FileRepository {
-    suspend fun saveBitmapToGallery(bitmap: Bitmap): Response<Unit>
-    suspend fun saveBitmapToCache(bitmap: Bitmap): Response<Uri>
+    suspend fun saveBitmapToGallery(
+        bitmap: Bitmap,
+        withTransparency: Boolean
+    ): Response<Unit>
+    suspend fun saveBitmapToCache(
+        bitmap: Bitmap,
+        withTransparency: Boolean
+    ): Response<Uri>
 }

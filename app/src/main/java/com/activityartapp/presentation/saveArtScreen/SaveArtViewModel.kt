@@ -91,7 +91,13 @@ class SaveArtViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             viewModelScope.launch(Dispatchers.Default) {
                 fileRepository
-                    .saveBitmapToGallery(createArtBitmapOfSize(false, sizePx))
+                    .saveBitmapToGallery(
+                        bitmap = createArtBitmapOfSize(
+                            isPreview = false,
+                            size = sizePx
+                        ),
+                        withTransparency = backgroundType == BackgroundType.TRANSPARENT
+                    )
                     .doOnSuccess { pushUpdateToDownloadShareStatus(DOWNLOAD_SUCCESS) }
                     .doOnError { pushUpdateToDownloadShareStatus(DOWNLOAD_FAILURE) }
             }
@@ -119,7 +125,13 @@ class SaveArtViewModel @Inject constructor(
         pushUpdateToDownloadShareStatus(SHARE_IN_PROGRESS)
         viewModelScope.launch(Dispatchers.IO) {
             fileRepository
-                .saveBitmapToCache(createArtBitmapOfSize(false, sizePx))
+                .saveBitmapToCache(
+                    bitmap = createArtBitmapOfSize(
+                        isPreview = false,
+                        size = sizePx
+                    ),
+                    withTransparency = backgroundType == BackgroundType.TRANSPARENT
+                )
                 .doOnSuccess {
                     withContext(Dispatchers.Main) {
                         routeTo(ShareFile(data))
