@@ -14,19 +14,16 @@ import javax.inject.Inject
 class GetActivitiesByPageFromRemote @Inject constructor(
     private val api: AthleteApi // Impl of API
 ) {
-    companion object {
-        private const val ACTIVITIES_PER_PAGE = 200
-    }
-
     suspend operator fun invoke(
         code: String,
-        page: Int
+        page: Int,
+        activitiesPerPage: Int
     ): Response<List<Activity>> {
         return try {
             Response.Success(data = api.getActivities(
                 authHeader = "Bearer $code",
                 page = page,
-                perPage = ACTIVITIES_PER_PAGE
+                perPage = activitiesPerPage
             )
                 .toList()
                 .filter {
