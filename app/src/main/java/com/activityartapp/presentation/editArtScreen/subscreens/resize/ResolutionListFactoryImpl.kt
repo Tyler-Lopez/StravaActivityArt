@@ -6,6 +6,13 @@ import com.activityartapp.presentation.editArtScreen.Resolution
 
 class ResolutionListFactoryImpl : ResolutionListFactory {
 
+    companion object {
+        private const val SIZE_CUSTOM_INITIAL_WIDTH_PX = 1920
+        private const val SIZE_CUSTOM_INITIAL_HEIGHT_PX = 1080
+        private const val SIZE_CUSTOM_MAXIMUM_PX = 12000
+        private const val SIZE_CUSTOM_MINIMUM_PX = 100
+    }
+
     override fun create(): MutableList<Resolution> {
         return mutableListOf(
             Resolution.ComputerResolution(
@@ -32,7 +39,12 @@ class ResolutionListFactoryImpl : ResolutionListFactory {
             Resolution.PrintResolution(6000, 6000, 20, 20),
             Resolution.PrintResolution(6000, 9000, 20, 30),
             Resolution.PrintResolution(6000, 12000, 20, 40),
-            Resolution.CustomResolution()
+            Resolution.CustomResolution(
+                widthPx = SIZE_CUSTOM_INITIAL_WIDTH_PX,
+                heightPx = SIZE_CUSTOM_INITIAL_HEIGHT_PX,
+                sizeMaximumPx = SIZE_CUSTOM_MAXIMUM_PX,
+                sizeMinimumPx = SIZE_CUSTOM_MINIMUM_PX
+            )
         )
     }
 }

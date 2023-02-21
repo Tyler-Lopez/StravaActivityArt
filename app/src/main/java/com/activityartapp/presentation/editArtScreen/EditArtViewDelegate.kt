@@ -149,7 +149,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 eventReceiver = viewModel
                             )
                             RESIZE -> EditArtResizeScreen(
-                                sizeCustomMinPx..sizeCustomMaxPx,
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,
                                 viewModel
