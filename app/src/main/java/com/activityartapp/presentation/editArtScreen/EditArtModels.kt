@@ -109,15 +109,13 @@ sealed interface EditArtViewEvent : ViewEvent {
         }
 
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
-        sealed interface SizeCustomChanged : ArtMutatingEvent {
-            val changedToPx: Int
+        data class SizeCustomChanged(
+            val customIndex: Int,
+            val changedToPx: Int,
+            val heightChanged: Boolean
+        ) : ArtMutatingEvent
 
-            data class HeightChanged(override val changedToPx: Int) : SizeCustomChanged
-            data class WidthChanged(override val changedToPx: Int) : SizeCustomChanged
-        }
-
-        object SizeCustomPendingChangeConfirmed : ArtMutatingEvent
-
+        data class SizeCustomPendingChangeConfirmed(val customIndex: Int) : ArtMutatingEvent
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
@@ -199,8 +197,6 @@ sealed interface EditArtViewState : ViewState {
         @IgnoredOnParcel val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val sizeResolutionList: List<Resolution> = ResolutionListFactoryImpl().create(),
         val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
-        @IgnoredOnParcel val sizeCustomMaxPx: Int = CUSTOM_SIZE_MAXIMUM_PX,
-        @IgnoredOnParcel val sizeCustomMinPx: Int = CUSTOM_SIZE_MINIMUM_PX,
         val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
         val sortDirectionTypeSelected: EditArtSortDirectionType = EditArtSortDirectionType.ASCENDING,
         val styleActivities: ColorWrapper = ColorWrapper(
@@ -233,9 +229,6 @@ sealed interface EditArtViewState : ViewState {
     ) : EditArtViewState, Parcelable {
 
         companion object {
-            private const val CUSTOM_SIZE_MINIMUM_PX = 100
-            private const val CUSTOM_SIZE_MAXIMUM_PX = 12000
-
             private const val INITIAL_SCROLL_STATE = 0
             private const val INITIAL_SELECTED_RES_INDEX = 0
 
@@ -405,11 +398,6 @@ sealed interface Resolution : Parcelable {
     @Composable
     fun displayTextResolution(): String
 
-    companion object {
-        private const val DEFAULT_CUSTOM_WIDTH_PX = 1000
-        private const val DEFAULT_CUSTOM_HEIGHT_PX = 1000
-    }
-
     interface RotatingResolution : Resolution {
         val isRotated: Boolean
         val swappingChangesSize: Boolean
@@ -486,14 +474,20 @@ sealed interface Resolution : Parcelable {
 
     @Parcelize
     data class CustomResolution(
-        override val widthPx: Int = DEFAULT_CUSTOM_WIDTH_PX,
-        override val heightPx: Int = DEFAULT_CUSTOM_HEIGHT_PX,
+        override val widthPx: Int,
+        override val heightPx: Int,
+        private val sizeMaximumPx: Int,
+        private val sizeMinimumPx: Int,
         @IgnoredOnParcel var pendingWidth: String? = null,
         @IgnoredOnParcel var pendingHeight: String? = null
     ) : Resolution {
 
-        @IgnoredOnParcel override val stringResourceId: Int
+        @IgnoredOnParcel
+        override val stringResourceId: Int
             get() = R.string.edit_art_resize_option_custom
+
+        @IgnoredOnParcel
+        val sizeRangePx: IntRange = sizeMinimumPx..sizeMaximumPx
 
         @Composable
         override fun displayTextResolution(): String {

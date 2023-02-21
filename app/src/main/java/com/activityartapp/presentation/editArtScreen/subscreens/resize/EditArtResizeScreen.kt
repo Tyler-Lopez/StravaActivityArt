@@ -21,11 +21,9 @@ import com.activityartapp.presentation.editArtScreen.composables.TextFieldSlider
 import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliders
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.ext.toFloatRange
-import kotlin.math.roundToInt
 
 @Composable
 fun EditArtResizeScreen(
-    customRangePx: IntRange,
     resolutionList: List<Resolution>,
     selectedResolutionIndex: Int,
     eventReceiver: EventReceiver<EditArtViewEvent>
@@ -51,75 +49,76 @@ fun EditArtResizeScreen(
                                 )
                             }
                         },
-                    content = (res as? Resolution.CustomResolution)
-                        ?.let {
-                            {
-                                TextFieldSliders(
-                                    specifications = listOf(
-                                        TextFieldSliderSpecification(
-                                            pendingChangesMessage = it.pendingWidth?.let {
-                                                stringResource(R.string.edit_art_resize_custom_pending_change_prompt)
-                                            },
-                                            keyboardType = KeyboardType.Number,
-                                            textFieldLabel = stringResource(R.string.edit_art_resize_pixels_width),
-                                            textFieldValue = it.pendingWidth
-                                                ?: it.widthPx.toString(),
-                                            sliderValue = it.widthPx.toFloat(),
-                                            sliderRange = customRangePx.toFloatRange(),
-                                            onSliderChanged = {
-                                                eventReceiver.onEvent(
-                                                    SizeCustomChanged.WidthChanged(
-                                                        it.toInt()
-                                                    )
-                                                )
-                                            },
-                                            onTextFieldChanged = { str ->
-                                                eventReceiver.onEvent(
-                                                    EditArtViewEvent.SizeCustomPendingChanged.WidthChanged(
-                                                        changedTo = str
-                                                    )
-                                                )
-                                            },
-                                            onTextFieldDone = {
-                                                eventReceiver.onEvent(
-                                                    SizeCustomPendingChangeConfirmed
-                                                )
-                                            }
-                                        ),
-                                        TextFieldSliderSpecification(
-                                            pendingChangesMessage = it.pendingHeight?.let {
-                                                stringResource(R.string.edit_art_resize_custom_pending_change_prompt)
-                                            },
-                                            keyboardType = KeyboardType.Number,
-                                            textFieldLabel = stringResource(R.string.edit_art_resize_pixels_height),
-                                            textFieldValue = it.pendingHeight
-                                                ?: it.heightPx.toString(),
-                                            sliderValue = it.heightPx.toFloat(),
-                                            sliderRange = customRangePx.toFloatRange(),
-                                            onSliderChanged = {
-                                                eventReceiver.onEvent(
-                                                    SizeCustomChanged.HeightChanged(
-                                                        it.toInt()
-                                                    )
-                                                )
-                                            },
-                                            onTextFieldChanged = { str ->
-                                                eventReceiver.onEvent(
-                                                    EditArtViewEvent.SizeCustomPendingChanged.HeightChanged(
-                                                        changedTo = str
-                                                    )
-                                                )
-                                            },
-                                            onTextFieldDone = {
-                                                eventReceiver.onEvent(
-                                                    SizeCustomPendingChangeConfirmed
-                                                )
-                                            }
-                                        )
-                                    )
+                    content = (res as? Resolution.CustomResolution)?.let {
+                        {
+                            val range = it.sizeRangePx.toFloatRange()
+                            val onTextFieldDone = {
+                                eventReceiver.onEvent(
+                                    SizeCustomPendingChangeConfirmed(customIndex = index)
                                 )
                             }
-                        },
+                            TextFieldSliders(
+                                specifications = listOf(
+                                    TextFieldSliderSpecification(
+                                        pendingChangesMessage = it.pendingWidth?.let {
+                                            stringResource(R.string.edit_art_resize_custom_pending_change_prompt)
+                                        },
+                                        keyboardType = KeyboardType.Number,
+                                        textFieldLabel = stringResource(R.string.edit_art_resize_pixels_width),
+                                        textFieldValue = it.pendingWidth
+                                            ?: it.widthPx.toString(),
+                                        sliderValue = it.widthPx.toFloat(),
+                                        sliderRange = range,
+                                        onSliderChanged = {
+                                            eventReceiver.onEvent(
+                                                SizeCustomChanged(
+                                                    customIndex = index,
+                                                    changedToPx = it.toInt(),
+                                                    heightChanged = false
+                                                )
+                                            )
+                                        },
+                                        onTextFieldChanged = { str ->
+                                            eventReceiver.onEvent(
+                                                EditArtViewEvent.SizeCustomPendingChanged.WidthChanged(
+                                                    changedTo = str
+                                                )
+                                            )
+                                        },
+                                        onTextFieldDone = onTextFieldDone
+                                    ),
+                                    TextFieldSliderSpecification(
+                                        pendingChangesMessage = it.pendingHeight?.let {
+                                            stringResource(R.string.edit_art_resize_custom_pending_change_prompt)
+                                        },
+                                        keyboardType = KeyboardType.Number,
+                                        textFieldLabel = stringResource(R.string.edit_art_resize_pixels_height),
+                                        textFieldValue = it.pendingHeight
+                                            ?: it.heightPx.toString(),
+                                        sliderValue = it.heightPx.toFloat(),
+                                        sliderRange = range,
+                                        onSliderChanged = {
+                                            eventReceiver.onEvent(
+                                                SizeCustomChanged(
+                                                    customIndex = index,
+                                                    changedToPx = it.toInt(),
+                                                    heightChanged = true
+                                                )
+                                            )
+                                        },
+                                        onTextFieldChanged = { str ->
+                                            eventReceiver.onEvent(
+                                                EditArtViewEvent.SizeCustomPendingChanged.HeightChanged(
+                                                    changedTo = str
+                                                )
+                                            )
+                                        },
+                                        onTextFieldDone = onTextFieldDone
+                                    )
+                                )
+                            )
+                        }
+                    },
                     onActionButtonPressed = { eventReceiver.onEvent(SizeRotated(index)) },
                     isSelected = isSelected,
                     text = res.displayTextResolution(),

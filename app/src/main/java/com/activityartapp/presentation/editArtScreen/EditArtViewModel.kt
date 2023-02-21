@@ -238,7 +238,7 @@ class EditArtViewModel @Inject constructor(
             is FilterChanged -> onFilterChangeEvent(event)
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChanged -> onSizeCustomChanged(event)
-            is SizeCustomPendingChangeConfirmed -> onSizeCustomPendingChangeConfirmed()
+            is SizeCustomPendingChangeConfirmed -> onSizeCustomPendingChangeConfirmed(event)
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
@@ -495,47 +495,42 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
         pushStateCopy {
+            val customRes = sizeResolutionList[event.customIndex] as Resolution.CustomResolution
+            val newSizeResolutionList = sizeResolutionList.toMutableList()
+            newSizeResolutionList[event.customIndex] = if (event.heightChanged) {
+                customRes.copy(heightPx = event.changedToPx, pendingHeight = null)
+            } else {
+                customRes.copy(widthPx = event.changedToPx, pendingWidth = null)
+            }
+
             copy(
-                sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
-                sizeResolutionList = sizeResolutionList
-                    .toMutableList()
-                    .apply {
-                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
-                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
-                            Resolution.CustomResolution(
-                                widthPx = if (event is SizeCustomChanged.WidthChanged) event.changedToPx else widthPx,
-                                heightPx = if (event is SizeCustomChanged.HeightChanged) event.changedToPx else heightPx,
-                                pendingWidth = if (event is SizeCustomChanged.WidthChanged) null else pendingWidth,
-                                pendingHeight = if (event is SizeCustomChanged.HeightChanged) null else pendingHeight
-                            )
-                        })
-                    }
+                sizeResolutionListSelectedIndex = event.customIndex,
+                sizeResolutionList = newSizeResolutionList
             )
         }
     }
 
-    private fun onSizeCustomPendingChangeConfirmed() {
+    private fun onSizeCustomPendingChangeConfirmed(event: SizeCustomPendingChangeConfirmed) {
         pushStateCopy {
-            val range = sizeCustomMinPx..sizeCustomMaxPx
+            val customRes = sizeResolutionList[event.customIndex] as Resolution.CustomResolution
+            val range = customRes.sizeRangePx
+            val newSizeResolutionList = sizeResolutionList.toMutableList()
+            newSizeResolutionList[event.customIndex] = customRes.run {
+                copy(
+                    widthPx = pendingWidth?.let {
+                        parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                    } ?: widthPx,
+                    heightPx = pendingHeight?.let {
+                        parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                    } ?: heightPx,
+                    pendingWidth = null,
+                    pendingHeight = null
+                )
+            }
+
             copy(
-                sizeResolutionListSelectedIndex = sizeResolutionList.indexOfFirst { it is Resolution.CustomResolution },
-                sizeResolutionList = sizeResolutionList
-                    .toMutableList()
-                    .apply {
-                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
-                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
-                            Resolution.CustomResolution(
-                                widthPx = pendingWidth?.let {
-                                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
-                                } ?: widthPx,
-                                heightPx = pendingHeight?.let {
-                                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
-                                } ?: heightPx,
-                                pendingWidth = null,
-                                pendingHeight = null
-                            )
-                        })
-                    }
+                sizeResolutionListSelectedIndex = event.customIndex,
+                sizeResolutionList = newSizeResolutionList
             )
         }
     }
