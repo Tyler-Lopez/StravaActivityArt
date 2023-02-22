@@ -63,7 +63,7 @@ fun MainNavHost(
         swipingInOutComposable(
             screen = EditArt,
             navArgSpecifications = listOf(
-                AthleteId
+                AthleteIdArg
             )
         ) {
             EditArtViewDelegate(viewModel = hiltViewModel<EditArtViewModel>().apply {
@@ -73,26 +73,27 @@ fun MainNavHost(
         swipingInOutComposable(
             screen = SaveArt,
             navArgSpecifications = listOf(
-                ActivityTypes,
-                AthleteId,
-                BackgroundType,
-                ColorActivitiesArgb,
-                ColorBackgroundArgbList,
-                ColorFontArgb,
-                FilterDateAfterMs,
-                FilterDateBeforeMs,
-                FilterDistanceLessThanMeters,
-                FilterDistanceMoreThanMeters,
-                SizeHeightPx,
-                SizeWidthPx,
-                SortDirectionType,
-                SortType,
-                StrokeWidth,
-                TextLeft,
-                TextCenter,
-                TextRight,
-                TextFontAssetPath,
-                TextFontSize
+                ActivityTypesArg,
+                AthleteIdArg,
+                BackgroundGradientAngleTypeArg,
+                BackgroundTypeArg,
+                ColorActivitiesArgbArg,
+                ColorBackgroundArgbListArg,
+                ColorFontArgbArg,
+                FilterDateAfterMsArg,
+                FilterDateBeforeMsArg,
+                FilterDistanceLessThanMetersArg,
+                FilterDistanceMoreThanMetersArg,
+                SizeHeightPxArg,
+                SizeWidthPxArg,
+                SortDirectionTypeArg,
+                SortTypeArg,
+                StrokeWidthArg,
+                TextLeftArg,
+                TextCenterArg,
+                TextRightArg,
+                TextFontAssetPathArg,
+                TextFontSizeArg
             )
         ) {
             SaveArtViewDelegate(viewModel = hiltViewModel<SaveArtViewModel>().apply {
@@ -102,7 +103,7 @@ fun MainNavHost(
         swipingInOutComposable(
             screen = Error,
             navArgSpecifications = listOf(
-                ErrorScreen
+                ErrorScreenArg
             )
         ) {
             ErrorScreen(viewModel = hiltViewModel<ErrorViewModel>().apply {

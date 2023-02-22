@@ -16,6 +16,7 @@ import com.activityartapp.util.enums.BackgroundType
 @Composable
 fun ColumnScope.EditArtStyleViewDelegate(
     backgroundType: BackgroundType,
+    backgroundGradientColorCount: Int,
     colorBackgroundList: List<ColorWrapper>,
     colorActivities: ColorWrapper,
     colorText: ColorWrapper?,
@@ -37,13 +38,22 @@ fun ColumnScope.EditArtStyleViewDelegate(
             ) { eventReceiver.onEvent(StyleBackgroundTypeChanged(changedTo = it)) }
         }
     }
-    SectionColorBackground(
-        backgroundType = backgroundType,
-        colorList = colorBackgroundList,
-        onColorChanged = eventReceiver::onEvent,
-        onColorPendingChanged = eventReceiver::onEvent,
-        onColorPendingChangeConfirmed = eventReceiver::onEvent
-    )
+    when (backgroundType) {
+        BackgroundType.GRADIENT -> SectionColorBackgroundGradient(
+            colorList = colorBackgroundList.take(backgroundGradientColorCount),
+            onColorChanged = eventReceiver::onEvent,
+            onColorCountChanged = eventReceiver::onEvent,
+            onColorPendingChanged = eventReceiver::onEvent,
+            onColorPendingChangeConfirmed = eventReceiver::onEvent
+        )
+        BackgroundType.SOLID -> SectionColorBackgroundSolid(
+            color = colorBackgroundList.first(),
+            onColorChanged = eventReceiver::onEvent,
+            onColorPendingChanged = eventReceiver::onEvent,
+            onColorPendingChangeConfirmed = eventReceiver::onEvent
+        )
+        BackgroundType.TRANSPARENT -> {} // No-op
+    }
     SectionColorActivities(
         color = colorActivities,
         onColorChanged = eventReceiver::onEvent,

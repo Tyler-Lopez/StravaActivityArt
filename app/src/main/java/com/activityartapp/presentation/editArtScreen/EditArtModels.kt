@@ -3,7 +3,6 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
-import android.graphics.LinearGradient
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
@@ -118,6 +117,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
+        data class StyleBackgroundColorCountChanged(val changedTo: Int) : ArtMutatingEvent
         data class StyleColorChanged(
             val colorType: ColorType,
             val changedTo: Float,
@@ -147,6 +147,8 @@ sealed interface EditArtViewState : ViewState {
 
     companion object {
         private const val FADE_LENGTH_MS = 1000
+        const val MAX_GRADIENT_BG_COLORS = 7
+        const val MIN_GRADIENT_BG_COLORS = 2
     }
 
     val dialogActive: EditArtDialogType
@@ -197,15 +199,17 @@ sealed interface EditArtViewState : ViewState {
             green = INIT_ACTIVITIES_GREEN,
             red = INIT_ACTIVITIES_RED
         ),
-        val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleBackgroundList: List<ColorWrapper> = listOf(
+        val styleBackgroundList: List<ColorWrapper> = (0 until MAX_GRADIENT_BG_COLORS).map {
             ColorWrapper(
                 alpha = INIT_BACKGROUND_ALPHA,
                 blue = INIT_BACKGROUND_BLUE,
                 green = INIT_BACKGROUND_GREEN,
                 red = INIT_BACKGROUND_RED
             )
-        ),
+        },
+        val styleBackgroundGradientAngleType: GradientAngleType = GradientAngleType.CW90,
+        val styleBackgroundGradientColorCount: Int = MIN_GRADIENT_BG_COLORS,
+        val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
         val typeActivitiesDistanceMetersSummed: Int = -1,

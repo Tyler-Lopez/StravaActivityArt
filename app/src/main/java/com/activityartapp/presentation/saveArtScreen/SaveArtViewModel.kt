@@ -40,35 +40,37 @@ class SaveArtViewModel @Inject constructor(
 
     private val activityTypes = gson
         .fromJson<List<String>>(
-            ActivityTypes.rawArg(ssh),
+            ActivityTypesArg.rawArg(ssh),
             List::class.java
         )
         .map { SportType.valueOf(it) }
     private lateinit var activities: List<Activity>
-    private val athleteId = AthleteId.rawArg(ssh).toLong()
-    private val backgroundType =
-        BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
-    private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
+    private val athleteId = AthleteIdArg.rawArg(ssh).toLong()
+    private val backgroundGradientAngleType =
+        GradientAngleType.valueOf(BackgroundGradientAngleTypeArg.rawArg(ssh))
+    private val backgroundType = BackgroundType.valueOf(BackgroundTypeArg.rawArg(ssh))
+    private val colorActivitiesArgb = ColorActivitiesArgbArg.rawArg(ssh).toInt()
     private val colorBackgroundArgbList = gson.fromJson<List<String>>(
-        ColorBackgroundArgbList.rawArg(ssh),
+        ColorBackgroundArgbListArg.rawArg(ssh),
         List::class.java
     ).map { it.toInt() }
-    private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()
-    private val filterDateAfterMs = FilterDateAfterMs.rawArg(ssh).toLong()
-    private val filterDateBeforeMs = FilterDateBeforeMs.rawArg(ssh).toLong()
-    private val filterDistanceLessThanMeters = FilterDistanceLessThanMeters.rawArg(ssh).toInt()
-    private val filterDistanceMoreThanMeters = FilterDistanceMoreThanMeters.rawArg(ssh).toInt()
-    private val sizeHeightPx = SizeHeightPx.rawArg(ssh).toInt()
-    private val sizeWidthPx = SizeWidthPx.rawArg(ssh).toInt()
+    private val colorFontArgb = ColorFontArgbArg.rawArg(ssh).toInt()
+    private val filterDateAfterMs = FilterDateAfterMsArg.rawArg(ssh).toLong()
+    private val filterDateBeforeMs = FilterDateBeforeMsArg.rawArg(ssh).toLong()
+    private val filterDistanceLessThanMeters = FilterDistanceLessThanMetersArg.rawArg(ssh).toInt()
+    private val filterDistanceMoreThanMeters = FilterDistanceMoreThanMetersArg.rawArg(ssh).toInt()
+    private val sizeHeightPx = SizeHeightPxArg.rawArg(ssh).toInt()
+    private val sizeWidthPx = SizeWidthPxArg.rawArg(ssh).toInt()
     private val sizePx: Size get() = Size(sizeWidthPx, sizeHeightPx)
-    private val sortDirectionType = EditArtSortDirectionType.valueOf(SortDirectionType.rawArg(ssh))
-    private val sortType = EditArtSortType.valueOf(SortType.rawArg(ssh))
-    private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidth.rawArg(ssh))
-    private val textLeft = TextLeft.rawArg(ssh).takeIf { it.isNotBlank() }
-    private val textCenter = TextCenter.rawArg(ssh).takeIf { it.isNotBlank() }
-    private val textRight = TextRight.rawArg(ssh).takeIf { it.isNotBlank() }
-    private val fontAssetPath = TextFontAssetPath.rawArg(ssh)
-    private val fontTypeSize = FontSizeType.valueOf(TextFontSize.rawArg(ssh))
+    private val sortDirectionType =
+        EditArtSortDirectionType.valueOf(SortDirectionTypeArg.rawArg(ssh))
+    private val sortType = EditArtSortType.valueOf(SortTypeArg.rawArg(ssh))
+    private val strokeWidthType = StrokeWidthType.valueOf(StrokeWidthArg.rawArg(ssh))
+    private val textLeft = TextLeftArg.rawArg(ssh).takeIf { it.isNotBlank() }
+    private val textCenter = TextCenterArg.rawArg(ssh).takeIf { it.isNotBlank() }
+    private val textRight = TextRightArg.rawArg(ssh).takeIf { it.isNotBlank() }
+    private val fontAssetPath = TextFontAssetPathArg.rawArg(ssh)
+    private val fontTypeSize = FontSizeType.valueOf(TextFontSizeArg.rawArg(ssh))
 
     override fun onEvent(event: SaveArtViewEvent) {
         when (event) {
@@ -185,6 +187,7 @@ class SaveArtViewModel @Inject constructor(
                 unixMsRange = filterDateAfterMs..filterDateBeforeMs,
                 distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
             ),
+            backgroundGradientAngleType = backgroundGradientAngleType,
             backgroundType = backgroundType,
             fontAssetPath = fontAssetPath,
             fontSize = fontTypeSize,

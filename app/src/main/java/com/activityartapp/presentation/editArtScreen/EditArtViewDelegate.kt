@@ -121,6 +121,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             }
                             STYLE -> EditArtStyleViewDelegate(
                                 styleBackgroundType,
+                                styleBackgroundGradientColorCount,
                                 styleBackgroundList,
                                 styleActivities,
                                 styleFont,
@@ -129,7 +130,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             )
                             TYPE -> EditArtTypeScreen(
                                 typeActivitiesDistanceMetersSummed,
-                                //         typeAthleteName,
                                 typeCenterCustomText,
                                 typeLeftCustomText,
                                 typeRightCustomText,

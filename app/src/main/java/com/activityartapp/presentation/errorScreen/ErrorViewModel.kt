@@ -15,7 +15,7 @@ class ErrorViewModel @Inject constructor(
     ssh: SavedStateHandle
 ) : BaseRoutingViewModel<ErrorViewState, ErrorViewEvent, MainDestination>() {
 
-    private val errorScreenType = ErrorScreenType.valueOf(ErrorScreen.rawArg(ssh))
+    private val errorScreenType = ErrorScreenType.valueOf(ErrorScreenArg.rawArg(ssh))
 
     init {
         ErrorViewState(error = errorScreenType).push()

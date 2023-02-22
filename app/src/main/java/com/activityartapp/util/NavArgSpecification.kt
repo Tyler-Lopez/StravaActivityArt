@@ -4,13 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.activityartapp.util.enums.GradientAngleType
 
 sealed interface NavArgSpecification {
 
     companion object {
         private const val ACTIVITY_TYPES_KEY = "activityTypes"
         private const val ATHLETE_ID_KEY = "athleteId"
-        private const val ACCESS_TOKEN_KEY = "accessToken"
+        private const val BACKGROUND_GRADIENT_ANGLE_TYPE_KEY = "backgroundGradientAngleType"
         private const val BACKGROUND_TYPE_KEY = "backgroundType"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLORS_BACKGROUND_KEY = "colorsBackground"
@@ -49,91 +50,91 @@ sealed interface NavArgSpecification {
         return handle[key] ?: error(ERROR_MISSING_KEY.format(key))
     }
 
-    object ActivityTypes : NavArgSpecification {
+    object ActivityTypesArg : NavArgSpecification {
         override val name = ACTIVITY_TYPES_KEY
     }
 
-    object AthleteId : NavArgSpecification {
+    object AthleteIdArg : NavArgSpecification {
         override val name = ATHLETE_ID_KEY
     }
 
-    object AccessToken : NavArgSpecification {
-        override val name = ACCESS_TOKEN_KEY
-    }
-
-    object BackgroundType : NavArgSpecification {
+    object BackgroundTypeArg : NavArgSpecification {
         override val name = BACKGROUND_TYPE_KEY
     }
-    
-    object ColorActivitiesArgb : NavArgSpecification {
+
+    object BackgroundGradientAngleTypeArg : NavArgSpecification {
+        override val name = BACKGROUND_GRADIENT_ANGLE_TYPE_KEY
+    }
+
+    object ColorActivitiesArgbArg : NavArgSpecification {
         override val name = COLOR_ACTIVITIES_KEY
     }
 
-    object ColorBackgroundArgbList : NavArgSpecification {
+    object ColorBackgroundArgbListArg : NavArgSpecification {
         override val name = COLORS_BACKGROUND_KEY
     }
 
-    object ColorFontArgb : NavArgSpecification {
+    object ColorFontArgbArg : NavArgSpecification {
         override val name: String = COLOR_FONT_KEY
     }
 
-    object ErrorScreen : NavArgSpecification {
+    object ErrorScreenArg : NavArgSpecification {
         override val name: String = ERROR_SCREEN_TYPE
     }
 
-    object FilterDateAfterMs : NavArgSpecification {
+    object FilterDateAfterMsArg : NavArgSpecification {
         override val name = FILTER_DATE_AFTER_MS_KEY
     }
 
-    object FilterDateBeforeMs : NavArgSpecification {
+    object FilterDateBeforeMsArg : NavArgSpecification {
         override val name = FILTER_DATE_BEFORE_MS_KEY
     }
 
-    object FilterDistanceLessThanMeters : NavArgSpecification {
+    object FilterDistanceLessThanMetersArg : NavArgSpecification {
         override val name: String = FILTER_DISTANCE_LESS_THAN_KEY
     }
 
-    object FilterDistanceMoreThanMeters : NavArgSpecification {
+    object FilterDistanceMoreThanMetersArg : NavArgSpecification {
         override val name: String = FILTER_DISTANCE_MORE_THAN_KEY
     }
 
-    object StrokeWidth : NavArgSpecification {
+    object StrokeWidthArg : NavArgSpecification {
         override val name = STROKE_WIDTH_KEY
     }
 
-    object SizeHeightPx : NavArgSpecification {
+    object SizeHeightPxArg : NavArgSpecification {
         override val name = SIZE_HEIGHT_KEY
     }
 
-    object SizeWidthPx : NavArgSpecification {
+    object SizeWidthPxArg : NavArgSpecification {
         override val name = SIZE_WIDTH_KEY
     }
 
-    object SortType : NavArgSpecification {
+    object SortTypeArg : NavArgSpecification {
         override val name: String = SORT_TYPE_KEY
     }
 
-    object SortDirectionType : NavArgSpecification {
+    object SortDirectionTypeArg : NavArgSpecification {
         override val name: String = SORT_DIRECTION_TYPE_KEY
     }
 
-    object TextLeft : NavArgSpecification {
+    object TextLeftArg : NavArgSpecification {
         override val name: String = TEXT_LEFT_KEY
     }
 
-    object TextCenter : NavArgSpecification {
+    object TextCenterArg : NavArgSpecification {
         override val name: String = TEXT_CENTER_KEY
     }
 
-    object TextRight : NavArgSpecification {
+    object TextRightArg : NavArgSpecification {
         override val name: String = TEXT_RIGHT_KEY
     }
 
-    object TextFontAssetPath : NavArgSpecification {
+    object TextFontAssetPathArg : NavArgSpecification {
         override val name: String = TEXT_FONT_ASSET_PATH_KEY
     }
 
-    object TextFontSize : NavArgSpecification {
+    object TextFontSizeArg : NavArgSpecification {
         override val name: String = TEXT_FONT_SIZE_KEY
     }
 }

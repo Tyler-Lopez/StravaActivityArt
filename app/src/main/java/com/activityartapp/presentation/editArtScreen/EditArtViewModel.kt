@@ -1,6 +1,5 @@
 package com.activityartapp.presentation.editArtScreen
 
-import android.graphics.Color
 import android.util.Size
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -22,7 +21,6 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.activityartapp.util.*
-import com.activityartapp.util.enums.BackgroundType
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,7 +55,7 @@ class EditArtViewModel @Inject constructor(
     /** All activities stored on-disk **/
     private lateinit var activities: List<Activity>
 
-    private val athleteId = NavArgSpecification.AthleteId.rawArg(ssh).toLong()
+    private val athleteId = NavArgSpecification.AthleteIdArg.rawArg(ssh).toLong()
 
     /** The list of activities for each [EditArtFilterType] **/
     private val activitiesFilteredByFilterType: MutableMap<EditArtFilterType, List<Activity>> =
@@ -244,6 +242,7 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
+            is StyleBackgroundColorCountChanged -> onStyleBackgroundColorCountChanged(event)
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
             is StyleColorChanged -> onStyleColorChanged(event)
             is StyleColorPendingChangeConfirmed -> onStyleColorPendingChangeConfirmed(event)
@@ -439,7 +438,10 @@ class EditArtViewModel @Inject constructor(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
                         athleteId = athleteId,
-                        backgroundColorsArgb = styleBackgroundList.map { it.toColorArgb() },
+                        backgroundColorsArgb = styleBackgroundList
+                            .take(styleBackgroundGradientColorCount)
+                            .map { it.toColorArgb() }, // TODO
+                        backgroundGradientAngleType = styleBackgroundGradientAngleType,
                         backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.toColorArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
@@ -588,23 +590,17 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(sortTypeSelected = event.changedTo) }.push()
     }
 
+    private fun onStyleBackgroundColorCountChanged(event: StyleBackgroundColorCountChanged) {
+        pushStateCopy {
+            copy(styleBackgroundGradientColorCount = event.changedTo)
+        }
+    }
     private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
         pushStateCopy {
             if (styleBackgroundType == event.changedTo) {
                 return@pushStateCopy null
             }
-
-            val firstBackgroundColor = styleBackgroundList.first()
-            val newBackgroundList = mutableListOf(firstBackgroundColor)
-
-            if (event.changedTo == BackgroundType.GRADIENT) {
-                newBackgroundList += firstBackgroundColor.copy()
-            }
-
-            copy(
-                styleBackgroundList = newBackgroundList,
-                styleBackgroundType = event.changedTo
-            )
+            copy(styleBackgroundType = event.changedTo)
         }
     }
 
@@ -766,8 +762,11 @@ class EditArtViewModel @Inject constructor(
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered,
+                    backgroundGradientAngleType = styleBackgroundGradientAngleType,
                     backgroundType = styleBackgroundType,
-                    backgroundColorsArgb = styleBackgroundList.map { it.toColorArgb() }, // TODO
+                    backgroundColorsArgb = styleBackgroundList
+                        .take(styleBackgroundGradientColorCount)
+                        .map { it.toColorArgb() }, // TODO
                     colorActivitiesArgb = styleActivities.toColorArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
                     strokeWidth = styleStrokeWidthType,
