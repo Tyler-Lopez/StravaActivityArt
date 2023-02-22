@@ -165,7 +165,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     args = arrayOf(
                         ActivityTypesArg to gson.toJson(activityTypes.map { it.toString() }),
                         AthleteIdArg to athleteId.toString(),
-                        BackgroundGradientAngleTypeArg to backgroundGradientAngleType.toString(),
+                        BackgroundGradientAngleTypeArg to backgroundAngleType.toString(),
                         BackgroundTypeArg to backgroundType.toString(),
                         ColorActivitiesArgbArg to colorActivitiesArgb.toString(),
                         ColorBackgroundArgbListArg to gson.toJson(backgroundColorsArgb.map { it.toString() }),

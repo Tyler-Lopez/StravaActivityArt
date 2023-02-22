@@ -33,7 +33,7 @@ class VisualizationUtils @Inject constructor(
 
     fun createBitmap(
         activities: List<Activity>,
-        backgroundGradientAngleType: GradientAngleType,
+        backgroundAngleType: AngleType,
         backgroundType: BackgroundType,
         backgroundColorsArgb: List<Int>,
         colorActivitiesArgb: Int,
@@ -91,7 +91,7 @@ class VisualizationUtils @Inject constructor(
                     BackgroundType.SOLID -> drawBackgroundSolid(backgroundColorsArgb.first())
                     BackgroundType.GRADIENT -> drawBackgroundGradient(
                         backgroundColorsArgb,
-                        backgroundGradientAngleType
+                        backgroundAngleType
                     ) // TODO
                 }
 
@@ -225,10 +225,10 @@ class VisualizationUtils @Inject constructor(
 
     private fun Canvas.drawBackgroundGradient(
         argbList: List<Int>,
-        gradientAngleType: GradientAngleType
+        angleType: AngleType
     ) {
         val offsets = gradientAngleUtils.getStartAndEndOffsets(
-            gradientAngleType = gradientAngleType,
+            angleType = angleType,
             size = Size(width, height)
         )
         drawRect(

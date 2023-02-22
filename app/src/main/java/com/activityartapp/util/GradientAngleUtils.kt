@@ -2,17 +2,17 @@ package com.activityartapp.util
 
 import android.util.Size
 import androidx.compose.ui.geometry.Offset
-import com.activityartapp.util.enums.GradientAngleType
-import com.activityartapp.util.enums.GradientAngleType.*
+import com.activityartapp.util.enums.AngleType
+import com.activityartapp.util.enums.AngleType.*
 
 class GradientAngleUtils {
     fun getStartAndEndOffsets(
-        gradientAngleType: GradientAngleType,
+        angleType: AngleType,
         size: Size
     ): Pair<Offset, Offset> {
         val width = size.width.toFloat()
         val height = size.height.toFloat()
-        return when (gradientAngleType) {
+        return when (angleType) {
             CW0 -> Offset.Zero to Offset(width, 0f)
             CW45 -> Offset.Zero to Offset(width, height)
             CW90 -> Offset.Zero to Offset(0f, height)

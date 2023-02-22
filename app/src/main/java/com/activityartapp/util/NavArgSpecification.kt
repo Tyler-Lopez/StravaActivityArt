@@ -4,14 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.activityartapp.util.enums.GradientAngleType
 
 sealed interface NavArgSpecification {
 
     companion object {
         private const val ACTIVITY_TYPES_KEY = "activityTypes"
         private const val ATHLETE_ID_KEY = "athleteId"
-        private const val BACKGROUND_GRADIENT_ANGLE_TYPE_KEY = "backgroundGradientAngleType"
+        private const val BACKGROUND_GRADIENT_ANGLE_TYPE_KEY = "backgroundAngleType"
         private const val BACKGROUND_TYPE_KEY = "backgroundType"
         private const val COLOR_ACTIVITIES_KEY = "colorActivities"
         private const val COLORS_BACKGROUND_KEY = "colorsBackground"

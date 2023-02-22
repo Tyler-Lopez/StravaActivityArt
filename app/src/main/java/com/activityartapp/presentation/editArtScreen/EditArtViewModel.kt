@@ -247,7 +247,8 @@ class EditArtViewModel @Inject constructor(
             is StyleColorChanged -> onStyleColorChanged(event)
             is StyleColorPendingChangeConfirmed -> onStyleColorPendingChangeConfirmed(event)
             is StyleColorFontUseCustomChanged -> onStyleColorFontUseCustomChanged(event)
-            is StylesStrokeWidthChanged -> onStylesStrokeWidthChanged(event)
+            is StyleGradientAngleTypeChanged -> onStyleGradientAngleTypeChanged(event)
+            is StyleStrokeWidthChanged -> onStyleStrokeWidthChanged(event)
             is TypeCustomTextChanged -> onTypeCustomTextChanged(event)
             is TypeFontChanged -> onTypeFontChanged(event)
             is TypeFontSizeChanged -> onTypeFontSizeChanged(event)
@@ -441,7 +442,7 @@ class EditArtViewModel @Inject constructor(
                         backgroundColorsArgb = styleBackgroundList
                             .take(styleBackgroundGradientColorCount)
                             .map { it.toColorArgb() }, // TODO
-                        backgroundGradientAngleType = styleBackgroundGradientAngleType,
+                        backgroundAngleType = styleBackgroundAngleType,
                         backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.toColorArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
@@ -595,6 +596,7 @@ class EditArtViewModel @Inject constructor(
             copy(styleBackgroundGradientColorCount = event.changedTo)
         }
     }
+
     private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
         pushStateCopy {
             if (styleBackgroundType == event.changedTo) {
@@ -650,10 +652,14 @@ class EditArtViewModel @Inject constructor(
     private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
         copyLastState {
             copy(styleFont = if (event.useCustom) styleFont ?: styleActivities else null)
-        }.push()
+        }
     }
 
-    private fun onStylesStrokeWidthChanged(event: StylesStrokeWidthChanged) {
+    private fun onStyleGradientAngleTypeChanged(event: StyleGradientAngleTypeChanged) {
+        pushStateCopy { copy(styleBackgroundAngleType = event.changedTo) }
+    }
+
+    private fun onStyleStrokeWidthChanged(event: StyleStrokeWidthChanged) {
         (lastPushedState as? Standby)?.run {
             copy(styleStrokeWidthType = event.changedTo)
         }?.push()
@@ -762,7 +768,7 @@ class EditArtViewModel @Inject constructor(
             copyLastState {
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered,
-                    backgroundGradientAngleType = styleBackgroundGradientAngleType,
+                    backgroundAngleType = styleBackgroundAngleType,
                     backgroundType = styleBackgroundType,
                     backgroundColorsArgb = styleBackgroundList
                         .take(styleBackgroundGradientColorCount)

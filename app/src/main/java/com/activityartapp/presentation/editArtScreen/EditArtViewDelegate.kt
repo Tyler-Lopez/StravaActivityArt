@@ -121,6 +121,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             }
                             STYLE -> EditArtStyleViewDelegate(
                                 styleBackgroundType,
+                                styleBackgroundAngleType,
                                 styleBackgroundGradientColorCount,
                                 styleBackgroundList,
                                 styleActivities,

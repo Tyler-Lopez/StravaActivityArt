@@ -46,8 +46,8 @@ class SaveArtViewModel @Inject constructor(
         .map { SportType.valueOf(it) }
     private lateinit var activities: List<Activity>
     private val athleteId = AthleteIdArg.rawArg(ssh).toLong()
-    private val backgroundGradientAngleType =
-        GradientAngleType.valueOf(BackgroundGradientAngleTypeArg.rawArg(ssh))
+    private val backgroundAngleType =
+        AngleType.valueOf(BackgroundGradientAngleTypeArg.rawArg(ssh))
     private val backgroundType = BackgroundType.valueOf(BackgroundTypeArg.rawArg(ssh))
     private val colorActivitiesArgb = ColorActivitiesArgbArg.rawArg(ssh).toInt()
     private val colorBackgroundArgbList = gson.fromJson<List<String>>(
@@ -187,7 +187,7 @@ class SaveArtViewModel @Inject constructor(
                 unixMsRange = filterDateAfterMs..filterDateBeforeMs,
                 distanceRange = filterDistanceMoreThanMeters..filterDistanceLessThanMeters
             ),
-            backgroundGradientAngleType = backgroundGradientAngleType,
+            backgroundAngleType = backgroundAngleType,
             backgroundType = backgroundType,
             fontAssetPath = fontAssetPath,
             fontSize = fontTypeSize,

@@ -2,7 +2,7 @@ package com.activityartapp.util.enums
 
 import androidx.compose.ui.geometry.Offset
 
-enum class GradientAngleType {
+enum class AngleType {
     CW0,
     CW45,
     CW90,

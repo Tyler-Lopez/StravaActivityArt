@@ -116,6 +116,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
+        data class StyleGradientAngleTypeChanged(val changedTo: AngleType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
         data class StyleBackgroundColorCountChanged(val changedTo: Int) : ArtMutatingEvent
         data class StyleColorChanged(
@@ -126,7 +127,7 @@ sealed interface EditArtViewEvent : ViewEvent {
 
         data class StyleColorPendingChangeConfirmed(val style: StyleIdentifier) : ArtMutatingEvent
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
-        data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
+        data class StyleStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
         data class TypeCustomTextChanged(
             val section: EditArtTypeSection,
             val changedTo: String
@@ -207,7 +208,7 @@ sealed interface EditArtViewState : ViewState {
                 red = INIT_BACKGROUND_RED
             )
         },
-        val styleBackgroundGradientAngleType: GradientAngleType = GradientAngleType.CW90,
+        val styleBackgroundAngleType: AngleType = AngleType.CW90,
         val styleBackgroundGradientColorCount: Int = MIN_GRADIENT_BG_COLORS,
         val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
         val styleFont: ColorWrapper? = null,
