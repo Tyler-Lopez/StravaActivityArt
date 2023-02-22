@@ -7,7 +7,7 @@ import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorPendingChangeConfirmed
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
-import com.activityartapp.presentation.editArtScreen.StyleType
+import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.composables.Section
 
 @Composable
@@ -27,7 +27,7 @@ fun SectionColorActivities(
             onColorChanged = { colorType, changedTo ->
                 onColorChanged(
                     StyleColorChanged(
-                        styleType = StyleType.ACTIVITIES,
+                        style = StyleIdentifier.Activities,
                         colorType = colorType,
                         changedTo = changedTo
                     )
@@ -36,14 +36,18 @@ fun SectionColorActivities(
             onColorPendingChanged = { colorType, changedTo ->
                 onColorPendingChanged(
                     StyleColorPendingChanged(
-                        styleType = StyleType.ACTIVITIES,
+                        style = StyleIdentifier.Activities,
                         colorType = colorType,
                         changedTo = changedTo
                     )
                 )
             },
             onColorPendingChangeConfirmed = {
-                onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.ACTIVITIES))
+                onColorPendingChangeConfirmed(
+                    StyleColorPendingChangeConfirmed(
+                        style = StyleIdentifier.Activities
+                    )
+                )
             }
         )
     }

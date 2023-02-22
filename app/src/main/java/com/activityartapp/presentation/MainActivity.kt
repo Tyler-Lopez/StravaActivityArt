@@ -137,9 +137,9 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     inclusive = true
                 }
                 val a = ""
-                  val b: List<String> =  a.mapIndexed { index, _ ->
-                      a.substring(index, a.lastIndex)
-                  }
+                val b: List<String> = a.mapIndexed { index, _ ->
+                    a.substring(index, a.lastIndex)
+                }
             }
         }
     }
@@ -167,7 +167,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         AthleteId to athleteId.toString(),
                         BackgroundType to backgroundType.toString(),
                         ColorActivitiesArgb to colorActivitiesArgb.toString(),
-                        ColorBackgroundArgb to backgroundColorArgb.toString(),
+                        ColorBackgroundArgbList to gson.toJson(backgroundColorsArgb.map { it.toString() }),
                         ColorFontArgb to colorFontArgb.toString(),
                         FilterDateAfterMs to filterAfterMs.toString(),
                         FilterDateBeforeMs to filterBeforeMs.toString(),

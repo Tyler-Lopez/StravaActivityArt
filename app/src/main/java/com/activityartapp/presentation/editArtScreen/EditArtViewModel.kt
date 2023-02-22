@@ -1,5 +1,6 @@
 package com.activityartapp.presentation.editArtScreen
 
+import android.graphics.Color
 import android.util.Size
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.activityartapp.util.*
+import com.activityartapp.util.enums.BackgroundType
 import com.activityartapp.util.enums.FontWeightType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -437,7 +439,7 @@ class EditArtViewModel @Inject constructor(
                     NavigateSaveArt(
                         activityTypes = filteredTypes,
                         athleteId = athleteId,
-                        backgroundColorArgb = styleBackground.toColorArgb(),
+                        backgroundColorsArgb = styleBackgroundList.map { it.toColorArgb() },
                         backgroundType = styleBackgroundType,
                         colorActivitiesArgb = styleActivities.toColorArgb(),
                         colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
@@ -470,18 +472,27 @@ class EditArtViewModel @Inject constructor(
 
     private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
         pushStateCopy {
-            when (event.styleType) {
-                StyleType.ACTIVITIES -> copy(
-                    styleActivities = styleActivities
-                        .copyWithPendingChange(event.colorType, event.changedTo)
+            when (event.style) {
+                is StyleIdentifier.Activities -> copy(
+                    styleActivities = styleActivities.copyPendingChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
                 )
-                StyleType.BACKGROUND -> copy(
-                    styleBackground = styleBackground
-                        .copyWithPendingChange(event.colorType, event.changedTo)
-                )
-                StyleType.FONT -> copy(
-                    styleFont = (styleFont ?: styleActivities)
-                        .copyWithPendingChange(event.colorType, event.changedTo)
+                is StyleIdentifier.Background -> {
+                    val color = styleBackgroundList[event.style.index]
+                    val newBackgroundList = styleBackgroundList.toMutableList()
+                    newBackgroundList[event.style.index] = color.copyPendingChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                    copy(styleBackgroundList = newBackgroundList)
+                }
+                is StyleIdentifier.Font -> copy(
+                    styleFont = (styleFont ?: styleActivities).copyPendingChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
                 )
             }
         }
@@ -578,25 +589,44 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
-        copyLastState { copy(styleBackgroundType = event.changedTo) }.push()
+        pushStateCopy {
+            if (styleBackgroundType == event.changedTo) {
+                return@pushStateCopy null
+            }
+
+            val firstBackgroundColor = styleBackgroundList.first()
+            val newBackgroundList = mutableListOf(firstBackgroundColor)
+
+            if (event.changedTo == BackgroundType.GRADIENT) {
+                newBackgroundList += firstBackgroundColor.copy()
+            }
+
+            copy(
+                styleBackgroundList = newBackgroundList,
+                styleBackgroundType = event.changedTo
+            )
+        }
     }
 
     private fun onStyleColorChanged(event: StyleColorChanged) {
         pushStateCopy {
-            when (event.styleType) {
-                StyleType.ACTIVITIES -> copy(
+            when (event.style) {
+                is StyleIdentifier.Activities -> copy(
                     styleActivities = styleActivities.copyWithChange(
                         colorType = event.colorType,
                         changedTo = event.changedTo
                     )
                 )
-                StyleType.BACKGROUND -> copy(
-                    styleBackground = styleBackground.copyWithChange(
+                is StyleIdentifier.Background -> {
+                    val color = styleBackgroundList[event.style.index]
+                    val newBackgroundList = styleBackgroundList.toMutableList()
+                    newBackgroundList[event.style.index] = color.copyWithChange(
                         colorType = event.colorType,
                         changedTo = event.changedTo
                     )
-                )
-                StyleType.FONT -> copy(
+                    copy(styleBackgroundList = newBackgroundList)
+                }
+                is StyleIdentifier.Font -> copy(
                     styleFont = (styleFont ?: styleActivities).copyWithChange(
                         colorType = event.colorType,
                         changedTo = event.changedTo
@@ -608,10 +638,15 @@ class EditArtViewModel @Inject constructor(
 
     private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
         pushStateCopy {
-            when (event.styleType) {
-                StyleType.ACTIVITIES -> copy(styleActivities = styleActivities.confirmPendingChanges())
-                StyleType.BACKGROUND -> copy(styleBackground = styleBackground.confirmPendingChanges())
-                StyleType.FONT -> copy(styleFont = styleFont?.confirmPendingChanges())
+            when (event.style) {
+                is StyleIdentifier.Activities -> copy(styleActivities = styleActivities.confirmPendingChanges())
+                is StyleIdentifier.Background -> {
+                    val color = styleBackgroundList[event.style.index]
+                    val newBackgroundList = styleBackgroundList.toMutableList()
+                    newBackgroundList[event.style.index] = color.confirmPendingChanges()
+                    copy(styleBackgroundList = newBackgroundList)
+                }
+                is StyleIdentifier.Font -> copy(styleFont = styleFont?.confirmPendingChanges())
             }
         }
     }
@@ -692,7 +727,7 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun ColorWrapper.copyWithPendingChange(
+    private fun ColorWrapper.copyPendingChange(
         colorType: ColorType,
         changedTo: String
     ): ColorWrapper {
@@ -732,7 +767,7 @@ class EditArtViewModel @Inject constructor(
                 val bitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered,
                     backgroundType = styleBackgroundType,
-                    backgroundColorArgb = styleBackground.toColorArgb(),
+                    backgroundColorsArgb = styleBackgroundList.map { it.toColorArgb() }, // TODO
                     colorActivitiesArgb = styleActivities.toColorArgb(),
                     colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
                     strokeWidth = styleStrokeWidthType,

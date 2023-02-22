@@ -86,6 +86,9 @@ object AppModule {
     fun provideTimeUtils() = TimeUtils()
 
     @Provides
+    fun provideGradientAngleUtils() = GradientAngleUtils()
+
+    @Provides
     fun provideParseNumberFromStringUtils() = ParseNumberFromStringUtils()
 
     @Provides
@@ -95,9 +98,10 @@ object AppModule {
     fun provideVisualizationUtils(
         activitySortUtils: ActivitySortUtils,
         colorBrightnessUtils: ColorBrightnessUtils,
+        gradientAngleUtils: GradientAngleUtils,
         @ApplicationContext appContext: Context
     ) =
-        VisualizationUtils(appContext, activitySortUtils, colorBrightnessUtils)
+        VisualizationUtils(appContext, activitySortUtils, colorBrightnessUtils, gradientAngleUtils)
 
     @Provides
     fun provideFileRepository(@ApplicationContext appContext: Context): FileRepository =

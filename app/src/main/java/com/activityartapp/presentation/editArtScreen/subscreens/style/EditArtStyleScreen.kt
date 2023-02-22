@@ -15,8 +15,8 @@ import com.activityartapp.util.enums.BackgroundType
 
 @Composable
 fun ColumnScope.EditArtStyleViewDelegate(
-    colorBackground: ColorWrapper,
     backgroundType: BackgroundType,
+    colorBackgroundList: List<ColorWrapper>,
     colorActivities: ColorWrapper,
     colorText: ColorWrapper?,
     strokeWidthType: StrokeWidthType,
@@ -39,7 +39,7 @@ fun ColumnScope.EditArtStyleViewDelegate(
     }
     SectionColorBackground(
         backgroundType = backgroundType,
-        color = colorBackground,
+        colorList = colorBackgroundList,
         onColorChanged = eventReceiver::onEvent,
         onColorPendingChanged = eventReceiver::onEvent,
         onColorPendingChangeConfirmed = eventReceiver::onEvent

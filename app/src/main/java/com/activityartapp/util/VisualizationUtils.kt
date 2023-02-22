@@ -7,10 +7,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
-import com.activityartapp.util.enums.BackgroundType
-import com.activityartapp.util.enums.EditArtSortDirectionType
-import com.activityartapp.util.enums.EditArtSortType
-import com.activityartapp.util.enums.FontSizeType
+import com.activityartapp.util.enums.*
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlin.math.ceil
@@ -21,7 +18,8 @@ import kotlin.math.sqrt
 class VisualizationUtils @Inject constructor(
     private val context: Context,
     private val activitySortUtils: ActivitySortUtils,
-    private val colorBrightnessUtils: ColorBrightnessUtils
+    private val colorBrightnessUtils: ColorBrightnessUtils,
+    private val gradientAngleUtils: GradientAngleUtils
 ) {
 
     companion object {
@@ -36,7 +34,7 @@ class VisualizationUtils @Inject constructor(
     fun createBitmap(
         activities: List<Activity>,
         backgroundType: BackgroundType,
-        backgroundColorArgb: Int,
+        backgroundColorsArgb: List<Int>,
         colorActivitiesArgb: Int,
         colorFontArgb: Int,
         bitmapSize: Size,
@@ -89,7 +87,11 @@ class VisualizationUtils @Inject constructor(
                     BackgroundType.TRANSPARENT -> if (isPreview) {
                         drawBackgroundGrid(colorActivitiesArgb)
                     }
-                    BackgroundType.SOLID -> drawBackgroundSolid(backgroundColorArgb)
+                    BackgroundType.SOLID -> drawBackgroundSolid(backgroundColorsArgb.first())
+                    BackgroundType.GRADIENT -> drawBackgroundGradient(
+                        backgroundColorsArgb,
+                        GradientAngleType.CW90
+                    ) // TODO
                 }
 
                 val padding = paddingFraction * minOf(width, height)
@@ -217,6 +219,35 @@ class VisualizationUtils @Inject constructor(
             width.toFloat(),
             height.toFloat(),
             Paint().apply { color = argb }
+        )
+    }
+
+    private fun Canvas.drawBackgroundGradient(
+        argbList: List<Int>,
+        gradientAngleType: GradientAngleType
+    ) {
+        val offsets = gradientAngleUtils.getStartAndEndOffsets(
+            gradientAngleType = gradientAngleType,
+            size = Size(width, height)
+        )
+        drawRect(
+            OFFSET_ZERO_PX,
+            OFFSET_ZERO_PX,
+            width.toFloat(),
+            height.toFloat(),
+            Paint().apply {
+                shader = LinearGradient(
+                    offsets.first.x,
+                    offsets.first.y,
+                    offsets.second.x,
+                    offsets.second.y,
+                    argbList.toIntArray(),
+                    argbList
+                        .mapIndexed { index, _ -> index / argbList.lastIndex.toFloat() }
+                        .toFloatArray(),
+                    Shader.TileMode.CLAMP
+                )
+            }
         )
     }
 

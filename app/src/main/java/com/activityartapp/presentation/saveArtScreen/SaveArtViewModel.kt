@@ -49,7 +49,10 @@ class SaveArtViewModel @Inject constructor(
     private val backgroundType =
         BackgroundType.valueOf(NavArgSpecification.BackgroundType.rawArg(ssh))
     private val colorActivitiesArgb = ColorActivitiesArgb.rawArg(ssh).toInt()
-    private val colorBackgroundArgb = ColorBackgroundArgb.rawArg(ssh).toInt()
+    private val colorBackgroundArgbList = gson.fromJson<List<String>>(
+        ColorBackgroundArgbList.rawArg(ssh),
+        List::class.java
+    ).map { it.toInt() }
     private val colorFontArgb = ColorFontArgb.rawArg(ssh).toInt()
     private val filterDateAfterMs = FilterDateAfterMs.rawArg(ssh).toLong()
     private val filterDateBeforeMs = FilterDateBeforeMs.rawArg(ssh).toLong()
@@ -187,7 +190,7 @@ class SaveArtViewModel @Inject constructor(
             fontSize = fontTypeSize,
             isPreview = isPreview,
             colorActivitiesArgb = colorActivitiesArgb,
-            backgroundColorArgb = colorBackgroundArgb,
+            backgroundColorsArgb = colorBackgroundArgbList,
             colorFontArgb = colorFontArgb,
             bitmapSize = size,
             sortType = sortType,

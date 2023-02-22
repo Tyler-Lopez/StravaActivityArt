@@ -171,9 +171,12 @@
     <string name="edit_art_style_background_type_header">Background Type</string>
     <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
     <string name="edit_art_style_background_type_transparent">Transparent</string>
+    <string name="edit_art_style_background_type_gradient">Gradient</string>
     <string name="edit_art_style_background_type_solid">Solid Color</string>
-    <string name="edit_art_style_background_header">Background Color</string>
-    <string name="edit_art_style_background_type_solid_description">What solid color should the background of the art be?</string>
+    <string name="edit_art_style_background_gradient_header">Gradient Colors</string>
+    <string name="edit_art_style_background_gradient_description">Which colors should be in the background gradient?</string>
+    <string name="edit_art_style_background_solid_header">Background Color</string>
+    <string name="edit_art_style_background_solid_description">What solid color should the background of the art be?</string>
     <string name="edit_art_style_activities_header">Activities Color</string>
     <string name="edit_art_style_activities_description">What color should the activities of the art be?</string>
     <string name="edit_art_style_text_header">Font Color</string>

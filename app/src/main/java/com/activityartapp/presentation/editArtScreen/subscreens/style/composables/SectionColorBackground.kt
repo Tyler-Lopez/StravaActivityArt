@@ -7,48 +7,55 @@ import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorPendingChangeConfirmed
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
-import com.activityartapp.presentation.editArtScreen.StyleType
+import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.util.enums.BackgroundType
 
 @Composable
 fun SectionColorBackground(
     backgroundType: BackgroundType,
-    color: ColorWrapper,
+    colorList: List<ColorWrapper>,
     onColorChanged: (StyleColorChanged) -> Unit,
     onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
-    if (backgroundType != BackgroundType.TRANSPARENT) {
+    backgroundType.backgroundColorStrRes?.let {
         Section(
-            header = stringResource(R.string.edit_art_style_background_header),
-            description = stringResource(R.string.edit_art_style_background_type_solid_description)
+            header = stringResource(it.first),
+            description = stringResource(it.second)
         ) {
-            ColorPreview(colorWrapper = color)
-            ColorSlidersRGB(
-                color = color,
-                onColorChanged = { colorType, changedTo ->
-                    onColorChanged(
-                        StyleColorChanged(
-                            styleType = StyleType.BACKGROUND,
-                            colorType = colorType,
-                            changedTo = changedTo
+            colorList.forEachIndexed { index, color ->
+                ColorPreview(colorWrapper = color)
+                ColorSlidersRGB(
+                    color = color,
+                    onColorChanged = { colorType, changedTo ->
+                        onColorChanged(
+                            StyleColorChanged(
+                                style = StyleIdentifier.Background(index = index),
+                                colorType = colorType,
+                                changedTo = changedTo
+                            )
                         )
-                    )
-                },
-                onColorPendingChanged = { colorType, changedTo ->
-                    onColorPendingChanged(
-                        StyleColorPendingChanged(
-                            styleType = StyleType.BACKGROUND,
-                            colorType = colorType,
-                            changedTo = changedTo
+                    },
+                    onColorPendingChanged = { colorType, changedTo ->
+                        onColorPendingChanged(
+                            StyleColorPendingChanged(
+                                style = StyleIdentifier.Background(index = index),
+                                colorType = colorType,
+                                changedTo = changedTo
+                            )
                         )
-                    )
-                },
-                onColorPendingChangeConfirmed = {
-                    onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.BACKGROUND))
-                }
-            )
+                    },
+                    onColorPendingChangeConfirmed = {
+                        onColorPendingChangeConfirmed(
+                            StyleColorPendingChangeConfirmed(
+                                style = StyleIdentifier.Background(index = index),
+                            )
+                        )
+                    }
+                )
+            }
         }
     }
 }
+

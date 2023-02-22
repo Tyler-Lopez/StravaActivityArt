@@ -3,15 +3,13 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
+import android.graphics.LinearGradient
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
-import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -57,7 +55,7 @@ sealed interface EditArtViewEvent : ViewEvent {
     }
 
     data class StyleColorPendingChanged(
-        val styleType: StyleType,
+        val style: StyleIdentifier,
         val colorType: ColorType,
         val changedTo: String
     ) : EditArtViewEvent
@@ -121,12 +119,12 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
         data class StyleColorChanged(
-            val styleType: StyleType,
             val colorType: ColorType,
-            val changedTo: Float
+            val changedTo: Float,
+            val style: StyleIdentifier
         ) : ArtMutatingEvent
 
-        data class StyleColorPendingChangeConfirmed(val styleType: StyleType) : ArtMutatingEvent
+        data class StyleColorPendingChangeConfirmed(val style: StyleIdentifier) : ArtMutatingEvent
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
         data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
         data class TypeCustomTextChanged(
@@ -163,12 +161,6 @@ sealed interface EditArtViewState : ViewState {
         )
     ) : EditArtViewState
 
-    /**
-     * @param styleActivities The color of the activities on the art.
-     * @param styleBackground The color of the background of the art.
-     * @param styleFont The color of text on the art. When set to null, [styleActivities] determines
-     * the color of the text.
-     */
     @Parcelize
     data class Standby(
         @IgnoredOnParcel val bitmap: Bitmap? = null,
@@ -206,11 +198,13 @@ sealed interface EditArtViewState : ViewState {
             red = INIT_ACTIVITIES_RED
         ),
         val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleBackground: ColorWrapper = ColorWrapper(
-            alpha = INIT_BACKGROUND_ALPHA,
-            blue = INIT_BACKGROUND_BLUE,
-            green = INIT_BACKGROUND_GREEN,
-            red = INIT_BACKGROUND_RED
+        val styleBackgroundList: List<ColorWrapper> = listOf(
+            ColorWrapper(
+                alpha = INIT_BACKGROUND_ALPHA,
+                blue = INIT_BACKGROUND_BLUE,
+                green = INIT_BACKGROUND_GREEN,
+                red = INIT_BACKGROUND_RED
+            )
         ),
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
@@ -340,11 +334,9 @@ data class ColorWrapper(
     fun greenToEightBitString() = ratioToEightBit(green).toString()
     fun blueToEightBitString() = ratioToEightBit(blue).toString()
     fun alphaToEightBitString() = ratioToEightBit(alpha).toString()
-
 }
 
 sealed interface DateSelection : Parcelable {
-
     @Parcelize
     object All : DateSelection
 
@@ -368,11 +360,10 @@ sealed interface DateSelection : Parcelable {
     }
 }
 
-
-enum class StyleType {
-    BACKGROUND,
-    ACTIVITIES,
-    FONT
+sealed interface StyleIdentifier {
+    object Activities : StyleIdentifier
+    data class Background(val index: Int) : StyleIdentifier
+    object Font : StyleIdentifier
 }
 
 enum class ColorType(@StringRes val strRes: Int) {

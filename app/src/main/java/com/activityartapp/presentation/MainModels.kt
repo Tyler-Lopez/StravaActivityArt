@@ -33,7 +33,7 @@ sealed interface MainDestination : Destination {
         val activityTypes: List<SportType>,
         val athleteId: Long,
         val backgroundType: BackgroundType,
-        val backgroundColorArgb: Int,
+        val backgroundColorsArgb: List<Int>,
         val colorActivitiesArgb: Int,
         val colorFontArgb: Int,
         val filterBeforeMs: Long,

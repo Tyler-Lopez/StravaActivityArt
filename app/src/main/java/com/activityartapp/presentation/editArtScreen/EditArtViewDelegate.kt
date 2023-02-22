@@ -120,8 +120,8 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 )
                             }
                             STYLE -> EditArtStyleViewDelegate(
-                                styleBackground,
                                 styleBackgroundType,
+                                styleBackgroundList,
                                 styleActivities,
                                 styleFont,
                                 styleStrokeWidthType,

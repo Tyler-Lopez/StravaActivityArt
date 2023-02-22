@@ -77,7 +77,7 @@ fun MainNavHost(
                 AthleteId,
                 BackgroundType,
                 ColorActivitiesArgb,
-                ColorBackgroundArgb,
+                ColorBackgroundArgbList,
                 ColorFontArgb,
                 FilterDateAfterMs,
                 FilterDateBeforeMs,
