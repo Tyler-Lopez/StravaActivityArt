@@ -51,6 +51,7 @@ fun ColumnScope.EditArtStyleViewDelegate(
             )
             SectionGradientAngle(
                 angleType = backgroundGradientAngleType,
+                colorList = colorBackgroundList.take(backgroundGradientColorCount),
                 onGradientAngleTypeChanged = eventReceiver::onEvent
             )
         }
