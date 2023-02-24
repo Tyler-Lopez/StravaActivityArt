@@ -122,8 +122,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             STYLE -> EditArtStyleViewDelegate(
                                 styleBackgroundType,
                                 styleBackgroundAngleType,
-                                styleBackgroundGradientColorCount,
-                                styleBackgroundList,
+                                styleBackgroundList.take(styleBackgroundGradientColorCount),
                                 styleActivities,
                                 styleFont,
                                 styleStrokeWidthType,

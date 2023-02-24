@@ -36,7 +36,7 @@ fun SectionGradientAngle(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Card(modifier = Modifier.size(64.dp)) {
+            Card(modifier = Modifier.size(96.dp)) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val offsets = utils.getStartAndEndOffsets(
                         angleType,

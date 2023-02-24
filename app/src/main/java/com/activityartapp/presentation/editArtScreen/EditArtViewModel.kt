@@ -221,6 +221,7 @@ class EditArtViewModel @Inject constructor(
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
             is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
+            is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
             is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
             is DialogDismissed -> onDialogDismissed()
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
@@ -242,7 +243,8 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
-            is StyleBackgroundColorCountChanged -> onStyleBackgroundColorCountChanged(event)
+            is StyleBackgroundColorAdded -> onStyleBackgroundColorAdded()
+            is StyleBackgroundColorRemoved -> onStyleBackgroundColorRemoved(event)
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
             is StyleColorChanged -> onStyleColorChanged(event)
             is StyleColorPendingChangeConfirmed -> onStyleColorPendingChangeConfirmed(event)
@@ -296,6 +298,10 @@ class EditArtViewModel @Inject constructor(
 
     private fun onClickedInfoCheckeredBackground() {
         pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_CHECKERED_BACKGROUND) }
+    }
+
+    private fun onClickedInfoGradientBackground() {
+        pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_GRADIENT_BACKGROUND) }
     }
 
     private fun onClickedInfoTransparentBackground() {
@@ -591,9 +597,34 @@ class EditArtViewModel @Inject constructor(
         copyLastState { copy(sortTypeSelected = event.changedTo) }.push()
     }
 
-    private fun onStyleBackgroundColorCountChanged(event: StyleBackgroundColorCountChanged) {
-        pushStateCopy {
-            copy(styleBackgroundGradientColorCount = event.changedTo)
+    private fun onStyleBackgroundColorAdded() {
+        withLastState {
+            if (styleBackgroundGradientColorCount >= EditArtViewState.MAX_GRADIENT_BG_COLORS) {
+                return
+            }
+            copy(styleBackgroundGradientColorCount = styleBackgroundGradientColorCount + 1).push()
+        }
+    }
+
+    private fun onStyleBackgroundColorRemoved(event: StyleBackgroundColorRemoved) {
+        withLastState {
+            if (styleBackgroundGradientColorCount <= EditArtViewState.MIN_GRADIENT_BG_COLORS) {
+                return
+            }
+            val newBackgroundList = styleBackgroundList.toMutableList()
+            for (i in event.index until newBackgroundList.lastIndex) {
+                val newColor = newBackgroundList[i + 1]
+                val replacingAt = newBackgroundList[i]
+                newBackgroundList[i] = replacingAt.apply {
+                    red = newColor.red
+                    green = newColor.green
+                    blue = newColor.blue
+                }
+            }
+            copy(
+                styleBackgroundGradientColorCount = styleBackgroundGradientColorCount - 1,
+                styleBackgroundList = newBackgroundList
+            ).push()
         }
     }
 

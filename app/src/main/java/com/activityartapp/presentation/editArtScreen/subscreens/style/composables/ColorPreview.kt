@@ -14,10 +14,12 @@ import com.activityartapp.R
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 
 @Composable
-fun ColorPreview(colorWrapper: ColorWrapper) {
+fun ColorPreview(
+    colorWrapper: ColorWrapper,
+    modifier: Modifier = Modifier.fillMaxWidth()
+) {
     Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .height(dimensionResource(id = R.dimen.color_preview_height))
             .border(
                 width = dimensionResource(R.dimen.color_preview_stroke_width),

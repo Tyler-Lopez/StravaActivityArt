@@ -30,6 +30,7 @@ annotation class UnixMS
 sealed interface EditArtViewEvent : ViewEvent {
 
     object ClickedInfoCheckeredBackground : EditArtViewEvent
+    object ClickedInfoGradientBackground : EditArtViewEvent
     object ClickedInfoTransparentBackground : EditArtViewEvent
     object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
@@ -118,7 +119,8 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
         data class StyleGradientAngleTypeChanged(val changedTo: AngleType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
-        data class StyleBackgroundColorCountChanged(val changedTo: Int) : ArtMutatingEvent
+        object StyleBackgroundColorAdded : ArtMutatingEvent
+        data class StyleBackgroundColorRemoved(val index: Int) : ArtMutatingEvent
         data class StyleColorChanged(
             val colorType: ColorType,
             val changedTo: Float,
@@ -201,12 +203,21 @@ sealed interface EditArtViewState : ViewState {
             red = INIT_ACTIVITIES_RED
         ),
         val styleBackgroundList: List<ColorWrapper> = (0 until MAX_GRADIENT_BG_COLORS).map {
-            ColorWrapper(
-                alpha = INIT_BACKGROUND_ALPHA,
-                blue = INIT_BACKGROUND_BLUE,
-                green = INIT_BACKGROUND_GREEN,
-                red = INIT_BACKGROUND_RED
-            )
+            if (it % 2 == 0) {
+                ColorWrapper(
+                    alpha = INIT_BACKGROUND_ALPHA,
+                    blue = INIT_BACKGROUND_BLUE,
+                    green = INIT_BACKGROUND_GREEN,
+                    red = INIT_BACKGROUND_RED
+                )
+            } else {
+                ColorWrapper(
+                    alpha = INIT_ACTIVITIES_ALPHA,
+                    blue = INIT_ACTIVITIES_BLUE,
+                    green = INIT_ACTIVITIES_GREEN,
+                    red = INIT_ACTIVITIES_RED
+                )
+            }
         },
         val styleBackgroundAngleType: AngleType = AngleType.CW90,
         val styleBackgroundGradientColorCount: Int = MIN_GRADIENT_BG_COLORS,
@@ -301,10 +312,10 @@ data class FilterStateWrapper(
 
 @Parcelize
 data class ColorWrapper(
-    val alpha: Float,
-    val blue: Float,
-    val green: Float,
-    val red: Float,
+    var alpha: Float,
+    var blue: Float,
+    var green: Float,
+    var red: Float,
     @IgnoredOnParcel val pendingAlpha: String? = null,
     @IgnoredOnParcel val pendingBlue: String? = null,
     @IgnoredOnParcel val pendingGreen: String? = null,
