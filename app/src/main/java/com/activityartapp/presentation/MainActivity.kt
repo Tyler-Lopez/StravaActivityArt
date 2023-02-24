@@ -128,7 +128,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         navController.navigate(
             route = Error.withArgs(
                 args = arrayOf(
-                    ErrorScreen to destination.errorScreenType.toString()
+                    ErrorScreenArg to destination.errorScreenType.toString()
                 )
             )
         ) {
@@ -137,9 +137,9 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                     inclusive = true
                 }
                 val a = ""
-                  val b: List<String> =  a.mapIndexed { index, _ ->
-                      a.substring(index, a.lastIndex)
-                  }
+                val b: List<String> = a.mapIndexed { index, _ ->
+                    a.substring(index, a.lastIndex)
+                }
             }
         }
     }
@@ -148,7 +148,7 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         navController.navigate(
             route = EditArt.withArgs(
                 args = arrayOf(
-                    AthleteId to destination.athleteId.toString(),
+                    AthleteIdArg to destination.athleteId.toString(),
                 )
             )
         ) {
@@ -163,26 +163,27 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = SaveArt.withArgs(
                     args = arrayOf(
-                        ActivityTypes to gson.toJson(activityTypes.map { it.toString() }),
-                        AthleteId to athleteId.toString(),
-                        BackgroundType to backgroundType.toString(),
-                        ColorActivitiesArgb to colorActivitiesArgb.toString(),
-                        ColorBackgroundArgb to backgroundColorArgb.toString(),
-                        ColorFontArgb to colorFontArgb.toString(),
-                        FilterDateAfterMs to filterAfterMs.toString(),
-                        FilterDateBeforeMs to filterBeforeMs.toString(),
-                        FilterDistanceLessThanMeters to filterDistanceLessThanMeters.toString(),
-                        FilterDistanceMoreThanMeters to filterDistanceMoreThanMeters.toString(),
-                        SizeHeightPx to sizeHeightPx.toString(),
-                        SizeWidthPx to sizeWidthPx.toString(),
-                        SortType to sortType.toString(),
-                        SortDirectionType to sortDirectionType.toString(),
-                        StrokeWidth to strokeWidthType.toString(),
-                        TextLeft to (textLeft ?: ""),
-                        TextCenter to (textCenter ?: ""),
-                        TextRight to (textRight ?: ""),
-                        TextFontAssetPath to textFontAssetPath,
-                        TextFontSize to textFontSize.toString()
+                        ActivityTypesArg to gson.toJson(activityTypes.map { it.toString() }),
+                        AthleteIdArg to athleteId.toString(),
+                        BackgroundGradientAngleTypeArg to backgroundAngleType.toString(),
+                        BackgroundTypeArg to backgroundType.toString(),
+                        ColorActivitiesArgbArg to colorActivitiesArgb.toString(),
+                        ColorBackgroundArgbListArg to gson.toJson(backgroundColorsArgb.map { it.toString() }),
+                        ColorFontArgbArg to colorFontArgb.toString(),
+                        FilterDateAfterMsArg to filterAfterMs.toString(),
+                        FilterDateBeforeMsArg to filterBeforeMs.toString(),
+                        FilterDistanceLessThanMetersArg to filterDistanceLessThanMeters.toString(),
+                        FilterDistanceMoreThanMetersArg to filterDistanceMoreThanMeters.toString(),
+                        SizeHeightPxArg to sizeHeightPx.toString(),
+                        SizeWidthPxArg to sizeWidthPx.toString(),
+                        SortTypeArg to sortType.toString(),
+                        SortDirectionTypeArg to sortDirectionType.toString(),
+                        StrokeWidthArg to strokeWidthType.toString(),
+                        TextLeftArg to (textLeft ?: ""),
+                        TextCenterArg to (textCenter ?: ""),
+                        TextRightArg to (textRight ?: ""),
+                        TextFontAssetPathArg to textFontAssetPath,
+                        TextFontSizeArg to textFontSize.toString()
                     )
                 )
             )

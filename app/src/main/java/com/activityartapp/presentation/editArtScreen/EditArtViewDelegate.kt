@@ -120,8 +120,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 )
                             }
                             STYLE -> EditArtStyleViewDelegate(
-                                styleBackground,
                                 styleBackgroundType,
+                                styleBackgroundAngleType,
+                                styleBackgroundList.take(styleBackgroundGradientColorCount),
                                 styleActivities,
                                 styleFont,
                                 styleStrokeWidthType,
@@ -129,7 +130,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             )
                             TYPE -> EditArtTypeScreen(
                                 typeActivitiesDistanceMetersSummed,
-                                //         typeAthleteName,
                                 typeCenterCustomText,
                                 typeLeftCustomText,
                                 typeRightCustomText,
@@ -169,6 +169,10 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
         when (dialogActive) {
             INFO_CHECKERED_BACKGROUND -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
+                eventReceiver = viewModel
+            )
+            INFO_GRADIENT_BACKGROUND -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_info_background_gradient),
                 eventReceiver = viewModel
             )
             INFO_TRANSPARENT -> EditArtDialogInfo(

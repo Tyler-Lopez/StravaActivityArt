@@ -7,7 +7,7 @@ import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
-import com.activityartapp.presentation.editArtScreen.StyleType
+import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.composables.Section
 
@@ -37,7 +37,7 @@ fun SectionColorText(
                         onColorChanged = { colorType, changedTo ->
                             onColorChanged(
                                 StyleColorChanged(
-                                    styleType = StyleType.FONT,
+                                    style = StyleIdentifier.Font,
                                     colorType = colorType,
                                     changedTo = changedTo
                                 )
@@ -46,14 +46,18 @@ fun SectionColorText(
                         onColorPendingChanged = { colorType, changedTo ->
                             onColorPendingChanged(
                                 StyleColorPendingChanged(
-                                    styleType = StyleType.FONT,
+                                    style = StyleIdentifier.Font,
                                     colorType = colorType,
                                     changedTo = changedTo
                                 )
                             )
                         },
                         onColorPendingChangeConfirmed = {
-                            onColorPendingChangeConfirmed(StyleColorPendingChangeConfirmed(StyleType.FONT))
+                            onColorPendingChangeConfirmed(
+                                StyleColorPendingChangeConfirmed(
+                                    style = StyleIdentifier.Font
+                                )
+                            )
                         }
                     )
                 }) { onUseFontChanged(StyleColorFontUseCustomChanged(useCustom = true)) }

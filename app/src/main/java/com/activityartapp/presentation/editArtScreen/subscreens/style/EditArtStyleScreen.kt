@@ -1,22 +1,27 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.style
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.editArtScreen.ColorWrapper
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleBackgroundTypeChanged
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StylesStrokeWidthChanged
-import com.activityartapp.presentation.editArtScreen.composables.Section
-import com.activityartapp.presentation.editArtScreen.*
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleStrokeWidthChanged
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ClickedInfoTransparentBackground
+import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
+import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.*
+import com.activityartapp.util.enums.AngleType
 import com.activityartapp.util.enums.BackgroundType
+import okhttp3.Interceptor.Companion.invoke
 
 @Composable
-fun ColumnScope.EditArtStyleViewDelegate(
-    colorBackground: ColorWrapper,
+fun EditArtStyleViewDelegate(
     backgroundType: BackgroundType,
+    backgroundGradientAngleType: AngleType,
+    colorBackgroundList: List<ColorWrapper>,
     colorActivities: ColorWrapper,
     colorText: ColorWrapper?,
     strokeWidthType: StrokeWidthType,
@@ -27,23 +32,44 @@ fun ColumnScope.EditArtStyleViewDelegate(
             RadioButtonContentRow(
                 isSelected = it == backgroundType,
                 text = stringResource(it.strRes),
-                onHelpPressed = if (it == BackgroundType.TRANSPARENT) {
-                    {
-                        eventReceiver.onEvent(EditArtViewEvent.ClickedInfoTransparentBackground)
+                onHelpPressed = when (it) {
+                    BackgroundType.GRADIENT -> {
+                        { eventReceiver.onEvent(EditArtViewEvent.ClickedInfoGradientBackground) }
                     }
-                } else {
-                    null
-                }
-            ) { eventReceiver.onEvent(StyleBackgroundTypeChanged(changedTo = it)) }
+                    BackgroundType.TRANSPARENT -> {
+                        { eventReceiver.onEvent(ClickedInfoTransparentBackground) }
+                    }
+                    else -> null
+                },
+                onSelected = {
+                    eventReceiver.onEvent(StyleBackgroundTypeChanged(changedTo = it))
+                })
         }
     }
-    SectionColorBackground(
-        backgroundType = backgroundType,
-        color = colorBackground,
-        onColorChanged = eventReceiver::onEvent,
-        onColorPendingChanged = eventReceiver::onEvent,
-        onColorPendingChangeConfirmed = eventReceiver::onEvent
-    )
+    when (backgroundType) {
+        BackgroundType.GRADIENT -> {
+            SectionGradientAngle(
+                angleType = backgroundGradientAngleType,
+                colorList = colorBackgroundList,
+                onGradientAngleTypeChanged = eventReceiver::onEvent
+            )
+            SectionColorBackgroundGradient(
+                colorList = colorBackgroundList,
+                onColorChanged = eventReceiver::onEvent,
+                onColorAdded = eventReceiver::onEvent,
+                onColorRemoved = eventReceiver::onEvent,
+                onColorPendingChanged = eventReceiver::onEvent,
+                onColorPendingChangeConfirmed = eventReceiver::onEvent
+            )
+        }
+        BackgroundType.SOLID -> SectionColorBackgroundSolid(
+            color = colorBackgroundList.first(),
+            onColorChanged = eventReceiver::onEvent,
+            onColorPendingChanged = eventReceiver::onEvent,
+            onColorPendingChangeConfirmed = eventReceiver::onEvent
+        )
+        BackgroundType.TRANSPARENT -> {} // No-op
+    }
     SectionColorActivities(
         color = colorActivities,
         onColorChanged = eventReceiver::onEvent,
@@ -66,7 +92,7 @@ fun ColumnScope.EditArtStyleViewDelegate(
             RadioButtonContentRow(
                 isSelected = strokeWidthType == it,
                 text = stringResource(id = it.headerId)
-            ) { eventReceiver.onEvent(StylesStrokeWidthChanged(it)) }
+            ) { eventReceiver.onEvent(StyleStrokeWidthChanged(it)) }
         }
     }
 }

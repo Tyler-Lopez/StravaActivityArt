@@ -9,17 +9,18 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatin
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
 import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.composables.Section
+import com.activityartapp.util.enums.BackgroundType
 
 @Composable
-fun SectionColorActivities(
+fun SectionColorBackgroundSolid(
     color: ColorWrapper,
     onColorChanged: (StyleColorChanged) -> Unit,
     onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
     Section(
-        header = stringResource(R.string.edit_art_style_activities_header),
-        description = stringResource(R.string.edit_art_style_activities_description)
+        header = stringResource(R.string.edit_art_style_background_solid_header),
+        description = stringResource(R.string.edit_art_style_background_solid_description)
     ) {
         ColorPreview(colorWrapper = color)
         ColorSlidersRGB(
@@ -27,7 +28,7 @@ fun SectionColorActivities(
             onColorChanged = { colorType, changedTo ->
                 onColorChanged(
                     StyleColorChanged(
-                        style = StyleIdentifier.Activities,
+                        style = StyleIdentifier.Background(index = 0),
                         colorType = colorType,
                         changedTo = changedTo
                     )
@@ -36,7 +37,7 @@ fun SectionColorActivities(
             onColorPendingChanged = { colorType, changedTo ->
                 onColorPendingChanged(
                     StyleColorPendingChanged(
-                        style = StyleIdentifier.Activities,
+                        style = StyleIdentifier.Background(index = 0),
                         colorType = colorType,
                         changedTo = changedTo
                     )
@@ -45,10 +46,11 @@ fun SectionColorActivities(
             onColorPendingChangeConfirmed = {
                 onColorPendingChangeConfirmed(
                     StyleColorPendingChangeConfirmed(
-                        style = StyleIdentifier.Activities
+                        style = StyleIdentifier.Background(index = 0),
                     )
                 )
             }
         )
     }
 }
+

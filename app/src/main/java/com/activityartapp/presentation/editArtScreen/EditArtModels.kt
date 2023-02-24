@@ -7,11 +7,8 @@ import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
-import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -33,6 +30,7 @@ annotation class UnixMS
 sealed interface EditArtViewEvent : ViewEvent {
 
     object ClickedInfoCheckeredBackground : EditArtViewEvent
+    object ClickedInfoGradientBackground : EditArtViewEvent
     object ClickedInfoTransparentBackground : EditArtViewEvent
     object DialogDismissed : EditArtViewEvent
     object DialogNavigateUpConfirmed : EditArtViewEvent
@@ -57,7 +55,7 @@ sealed interface EditArtViewEvent : ViewEvent {
     }
 
     data class StyleColorPendingChanged(
-        val styleType: StyleType,
+        val style: StyleIdentifier,
         val colorType: ColorType,
         val changedTo: String
     ) : EditArtViewEvent
@@ -119,16 +117,19 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
+        data class StyleGradientAngleTypeChanged(val changedTo: AngleType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
+        object StyleBackgroundColorAdded : ArtMutatingEvent
+        data class StyleBackgroundColorRemoved(val index: Int) : ArtMutatingEvent
         data class StyleColorChanged(
-            val styleType: StyleType,
             val colorType: ColorType,
-            val changedTo: Float
+            val changedTo: Float,
+            val style: StyleIdentifier
         ) : ArtMutatingEvent
 
-        data class StyleColorPendingChangeConfirmed(val styleType: StyleType) : ArtMutatingEvent
+        data class StyleColorPendingChangeConfirmed(val style: StyleIdentifier) : ArtMutatingEvent
         data class StyleColorFontUseCustomChanged(val useCustom: Boolean) : ArtMutatingEvent
-        data class StylesStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
+        data class StyleStrokeWidthChanged(val changedTo: StrokeWidthType) : ArtMutatingEvent
         data class TypeCustomTextChanged(
             val section: EditArtTypeSection,
             val changedTo: String
@@ -149,6 +150,8 @@ sealed interface EditArtViewState : ViewState {
 
     companion object {
         private const val FADE_LENGTH_MS = 1000
+        const val MAX_GRADIENT_BG_COLORS = 7
+        const val MIN_GRADIENT_BG_COLORS = 2
     }
 
     val dialogActive: EditArtDialogType
@@ -163,12 +166,6 @@ sealed interface EditArtViewState : ViewState {
         )
     ) : EditArtViewState
 
-    /**
-     * @param styleActivities The color of the activities on the art.
-     * @param styleBackground The color of the background of the art.
-     * @param styleFont The color of text on the art. When set to null, [styleActivities] determines
-     * the color of the text.
-     */
     @Parcelize
     data class Standby(
         @IgnoredOnParcel val bitmap: Bitmap? = null,
@@ -205,13 +202,26 @@ sealed interface EditArtViewState : ViewState {
             green = INIT_ACTIVITIES_GREEN,
             red = INIT_ACTIVITIES_RED
         ),
+        val styleBackgroundList: List<ColorWrapper> = (0 until MAX_GRADIENT_BG_COLORS).map {
+            if (it % 2 == 0) {
+                ColorWrapper(
+                    alpha = INIT_BACKGROUND_ALPHA,
+                    blue = INIT_BACKGROUND_BLUE,
+                    green = INIT_BACKGROUND_GREEN,
+                    red = INIT_BACKGROUND_RED
+                )
+            } else {
+                ColorWrapper(
+                    alpha = INIT_ACTIVITIES_ALPHA,
+                    blue = INIT_ACTIVITIES_BLUE,
+                    green = INIT_ACTIVITIES_GREEN,
+                    red = INIT_ACTIVITIES_RED
+                )
+            }
+        },
+        val styleBackgroundAngleType: AngleType = AngleType.CW90,
+        val styleBackgroundGradientColorCount: Int = MIN_GRADIENT_BG_COLORS,
         val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleBackground: ColorWrapper = ColorWrapper(
-            alpha = INIT_BACKGROUND_ALPHA,
-            blue = INIT_BACKGROUND_BLUE,
-            green = INIT_BACKGROUND_GREEN,
-            red = INIT_BACKGROUND_RED
-        ),
         val styleFont: ColorWrapper? = null,
         val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
         val typeActivitiesDistanceMetersSummed: Int = -1,
@@ -302,10 +312,10 @@ data class FilterStateWrapper(
 
 @Parcelize
 data class ColorWrapper(
-    val alpha: Float,
-    val blue: Float,
-    val green: Float,
-    val red: Float,
+    var alpha: Float,
+    var blue: Float,
+    var green: Float,
+    var red: Float,
     @IgnoredOnParcel val pendingAlpha: String? = null,
     @IgnoredOnParcel val pendingBlue: String? = null,
     @IgnoredOnParcel val pendingGreen: String? = null,
@@ -340,11 +350,9 @@ data class ColorWrapper(
     fun greenToEightBitString() = ratioToEightBit(green).toString()
     fun blueToEightBitString() = ratioToEightBit(blue).toString()
     fun alphaToEightBitString() = ratioToEightBit(alpha).toString()
-
 }
 
 sealed interface DateSelection : Parcelable {
-
     @Parcelize
     object All : DateSelection
 
@@ -368,11 +376,10 @@ sealed interface DateSelection : Parcelable {
     }
 }
 
-
-enum class StyleType {
-    BACKGROUND,
-    ACTIVITIES,
-    FONT
+sealed interface StyleIdentifier {
+    object Activities : StyleIdentifier
+    data class Background(val index: Int) : StyleIdentifier
+    object Font : StyleIdentifier
 }
 
 enum class ColorType(@StringRes val strRes: Int) {

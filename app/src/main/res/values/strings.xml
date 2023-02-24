@@ -171,9 +171,14 @@
     <string name="edit_art_style_background_type_header">Background Type</string>
     <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
     <string name="edit_art_style_background_type_transparent">Transparent</string>
+    <string name="edit_art_style_background_type_gradient">Gradient</string>
     <string name="edit_art_style_background_type_solid">Solid Color</string>
-    <string name="edit_art_style_background_header">Background Color</string>
-    <string name="edit_art_style_background_type_solid_description">What solid color should the background of the art be?</string>
+    <string name="edit_art_style_background_gradient_header">Gradient Colors</string>
+    <string name="edit_art_style_background_gradient_description">Which colors should be in the background gradient?</string>
+    <string name="edit_art_style_background_solid_header">Background Color</string>
+    <string name="edit_art_style_background_solid_description">What solid color should the background of the art be?</string>
+    <string name="edit_art_style_background_gradient_angle_header">Gradient Angle</string>
+    <string name="edit_art_style_background_gradient_angle_description">The gradient angle specifies the direction in which the linear color gradient changes.</string>
     <string name="edit_art_style_activities_header">Activities Color</string>
     <string name="edit_art_style_activities_description">What color should the activities of the art be?</string>
     <string name="edit_art_style_text_header">Font Color</string>
@@ -260,6 +265,10 @@
     <string-array name="edit_art_dialog_info_background_checkered">
         <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
+    </string-array>
+    <string-array name="edit_art_dialog_info_background_gradient">
+        <item>A color gradient is a gradual transition of colors from one to another, creating a smooth and visually pleasing effect.</item>
+        <item>Think of a sunset sky, where the colors blend seamlessly from orange to pink to purple.</item>
     </string-array>
     <string-array name="edit_art_dialog_info_background_transparent">
         <item>Have you tried making art with a transparent background? It\'s like making your art a
