@@ -33,12 +33,11 @@ fun EditArtStyleViewDelegate(
                 isSelected = it == backgroundType,
                 text = stringResource(it.strRes),
                 onHelpPressed = when (it) {
+                    BackgroundType.GRADIENT -> {
+                        { eventReceiver.onEvent(EditArtViewEvent.ClickedInfoGradientBackground) }
+                    }
                     BackgroundType.TRANSPARENT -> {
-                        {
-                            eventReceiver.onEvent(
-                                ClickedInfoTransparentBackground
-                            )
-                        }
+                        { eventReceiver.onEvent(ClickedInfoTransparentBackground) }
                     }
                     else -> null
                 },

@@ -171,6 +171,10 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
                 eventReceiver = viewModel
             )
+            INFO_GRADIENT_BACKGROUND -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_info_background_gradient),
+                eventReceiver = viewModel
+            )
             INFO_TRANSPARENT -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_transparent),
                 eventReceiver = viewModel
