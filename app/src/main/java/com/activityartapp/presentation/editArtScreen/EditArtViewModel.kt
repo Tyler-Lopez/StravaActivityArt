@@ -713,9 +713,18 @@ class EditArtViewModel @Inject constructor(
             }
         copyLastState {
             when (event.section) {
-                LEFT -> copy(typeLeftCustomText = newText ?: typeLeftCustomText)
-                CENTER -> copy(typeCenterCustomText = newText ?: typeCenterCustomText)
-                RIGHT -> copy(typeRightCustomText = newText ?: typeRightCustomText)
+                LEFT -> copy(
+                    typeLeftCustomText = newText ?: typeLeftCustomText,
+                    typeLeftSelected = CUSTOM
+                )
+                CENTER -> copy(
+                    typeCenterCustomText = newText ?: typeCenterCustomText,
+                    typeCenterSelected = CUSTOM
+                )
+                RIGHT -> copy(
+                    typeRightCustomText = newText ?: typeRightCustomText,
+                    typeRightSelected = CUSTOM
+                )
             }
         }.push()
     }
