@@ -12,7 +12,7 @@ import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.editArtScreen.composables.Section
-import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.*
+import com.activityartapp.presentation.editArtScreen.subscreens.style.sections.*
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.enums.AngleType
 import com.activityartapp.util.enums.BackgroundType

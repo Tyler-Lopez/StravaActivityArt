@@ -1,4 +1,4 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource

@@ -1,8 +1,7 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ClickedInfoTransparentBackground
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ClickedInfoGradientBackground

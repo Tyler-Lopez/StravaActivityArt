@@ -171,7 +171,8 @@
     <string name="edit_art_style_background_type_header">Background Type</string>
     <string name="edit_art_style_background_type_description">Which type of background should be used?</string>
     <string name="edit_art_style_background_type_transparent">Transparent</string>
-    <string name="edit_art_style_background_type_gradient">Gradient</string>
+    <string name="edit_art_style_background_type_linear_gradient">Linear Gradient</string>
+    <string name="edit_art_style_background_type_radial_gradient">Linear Gradient</string>
     <string name="edit_art_style_background_type_solid">Solid Color</string>
     <string name="edit_art_style_background_gradient_header">Gradient Colors</string>
     <string name="edit_art_style_background_gradient_description">Which colors should be in the background gradient?</string>

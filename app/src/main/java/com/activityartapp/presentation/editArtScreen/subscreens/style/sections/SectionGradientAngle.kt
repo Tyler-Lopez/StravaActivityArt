@@ -1,4 +1,4 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
 import android.util.Size
 import androidx.compose.foundation.Canvas

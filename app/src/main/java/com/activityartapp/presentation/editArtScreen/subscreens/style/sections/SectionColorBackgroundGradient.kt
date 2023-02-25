@@ -1,4 +1,4 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -25,6 +25,8 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ClickedRem
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewState
 import com.activityartapp.presentation.editArtScreen.StyleIdentifier
+import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorPreview
+import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorSlidersRGB
 import com.activityartapp.presentation.ui.theme.spacing
 
 @Composable
