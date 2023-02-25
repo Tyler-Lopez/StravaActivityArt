@@ -29,6 +29,7 @@ annotation class UnixMS
 
 sealed interface EditArtViewEvent : ViewEvent {
 
+    data class ClickedRemoveGradientColor(val removedIndex: Int) : EditArtViewEvent
     object ClickedInfoCheckeredBackground : EditArtViewEvent
     object ClickedInfoGradientBackground : EditArtViewEvent
     object ClickedInfoTransparentBackground : EditArtViewEvent
@@ -120,7 +121,7 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class StyleGradientAngleTypeChanged(val changedTo: AngleType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
         object StyleBackgroundColorAdded : ArtMutatingEvent
-        data class StyleBackgroundColorRemoved(val index: Int) : ArtMutatingEvent
+        object StyleBackgroundColorRemoveConfirmed : ArtMutatingEvent
         data class StyleColorChanged(
             val colorType: ColorType,
             val changedTo: Float,
@@ -154,11 +155,11 @@ sealed interface EditArtViewState : ViewState {
         const val MIN_GRADIENT_BG_COLORS = 2
     }
 
-    val dialogActive: EditArtDialogType
+    val dialogActive: EditArtDialog
     val pagerStateWrapper: PagerStateWrapper
 
     data class Loading(
-        override val dialogActive: EditArtDialogType = EditArtDialogType.NONE,
+        override val dialogActive: EditArtDialog = EditArtDialog.None,
         override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
             pagerHeaders = EditArtHeaderType.values().toList(),
             pagerState = PagerState(EditArtHeaderType.values().toList().size),
@@ -169,7 +170,7 @@ sealed interface EditArtViewState : ViewState {
     @Parcelize
     data class Standby(
         @IgnoredOnParcel val bitmap: Bitmap? = null,
-        @IgnoredOnParcel override val dialogActive: EditArtDialogType = EditArtDialogType.NONE,
+        @IgnoredOnParcel override val dialogActive: EditArtDialog = EditArtDialog.None,
         val filterActivitiesCountDate: Int = 0,
         val filterActivitiesCountDistance: Int = 0,
         val filterActivitiesCountType: Int = 0,

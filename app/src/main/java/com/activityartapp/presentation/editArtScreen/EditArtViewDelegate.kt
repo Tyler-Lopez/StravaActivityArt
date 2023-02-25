@@ -20,17 +20,15 @@ import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.AppBarScaffold
 import com.activityartapp.presentation.common.ScreenBackground
-import com.activityartapp.presentation.editArtScreen.EditArtDialogType.*
 import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.SaveClicked
 import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogInfo
-import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogNavigateUp
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.preview.EditArtPreview
 import com.activityartapp.presentation.editArtScreen.subscreens.resize.EditArtResizeScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.sort.EditArtSortScreen
-import com.activityartapp.presentation.editArtScreen.subscreens.style.EditArtStyleViewDelegate
+import com.activityartapp.presentation.editArtScreen.subscreens.style.EditArtStyleScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
@@ -85,13 +83,13 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         padding = 0.dp,
                         scrollState = when (it) {
                             FILTERS -> scrollStateFilter
-                            STYLE -> scrollStateStyle
+                            // STYLE -> scrollStateStyle
                             TYPE -> scrollStateType
                             SORT -> scrollStateSort
                             RESIZE -> scrollStateResize
                             else -> null
                         },
-                        scrollingEnabled = it != PREVIEW
+                        scrollingEnabled = it != PREVIEW && it != STYLE
                     ) {
                         when (it) {
                             PREVIEW -> EditArtPreview(
@@ -119,7 +117,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     viewModel
                                 )
                             }
-                            STYLE -> EditArtStyleViewDelegate(
+                            STYLE -> EditArtStyleScreen(
                                 styleBackgroundType,
                                 styleBackgroundAngleType,
                                 styleBackgroundList.take(styleBackgroundGradientColorCount),
@@ -161,26 +159,39 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
         }
 
         /** Only intercept when the dialog box is not visible **/
-        BackHandler(enabled = dialogActive == NONE) {
+        BackHandler(enabled = dialogActive is EditArtDialog.None) {
             viewModel.onEvent(NavigateUpClicked)
         }
 
-        println("Here, dialog active is $dialogActive")
         when (dialogActive) {
-            INFO_CHECKERED_BACKGROUND -> EditArtDialogInfo(
+            is EditArtDialog.ConfirmDeleteGradientColor -> {
+                EditArtDialogInfo(
+                    body = stringArrayResource(id = R.array.edit_art_dialog_info_remove_gradient_color),
+                    eventReceiver = viewModel,
+                    type = EditArtDialogType.REMOVE_AND_DISMISS_BY_CANCEL
+                )
+            }
+            is EditArtDialog.InfoCheckeredBackground -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
-                eventReceiver = viewModel
+                eventReceiver = viewModel,
+                type = EditArtDialogType.DISMISS_BY_OK
             )
-            INFO_GRADIENT_BACKGROUND -> EditArtDialogInfo(
+            is EditArtDialog.InfoGradientBackground -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_gradient),
-                eventReceiver = viewModel
+                eventReceiver = viewModel,
+                type = EditArtDialogType.DISMISS_BY_OK
             )
-            INFO_TRANSPARENT -> EditArtDialogInfo(
+            is EditArtDialog.InfoTransparent -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_transparent),
-                eventReceiver = viewModel
+                eventReceiver = viewModel,
+                type = EditArtDialogType.DISMISS_BY_OK
             )
-            NAVIGATE_UP -> EditArtDialogNavigateUp(eventReceiver = viewModel)
-            NONE -> {} // No-op
+            is EditArtDialog.NavigateUp -> EditArtDialogInfo(
+                body = stringArrayResource(id = R.array.edit_art_dialog_exit_confirmation_prompt),
+                eventReceiver = viewModel,
+                type = EditArtDialogType.DISCARD_AND_DISMISS_BY_CANCEL
+            )
+            is EditArtDialog.None -> {} // No-op
         }
     }
 }
