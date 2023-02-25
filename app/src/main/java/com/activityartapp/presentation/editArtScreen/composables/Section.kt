@@ -12,6 +12,10 @@ import com.activityartapp.presentation.common.layout.ColumnMediumSpacing
 import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.ui.theme.spacing
 
+interface Section {
+    val headerStrRes: Int
+    val descriptionStrRes: Int?
+}
 
 @Composable
 fun Section(

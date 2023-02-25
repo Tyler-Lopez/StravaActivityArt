@@ -175,6 +175,8 @@
     <string name="edit_art_style_background_type_solid">Solid Color</string>
     <string name="edit_art_style_background_gradient_header">Gradient Colors</string>
     <string name="edit_art_style_background_gradient_description">Which colors should be in the background gradient?</string>
+    <string name="edit_art_style_background_gradient_add_color_button">Add Color</string>
+    <string name="edit_art_style_background_gradient_add_color_button_cd">Add a Color to the Gradient</string>
     <string name="edit_art_style_background_solid_header">Background Color</string>
     <string name="edit_art_style_background_solid_description">What solid color should the background of the art be?</string>
     <string name="edit_art_style_background_gradient_angle_header">Gradient Angle</string>
@@ -266,6 +268,9 @@
         <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
     </string-array>
+    <string-array name="edit_art_dialog_info_remove_gradient_color">
+        <item>Are you sure you want to remove this color from the gradient?</item>
+    </string-array>
     <string-array name="edit_art_dialog_info_background_gradient">
         <item>A color gradient is a gradual transition of colors from one to another, creating a smooth and visually pleasing effect.</item>
         <item>Think of a sunset sky, where the colors blend seamlessly from orange to pink to purple.</item>
@@ -278,11 +283,14 @@
         more! It makes it appear as though it\'s a part of them.
         </item>
     </string-array>
+    <string-array name="edit_art_dialog_exit_confirmation_prompt">
+        <item>Discard unsaved changes?</item>
+    </string-array>
     <string name="edit_art_dialog_info_dismiss">@android:string/ok</string>
-    <string name="edit_art_dialog_exit_confirmation_prompt">Discard unsaved changes?</string>
     <string name="edit_art_dialog_exit_confirmation_yes">Discard</string>
     <string name="edit_art_dialog_exit_confirmation_no">Cancel</string>
-
+    <string name="edit_art_dialog_exit_remove_yes">Remove</string>
+    <string name="edit_art_dialog_exit_remove_no">Cancel</string>
     <!-- SAVE ART SCREEN -->
     <string name="save_art_header">Save Art</string>
     <string name="save_art_download_art">Download</string>

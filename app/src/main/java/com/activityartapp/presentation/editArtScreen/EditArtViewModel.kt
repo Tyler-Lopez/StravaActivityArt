@@ -220,6 +220,7 @@ class EditArtViewModel @Inject constructor(
     override fun onEvent(event: EditArtViewEvent) {
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
+            is ClickedRemoveGradientColor -> onClickedRemoveGradientColor(event)
             is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
             is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
             is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
@@ -244,7 +245,7 @@ class EditArtViewModel @Inject constructor(
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
             is StyleBackgroundColorAdded -> onStyleBackgroundColorAdded()
-            is StyleBackgroundColorRemoved -> onStyleBackgroundColorRemoved(event)
+            is StyleBackgroundColorRemoveConfirmed -> onStyleBackgroundColorRemoveConfirmed()
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
             is StyleColorChanged -> onStyleColorChanged(event)
             is StyleColorPendingChangeConfirmed -> onStyleColorPendingChangeConfirmed(event)
@@ -296,24 +297,28 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
+    private fun onClickedRemoveGradientColor(event: ClickedRemoveGradientColor) {
+        pushStateCopy { copy(dialogActive = EditArtDialog.ConfirmDeleteGradientColor(event.removedIndex)) }
+    }
+
     private fun onClickedInfoCheckeredBackground() {
-        pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_CHECKERED_BACKGROUND) }
+        pushStateCopy { copy(dialogActive = EditArtDialog.InfoCheckeredBackground) }
     }
 
     private fun onClickedInfoGradientBackground() {
-        pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_GRADIENT_BACKGROUND) }
+        pushStateCopy { copy(dialogActive = EditArtDialog.InfoGradientBackground) }
     }
 
     private fun onClickedInfoTransparentBackground() {
-        pushStateCopy { copy(dialogActive = EditArtDialogType.INFO_TRANSPARENT) }
+        pushStateCopy { copy(dialogActive = EditArtDialog.InfoTransparent) }
     }
 
     private fun onDialogDismissed() {
-        pushStateCopy { copy(dialogActive = EditArtDialogType.NONE) }
+        pushStateCopy { copy(dialogActive = EditArtDialog.None) }
     }
 
     private fun onDialogNavigateUpConfirmed() {
-        copyLastState { copy(dialogActive = EditArtDialogType.NONE) }.push()
+        copyLastState { copy(dialogActive = EditArtDialog.None) }.push()
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
@@ -425,7 +430,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onNavigateUpClicked() {
-        copyLastState { copy(dialogActive = EditArtDialogType.NAVIGATE_UP) }.push()
+        copyLastState { copy(dialogActive = EditArtDialog.NavigateUp) }.push()
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -606,13 +611,17 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun onStyleBackgroundColorRemoved(event: StyleBackgroundColorRemoved) {
+    private fun onStyleBackgroundColorRemoveConfirmed() {
         withLastState {
             if (styleBackgroundGradientColorCount <= EditArtViewState.MIN_GRADIENT_BG_COLORS) {
                 return
             }
+            val removedIndex = (dialogActive as? EditArtDialog.ConfirmDeleteGradientColor)
+                ?.toDeleteIndex
+                ?: return
+
             val newBackgroundList = styleBackgroundList.toMutableList()
-            for (i in event.index until newBackgroundList.lastIndex) {
+            for (i in removedIndex until newBackgroundList.lastIndex) {
                 val newColor = newBackgroundList[i + 1]
                 val replacingAt = newBackgroundList[i]
                 newBackgroundList[i] = replacingAt.apply {
@@ -622,6 +631,7 @@ class EditArtViewModel @Inject constructor(
                 }
             }
             copy(
+                dialogActive = EditArtDialog.None,
                 styleBackgroundGradientColorCount = styleBackgroundGradientColorCount - 1,
                 styleBackgroundList = newBackgroundList
             ).push()
