@@ -12,14 +12,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release {
-        storeFile file('C:\\Users\\tylop\\Downloads\\activityArt.jks')
-            storePassword '960960'
-            keyAlias 'key0'
-            keyPassword '960960'
-        }
-    }
     compileSdk 33
 
     defaultConfig {
@@ -33,8 +25,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        signingConfig signingConfigs.release
-        proguardFiles getDefaultProguardFile('proguard-android.txt')
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
