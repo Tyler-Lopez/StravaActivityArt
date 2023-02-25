@@ -86,11 +86,6 @@ fun EditArtTypeScreen(
                                     ),
                                     singleLine = true,
                                     maxLines = 1,
-                                    enabled = EditArtTypeType.CUSTOM == when (section) {
-                                        EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
-                                        EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
-                                        EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
-                                    },
                                     modifier = Modifier.sizeIn(maxWidth = 254.dp)
                                 )
                                 Text(
