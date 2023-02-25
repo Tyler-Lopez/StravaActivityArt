@@ -83,7 +83,6 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         padding = 0.dp,
                         scrollState = when (it) {
                             FILTERS -> scrollStateFilter
-                            // STYLE -> scrollStateStyle
                             TYPE -> scrollStateType
                             SORT -> scrollStateSort
                             RESIZE -> scrollStateResize
@@ -123,6 +122,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 styleBackgroundList.take(styleBackgroundGradientColorCount),
                                 styleActivities,
                                 styleFont,
+                                listStateStyle,
                                 styleStrokeWidthType,
                                 viewModel
                             )

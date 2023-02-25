@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
@@ -189,7 +190,7 @@ sealed interface EditArtViewState : ViewState {
             fadeLengthMs = FADE_LENGTH_MS
         ),
         @IgnoredOnParcel val scrollStateFilter: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-        @IgnoredOnParcel val scrollStateStyle: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel val listStateStyle: LazyListState = LazyListState(),
         @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),

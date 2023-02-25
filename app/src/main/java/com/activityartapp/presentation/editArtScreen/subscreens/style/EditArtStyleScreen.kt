@@ -2,6 +2,7 @@ package com.activityartapp.presentation.editArtScreen.subscreens.style
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -23,6 +24,7 @@ fun EditArtStyleScreen(
     colorBackgroundList: List<ColorWrapper>,
     colorActivities: ColorWrapper,
     colorText: ColorWrapper?,
+    listState: LazyListState,
     strokeWidthType: StrokeWidthType,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
@@ -41,7 +43,10 @@ fun EditArtStyleScreen(
         add(EditArtStyleSectionType.ACTIVITY_WEIGHT)
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(spacing.medium)) {
+    LazyColumn(
+        state = listState,
+        verticalArrangement = Arrangement.spacedBy(spacing.medium)
+    ) {
         items(sections) { section ->
             Section(
                 header = stringResource(section.headerStrRes),
