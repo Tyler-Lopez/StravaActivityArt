@@ -30,9 +30,9 @@ fun EditArtPreview(
 
         if (!atLeastOneActivitySelected) {
             ErrorComposable(
-                header = "No Activities",
-                description = stringResource(R.string.edit_art_preview_activities_zero_count_header),
-                prompt = stringResource(R.string.edit_art_preview_activities_zero_count_description)
+                header = stringResource(R.string.edit_art_preview_activities_zero_count_header),
+                description = stringResource(R.string.edit_art_preview_activities_zero_count_description),
+                prompt = stringResource(R.string.edit_art_preview_activities_zero_count_prompt)
             )
         } else {
             bitmap?.let {

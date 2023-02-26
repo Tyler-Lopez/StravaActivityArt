@@ -1,4 +1,4 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.filters.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.filters.sections
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.*
@@ -16,15 +16,12 @@ import com.activityartapp.presentation.editArtScreen.DateSelection
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.FilterChanged.*
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
+import com.activityartapp.presentation.editArtScreen.subscreens.filters.composables.FilterCount
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.classes.YearMonthDay
 
-/**
- * @param dateMaxDateSelectedYearMonthDay When null, use total value in place of selected.
- * @param dateMinDateSelectedYearMonthDay When null, use total value in place of selected.
- */
 @Composable
-fun ColumnScope.FilterSectionDate(
+fun SectionDate(
     count: Int,
     dateSelections: List<DateSelection>,
     dateSelectionSelectedIndex: Int,
@@ -40,8 +37,8 @@ fun ColumnScope.FilterSectionDate(
     val ymdTotalStart = YearMonthDay.fromUnixMs(rangeTotal.first)
     val ymdTotalEnd = YearMonthDay.fromUnixMs(rangeTotal.last)
 
-    val ymdSelectedStart = rangeSelected?.run { YearMonthDay.fromUnixMs(first) } ?: ymdTotalStart
-    val ymdSelectedEnd = rangeSelected?.run { YearMonthDay.fromUnixMs(last) } ?: ymdTotalEnd
+    val ymdSelectedStart = rangeSelected.run { YearMonthDay.fromUnixMs(first) }
+    val ymdSelectedEnd = rangeSelected.run { YearMonthDay.fromUnixMs(last) }
 
     val context = LocalContext.current
 
@@ -87,55 +84,50 @@ fun ColumnScope.FilterSectionDate(
         }
     }
 
-    FilterSection(
-        count = count,
-        header = stringResource(R.string.edit_art_filters_date_header),
-        description = stringResource(R.string.edit_art_filters_date_description),
-    ) {
-        dateSelections.forEachIndexed { index, selection ->
-            RadioButtonContentRow(
-                isSelected = index == dateSelectionSelectedIndex,
-                text = when (selection) {
-                    is DateSelection.All -> stringResource(R.string.edit_art_filters_date_include_all)
-                    is DateSelection.Year -> selection.year.toString()
-                    is DateSelection.Custom -> stringResource(R.string.edit_art_filters_date_custom_range)
-                },
-                content = {
-                    if (selection is DateSelection.Custom) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(spacing.small),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            selection.apply {
-                                Button(
-                                    emphasis = ButtonEmphasis.MEDIUM,
-                                    modifier = Modifier.weight(1f, true),
-                                    labelText = stringResource(R.string.edit_art_filters_date_start),
-                                    size = ButtonSize.LARGE,
-                                    text = ymdSelectedStart.toString()
-                                ) {
-                                    startDialog.show()
-                                }
-                                Button(
-                                    emphasis = ButtonEmphasis.MEDIUM,
-                                    modifier = Modifier.weight(1f, true),
-                                    labelText = stringResource(R.string.edit_art_filters_date_end),
-                                    size = ButtonSize.LARGE,
-                                    text = ymdSelectedEnd.toString()
-                                ) {
-                                    endDialog.show()
-                                }
+    dateSelections.forEachIndexed { index, selection ->
+        RadioButtonContentRow(
+            isSelected = index == dateSelectionSelectedIndex,
+            text = when (selection) {
+                is DateSelection.All -> stringResource(R.string.edit_art_filters_date_include_all)
+                is DateSelection.Year -> selection.year.toString()
+                is DateSelection.Custom -> stringResource(R.string.edit_art_filters_date_custom_range)
+            },
+            content = {
+                if (selection is DateSelection.Custom) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        selection.apply {
+                            Button(
+                                emphasis = ButtonEmphasis.MEDIUM,
+                                modifier = Modifier.weight(1f, true),
+                                labelText = stringResource(R.string.edit_art_filters_date_start),
+                                size = ButtonSize.LARGE,
+                                text = ymdSelectedStart.toString()
+                            ) {
+                                startDialog.show()
+                            }
+                            Button(
+                                emphasis = ButtonEmphasis.MEDIUM,
+                                modifier = Modifier.weight(1f, true),
+                                labelText = stringResource(R.string.edit_art_filters_date_end),
+                                size = ButtonSize.LARGE,
+                                text = ymdSelectedEnd.toString()
+                            ) {
+                                endDialog.show()
                             }
                         }
                     }
                 }
-            ) {
-                eventReceiver.onEvent(
-                    FilterDateSelectionChanged(
-                        index
-                    )
-                )
             }
+        ) {
+            eventReceiver.onEvent(
+                FilterDateSelectionChanged(
+                    index
+                )
+            )
         }
     }
+    FilterCount(count)
 }

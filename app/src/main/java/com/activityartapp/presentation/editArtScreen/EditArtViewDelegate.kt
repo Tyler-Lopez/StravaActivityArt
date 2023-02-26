@@ -82,13 +82,12 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         horizontalAlignment = if (it != PREVIEW) Alignment.Start else Alignment.CenterHorizontally,
                         padding = 0.dp,
                         scrollState = when (it) {
-                            FILTERS -> scrollStateFilter
                             TYPE -> scrollStateType
                             SORT -> scrollStateSort
                             RESIZE -> scrollStateResize
                             else -> null
                         },
-                        scrollingEnabled = it != PREVIEW && it != STYLE
+                        scrollingEnabled = it != PREVIEW && it != STYLE && it != FILTERS
                     ) {
                         when (it) {
                             PREVIEW -> EditArtPreview(
@@ -112,6 +111,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     },
                                     filterDistancePendingChangeStart,
                                     filterDistancePendingChangeEnd,
+                                    listStateFilter,
                                     filterTypes?.toList(),
                                     viewModel
                                 )

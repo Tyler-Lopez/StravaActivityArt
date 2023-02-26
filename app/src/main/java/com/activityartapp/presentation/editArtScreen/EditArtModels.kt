@@ -189,7 +189,7 @@ sealed interface EditArtViewState : ViewState {
             pagerState = PagerState(EditArtHeaderType.values().toList().size),
             fadeLengthMs = FADE_LENGTH_MS
         ),
-        @IgnoredOnParcel val scrollStateFilter: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel val listStateFilter: LazyListState = LazyListState(),
         @IgnoredOnParcel val listStateStyle: LazyListState = LazyListState(),
         @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
