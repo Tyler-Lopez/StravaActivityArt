@@ -11,15 +11,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.activityartapp.R
+import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.AppBarScaffold
 import com.activityartapp.presentation.common.ScreenBackground
+import com.activityartapp.presentation.common.ScreenMeasurer
 import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.SaveClicked
@@ -30,25 +30,39 @@ import com.activityartapp.presentation.editArtScreen.subscreens.resize.EditArtRe
 import com.activityartapp.presentation.editArtScreen.subscreens.sort.EditArtSortScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.style.EditArtStyleScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ScreenMeasured
 import com.activityartapp.presentation.ui.theme.spacing
-import com.activityartapp.util.classes.YearMonthDay
 import com.activityartapp.util.enums.BackgroundType
 import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.flow.StateFlow
 
-/**
- * A complex screen featuring [EditArtTabLayout]
- */
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun EditArtViewDelegate(viewModel: EditArtViewModel) {
-    viewModel.viewState.collectAsState().value?.apply {
-        val continueEnabled = (this@apply as? EditArtViewState.Standby)?.atLeastOneActivitySelected
+    ScreenMeasurer {
+        println("Screen measured.")
+        viewModel.onEvent(ScreenMeasured(it))
+    }
+    CollectViewState(
+        flow = viewModel.viewState,
+        eventReceiver = viewModel
+    )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun CollectViewState(
+    flow: StateFlow<EditArtViewState?>,
+    eventReceiver: EventReceiver<EditArtViewEvent>
+) {
+    flow.collectAsState().value?.apply {
+        val continueEnabled =
+            (this@apply as? EditArtViewState.Standby)?.atLeastOneActivitySelected
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
-            onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) },
+            onNavigateUp = { eventReceiver.onEventDebounced(NavigateUpClicked) },
             actions = {
                 IconButton(
-                    onClick = { viewModel.onEventDebounced(SaveClicked) },
+                    onClick = { eventReceiver.onEventDebounced(SaveClicked) },
                     enabled = continueEnabled ?: false
                 ) {
                     Text(
@@ -66,7 +80,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                     EditArtTabLayout(
                         pagerHeaders = pagerHeaders,
                         pagerState = pagerState,
-                        eventReceiver = viewModel
+                        eventReceiver = eventReceiver
                     )
                 }
             }
@@ -78,55 +92,45 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                     targetState = activeHeader,
                     animationSpec = tween(500, easing = FastOutSlowInEasing)
                 ) {
-                    ScreenBackground(
-                        horizontalAlignment = if (it != PREVIEW) Alignment.Start else Alignment.CenterHorizontally,
-                        padding = 0.dp,
-                        scrollState = when (it) {
-                            TYPE -> scrollStateType
-                            SORT -> scrollStateSort
-                            RESIZE -> scrollStateResize
-                            else -> null
-                        },
-                        scrollingEnabled = it != PREVIEW && it != STYLE && it != FILTERS
-                    ) {
-                        when (it) {
-                            PREVIEW -> EditArtPreview(
-                                atLeastOneActivitySelected,
-                                styleBackgroundType == BackgroundType.TRANSPARENT,
-                                bitmap,
-                                viewModel
-                            )
-                            FILTERS -> YearMonthDay.run {
-                                EditArtFiltersScreen(
-                                    filterActivitiesCountDate,
-                                    filterActivitiesCountDistance,
-                                    filterActivitiesCountType,
-                                    filterDateSelections,
-                                    filterDateSelectionIndex,
-                                    filterDistanceSelectedEnd?.let {
-                                        filterDistanceSelectedStart?.rangeTo(it)
-                                    },
-                                    filterDistanceTotalEnd?.let {
-                                        filterDistanceTotalStart?.rangeTo(it)
-                                    },
-                                    filterDistancePendingChangeStart,
-                                    filterDistancePendingChangeEnd,
-                                    listStateFilter,
-                                    filterTypes?.toList(),
-                                    viewModel
-                                )
-                            }
-                            STYLE -> EditArtStyleScreen(
-                                styleBackgroundType,
-                                styleBackgroundAngleType,
-                                styleBackgroundList.take(styleBackgroundGradientColorCount),
-                                styleActivities,
-                                styleFont,
-                                listStateStyle,
-                                styleStrokeWidthType,
-                                viewModel
-                            )
-                            TYPE -> EditArtTypeScreen(
+                    when (it) {
+                        PREVIEW -> EditArtPreview(
+                            atLeastOneActivitySelected,
+                            styleBackgroundType == BackgroundType.TRANSPARENT,
+                            bitmap,
+                            previewZoomFactor,
+                            previewOffset,
+                            eventReceiver
+                        )
+                        FILTERS -> EditArtFiltersScreen(
+                            filterActivitiesCountDate,
+                            filterActivitiesCountDistance,
+                            filterActivitiesCountType,
+                            filterDateSelections,
+                            filterDateSelectionIndex,
+                            filterDistanceSelectedEnd?.let { end ->
+                                filterDistanceSelectedStart?.rangeTo(end)
+                            },
+                            filterDistanceTotalEnd?.let { end ->
+                                filterDistanceTotalStart?.rangeTo(end)
+                            },
+                            filterDistancePendingChangeStart,
+                            filterDistancePendingChangeEnd,
+                            listStateFilter,
+                            filterTypes?.toList(),
+                            eventReceiver
+                        )
+                        STYLE -> EditArtStyleScreen(
+                            styleBackgroundType,
+                            styleBackgroundAngleType,
+                            styleBackgroundList.take(styleBackgroundGradientColorCount),
+                            styleActivities,
+                            styleFont,
+                            listStateStyle,
+                            styleStrokeWidthType,
+                            eventReceiver
+                        )
+                        TYPE -> ScreenBackground(scrollState = scrollStateType) {
+                            EditArtTypeScreen(
                                 typeActivitiesDistanceMetersSummed,
                                 typeCenterCustomText,
                                 typeLeftCustomText,
@@ -139,20 +143,24 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 typeCenterSelected,
                                 typeLeftSelected,
                                 typeRightSelected,
-                                viewModel
+                                eventReceiver
                             )
-                            SORT -> EditArtSortScreen(
+                        }
+                        SORT -> ScreenBackground(scrollState = scrollStateSort) {
+                            EditArtSortScreen(
                                 sortTypeSelected = sortTypeSelected,
                                 sortDirectionSelected = sortDirectionTypeSelected,
-                                eventReceiver = viewModel
+                                eventReceiver = eventReceiver
                             )
-                            RESIZE -> EditArtResizeScreen(
+                        }
+                        RESIZE -> ScreenBackground(scrollState = scrollStateResize) {
+                            EditArtResizeScreen(
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,
-                                viewModel
+                                eventReceiver
                             )
-                            null -> error("Invalid pagerState current page.")
                         }
+                        null -> error("Invalid pagerState current page.")
                     }
                 }
             }
@@ -160,35 +168,35 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
 
         /** Only intercept when the dialog box is not visible **/
         BackHandler(enabled = dialogActive is EditArtDialog.None) {
-            viewModel.onEvent(NavigateUpClicked)
+            eventReceiver.onEvent(NavigateUpClicked)
         }
 
         when (dialogActive) {
             is EditArtDialog.ConfirmDeleteGradientColor -> {
                 EditArtDialogInfo(
                     body = stringArrayResource(id = R.array.edit_art_dialog_info_remove_gradient_color),
-                    eventReceiver = viewModel,
+                    eventReceiver = eventReceiver,
                     type = EditArtDialogType.REMOVE_AND_DISMISS_BY_CANCEL
                 )
             }
             is EditArtDialog.InfoCheckeredBackground -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
-                eventReceiver = viewModel,
+                eventReceiver = eventReceiver,
                 type = EditArtDialogType.DISMISS_BY_OK
             )
             is EditArtDialog.InfoGradientBackground -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_gradient),
-                eventReceiver = viewModel,
+                eventReceiver = eventReceiver,
                 type = EditArtDialogType.DISMISS_BY_OK
             )
             is EditArtDialog.InfoTransparent -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_background_transparent),
-                eventReceiver = viewModel,
+                eventReceiver = eventReceiver,
                 type = EditArtDialogType.DISMISS_BY_OK
             )
             is EditArtDialog.NavigateUp -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_exit_confirmation_prompt),
-                eventReceiver = viewModel,
+                eventReceiver = eventReceiver,
                 type = EditArtDialogType.DISCARD_AND_DISMISS_BY_CANCEL
             )
             is EditArtDialog.None -> {} // No-op

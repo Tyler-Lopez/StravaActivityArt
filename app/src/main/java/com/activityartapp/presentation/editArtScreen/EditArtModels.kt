@@ -4,12 +4,20 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import android.util.Size
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.*
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.room.Ignore
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -48,7 +56,14 @@ sealed interface EditArtViewEvent : ViewEvent {
 
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
+    data class PreviewGesture(
+        val centroid: Offset,
+        val pan: Offset,
+        val zoom: Float
+    ) : EditArtViewEvent
+
     object SaveClicked : EditArtViewEvent
+    data class ScreenMeasured(val size: Size) : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
         val changedTo: String
 
@@ -154,6 +169,8 @@ sealed interface EditArtViewState : ViewState {
         private const val FADE_LENGTH_MS = 1000
         const val MAX_GRADIENT_BG_COLORS = 7
         const val MIN_GRADIENT_BG_COLORS = 2
+        const val PREVIEW_ZOOM_FACTOR_MAX = 3f
+        const val PREVIEW_ZOOM_FACTOR_MIN = 1f
     }
 
     val dialogActive: EditArtDialog
@@ -194,6 +211,12 @@ sealed interface EditArtViewState : ViewState {
         @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         @IgnoredOnParcel val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        @IgnoredOnParcel private val _previewZoomFactor: MutableState<Float> = mutableStateOf(
+            value = PREVIEW_ZOOM_FACTOR_MIN
+        ),
+        @IgnoredOnParcel private val _previewOffset: MutableState<Offset> = mutableStateOf(
+            value = Offset.Zero
+        ),
         val sizeResolutionList: List<Resolution> = ResolutionListFactoryImpl().create(),
         val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
         val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
@@ -295,6 +318,11 @@ sealed interface EditArtViewState : ViewState {
                         ?: Int.MAX_VALUE
                 )
 
+        /** Observables **/
+        @IgnoredOnParcel
+        val previewZoomFactor: State<Float> = _previewZoomFactor
+        @IgnoredOnParcel
+        val previewOffset: State<Offset> = _previewOffset
     }
 }
 

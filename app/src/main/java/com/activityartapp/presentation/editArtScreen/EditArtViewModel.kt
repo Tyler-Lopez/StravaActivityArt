@@ -29,6 +29,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
@@ -44,11 +45,7 @@ class EditArtViewModel @Inject constructor(
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
-        private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
-
         private const val STANDBY_SAVE_STATE_KEY = "StandbySaveState"
-
         private const val INDEX_FIRST = 0
     }
 
@@ -188,6 +185,7 @@ class EditArtViewModel @Inject constructor(
 
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    private var screenSize: Size? = null
 
     init {
         Loading().push()
@@ -228,7 +226,9 @@ class EditArtViewModel @Inject constructor(
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
+            is PreviewGesture -> onPreviewGesture(event)
             is SaveClicked -> onSaveClicked()
+            is ScreenMeasured -> onScreenMeasured(event)
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
@@ -441,6 +441,39 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
+    private fun onPreviewGesture(event: PreviewGesture) {
+        withLastState {
+            val oldScale = previewZoomFactor.value
+            val newScale = (oldScale * event.zoom)
+                .coerceIn(EditArtViewState.PREVIEW_ZOOM_FACTOR_MIN..EditArtViewState.PREVIEW_ZOOM_FACTOR_MAX)
+
+            val bitmapWidth = bitmap?.width ?: 0
+            val bitmapHeight = bitmap?.height ?: 0
+            val scaledExcessX = (bitmapWidth * newScale) - bitmapWidth
+            val maximumOffsetX: Float = scaledExcessX / newScale
+            val scaledExcessY = (bitmapHeight * newScale) - bitmapHeight
+            val maximumOffsetY: Float = scaledExcessY / newScale
+
+
+            val oldCentroid = event.centroid / oldScale
+            val newCentroid = event.centroid / newScale
+            val newOffset =
+                (previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
+                    copy(
+                        x = x.coerceIn(0f..maximumOffsetX),
+                        //  y = y.coerceIn(0f..(maximumOffsetY + bitmapHeight))
+                    )
+                }
+
+            println("height is ${bitmap?.height}")
+            println("new scale is $newScale")
+            println("Scaled excessY is $scaledExcessY")
+            println("Here, offset y is ${newOffset.y}")
+
+            
+        }
+    }
+
     private fun onSaveClicked() {
         viewModelScope.launch {
             (lastPushedState as? Standby)?.run {
@@ -509,6 +542,13 @@ class EditArtViewModel @Inject constructor(
                     )
                 )
             }
+        }
+    }
+
+    private fun onScreenMeasured(event: ScreenMeasured) {
+        if (screenSize != event.size) {
+            screenSize = event.size
+            updateBitmap()
         }
     }
 
@@ -815,40 +855,39 @@ class EditArtViewModel @Inject constructor(
     private fun updateBitmap() {
         imageProcessingDispatcher.cancelChildren()
         viewModelScope.launch(imageProcessingDispatcher) {
-            copyLastState {
-                val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFiltered,
-                    backgroundAngleType = styleBackgroundAngleType,
-                    backgroundType = styleBackgroundType,
-                    backgroundColorsArgb = styleBackgroundList
-                        .take(styleBackgroundGradientColorCount)
-                        .map { it.toColorArgb() }, // TODO
-                    colorActivitiesArgb = styleActivities.toColorArgb(),
-                    colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
-                    strokeWidth = styleStrokeWidthType,
-                    bitmapSize = imageSizeUtils.sizeToMaximumSize(
-                        actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
-                            Size(widthPx, heightPx)
-                        },
-                        maximumSize = Size(
-                            PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX,
-                            PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
-                        )
-                    ),
-                    fontAssetPath = typeFontSelected.getAssetPath(
-                        fontWeightType = typeFontWeightSelected,
-                        italicized = typeFontItalicized
-                    ),
-                    fontSize = typeFontSizeSelected,
-                    isPreview = true,
-                    sortType = sortTypeSelected,
-                    sortDirectionType = sortDirectionTypeSelected,
-                    textLeft = LEFT.text,
-                    textCenter = CENTER.text,
-                    textRight = RIGHT.text
-                )
-                copyLastState { copy(bitmap = bitmap) }
-            }.push()
+            println("here in update bitmap")
+            pushStateCopy {
+                copy(bitmap = screenSize?.let { size ->
+                    visualizationUtils.createBitmap(
+                        activities = activitiesFiltered,
+                        backgroundAngleType = styleBackgroundAngleType,
+                        backgroundType = styleBackgroundType,
+                        backgroundColorsArgb = styleBackgroundList
+                            .take(styleBackgroundGradientColorCount)
+                            .map { it.toColorArgb() }, // TODO
+                        colorActivitiesArgb = styleActivities.toColorArgb(),
+                        colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
+                        strokeWidth = styleStrokeWidthType,
+                        bitmapSize = imageSizeUtils.sizeToMaximumSize(
+                            actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
+                                Size(widthPx, heightPx)
+                            },
+                            maximumSize = size
+                        ),
+                        fontAssetPath = typeFontSelected.getAssetPath(
+                            fontWeightType = typeFontWeightSelected,
+                            italicized = typeFontItalicized
+                        ),
+                        fontSize = typeFontSizeSelected,
+                        isPreview = true,
+                        sortType = sortTypeSelected,
+                        sortDirectionType = sortDirectionTypeSelected,
+                        textLeft = LEFT.text,
+                        textCenter = CENTER.text,
+                        textRight = RIGHT.text
+                    )
+                })
+            }
         }
     }
 
