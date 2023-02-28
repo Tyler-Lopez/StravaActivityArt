@@ -42,7 +42,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 @Composable
 fun EditArtViewDelegate(viewModel: EditArtViewModel) {
     viewModel.viewState.collectAsState().value?.apply {
-        val continueEnabled = (this@apply as? EditArtViewState.Standby)?.atLeastOneActivitySelected
+  // todo      val continueEnabled = (this@apply as? EditArtViewState.Standby)?.atLeastOneActivitySelected
+        val continueEnabled: Boolean? = true
+        val atLeastOneActivitySelected: Boolean = true // todo
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
             onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) },
@@ -92,63 +94,63 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         when (it) {
                             PREVIEW -> EditArtPreview(
                                 atLeastOneActivitySelected,
-                                styleBackgroundType == BackgroundType.TRANSPARENT,
-                                bitmap,
+                                styleBackgroundType.value == BackgroundType.TRANSPARENT,
+                                bitmap.value,
                                 viewModel
                             )
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
-                                    filterActivitiesCountDate,
-                                    filterActivitiesCountDistance,
-                                    filterActivitiesCountType,
+                                    filterActivitiesCountDate.value,
+                                    filterActivitiesCountDistance.value,
+                                    filterActivitiesCountType.value,
                                     filterDateSelections,
-                                    filterDateSelectionIndex,
-                                    filterDistanceSelectedEnd?.let {
-                                        filterDistanceSelectedStart?.rangeTo(it)
+                                    filterDateSelectionIndex.value,
+                                    filterDistanceSelectedEnd.value?.let {
+                                        filterDistanceSelectedStart.value?.rangeTo(it)
                                     },
-                                    filterDistanceTotalEnd?.let {
-                                        filterDistanceTotalStart?.rangeTo(it)
+                                    filterDistanceTotalEnd.value?.let {
+                                        filterDistanceTotalStart.value?.rangeTo(it)
                                     },
-                                    filterDistancePendingChangeStart,
-                                    filterDistancePendingChangeEnd,
+                                    filterDistancePendingChangeStart.value,
+                                    filterDistancePendingChangeEnd.value,
                                     listStateFilter,
                                     filterTypes?.toList(),
                                     viewModel
                                 )
                             }
                             STYLE -> EditArtStyleScreen(
-                                styleBackgroundType,
-                                styleBackgroundAngleType,
-                                styleBackgroundList.take(styleBackgroundGradientColorCount),
-                                styleActivities,
-                                styleFont,
+                                styleBackgroundType.value,
+                                styleBackgroundAngleType.value,
+                                styleBackgroundList.take(styleBackgroundGradientColorCount.value),
+                                styleActivities.value,
+                                styleFont.value,
                                 listStateStyle,
-                                styleStrokeWidthType,
+                                styleStrokeWidthType.value,
                                 viewModel
                             )
                             TYPE -> EditArtTypeScreen(
-                                typeActivitiesDistanceMetersSummed,
-                                typeCenterCustomText,
-                                typeLeftCustomText,
-                                typeRightCustomText,
-                                typeFontSelected,
-                                typeFontWeightSelected,
-                                typeFontItalicized,
-                                typeFontSizeSelected,
+                                typeActivitiesDistanceMetersSummed.value,
+                                typeCenterCustomText.value,
+                                typeLeftCustomText.value,
+                                typeRightCustomText.value,
+                                typeFontSelected.value,
+                                typeFontWeightSelected.value,
+                                typeFontItalicized.value,
+                                typeFontSizeSelected.value,
                                 typeMaximumCustomTextLength,
-                                typeCenterSelected,
-                                typeLeftSelected,
-                                typeRightSelected,
+                                typeCenterSelected.value,
+                                typeLeftSelected.value,
+                                typeRightSelected.value,
                                 viewModel
                             )
                             SORT -> EditArtSortScreen(
-                                sortTypeSelected = sortTypeSelected,
-                                sortDirectionSelected = sortDirectionTypeSelected,
+                                sortTypeSelected = sortTypeSelected.value,
+                                sortDirectionSelected = sortDirectionTypeSelected.value,
                                 eventReceiver = viewModel
                             )
                             RESIZE -> EditArtResizeScreen(
                                 sizeResolutionList,
-                                sizeResolutionListSelectedIndex,
+                                sizeResolutionListSelectedIndex.value,
                                 viewModel
                             )
                             null -> error("Invalid pagerState current page.")
@@ -159,11 +161,11 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
         }
 
         /** Only intercept when the dialog box is not visible **/
-        BackHandler(enabled = dialogActive is EditArtDialog.None) {
+        BackHandler(enabled = dialogActive.value is EditArtDialog.None) {
             viewModel.onEvent(NavigateUpClicked)
         }
 
-        when (dialogActive) {
+        when (dialogActive.value) {
             is EditArtDialog.ConfirmDeleteGradientColor -> {
                 EditArtDialogInfo(
                     body = stringArrayResource(id = R.array.edit_art_dialog_info_remove_gradient_color),

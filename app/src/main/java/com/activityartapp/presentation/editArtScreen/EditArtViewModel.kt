@@ -1,13 +1,15 @@
 package com.activityartapp.presentation.editArtScreen
 
+import android.graphics.Bitmap
 import android.util.Size
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.useCase.activities.GetActivitiesFromDisk
 import com.activityartapp.presentation.MainDestination
-import com.activityartapp.presentation.MainDestination.NavigateSaveArt
 import com.activityartapp.presentation.MainDestination.NavigateUp
 import com.activityartapp.presentation.editArtScreen.ColorType.*
 import com.activityartapp.presentation.editArtScreen.EditArtFilterType.*
@@ -16,12 +18,11 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.presentation.editArtScreen.EditArtViewState.Loading
 import com.activityartapp.presentation.editArtScreen.EditArtViewState.Standby
+import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
-import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection.*
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
-import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType.*
 import com.activityartapp.util.*
-import com.activityartapp.util.enums.FontWeightType
+import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -44,10 +45,41 @@ class EditArtViewModel @Inject constructor(
 ) : BaseRoutingViewModel<EditArtViewState, EditArtViewEvent, MainDestination>() {
 
     companion object {
-        private const val PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX = 2000
-        private const val PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX = 2000
-
-        private const val STANDBY_SAVE_STATE_KEY = "StandbySaveState"
+        private const val SSH_FILTER_ACTIVITIES_COUNT_DATE = "filterActivitiesCountDate"
+        private const val SSH_FILTER_ACTIVITIES_COUNT_DISTANCE = "filterActivitiesCountDistance"
+        private const val SSH_FILTER_ACTIVITIES_COUNT_TYPE = "filterActivitiesCountType"
+        private const val SSH_FILTER_DATE_SELECTIONS = "filterDateSelections"
+        private const val SSH_FILTER_DATE_SELECTION_INDEX = "filterDateSelectionIndex"
+        private const val SSH_FILTER_DISTANCE_SELECTED_START = "filterDistanceSelectedStart"
+        private const val SSH_FILTER_DISTANCE_SELECTED_END = "filterDistanceSelectedEnd"
+        private const val SSH_FILTER_DISTANCE_TOTAL_START = "filterDistanceTotalStart"
+        private const val SSH_FILTER_DISTANCE_TOTAL_END = "filterDistanceTotalEnd"
+        private const val SSH_FILTER_TYPES = "filterTypes"
+        private const val SSH_SIZE_RESOLUTION_LIST = "sizeResolutionList"
+        private const val SSH_SIZE_RESOLUTION_LIST_SELECTED_INDEX =
+            "sizeResolutionListSelectedIndex"
+        private const val SSH_SORT_TYPE_SELECTED = "sortTypeSelected"
+        private const val SSH_SORT_DIRECTION_TYPE_SELECTED = "sortDirectionTypeSelected"
+        private const val SSH_STYLE_ACTIVITIES = "styleActivities"
+        private const val SSH_STYLE_BACKGROUND_LIST = "styleBackgroundList"
+        private const val SSH_STYLE_BACKGROUND_ANGLE_TYPE = "styleBackgroundAngleType"
+        private const val SSH_STYLE_BACKGROUND_GRADIENT_COLOR_COUNT =
+            "styleBackgroundGradientColorCount"
+        private const val SSH_STYLE_BACKGROUND_TYPE = "styleBackgroundType"
+        private const val SSH_STYLE_FONT = "styleFont"
+        private const val SSH_STYLE_STROKE_WIDTH_TYPE = "strokeWidthType"
+        private const val SSH_TYPE_ACTIVITIES_DISTANCE_METERS_SUMMED =
+            "typeActivitiesDistanceMetersSummed" // Todo, determine if need to be saved
+        private const val SSH_TYPE_FONT_SELECTED = "typeFontSelected"
+        private const val SSH_TYPE_FONT_WEIGHT_SELECTED = "typeFontWeightSelected"
+        private const val SSH_TYPE_FONT_ITALICIZED = "typeFontItalicized"
+        private const val SSH_TYPE_FONT_SIZE_SELECTED = "typeFontSizeSelected"
+        private const val SSH_TYPE_LEFT_SELECTED = "typeLeftSelected"
+        private const val SSH_TYPE_LEFT_CUSTOM_TEXT = "typeLeftCustomText"
+        private const val SSH_TYPE_CENTER_SELECTED = "typeCenterSelected"
+        private const val SSH_TYPE_CENTER_CUSTOM_TEXT = "typeCenterCustomText"
+        private const val SSH_TYPE_RIGHT_SELECTED = "typeRightSelected"
+        private const val SSH_TYPE_RIGHT_CUSTOM_TEXT = "typeRightCustomText"
 
         private const val INDEX_FIRST = 0
     }
@@ -67,11 +99,10 @@ class EditArtViewModel @Inject constructor(
 
     /** Determine current start and end MS of selected Date filters  **/
     private val activitiesDateRangeUnixMs: LongProgression?
-        get() = state?.filterDateSelections?.let { selections ->
-            val index = (lastPushedState as? Standby)?.filterDateSelectionIndex
-                ?: error("Attempted to compute date range when not in Standby state.")
+        get() = _filterDateSelections.let { selections ->
+            val index = _filterDateSelectionIndex.value
 
-            selections[index].run {
+            selections.getOrNull(index)?.run {
                 when (this) {
                     is DateSelection.All -> Long.MIN_VALUE..Long.MAX_VALUE
                     is DateSelection.Year -> timeUtils
@@ -88,106 +119,156 @@ class EditArtViewModel @Inject constructor(
     /** Updates [activitiesFilteredByFilterType] for a given [EditArtFilterType].
      * Designates which activities this particular filter sportType is in-charge of filtering. **/
     private fun EditArtFilterType.updateFilteredActivities() {
-        withLastState {
-            val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
-            activitiesFilteredByFilterType[this@updateFilteredActivities] =
-                prevActivities.filter { activity ->
-                    when (this@updateFilteredActivities) {
-                        DATE -> activityFilterUtils.activityWithinUnixMs(
-                            activity = activity,
-                            range = activitiesDateRangeUnixMs ?: Long.MIN_VALUE..Long.MAX_VALUE
-                        )
-                        TYPE -> activityFilterUtils.activityTypeContainedWithinTypes(
-                            activity = activity,
-                            types = filteredTypes
-                        )
-                        DISTANCE -> activityFilterUtils.activityWithinDistanceRange(
-                            activity = activity,
-                            range = filteredDistanceRangeMeters
-                        )
-                    }
+        val prevActivities = activitiesFilteredByFilterType[lastFilter] ?: activities
+        activitiesFilteredByFilterType[this@updateFilteredActivities] =
+            prevActivities.filter { activity ->
+                when (this@updateFilteredActivities) {
+                    DATE -> activityFilterUtils.activityWithinUnixMs(
+                        activity = activity,
+                        range = activitiesDateRangeUnixMs ?: Long.MIN_VALUE..Long.MAX_VALUE
+                    )
+                    TYPE -> activityFilterUtils.activityTypeContainedWithinTypes(
+                        activity = activity,
+                        types = filteredTypes
+                    )
+                    DISTANCE -> activityFilterUtils.activityWithinDistanceRange(
+                        activity = activity,
+                        range = filteredDistanceRangeMeters
+                    )
                 }
-            pushUpdatedFilteredActivityCountToView()
-        }
+            }
+        pushUpdatedFilteredActivityCountToView()
     }
 
     /** For a given [EditArtFilterType], update filters the user may choose which
      * are encapsulated within [Standby] **/
     private fun EditArtFilterType.updateFilters() {
         val filteredActivities = (activitiesFilteredByFilterType[lastFilter] ?: activities)
-        withLastState {
-            when (this@updateFilters) {
-                DATE -> {
-                    var selectionIndex = INDEX_FIRST
-                    val selections = activityFilterUtils
-                        .getPossibleDateSelections(
-                            activities = filteredActivities,
-                            customRangeSelectedPreviousMs = filterDateSelections
-                                ?.find { it is DateSelection.Custom }
-                                ?.run { this as? DateSelection.Custom }
-                                ?.run { dateSelected }
-                        )
-                        ?.also {
-                            selectionIndex = filterDateSelectionIndex
-                                .takeIf { prevIndex -> prevIndex in INDEX_FIRST..it.lastIndex }
-                                ?: INDEX_FIRST
-                        }
-                    copy(
-                        filterDateSelections = selections,
-                        filterDateSelectionIndex = selectionIndex
-                    )
-                }
-                TYPE -> copy(
-                    filterTypes = activityFilterUtils.getPossibleActivityTypes(
+        when (this@updateFilters) {
+            DATE -> {
+                var selectionIndex = INDEX_FIRST
+                val selections = activityFilterUtils
+                    .getPossibleDateSelections(
                         activities = filteredActivities,
-                        filterTypesPrevious = filterTypes
+                        customRangeSelectedPreviousMs = _filterDateSelections
+                            .find { it is DateSelection.Custom }
+                            ?.run { this as? DateSelection.Custom }
+                            ?.run { dateSelected }
                     )
-                )
-                DISTANCE -> {
-                    val newRangeTotal = activityFilterUtils.getPossibleDistances(filteredActivities)
-                    val newRangeSelected = newRangeTotal?.let { range ->
-                        val adjStart = filterDistanceSelectedStart?.takeIf {
-                            it >= range.start && it <= range.endInclusive
-                        } ?: range.start
-                        val adjEnd = filterDistanceSelectedEnd?.takeIf {
-                            it >= range.start && it <= range.endInclusive
-                        } ?: range.endInclusive
-                        adjStart..adjEnd
+                    ?.also {
+                        selectionIndex = _filterDateSelectionIndex.value
+                            .takeIf { prevIndex -> prevIndex in INDEX_FIRST..it.lastIndex }
+                            ?: INDEX_FIRST
                     }
-                    copy(
-                        filterDistancePendingChangeStart = null,
-                        filterDistancePendingChangeEnd = null,
-                        filterDistanceSelectedStart = newRangeSelected?.start,
-                        filterDistanceSelectedEnd = newRangeSelected?.endInclusive,
-                        filterDistanceTotalStart = newRangeTotal?.start,
-                        filterDistanceTotalEnd = newRangeTotal?.endInclusive
-                    )
+                _filterDateSelections.clear()
+                if (selections != null) {
+                    _filterDateSelections.addAll(selections)
                 }
-            }.push()
+                _filterDateSelectionIndex.value = selectionIndex
+            }
+            TYPE -> {
+                val newFilterTypes = activityFilterUtils.getPossibleActivityTypes(
+                    activities = filteredActivities,
+                    filterTypesPrevious = _filterTypes
+                )
+                _filterTypes.clear()
+                if (newFilterTypes != null) {
+                    _filterTypes.putAll(newFilterTypes)
+                }
+            }
+            DISTANCE -> {
+                val newRangeTotal = activityFilterUtils.getPossibleDistances(filteredActivities)
+                val newRangeSelected = newRangeTotal?.let { range ->
+                    val adjStart = _filterDistanceSelectedStart.value?.takeIf {
+                        it >= range.start && it <= range.endInclusive
+                    } ?: range.start
+                    val adjEnd = _filterDistanceSelectedEnd.value?.takeIf {
+                        it >= range.start && it <= range.endInclusive
+                    } ?: range.endInclusive
+                    adjStart..adjEnd
+                }
+                _filterDistancePendingChangeStart.value = null
+                _filterDistancePendingChangeEnd.value = null
+                _filterDistanceSelectedStart.value = newRangeSelected?.start
+                _filterDistanceSelectedEnd.value = newRangeSelected?.endInclusive
+                _filterDistanceTotalStart.value = newRangeTotal?.start
+                _filterDistanceTotalEnd.value = newRangeTotal?.endInclusive
+            }
         }
     }
 
     private val EditArtFilterType.activitiesCount: Int
         get() = activitiesFilteredByFilterType[this]?.size ?: 0
 
+    // DONE
     private fun EditArtFilterType.pushUpdatedFilteredActivityCountToView() {
-        copyLastState {
-            when (this@pushUpdatedFilteredActivityCountToView) {
-                DATE -> copy(filterActivitiesCountDate = DATE.activitiesCount)
-                DISTANCE -> copy(filterActivitiesCountDistance = DISTANCE.activitiesCount)
-                TYPE -> copy(filterActivitiesCountType = TYPE.activitiesCount)
-            }
-        }.run {
-            if (this@pushUpdatedFilteredActivityCountToView == filterFinal) {
-                copy(typeActivitiesDistanceMetersSummed = activitiesSummedDistance.roundToInt())
-            } else {
-                this
-            }
-        }.push()
+        when (this@pushUpdatedFilteredActivityCountToView) {
+            DATE -> _filterActivitiesCountDate.value = DATE.activitiesCount
+            DISTANCE -> _filterActivitiesCountDistance.value = DISTANCE.activitiesCount
+            TYPE -> _filterActivitiesCountType.value = TYPE.activitiesCount
+        }
+        if (this@pushUpdatedFilteredActivityCountToView == filterFinal) {
+            _typeActivitiesDistanceMetersSummed.value = activitiesSummedDistance.roundToInt()
+        }
     }
 
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+
+    /** Subscribed in EditArtViewDelegate **/
+    /** ALL **/
+    private val _dialogActive = mutableStateOf<EditArtDialog>(EditArtDialog.None) // not save
+
+    /** PREVIEW **/
+    private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
+
+    /** FILTERS **/
+    private val _filterActivitiesCountDate = mutableStateOf(0)
+    private val _filterActivitiesCountDistance = mutableStateOf(0)
+    private val _filterActivitiesCountType = mutableStateOf(0)
+    private val _filterDateSelections = mutableStateListOf<DateSelection>()
+    private val _filterDateSelectionIndex = mutableStateOf(0)
+    private val _filterDistanceSelectedStart = mutableStateOf<Double?>(null)
+    private val _filterDistanceSelectedEnd = mutableStateOf<Double?>(null)
+    private val _filterDistanceTotalStart = mutableStateOf<Double?>(null)
+    private val _filterDistanceTotalEnd = mutableStateOf<Double?>(null)
+    private val _filterDistancePendingChangeStart = mutableStateOf<String?>(null) // not save
+    private val _filterDistancePendingChangeEnd = mutableStateOf<String?>(null) // not save
+    private val _filterTypes: SnapshotStateMap<SportType, Boolean> = mutableStateMapOf()
+
+    /** SIZE **/
+    private val _sizeResolutionList =
+        mutableStateListOf(*ResolutionListFactoryImpl().create().toTypedArray())
+    private val _sizeResolutionListSelectedIndex = mutableStateOf(0)
+
+    /** SORT **/
+    private val _sortTypeSelected = mutableStateOf(EditArtSortType.DATE)
+    private val _sortDirectionTypeSelected = mutableStateOf(EditArtSortDirectionType.ASCENDING)
+
+    /** STYLE **/
+    private val _styleActivities = mutableStateOf(ColorWrapper.White)
+    private val _styleBackgroundList = (0 until 7).map {
+        if (it % 2 == 0) ColorWrapper.Black else ColorWrapper.White
+    }.toMutableStateList()
+    private val _styleBackgroundAngleType = mutableStateOf(AngleType.CW90)
+    private val _styleBackgroundGradientColorCount = mutableStateOf(2)
+    private val _styleBackgroundType = mutableStateOf(BackgroundType.SOLID)
+    private val _styleFont = mutableStateOf<ColorWrapper?>(null)
+    private val _styleStrokeWidthType = mutableStateOf(StrokeWidthType.MEDIUM)
+
+    /** TYPE **/
+    private val _typeActivitiesDistanceMetersSummed = mutableStateOf(0)
+    private val _typeFontSelected = mutableStateOf(FontType.JOSEFIN_SANS)
+    private val _typeFontWeightSelected = mutableStateOf(FontWeightType.REGULAR)
+    private val _typeFontItalicized = mutableStateOf(false)
+    private val _typeFontSizeSelected = mutableStateOf(FontSizeType.MEDIUM)
+    private val _typeMaximumCustomTextLength = 30 // not save
+    private val _typeLeftSelected = mutableStateOf(EditArtTypeType.NONE)
+    private val _typeLeftCustomText = mutableStateOf("")
+    private val _typeCenterSelected = mutableStateOf(EditArtTypeType.NONE)
+    private val _typeCenterCustomText = mutableStateOf("")
+    private val _typeRightSelected = mutableStateOf(EditArtTypeType.NONE)
+    private val _typeRightCustomText = mutableStateOf("")
 
     init {
         Loading().push()
@@ -195,21 +276,75 @@ class EditArtViewModel @Inject constructor(
             activities = getActivitiesFromDisk(athleteId)
 
             /** Push either a previously-saved (if available) or constructed Standby state **/
-            val prevState: Standby? = ssh[STANDBY_SAVE_STATE_KEY]
-            (prevState ?: Standby()).push()
+            //   val prevState: Standby? = ssh[STANDBY_SAVE_STATE_KEY]
+            stateRestore()
+            stateObserveAndSave()
+            Standby(
+                bitmap = _bitmap,
+                dialogActive = _dialogActive,
+                filterActivitiesCountDate = _filterActivitiesCountDate,
+                filterActivitiesCountDistance = _filterActivitiesCountDistance,
+                filterActivitiesCountType = _filterActivitiesCountType,
+                filterDateSelections = _filterDateSelections,
+                filterDateSelectionIndex = _filterDateSelectionIndex,
+                filterDistanceSelectedStart = _filterDistanceSelectedStart,
+                filterDistanceSelectedEnd = _filterDistanceSelectedEnd,
+                filterDistanceTotalStart = _filterDistanceTotalStart,
+                filterDistanceTotalEnd = _filterDistanceTotalEnd,
+                filterDistancePendingChangeStart = _filterDistancePendingChangeStart,
+                filterDistancePendingChangeEnd = _filterDistancePendingChangeEnd,
+                filterTypes = _filterTypes,
+                sizeResolutionList = _sizeResolutionList,
+                sizeResolutionListSelectedIndex = _sizeResolutionListSelectedIndex,
+                sortDirectionTypeSelected = _sortDirectionTypeSelected,
+                sortTypeSelected = _sortTypeSelected,
+                styleActivities = _styleActivities,
+                styleBackgroundAngleType = _styleBackgroundAngleType,
+                styleBackgroundGradientColorCount = _styleBackgroundGradientColorCount,
+                styleBackgroundList = _styleBackgroundList,
+                styleBackgroundType = _styleBackgroundType,
+                styleFont = _styleFont,
+                styleStrokeWidthType = _styleStrokeWidthType,
+                typeActivitiesDistanceMetersSummed = _typeActivitiesDistanceMetersSummed,
+                typeFontSelected = _typeFontSelected,
+                typeFontWeightSelected = _typeFontWeightSelected,
+                typeFontItalicized = _typeFontItalicized,
+                typeFontSizeSelected = _typeFontSizeSelected,
+                typeMaximumCustomTextLength = _typeMaximumCustomTextLength,
+                typeLeftSelected = _typeLeftSelected,
+                typeLeftCustomText = _typeLeftCustomText,
+                typeCenterSelected = _typeCenterSelected,
+                typeCenterCustomText = _typeCenterCustomText,
+                typeRightSelected = _typeRightSelected,
+                typeRightCustomText = _typeRightCustomText
+            ).push()
 
             EditArtFilterType.values().forEach {
+            //    activitiesFilteredByFilterType[it]?.let { _ ->
+                    it.updateFilteredActivities()
+          //      } ?: run {
+         //           activitiesFilteredByFilterType[it] = activities
+                    it.pushUpdatedFilteredActivityCountToView()
+                    it.updateFilters()
+         //       }
+                /*
                 if (prevState != null) {
                     /** If there was a saved state, now that we've pushed Standby update filtered activities to reflect
                      * the various saved filters. **/
                     it.updateFilteredActivities()
                 } else {
-                    /** Otherwise, simply initialize filtered activities for each sportType as all activities and
-                     * initialize filters. **/
-                    activitiesFilteredByFilterType[it] = activities
-                    it.pushUpdatedFilteredActivityCountToView()
-                    it.updateFilters()
-                }
+
+                 */
+
+                /** Otherwise, simply initialize filtered activities for each sportType as all activities and
+                 * initialize filters. **/
+                /*
+                activitiesFilteredByFilterType[it] = activities
+                it.pushUpdatedFilteredActivityCountToView()
+                it.updateFilters()
+
+                 */
+                // }
             }
 
             /** Finally, update the bitmap of the current Standby state **/
@@ -261,7 +396,8 @@ class EditArtViewModel @Inject constructor(
         }
         if (event !is FilterChanged) {
             updateBitmap()
-            ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
+            // todo
+            //    ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby) // todo
         }
     }
 
@@ -293,144 +429,133 @@ class EditArtViewModel @Inject constructor(
                 }
             }
             updateBitmap()
-            ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby)
+            // todo
+//            ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby) todo
         }
     }
 
+    // DONE
     private fun onClickedRemoveGradientColor(event: ClickedRemoveGradientColor) {
-        pushStateCopy { copy(dialogActive = EditArtDialog.ConfirmDeleteGradientColor(event.removedIndex)) }
+        _dialogActive.value = EditArtDialog.ConfirmDeleteGradientColor(
+            toDeleteIndex = event.removedIndex
+        )
     }
 
+    // DONE
     private fun onClickedInfoCheckeredBackground() {
-        pushStateCopy { copy(dialogActive = EditArtDialog.InfoCheckeredBackground) }
+        _dialogActive.value = EditArtDialog.InfoCheckeredBackground
     }
 
+    // DONE
     private fun onClickedInfoGradientBackground() {
-        pushStateCopy { copy(dialogActive = EditArtDialog.InfoGradientBackground) }
+        _dialogActive.value = EditArtDialog.InfoGradientBackground
     }
 
+    // DONE
     private fun onClickedInfoTransparentBackground() {
-        pushStateCopy { copy(dialogActive = EditArtDialog.InfoTransparent) }
+        _dialogActive.value = EditArtDialog.InfoTransparent
     }
 
+    // DONE
     private fun onDialogDismissed() {
-        pushStateCopy { copy(dialogActive = EditArtDialog.None) }
+        _dialogActive.value = EditArtDialog.None
     }
 
+    // DONE
     private fun onDialogNavigateUpConfirmed() {
-        copyLastState { copy(dialogActive = EditArtDialog.None) }.push()
+        _dialogActive.value = EditArtDialog.None
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
+    // DONE
     private fun onFilterDateSelectionChanged(event: FilterChanged.FilterDateSelectionChanged) {
-        copyLastState { copy(filterDateSelectionIndex = event.index) }.push()
+        _filterDateSelectionIndex.value = event.index
     }
 
+    // DONE
     private fun onFilterDateCustomChanged(event: FilterChanged.FilterDateCustomChanged) {
-        withLastState {
-            val replacementCustom: DateSelection.Custom =
-                (filterDateSelections
-                    ?.firstOrNull { it is DateSelection.Custom } as? DateSelection.Custom
-                    ?: error("ApiError retrieving DateSelection as Custom from selected index."))
-                    .run {
-                        copy(
-                            dateSelectedStartUnixMs = when (event) {
-                                is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
-                                    event.changedTo.coerceIn(dateTotal.first..dateSelected.last)
-                                }
-                                is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
-                                    dateSelected.first
-                                }
-                            },
-                            dateSelectedEndUnixMs = when (event) {
-                                is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
-                                    dateSelected.last
-                                }
-                                is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
-                                    event.changedTo.coerceIn(dateSelected.first..dateTotal.last)
-                                }
-                            }
-                        )
+        val customIndex = _filterDateSelections.indexOfFirst { it is DateSelection.Custom }
+        val updatedDateSelection =
+            (_filterDateSelections[customIndex] as DateSelection.Custom).run {
+                copy(
+                    dateSelectedStartUnixMs = when (event) {
+                        is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
+                            event.changedTo.coerceIn(dateTotal.first..dateSelected.last)
+                        }
+                        is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
+                            dateSelected.first
+                        }
+                    },
+                    dateSelectedEndUnixMs = when (event) {
+                        is FilterChanged.FilterDateCustomChanged.FilterAfterChanged -> {
+                            dateSelected.last
+                        }
+                        is FilterChanged.FilterDateCustomChanged.FilterBeforeChanged -> {
+                            event.changedTo.coerceIn(dateSelected.first..dateTotal.last)
+                        }
                     }
-
-            val customIndex = filterDateSelections.indexOfFirst { it is DateSelection.Custom }
-            copy(
-                filterDateSelectionIndex = customIndex,
-                filterDateSelections = filterDateSelections
-                    .toMutableList()
-                    .apply { set(customIndex, replacementCustom) }
-            ).push()
-        }
+                )
+            }
+        _filterDateSelectionIndex.value = customIndex
+        _filterDateSelections[customIndex] = updatedDateSelection
     }
 
+    // DONE
     private fun onFilterDistanceChanged(event: FilterChanged.FilterDistanceChanged) {
-        copyLastState {
-            copy(
-                filterDistanceSelectedStart = event.changedTo.start,
-                filterDistanceSelectedEnd = event.changedTo.endInclusive,
-                filterDistancePendingChangeStart = null,
-                filterDistancePendingChangeEnd = null
-            )
-        }.push()
+        _filterDistanceSelectedStart.value = event.changedTo.start
+        _filterDistanceSelectedEnd.value = event.changedTo.endInclusive
+        _filterDistancePendingChangeStart.value = null
+        _filterDistancePendingChangeEnd.value = null
     }
 
+    // DONE
     private fun onFilterDistancePendingChange(event: FilterDistancePendingChange) {
-        pushStateCopy {
-            if (event is FilterDistancePendingChange.FilterDistancePendingChangeShortest) {
-                copy(filterDistancePendingChangeStart = event.changedTo)
-            } else {
-                copy(filterDistancePendingChangeEnd = event.changedTo)
-            }
+        if (event is FilterDistancePendingChange.FilterDistancePendingChangeShortest) {
+            _filterDistancePendingChangeStart.value = event.changedTo
+        } else {
+            _filterDistancePendingChangeEnd.value = event.changedTo
         }
     }
 
+    // DONE
     private fun onFilterDistancePendingChangeConfirmed(event: FilterChanged.FilterDistancePendingChangeConfirmed) {
-        pushStateCopy {
-            val totalValueSmallest = filterDistanceTotalStart ?: 0.0
-            val totalValueLargest = filterDistanceTotalEnd ?: Double.MAX_VALUE
+        val totalValueSmallest = _filterDistanceTotalStart.value ?: 0.0
+        val totalValueLargest = _filterDistanceTotalEnd.value ?: Double.MAX_VALUE
 
-            when (event) {
-                is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed -> {
-                    filterDistancePendingChangeStart?.let {
-                        val coerceAtMost = filterDistanceSelectedEnd ?: totalValueLargest
-
-                        copy(
-                            filterDistanceSelectedStart = parseNumberFromStringUtils.parse(it)
-                                .milesToMeters()
-                                .coerceIn(totalValueSmallest.rangeTo(coerceAtMost)),
-                            filterDistanceSelectedEnd = coerceAtMost,
-                            filterDistancePendingChangeStart = null
-                        )
-                    }
+        when (event) {
+            is FilterChanged.FilterDistancePendingChangeConfirmed.StartConfirmed -> {
+                _filterDistancePendingChangeStart.value?.let { pendingStart ->
+                    val coerceAtMost = _filterDistanceSelectedEnd.value ?: totalValueLargest
+                    _filterDistanceSelectedStart.value = parseNumberFromStringUtils
+                        .parse(pendingStart)
+                        .milesToMeters()
+                        .coerceIn(totalValueSmallest.rangeTo(coerceAtMost))
+                    _filterDistanceSelectedEnd.value = coerceAtMost
+                    _filterDistancePendingChangeStart.value = null
                 }
-                is FilterChanged.FilterDistancePendingChangeConfirmed.EndConfirmed -> {
-                    filterDistancePendingChangeEnd?.let {
-                        val coerceAtLeast = filterDistanceSelectedStart ?: totalValueSmallest
-
-                        copy(
-                            filterDistanceSelectedStart = coerceAtLeast,
-                            filterDistanceSelectedEnd = parseNumberFromStringUtils.parse(it)
-                                .milesToMeters()
-                                .coerceIn(coerceAtLeast.rangeTo(totalValueLargest)),
-                            filterDistancePendingChangeEnd = null
-                        )
-                    }
+            }
+            is FilterChanged.FilterDistancePendingChangeConfirmed.EndConfirmed -> {
+                _filterDistancePendingChangeEnd.value?.let { pendingEnd ->
+                    val coerceAtLeast = _filterDistanceSelectedStart.value ?: totalValueSmallest
+                    _filterDistanceSelectedStart.value = parseNumberFromStringUtils
+                        .parse(pendingEnd)
+                        .milesToMeters()
+                        .coerceIn(coerceAtLeast.rangeTo(totalValueLargest))
+                    _filterDistanceSelectedEnd.value = coerceAtLeast
+                    _filterDistancePendingChangeEnd.value = null
                 }
             }
         }
     }
 
+    // DONE
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
-        copyLastState {
-            copy(filterTypes = filterTypes
-                ?.toMutableMap()
-                ?.apply { set(event.type, !get(event.type)!!) }
-            )
-        }.push()
+        _filterTypes[event.type] = _filterTypes[event.type]!!.not()
     }
 
+    //  DONE
     private fun onNavigateUpClicked() {
-        copyLastState { copy(dialogActive = EditArtDialog.NavigateUp) }.push()
+        _dialogActive.value = EditArtDialog.NavigateUp
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -443,328 +568,281 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSaveClicked() {
         viewModelScope.launch {
-            (lastPushedState as? Standby)?.run {
-                val targetSize = sizeResolutionList[sizeResolutionListSelectedIndex]
-                val filterRange = activitiesDateRangeUnixMs
-                routeTo(
-                    NavigateSaveArt(
-                        activityTypes = filteredTypes,
-                        athleteId = athleteId,
-                        backgroundColorsArgb = styleBackgroundList
-                            .take(styleBackgroundGradientColorCount)
-                            .map { it.toColorArgb() }, // TODO
-                        backgroundAngleType = styleBackgroundAngleType,
-                        backgroundType = styleBackgroundType,
-                        colorActivitiesArgb = styleActivities.toColorArgb(),
-                        colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
-                        filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
-                        filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
-                        filterDistanceLessThanMeters = filterDistanceSelectedEnd
-                            ?.roundToInt()
-                            ?: Int.MAX_VALUE,
-                        filterDistanceMoreThanMeters = filterDistanceSelectedStart
-                            ?.roundToInt()
-                            ?: Int.MIN_VALUE,
-                        sizeHeightPx = targetSize.heightPx,
-                        sizeWidthPx = targetSize.widthPx,
-                        sortType = sortTypeSelected,
-                        sortDirectionType = sortDirectionTypeSelected,
-                        strokeWidthType = styleStrokeWidthType,
-                        textLeft = LEFT.text,
-                        textCenter = CENTER.text,
-                        textRight = RIGHT.text,
-                        textFontAssetPath = typeFontSelected.getAssetPath(
-                            typeFontWeightSelected,
-                            typeFontItalicized
-                        ),
-                        textFontSize = typeFontSizeSelected
-                    )
+            val targetSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value]
+            val filterRange = activitiesDateRangeUnixMs
+            routeTo(
+                MainDestination.NavigateSaveArt(
+                    activityTypes = filteredTypes,
+                    athleteId = athleteId,
+                    backgroundColorsArgb = _styleBackgroundList
+                        .take(_styleBackgroundGradientColorCount.value)
+                        .map { it.toColorArgb() }, // TODO
+                    backgroundAngleType = _styleBackgroundAngleType.value,
+                    backgroundType = _styleBackgroundType.value,
+                    colorActivitiesArgb = _styleActivities.value.toColorArgb(),
+                    colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
+                    filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
+                    filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
+                    filterDistanceLessThanMeters = _filterDistanceSelectedEnd.value
+                        ?.roundToInt()
+                        ?: Int.MAX_VALUE,
+                    filterDistanceMoreThanMeters = _filterDistanceSelectedStart.value
+                        ?.roundToInt()
+                        ?: Int.MIN_VALUE,
+                    sizeHeightPx = targetSize.heightPx,
+                    sizeWidthPx = targetSize.widthPx,
+                    sortType = _sortTypeSelected.value,
+                    sortDirectionType = _sortDirectionTypeSelected.value,
+                    strokeWidthType = _styleStrokeWidthType.value,
+                    textLeft = EditArtTypeSection.LEFT.text,
+                    textCenter = EditArtTypeSection.CENTER.text,
+                    textRight = EditArtTypeSection.RIGHT.text,
+                    textFontAssetPath = _typeFontSelected.value.getAssetPath(
+                        fontWeightType = _typeFontWeightSelected.value,
+                        italicized = _typeFontItalicized.value
+                    ),
+                    textFontSize = _typeFontSizeSelected.value
                 )
-            }
+            )
         }
     }
 
+    // DONE
     private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
-        pushStateCopy {
-            when (event.style) {
-                is StyleIdentifier.Activities -> copy(
-                    styleActivities = styleActivities.copyPendingChange(
-                        colorType = event.colorType,
-                        changedTo = event.changedTo
-                    )
+        when (event.style) {
+            is StyleIdentifier.Activities -> {
+                val color = _styleActivities.value
+                _styleActivities.value = color.copyPendingChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
                 )
-                is StyleIdentifier.Background -> {
-                    val color = styleBackgroundList[event.style.index]
-                    val newBackgroundList = styleBackgroundList.toMutableList()
-                    newBackgroundList[event.style.index] = color.copyPendingChange(
-                        colorType = event.colorType,
-                        changedTo = event.changedTo
-                    )
-                    copy(styleBackgroundList = newBackgroundList)
-                }
-                is StyleIdentifier.Font -> copy(
-                    styleFont = (styleFont ?: styleActivities).copyPendingChange(
-                        colorType = event.colorType,
-                        changedTo = event.changedTo
-                    )
+            }
+            is StyleIdentifier.Background -> {
+                val color = _styleBackgroundList[event.style.index]
+                _styleBackgroundList[event.style.index] = color.copyPendingChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
+                )
+            }
+            is StyleIdentifier.Font -> {
+                val color = _styleFont.value ?: _styleActivities.value
+                _styleFont.value = color.copyPendingChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
                 )
             }
         }
     }
 
+    // DONE
     private fun onSizeChanged(event: SizeChanged) {
-        copyLastState {
-            copy(sizeResolutionListSelectedIndex = event.changedIndex)
-        }.push()
+        _sizeResolutionListSelectedIndex.value = event.changedIndex
     }
 
+    // DONE
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
-        pushStateCopy {
-            val customRes = sizeResolutionList[event.customIndex] as Resolution.CustomResolution
-            val newSizeResolutionList = sizeResolutionList.toMutableList()
-            newSizeResolutionList[event.customIndex] = if (event.heightChanged) {
-                customRes.copy(heightPx = event.changedToPx, pendingHeight = null)
-            } else {
-                customRes.copy(widthPx = event.changedToPx, pendingWidth = null)
-            }
-
-            copy(
-                sizeResolutionListSelectedIndex = event.customIndex,
-                sizeResolutionList = newSizeResolutionList
-            )
+        val customRes = _sizeResolutionList[event.customIndex] as Resolution.CustomResolution
+        _sizeResolutionList[event.customIndex] = if (event.heightChanged) {
+            customRes.copy(heightPx = event.changedToPx, pendingHeight = null)
+        } else {
+            customRes.copy(widthPx = event.changedToPx, pendingWidth = null)
         }
+        _sizeResolutionListSelectedIndex.value = event.customIndex
     }
 
+    // DONE
     private fun onSizeCustomPendingChangeConfirmed(event: SizeCustomPendingChangeConfirmed) {
-        pushStateCopy {
-            val customRes = sizeResolutionList[event.customIndex] as Resolution.CustomResolution
-            val range = customRes.sizeRangePx
-            val newSizeResolutionList = sizeResolutionList.toMutableList()
-            newSizeResolutionList[event.customIndex] = customRes.run {
-                copy(
-                    widthPx = pendingWidth?.let {
-                        parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
-                    } ?: widthPx,
-                    heightPx = pendingHeight?.let {
-                        parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
-                    } ?: heightPx,
-                    pendingWidth = null,
-                    pendingHeight = null
-                )
-            }
-
+        val customRes = _sizeResolutionList[event.customIndex] as Resolution.CustomResolution
+        val range = customRes.sizeRangePx
+        _sizeResolutionList[event.customIndex] = customRes.run {
             copy(
-                sizeResolutionListSelectedIndex = event.customIndex,
-                sizeResolutionList = newSizeResolutionList
+                widthPx = pendingWidth?.let {
+                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                } ?: widthPx,
+                heightPx = pendingHeight?.let {
+                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
+                } ?: heightPx,
+                pendingWidth = null,
+                pendingHeight = null
             )
         }
+        _sizeResolutionListSelectedIndex.value = event.customIndex
     }
 
+    // DONE
     private fun onSizeCustomPendingChanged(event: SizeCustomPendingChanged) {
-        pushStateCopy {
-            copy(
-                sizeResolutionList = sizeResolutionList
-                    .toMutableList()
-                    .apply {
-                        val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
-                        set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
-                            copy(
-                                pendingWidth = if (event is SizeCustomPendingChanged.WidthChanged) event.changedTo else pendingWidth,
-                                pendingHeight = if (event is SizeCustomPendingChanged.HeightChanged) event.changedTo else pendingHeight
-                            )
-                        })
-                    }
-            )
-        }
-    }
-
-    private fun onSizeRotated(event: SizeRotated) {
-        copyLastState {
-            copy(
-                sizeResolutionList = sizeResolutionList
-                    .toMutableList()
-                    .apply {
-                        val prevRes = get(event.rotatedIndex)
-                        val adjRes = (prevRes as? Resolution.RotatingResolution
-                            ?: error("Rotated a non-rotating resolution."))
-                            .copyWithRotation()
-                        set(event.rotatedIndex, adjRes)
-                    }
-            )
-        }.push()
-    }
-
-    private fun onSortDirectionChanged(event: SortDirectionChanged) {
-        copyLastState { copy(sortDirectionTypeSelected = event.changedTo) }.push()
-    }
-
-    private fun onSortTypeChanged(event: SortTypeChanged) {
-        copyLastState { copy(sortTypeSelected = event.changedTo) }.push()
-    }
-
-    private fun onStyleBackgroundColorAdded() {
-        withLastState {
-            if (styleBackgroundGradientColorCount >= EditArtViewState.MAX_GRADIENT_BG_COLORS) {
-                return
-            }
-            copy(styleBackgroundGradientColorCount = styleBackgroundGradientColorCount + 1).push()
-        }
-    }
-
-    private fun onStyleBackgroundColorRemoveConfirmed() {
-        withLastState {
-            if (styleBackgroundGradientColorCount <= EditArtViewState.MIN_GRADIENT_BG_COLORS) {
-                return
-            }
-            val removedIndex = (dialogActive as? EditArtDialog.ConfirmDeleteGradientColor)
-                ?.toDeleteIndex
-                ?: return
-
-            val newBackgroundList = styleBackgroundList.toMutableList()
-            for (i in removedIndex until newBackgroundList.lastIndex) {
-                val newColor = newBackgroundList[i + 1]
-                val replacingAt = newBackgroundList[i]
-                newBackgroundList[i] = replacingAt.apply {
-                    red = newColor.red
-                    green = newColor.green
-                    blue = newColor.blue
-                }
-            }
-            copy(
-                dialogActive = EditArtDialog.None,
-                styleBackgroundGradientColorCount = styleBackgroundGradientColorCount - 1,
-                styleBackgroundList = newBackgroundList
-            ).push()
-        }
-    }
-
-    private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
-        pushStateCopy {
-            if (styleBackgroundType == event.changedTo) {
-                return@pushStateCopy null
-            }
-            copy(styleBackgroundType = event.changedTo)
-        }
-    }
-
-    private fun onStyleColorChanged(event: StyleColorChanged) {
-        pushStateCopy {
-            when (event.style) {
-                is StyleIdentifier.Activities -> copy(
-                    styleActivities = styleActivities.copyWithChange(
-                        colorType = event.colorType,
-                        changedTo = event.changedTo
-                    )
-                )
-                is StyleIdentifier.Background -> {
-                    val color = styleBackgroundList[event.style.index]
-                    val newBackgroundList = styleBackgroundList.toMutableList()
-                    newBackgroundList[event.style.index] = color.copyWithChange(
-                        colorType = event.colorType,
-                        changedTo = event.changedTo
-                    )
-                    copy(styleBackgroundList = newBackgroundList)
-                }
-                is StyleIdentifier.Font -> copy(
-                    styleFont = (styleFont ?: styleActivities).copyWithChange(
-                        colorType = event.colorType,
-                        changedTo = event.changedTo
-                    )
-                )
-            }
-        }
-    }
-
-    private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
-        pushStateCopy {
-            when (event.style) {
-                is StyleIdentifier.Activities -> copy(styleActivities = styleActivities.confirmPendingChanges())
-                is StyleIdentifier.Background -> {
-                    val color = styleBackgroundList[event.style.index]
-                    val newBackgroundList = styleBackgroundList.toMutableList()
-                    newBackgroundList[event.style.index] = color.confirmPendingChanges()
-                    copy(styleBackgroundList = newBackgroundList)
-                }
-                is StyleIdentifier.Font -> copy(styleFont = styleFont?.confirmPendingChanges())
-            }
-        }
-    }
-
-    private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
-        copyLastState {
-            copy(styleFont = if (event.useCustom) styleFont ?: styleActivities else null)
-        }
-    }
-
-    private fun onStyleGradientAngleTypeChanged(event: StyleGradientAngleTypeChanged) {
-        pushStateCopy { copy(styleBackgroundAngleType = event.changedTo) }
-    }
-
-    private fun onStyleStrokeWidthChanged(event: StyleStrokeWidthChanged) {
-        (lastPushedState as? Standby)?.run {
-            copy(styleStrokeWidthType = event.changedTo)
-        }?.push()
-    }
-
-    private fun onTypeCustomTextChanged(event: TypeCustomTextChanged) {
-        val newText: String? =
-            event.changedTo.takeIf {
-                (state?.typeMaximumCustomTextLength?.compareTo(it.length) ?: -1) >= 0
-            }
-        copyLastState {
-            when (event.section) {
-                LEFT -> copy(
-                    typeLeftCustomText = newText ?: typeLeftCustomText,
-                    typeLeftSelected = CUSTOM
-                )
-                CENTER -> copy(
-                    typeCenterCustomText = newText ?: typeCenterCustomText,
-                    typeCenterSelected = CUSTOM
-                )
-                RIGHT -> copy(
-                    typeRightCustomText = newText ?: typeRightCustomText,
-                    typeRightSelected = CUSTOM
-                )
-            }
-        }.push()
-    }
-
-    private fun onTypeFontChanged(event: TypeFontChanged) {
-        copyLastState {
-            event.changedTo.run {
+        _sizeResolutionList.apply {
+            val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
+            set(tarIndex, (get(tarIndex) as Resolution.CustomResolution).run {
                 copy(
-                    typeFontItalicized = typeFontItalicized && isItalic,
-                    typeFontSelected = this,
-                    typeFontWeightSelected = if (fontWeightTypes.contains(typeFontWeightSelected)) {
-                        typeFontWeightSelected
-                    } else {
-                        FontWeightType.REGULAR
-                    },
+                    pendingWidth = if (event is SizeCustomPendingChanged.WidthChanged) event.changedTo else pendingWidth,
+                    pendingHeight = if (event is SizeCustomPendingChanged.HeightChanged) event.changedTo else pendingHeight
+                )
+            })
+        }
+    }
+
+    // DONE
+    private fun onSizeRotated(event: SizeRotated) {
+        val prevRes = _sizeResolutionList[event.rotatedIndex]
+        val adjRes = (prevRes as? Resolution.RotatingResolution
+            ?: error("Rotated a non-rotating resolution."))
+            .copyWithRotation()
+        _sizeResolutionList[event.rotatedIndex] = adjRes
+    }
+
+    // DONE
+    private fun onSortDirectionChanged(event: SortDirectionChanged) {
+        _sortDirectionTypeSelected.value = event.changedTo
+    }
+
+    // DONE
+    private fun onSortTypeChanged(event: SortTypeChanged) {
+        _sortTypeSelected.value = event.changedTo
+    }
+
+    // DONE
+    private fun onStyleBackgroundColorAdded() {
+        val prevCount = _styleBackgroundGradientColorCount.value
+        if (prevCount >= 7) return // todo
+        _styleBackgroundGradientColorCount.value = prevCount.inc()
+    }
+
+    // DONE
+    private fun onStyleBackgroundColorRemoveConfirmed() {
+        val prevCount = _styleBackgroundGradientColorCount.value
+        if (prevCount <= 2) return // todo
+        val removedIndex = (_dialogActive.value as? EditArtDialog.ConfirmDeleteGradientColor)
+            ?.toDeleteIndex
+            ?: return
+        for (i in removedIndex until _styleBackgroundList.lastIndex) {
+            val newColor = _styleBackgroundList[i + 1]
+            _styleBackgroundList[i] = _styleBackgroundList[i].apply {
+                red = newColor.red
+                green = newColor.green
+                blue = newColor.blue
+            }
+        }
+        _dialogActive.value = EditArtDialog.None
+        _styleBackgroundGradientColorCount.value = prevCount.dec()
+    }
+
+    // DONE
+    private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
+        _styleBackgroundType.value = event.changedTo
+    }
+
+    // DONE
+    private fun onStyleColorChanged(event: StyleColorChanged) {
+        when (event.style) {
+            is StyleIdentifier.Activities -> _styleActivities.value =
+                _styleActivities.value.copyWithChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
+                )
+            is StyleIdentifier.Background -> {
+                val color = _styleBackgroundList[event.style.index]
+                _styleBackgroundList[event.style.index] = color.copyWithChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
                 )
             }
-        }.push()
+            is StyleIdentifier.Font -> _styleFont.value =
+                (_styleFont.value ?: _styleActivities.value).copyWithChange(
+                    colorType = event.colorType,
+                    changedTo = event.changedTo
+                )
+        }
     }
 
-    private fun onTypeFontSizeChanged(event: TypeFontSizeChanged) {
-        copyLastState { copy(typeFontSizeSelected = event.changedTo) }.push()
-    }
-
-    private fun onTypeSelectionChanged(event: TypeSelectionChanged) {
-        copyLastState {
-            when (event.section) {
-                LEFT -> copy(typeLeftSelected = event.typeSelected)
-                CENTER -> copy(typeCenterSelected = event.typeSelected)
-                RIGHT -> copy(typeRightSelected = event.typeSelected)
+    // DONE
+    private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
+        when (event.style) {
+            is StyleIdentifier.Activities -> _styleActivities.value =
+                _styleActivities.value.confirmPendingChanges()
+            is StyleIdentifier.Background -> {
+                val color = _styleBackgroundList[event.style.index]
+                _styleBackgroundList[event.style.index] = color.confirmPendingChanges()
             }
-        }.push()
+            is StyleIdentifier.Font -> _styleFont.value = _styleFont.value?.confirmPendingChanges()
+        }
     }
 
+    // DONE
+    private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
+        _styleFont.value = if (event.useCustom) {
+            _styleFont.value ?: _styleActivities.value
+        } else {
+            null
+        }
+    }
+
+    // DONE
+    private fun onStyleGradientAngleTypeChanged(event: StyleGradientAngleTypeChanged) {
+        _styleBackgroundAngleType.value = event.changedTo
+    }
+
+    // DONE
+    private fun onStyleStrokeWidthChanged(event: StyleStrokeWidthChanged) {
+        _styleStrokeWidthType.value = event.changedTo
+    }
+
+    // DONE
+    private fun onTypeCustomTextChanged(event: TypeCustomTextChanged) {
+        val newText = event.changedTo.takeIf { it.length <= _typeMaximumCustomTextLength }
+        when (event.section) {
+            EditArtTypeSection.LEFT -> {
+                _typeLeftCustomText.value = newText ?: _typeLeftCustomText.value
+                _typeLeftSelected.value = EditArtTypeType.CUSTOM
+            }
+            EditArtTypeSection.CENTER -> {
+                _typeCenterCustomText.value = newText ?: _typeCenterCustomText.value
+                _typeCenterSelected.value = EditArtTypeType.CUSTOM
+
+            }
+            EditArtTypeSection.RIGHT -> {
+                _typeRightCustomText.value = newText ?: _typeRightCustomText.value
+                _typeRightSelected.value = EditArtTypeType.CUSTOM
+            }
+        }
+    }
+
+    // DONE
+    private fun onTypeFontChanged(event: TypeFontChanged) {
+        event.changedTo.run {
+            _typeFontItalicized.value = _typeFontItalicized.value && isItalic
+            _typeFontSelected.value = this
+            _typeFontWeightSelected.value =
+                if (fontWeightTypes.contains(_typeFontWeightSelected.value)) {
+                    _typeFontWeightSelected.value
+                } else {
+                    FontWeightType.REGULAR
+                }
+        }
+    }
+
+    // DONE
+    private fun onTypeFontSizeChanged(event: TypeFontSizeChanged) {
+        _typeFontSizeSelected.value = event.changedTo
+    }
+
+    // DONE
+    private fun onTypeSelectionChanged(event: TypeSelectionChanged) {
+        when (event.section) {
+            EditArtTypeSection.LEFT -> _typeLeftSelected.value = event.typeSelected
+            EditArtTypeSection.CENTER -> _typeCenterSelected.value = event.typeSelected
+            EditArtTypeSection.RIGHT -> _typeRightSelected.value = event.typeSelected
+        }
+    }
+
+    // DONE
     private fun onTypeFontWeightChanged(event: TypeFontWeightChanged) {
-        copyLastState { copy(typeFontWeightSelected = event.changedTo) }.push()
+        _typeFontWeightSelected.value = event.changedTo
     }
 
+    // DONE
     private fun onTypeFontItalicChanged(event: TypeFontItalicChanged) {
-        copyLastState { copy(typeFontItalicized = event.changedTo) }.push()
+        _typeFontItalicized.value = event.changedTo
     }
 
     private fun ColorWrapper.copyWithChange(
@@ -815,78 +893,318 @@ class EditArtViewModel @Inject constructor(
     private fun updateBitmap() {
         imageProcessingDispatcher.cancelChildren()
         viewModelScope.launch(imageProcessingDispatcher) {
-            copyLastState {
-                val bitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFiltered,
-                    backgroundAngleType = styleBackgroundAngleType,
-                    backgroundType = styleBackgroundType,
-                    backgroundColorsArgb = styleBackgroundList
-                        .take(styleBackgroundGradientColorCount)
-                        .map { it.toColorArgb() }, // TODO
-                    colorActivitiesArgb = styleActivities.toColorArgb(),
-                    colorFontArgb = (styleFont ?: styleActivities).toColorArgb(),
-                    strokeWidth = styleStrokeWidthType,
-                    bitmapSize = imageSizeUtils.sizeToMaximumSize(
-                        actualSize = sizeResolutionList[sizeResolutionListSelectedIndex].run {
-                            Size(widthPx, heightPx)
-                        },
-                        maximumSize = Size(
-                            PREVIEW_BITMAP_MAX_SIZE_WIDTH_PX,
-                            PREVIEW_BITMAP_MAX_SIZE_HEIGHT_PX
-                        )
-                    ),
-                    fontAssetPath = typeFontSelected.getAssetPath(
-                        fontWeightType = typeFontWeightSelected,
-                        italicized = typeFontItalicized
-                    ),
-                    fontSize = typeFontSizeSelected,
-                    isPreview = true,
-                    sortType = sortTypeSelected,
-                    sortDirectionType = sortDirectionTypeSelected,
-                    textLeft = LEFT.text,
-                    textCenter = CENTER.text,
-                    textRight = RIGHT.text
-                )
-                copyLastState { copy(bitmap = bitmap) }
-            }.push()
+            _bitmap.value = visualizationUtils.createBitmap(
+                activities = activitiesFiltered,
+                backgroundAngleType = _styleBackgroundAngleType.value,
+                backgroundType = _styleBackgroundType.value,
+                backgroundColorsArgb = _styleBackgroundList
+                    .take(_styleBackgroundGradientColorCount.value)
+                    .map { it.toColorArgb() }, // TODO
+                colorActivitiesArgb = _styleActivities.value.toColorArgb(),
+                colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
+                strokeWidth = _styleStrokeWidthType.value,
+                bitmapSize = imageSizeUtils.sizeToMaximumSize(
+                    actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
+                        Size(widthPx, heightPx)
+                    },
+                    maximumSize = Size( // todo this needs to be screen measured
+                        2000,
+                        2000
+                    )
+                ),
+                fontAssetPath = _typeFontSelected.value.getAssetPath(
+                    fontWeightType = _typeFontWeightSelected.value,
+                    italicized = _typeFontItalicized.value
+                ),
+                fontSize = _typeFontSizeSelected.value,
+                isPreview = true,
+                sortType = _sortTypeSelected.value,
+                sortDirectionType = _sortDirectionTypeSelected.value,
+                textLeft = EditArtTypeSection.LEFT.text,
+                textCenter = EditArtTypeSection.CENTER.text,
+                textRight = EditArtTypeSection.RIGHT.text
+            )
         }
-    }
-
-    private inline fun copyLastState(block: Standby.() -> Standby): Standby {
-        return (lastPushedState as? Standby)?.run(block) ?: error("Last state was not standby")
-    }
-
-    private inline fun pushStateCopy(block: Standby.() -> Standby?) {
-        (lastPushedState as? Standby)
-            ?.run(block)
-            ?.push()
-    }
-
-    private inline fun withLastState(block: Standby.() -> Unit) {
-        (lastPushedState as? Standby)?.run(block)
     }
 
     private val EditArtTypeSection.text: String?
         get() {
-            return state?.run {
-                val typeCustomText: Pair<EditArtTypeType, String> = when (this@text) {
-                    CENTER -> Pair(typeCenterSelected, typeCenterCustomText)
-                    LEFT -> Pair(typeLeftSelected, typeLeftCustomText)
-                    RIGHT -> Pair(typeRightSelected, typeRightCustomText)
-                }
+            val typeCustomText: Pair<EditArtTypeType, String> = when (this@text) {
+                EditArtTypeSection.CENTER -> _typeCenterSelected.value to _typeCenterCustomText.value
+                EditArtTypeSection.LEFT -> _typeLeftSelected.value to _typeLeftCustomText.value
+                EditArtTypeSection.RIGHT -> _typeRightSelected.value to _typeRightCustomText.value
+            }
 
-                when (typeCustomText.first) {
-                    NONE -> null
-                    DISTANCE_MILES -> activitiesSummedDistance.meterToMilesStr()
-                    DISTANCE_KILOMETERS -> activitiesSummedDistance.meterToKilometerStr()
-                    CUSTOM -> typeCustomText.second.takeIf { it.isNotBlank() }
-                }
+            return when (typeCustomText.first) {
+                EditArtTypeType.NONE -> null
+                EditArtTypeType.DISTANCE_MILES -> activitiesSummedDistance.meterToMilesStr()
+                EditArtTypeType.DISTANCE_KILOMETERS -> activitiesSummedDistance.meterToKilometerStr()
+                EditArtTypeType.CUSTOM -> typeCustomText.second.takeIf { it.isNotBlank() }
             }
         }
+
 
     private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
     private fun Double.milesToMeters(): Double = this / 0.000621371192
 
-    private val state: Standby? get() = lastPushedState as? Standby
+    private val filteredTypes: List<SportType>
+        get() = _filterTypes.entries.filter { it.value }.map { it.key }
+    private val filteredDistanceRangeMeters: IntRange
+        get() = (_filterDistanceSelectedStart.value
+            ?.roundToInt()
+            ?: Int.MIN_VALUE)
+            .rangeTo(
+                _filterDistanceSelectedEnd.value
+                    ?.roundToInt()
+                    ?: Int.MAX_VALUE
+            )
+
+    private fun stateRestore() {
+        println("Here in state restore")
+        ssh.get<Int>(SSH_FILTER_ACTIVITIES_COUNT_DATE)?.let {
+            _filterActivitiesCountDate.value = it
+        }
+        ssh.get<Int>(SSH_FILTER_ACTIVITIES_COUNT_DISTANCE)?.let {
+            _filterActivitiesCountDistance.value = it
+        }
+        ssh.get<Int>(SSH_FILTER_ACTIVITIES_COUNT_TYPE)?.let {
+            _filterActivitiesCountType.value = it
+        }
+        ssh.get<List<DateSelection>>(SSH_FILTER_DATE_SELECTIONS)?.let {
+            _filterDateSelections.clear()
+            _filterDateSelections.addAll(it)
+        }
+        ssh.get<Int>(SSH_FILTER_DATE_SELECTION_INDEX)?.let {
+            _filterDateSelectionIndex.value = it
+        }
+        ssh.get<Double?>(SSH_FILTER_DISTANCE_SELECTED_START)?.let {
+            _filterDistanceSelectedStart.value = it
+        }
+        ssh.get<Double?>(SSH_FILTER_DISTANCE_SELECTED_END)?.let {
+            _filterDistanceSelectedEnd.value = it
+        }
+        ssh.get<Double?>(SSH_FILTER_DISTANCE_TOTAL_START)?.let {
+            _filterDistanceTotalStart.value = it
+        }
+        ssh.get<Double?>(SSH_FILTER_DISTANCE_TOTAL_END)?.let {
+            _filterDistanceTotalEnd.value = it
+        }
+        ssh.get<Map<SportType, Boolean>>(SSH_FILTER_TYPES)?.let {
+            _filterTypes.clear()
+            _filterTypes.putAll(it)
+        }
+        ssh.get<List<Resolution>>(SSH_SIZE_RESOLUTION_LIST)?.let {
+            _sizeResolutionList.clear()
+            _sizeResolutionList.addAll(it)
+        }
+        ssh.get<Int>(SSH_SIZE_RESOLUTION_LIST_SELECTED_INDEX)?.let {
+            _sizeResolutionListSelectedIndex.value = it
+        }
+        ssh.get<EditArtSortType>(SSH_SORT_TYPE_SELECTED)?.let {
+            _sortTypeSelected.value = it
+        }
+        ssh.get<EditArtSortDirectionType>(SSH_SORT_DIRECTION_TYPE_SELECTED)?.let {
+            _sortDirectionTypeSelected.value = it
+        }
+        println("value for style activities is ${ssh.get<ColorWrapper>(SSH_STYLE_ACTIVITIES)}")
+        ssh.get<ColorWrapper>(SSH_STYLE_ACTIVITIES)?.let {
+            println("here, getting style activities")
+            _styleActivities.value = it
+        }
+        ssh.get<List<ColorWrapper>>(SSH_STYLE_BACKGROUND_LIST)?.let {
+            _styleBackgroundList.clear()
+            _styleBackgroundList.addAll(it)
+        }
+        ssh.get<AngleType>(SSH_STYLE_BACKGROUND_ANGLE_TYPE)?.let {
+            _styleBackgroundAngleType.value = it
+        }
+        ssh.get<Int>(SSH_STYLE_BACKGROUND_GRADIENT_COLOR_COUNT)?.let {
+            _styleBackgroundGradientColorCount.value = it
+        }
+        ssh.get<BackgroundType>(SSH_STYLE_BACKGROUND_TYPE)?.let {
+            _styleBackgroundType.value = it
+        }
+        ssh.get<ColorWrapper>(SSH_STYLE_FONT)?.let {
+            _styleFont.value = it
+        }
+        ssh.get<StrokeWidthType>(SSH_STYLE_STROKE_WIDTH_TYPE)?.let {
+            _styleStrokeWidthType.value = it
+        }
+        ssh.get<Int>(SSH_TYPE_ACTIVITIES_DISTANCE_METERS_SUMMED)?.let {
+            _typeActivitiesDistanceMetersSummed.value = it
+        } // todo, maybe not needed
+        ssh.get<FontType>(SSH_TYPE_FONT_SELECTED)?.let {
+            _typeFontSelected.value = it
+        }
+        ssh.get<FontType>(SSH_TYPE_FONT_SELECTED)?.let {
+            _typeFontSelected.value = it
+        }
+        ssh.get<FontWeightType>(SSH_TYPE_FONT_WEIGHT_SELECTED)?.let {
+            _typeFontWeightSelected.value = it
+        }
+        ssh.get<Boolean>(SSH_TYPE_FONT_ITALICIZED)?.let {
+            _typeFontItalicized.value = it
+        }
+        ssh.get<FontSizeType>(SSH_TYPE_FONT_SIZE_SELECTED)?.let {
+            _typeFontSizeSelected.value = it
+        }
+        ssh.get<EditArtTypeType>(SSH_TYPE_LEFT_SELECTED)?.let {
+            _typeLeftSelected.value = it
+        }
+        ssh.get<String>(SSH_TYPE_LEFT_CUSTOM_TEXT)?.let {
+            _typeLeftCustomText.value = it
+        }
+        ssh.get<EditArtTypeType>(SSH_TYPE_CENTER_SELECTED)?.let {
+            _typeCenterSelected.value = it
+        }
+        ssh.get<String>(SSH_TYPE_CENTER_CUSTOM_TEXT)?.let {
+            _typeCenterCustomText.value = it
+        }
+        ssh.get<EditArtTypeType>(SSH_TYPE_RIGHT_SELECTED)?.let {
+            _typeRightSelected.value = it
+        }
+        ssh.get<String>(SSH_TYPE_RIGHT_CUSTOM_TEXT)?.let {
+            _typeRightCustomText.value = it
+        }
+    }
+
+    private suspend fun stateObserveAndSave() {
+        viewModelScope.launch {
+            snapshotFlow { _styleBackgroundList.toList() }.collect {
+                ssh[SSH_STYLE_BACKGROUND_LIST] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterDateSelections.toList() }.collect {
+                ssh[SSH_FILTER_DATE_SELECTIONS] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterTypes.toMap() }.collect {
+                ssh[SSH_FILTER_TYPES] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _sizeResolutionList.toList() }.collect {
+                ssh[SSH_SIZE_RESOLUTION_LIST] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterActivitiesCountDate.value }.collect {
+                ssh[SSH_FILTER_ACTIVITIES_COUNT_DATE] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterActivitiesCountDistance.value }.collect {
+                ssh[SSH_FILTER_ACTIVITIES_COUNT_DISTANCE] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterActivitiesCountType.value }.collect {
+                ssh[SSH_FILTER_ACTIVITIES_COUNT_TYPE] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterDateSelectionIndex.value }.collect {
+                ssh[SSH_FILTER_DATE_SELECTION_INDEX] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterDistanceSelectedStart.value }.collect {
+                println("here, collect")
+                ssh[SSH_FILTER_DISTANCE_SELECTED_START] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterDistanceSelectedEnd.value }.collect {
+                println("selected starte changed...")
+                ssh[SSH_FILTER_DISTANCE_SELECTED_END] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterDistanceTotalStart.value }.collect {
+                ssh[SSH_FILTER_DISTANCE_TOTAL_START] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _filterDistanceTotalEnd.value }.collect {
+                ssh[SSH_FILTER_DISTANCE_TOTAL_END] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _sizeResolutionListSelectedIndex.value }.collect {
+                ssh[SSH_SIZE_RESOLUTION_LIST_SELECTED_INDEX] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _sortTypeSelected.value }.collect { ssh[SSH_SORT_TYPE_SELECTED] = it }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _sortDirectionTypeSelected.value }.collect {
+                ssh[SSH_SORT_DIRECTION_TYPE_SELECTED] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _styleActivities.value }.collect {
+                ssh[SSH_STYLE_ACTIVITIES] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _styleBackgroundAngleType.value }.collect {
+                ssh[SSH_STYLE_BACKGROUND_ANGLE_TYPE] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _styleBackgroundGradientColorCount.value }.collect {
+                ssh[SSH_STYLE_BACKGROUND_GRADIENT_COLOR_COUNT] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _styleBackgroundType.value }.collect {
+                ssh[SSH_STYLE_BACKGROUND_TYPE] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _styleFont.value }.collect { ssh[SSH_STYLE_FONT] = it }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _styleStrokeWidthType.value }.collect {
+                ssh[SSH_STYLE_STROKE_WIDTH_TYPE] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeActivitiesDistanceMetersSummed.value }.collect {
+                ssh[SSH_TYPE_ACTIVITIES_DISTANCE_METERS_SUMMED] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeFontSelected.value }.collect { ssh[SSH_TYPE_FONT_SELECTED] = it }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeFontWeightSelected.value }.collect {
+                ssh[SSH_TYPE_FONT_WEIGHT_SELECTED] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeFontItalicized.value }.collect {
+                ssh[SSH_TYPE_FONT_ITALICIZED] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeFontSizeSelected.value }.collect {
+                ssh[SSH_TYPE_FONT_SIZE_SELECTED] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeLeftSelected.value }.collect {
+                ssh[SSH_TYPE_LEFT_SELECTED] = it
+            }
+        }
+        viewModelScope.launch {
+            snapshotFlow { _typeLeftCustomText.value }.collect {
+                ssh[SSH_TYPE_LEFT_CUSTOM_TEXT] = it
+            }
+        }
+    }
 }
