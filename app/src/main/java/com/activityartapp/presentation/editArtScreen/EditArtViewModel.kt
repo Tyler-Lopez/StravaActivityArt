@@ -212,17 +212,23 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
+    /** region Unsaved States unobserved in View */
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    /** endregion **/
 
-    /** Subscribed in EditArtViewDelegate **/
-    /** ALL **/
+    /** region Saved States unobserved in View */
+
+    /** endregion **/
+
+    /** region Saved States observed in View */
+    // GLOBAL
     private val _dialogActive = mutableStateOf<EditArtDialog>(EditArtDialog.None) // not save
 
-    /** PREVIEW **/
+    // PREVIEW
     private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
 
-    /** FILTERS **/
+    // FILTERS
     private val _filterActivitiesCountDate = mutableStateOf(0)
     private val _filterActivitiesCountDistance = mutableStateOf(0)
     private val _filterActivitiesCountType = mutableStateOf(0)
@@ -236,16 +242,16 @@ class EditArtViewModel @Inject constructor(
     private val _filterDistancePendingChangeEnd = mutableStateOf<String?>(null) // not save
     private val _filterTypes: SnapshotStateMap<SportType, Boolean> = mutableStateMapOf()
 
-    /** SIZE **/
+    // SIZE
     private val _sizeResolutionList =
         mutableStateListOf(*ResolutionListFactoryImpl().create().toTypedArray())
     private val _sizeResolutionListSelectedIndex = mutableStateOf(0)
 
-    /** SORT **/
+    // SORT
     private val _sortTypeSelected = mutableStateOf(EditArtSortType.DATE)
     private val _sortDirectionTypeSelected = mutableStateOf(EditArtSortDirectionType.ASCENDING)
 
-    /** STYLE **/
+    // STYLE
     private val _styleActivities = mutableStateOf(ColorWrapper.White)
     private val _styleBackgroundList = (0 until 7).map {
         if (it % 2 == 0) ColorWrapper.Black else ColorWrapper.White
@@ -256,7 +262,7 @@ class EditArtViewModel @Inject constructor(
     private val _styleFont = mutableStateOf<ColorWrapper?>(null)
     private val _styleStrokeWidthType = mutableStateOf(StrokeWidthType.MEDIUM)
 
-    /** TYPE **/
+    // TYPE
     private val _typeActivitiesDistanceMetersSummed = mutableStateOf(0)
     private val _typeFontSelected = mutableStateOf(FontType.JOSEFIN_SANS)
     private val _typeFontWeightSelected = mutableStateOf(FontWeightType.REGULAR)
@@ -270,14 +276,16 @@ class EditArtViewModel @Inject constructor(
     private val _typeRightSelected = mutableStateOf(EditArtTypeType.NONE)
     private val _typeRightCustomText = mutableStateOf("")
 
+    /** endregion **/
+
     init {
         Loading().push()
         viewModelScope.launch(Dispatchers.Default) {
             activities = getActivitiesFromDisk(athleteId)
 
-            /** Push either a previously-saved (if available) or constructed Standby state **/
-            //   val prevState: Standby? = ssh[STANDBY_SAVE_STATE_KEY]
+            /** Restore any previous state **/
             stateRestore()
+            /** Observe any changes to all states and save them into ssh **/
             stateObserveAndSave()
             Standby(
                 bitmap = _bitmap,
@@ -320,31 +328,21 @@ class EditArtViewModel @Inject constructor(
             ).push()
 
             EditArtFilterType.values().forEach {
-            //    activitiesFilteredByFilterType[it]?.let { _ ->
-                    it.updateFilteredActivities()
-          //      } ?: run {
-         //           activitiesFilteredByFilterType[it] = activities
-                    it.pushUpdatedFilteredActivityCountToView()
-                    it.updateFilters()
-         //       }
-                /*
-                if (prevState != null) {
+                val hasRestoredSaveState = when (it) {
+                    DATE -> _filterDateSelections.isNotEmpty()
+                    TYPE -> _filterTypes.isNotEmpty()
+                    DISTANCE -> _filterDistanceTotalStart.value != null
+                }
+
+                if (hasRestoredSaveState) {
                     /** If there was a saved state, now that we've pushed Standby update filtered activities to reflect
                      * the various saved filters. **/
                     it.updateFilteredActivities()
                 } else {
-
-                 */
-
-                /** Otherwise, simply initialize filtered activities for each sportType as all activities and
-                 * initialize filters. **/
-                /*
-                activitiesFilteredByFilterType[it] = activities
-                it.pushUpdatedFilteredActivityCountToView()
-                it.updateFilters()
-
-                 */
-                // }
+                    activitiesFilteredByFilterType[it] = activities
+                    it.pushUpdatedFilteredActivityCountToView()
+                    it.updateFilters()
+                }
             }
 
             /** Finally, update the bitmap of the current Standby state **/
@@ -395,9 +393,7 @@ class EditArtViewModel @Inject constructor(
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         if (event !is FilterChanged) {
-            updateBitmap()
-            // todo
-            //    ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby) // todo
+            // updateBitmap()
         }
     }
 
@@ -429,8 +425,6 @@ class EditArtViewModel @Inject constructor(
                 }
             }
             updateBitmap()
-            // todo
-//            ssh[STANDBY_SAVE_STATE_KEY] = (lastPushedState as? Standby) todo
         }
     }
 
@@ -961,7 +955,6 @@ class EditArtViewModel @Inject constructor(
             )
 
     private fun stateRestore() {
-        println("Here in state restore")
         ssh.get<Int>(SSH_FILTER_ACTIVITIES_COUNT_DATE)?.let {
             _filterActivitiesCountDate.value = it
         }
@@ -1007,9 +1000,7 @@ class EditArtViewModel @Inject constructor(
         ssh.get<EditArtSortDirectionType>(SSH_SORT_DIRECTION_TYPE_SELECTED)?.let {
             _sortDirectionTypeSelected.value = it
         }
-        println("value for style activities is ${ssh.get<ColorWrapper>(SSH_STYLE_ACTIVITIES)}")
         ssh.get<ColorWrapper>(SSH_STYLE_ACTIVITIES)?.let {
-            println("here, getting style activities")
             _styleActivities.value = it
         }
         ssh.get<List<ColorWrapper>>(SSH_STYLE_BACKGROUND_LIST)?.let {
@@ -1033,7 +1024,7 @@ class EditArtViewModel @Inject constructor(
         }
         ssh.get<Int>(SSH_TYPE_ACTIVITIES_DISTANCE_METERS_SUMMED)?.let {
             _typeActivitiesDistanceMetersSummed.value = it
-        } // todo, maybe not needed
+        }
         ssh.get<FontType>(SSH_TYPE_FONT_SELECTED)?.let {
             _typeFontSelected.value = it
         }
@@ -1112,13 +1103,11 @@ class EditArtViewModel @Inject constructor(
         }
         viewModelScope.launch {
             snapshotFlow { _filterDistanceSelectedStart.value }.collect {
-                println("here, collect")
                 ssh[SSH_FILTER_DISTANCE_SELECTED_START] = it
             }
         }
         viewModelScope.launch {
             snapshotFlow { _filterDistanceSelectedEnd.value }.collect {
-                println("selected starte changed...")
                 ssh[SSH_FILTER_DISTANCE_SELECTED_END] = it
             }
         }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotMutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
@@ -177,7 +178,7 @@ sealed interface EditArtViewState : ViewState {
        val filterActivitiesCountDate: State<Int>,
        val filterActivitiesCountDistance: State<Int>,
        val filterActivitiesCountType: State<Int>,
-       val filterDateSelections: List<DateSelection>,
+       val filterDateSelections: SnapshotStateList<DateSelection>,
        val filterDateSelectionIndex: State<Int>,
        val filterDistanceSelectedStart: State<Double?>,
        val filterDistanceSelectedEnd: State<Double?>,
@@ -185,7 +186,7 @@ sealed interface EditArtViewState : ViewState {
        val filterDistanceTotalEnd: State<Double?>,
        val filterDistancePendingChangeStart: State<String?>,
        val filterDistancePendingChangeEnd: State<String?>,
-       val filterTypes: Map<SportType, Boolean>,
+       val filterTypes: SnapshotStateMap<SportType, Boolean>,
        @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
            pagerHeaders = EditArtHeaderType.values().toList(),
            pagerState = PagerState(EditArtHeaderType.values().toList().size),
@@ -201,7 +202,7 @@ sealed interface EditArtViewState : ViewState {
        val sortTypeSelected: State<EditArtSortType>,
        val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
        val styleActivities: State<ColorWrapper>,
-       val styleBackgroundList: List<ColorWrapper>,
+       val styleBackgroundList: SnapshotStateList<ColorWrapper>,
        val styleBackgroundAngleType: State<AngleType>,
        val styleBackgroundGradientColorCount: State<Int>,
        val styleBackgroundType: State<BackgroundType>,

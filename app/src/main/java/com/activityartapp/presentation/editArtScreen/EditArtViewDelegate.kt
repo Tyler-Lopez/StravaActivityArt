@@ -100,32 +100,30 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                             )
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
-                                    filterActivitiesCountDate.value,
-                                    filterActivitiesCountDistance.value,
-                                    filterActivitiesCountType.value,
+                                    filterActivitiesCountDate,
+                                    filterActivitiesCountDistance,
+                                    filterActivitiesCountType,
                                     filterDateSelections,
-                                    filterDateSelectionIndex.value,
-                                    filterDistanceSelectedEnd.value?.let {
-                                        filterDistanceSelectedStart.value?.rangeTo(it)
-                                    },
-                                    filterDistanceTotalEnd.value?.let {
-                                        filterDistanceTotalStart.value?.rangeTo(it)
-                                    },
-                                    filterDistancePendingChangeStart.value,
-                                    filterDistancePendingChangeEnd.value,
+                                    filterDateSelectionIndex,
+                                    filterDistanceSelectedStart,
+                                    filterDistanceSelectedEnd,
+                                    filterDistanceTotalStart,
+                                    filterDistanceTotalEnd,
+                                    filterDistancePendingChangeStart,
+                                    filterDistancePendingChangeEnd,
                                     listStateFilter,
-                                    filterTypes?.toList(),
+                                    filterTypes,
                                     viewModel
                                 )
                             }
                             STYLE -> EditArtStyleScreen(
-                                styleBackgroundType.value,
-                                styleBackgroundAngleType.value,
-                                styleBackgroundList.take(styleBackgroundGradientColorCount.value),
-                                styleActivities.value,
-                                styleFont.value,
+                                styleBackgroundType,
+                                styleBackgroundAngleType,
+                                styleBackgroundList, // todo need to add a paremter
+                                styleActivities,
+                                styleFont,
                                 listStateStyle,
-                                styleStrokeWidthType.value,
+                                styleStrokeWidthType,
                                 viewModel
                             )
                             TYPE -> EditArtTypeScreen(

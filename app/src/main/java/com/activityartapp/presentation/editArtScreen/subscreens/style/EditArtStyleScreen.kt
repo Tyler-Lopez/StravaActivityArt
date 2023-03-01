@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
@@ -19,18 +21,18 @@ import com.activityartapp.util.enums.BackgroundType
 
 @Composable
 fun EditArtStyleScreen(
-    backgroundType: BackgroundType,
-    backgroundGradientAngleType: AngleType,
-    colorBackgroundList: List<ColorWrapper>,
-    colorActivities: ColorWrapper,
-    colorText: ColorWrapper?,
+    backgroundType: State<BackgroundType>,
+    backgroundGradientAngleType: State<AngleType>,
+    colorBackgroundList: SnapshotStateList<ColorWrapper>,
+    colorActivities: State<ColorWrapper>,
+    colorText: State<ColorWrapper?>,
     listState: LazyListState,
-    strokeWidthType: StrokeWidthType,
+    strokeWidthType: State<StrokeWidthType>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val sections = mutableListOf<EditArtStyleSectionType>().apply {
         add(EditArtStyleSectionType.BACKGROUND_TYPE)
-        when (backgroundType) {
+        when (backgroundType.value) {
             BackgroundType.GRADIENT -> {
                 add(EditArtStyleSectionType.GRADIENT_ANGLE)
                 add(EditArtStyleSectionType.GRADIENT_COLORS)
@@ -54,13 +56,13 @@ fun EditArtStyleScreen(
             ) {
                 when (section) {
                     EditArtStyleSectionType.BACKGROUND_TYPE -> SectionBackgroundType(
-                        backgroundType = backgroundType,
+                        backgroundType = backgroundType.value,
                         onBackgroundTypeChanged = eventReceiver::onEvent,
                         onClickedInfoGradientBackground = eventReceiver::onEvent,
                         onClickedInfoTransparentBackground = eventReceiver::onEvent
                     )
                     EditArtStyleSectionType.GRADIENT_ANGLE -> SectionGradientAngle(
-                        angleType = backgroundGradientAngleType,
+                        angleType = backgroundGradientAngleType.value,
                         colorList = colorBackgroundList,
                         onGradientAngleTypeChanged = eventReceiver::onEvent
                     )
@@ -79,21 +81,21 @@ fun EditArtStyleScreen(
                         onColorPendingChanged = eventReceiver::onEvent
                     )
                     EditArtStyleSectionType.ACTIVITIES_COLOR -> SectionColorActivities(
-                        color = colorActivities,
+                        color = colorActivities.value,
                         onColorChanged = eventReceiver::onEvent,
                         onColorPendingChanged = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent
                     )
                     EditArtStyleSectionType.FONT_COLOR -> SectionColorText(
-                        color = colorText,
-                        colorActivities = colorActivities,
+                        color = colorText.value,
+                        colorActivities = colorActivities.value,
                         onColorChanged = eventReceiver::onEvent,
                         onUseFontChanged = eventReceiver::onEvent,
                         onColorPendingChanged = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent
                     )
                     EditArtStyleSectionType.ACTIVITY_WEIGHT -> SectionActivityWidth(
-                        strokeWidthType = strokeWidthType,
+                        strokeWidthType = strokeWidthType.value,
                         onStyleStrokeWidthChanged = eventReceiver::onEvent
                     )
                 }
