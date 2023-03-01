@@ -8,6 +8,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.common.layout.ColumnMediumSpacing
 import com.activityartapp.presentation.common.layout.ColumnSmallSpacing
 import com.activityartapp.presentation.ui.theme.spacing
@@ -21,30 +23,49 @@ interface Section {
 fun Section(
     header: String,
     description: String? = null,
+    excludePadding: Boolean = false,
     includeDivider: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     ColumnMediumSpacing(
         modifier = Modifier
             .background(MaterialTheme.colors.surface)
-            .padding(spacing.medium),
+            .padding(
+                if (!excludePadding) {
+                    spacing.medium
+                } else {
+                    0.dp
+                }
+            ),
         horizontalAlignment = Alignment.Start
     ) {
-        ColumnSmallSpacing(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.fillMaxSize()
+        ColumnMediumSpacing(
+            modifier = Modifier.padding(
+                if (excludePadding) {
+                    spacing.medium
+                } else {
+                    0.dp
+                }
+            )
         ) {
-            Text(
-                text = header,
-                style = MaterialTheme.typography.h5
-            )
-            Divider()
-        }
-        description?.let {
-            Text(
-                text = it,
-                style = MaterialTheme.typography.body1
-            )
+            ColumnSmallSpacing(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = header,
+                    style = MaterialTheme.typography.h5
+                )
+                Divider()
+            }
+            description?.let {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body1
+                )
+            }
         }
         ColumnSmallSpacing(
             horizontalAlignment = Alignment.Start,

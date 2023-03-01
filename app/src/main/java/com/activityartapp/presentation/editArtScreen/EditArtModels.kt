@@ -154,7 +154,6 @@ sealed interface EditArtViewEvent : ViewEvent {
 sealed interface EditArtViewState : ViewState {
 
     companion object {
-        private const val FADE_LENGTH_MS = 1000
         const val MAX_GRADIENT_BG_COLORS = 7
         const val MIN_GRADIENT_BG_COLORS = 2
     }
@@ -163,62 +162,54 @@ sealed interface EditArtViewState : ViewState {
     val pagerStateWrapper: PagerStateWrapper
 
     data class Loading(
-        override val dialogActive: State<EditArtDialog> = mutableStateOf(EditArtDialog.None), // todo this is tmp
-        override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
-            pagerHeaders = EditArtHeaderType.values().toList(),
-            pagerState = PagerState(EditArtHeaderType.values().toList().size),
-            fadeLengthMs = FADE_LENGTH_MS // todo
-        )
+        override val dialogActive: State<EditArtDialog>,
+        override val pagerStateWrapper: PagerStateWrapper
     ) : EditArtViewState
 
     data class Standby(
-       val bitmap: State<Bitmap?>,
-       override val dialogActive: State<EditArtDialog>,
-       val filterActivitiesCountDate: State<Int>,
-       val filterActivitiesCountDistance: State<Int>,
-       val filterActivitiesCountType: State<Int>,
-       val filterDateSelections: SnapshotStateList<DateSelection>,
-       val filterDateSelectionIndex: State<Int>,
-       val filterDistanceSelectedStart: State<Double?>,
-       val filterDistanceSelectedEnd: State<Double?>,
-       val filterDistanceTotalStart: State<Double?>,
-       val filterDistanceTotalEnd: State<Double?>,
-       val filterDistancePendingChangeStart: State<String?>,
-       val filterDistancePendingChangeEnd: State<String?>,
-       val filterTypes: SnapshotStateMap<SportType, Boolean>,
-       override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
-           pagerHeaders = EditArtHeaderType.values().toList(),
-           pagerState = PagerState(EditArtHeaderType.values().toList().size),
-            fadeLengthMs = FADE_LENGTH_MS
-        ),
-       val listStateFilter: LazyListState = LazyListState(),
-       val listStateStyle: LazyListState = LazyListState(),
-       val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-       val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-       val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-       val sizeResolutionList: SnapshotStateList<Resolution>,
-       val sizeResolutionListSelectedIndex: State<Int>,
-       val sortTypeSelected: State<EditArtSortType>,
-       val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
-       val styleActivities: State<ColorWrapper>,
-       val styleBackgroundList: SnapshotStateList<ColorWrapper>,
-       val styleBackgroundAngleType: State<AngleType>,
-       val styleBackgroundGradientColorCount: State<Int>,
-       val styleBackgroundType: State<BackgroundType>,
-       val styleFont: State<ColorWrapper?>,
-       val styleStrokeWidthType: State<StrokeWidthType>,
-       val typeActivitiesDistanceMetersSummed: State<Int>,
-       val typeFontSelected: State<FontType>,
-       val typeFontWeightSelected: State<FontWeightType>,
-       val typeFontItalicized: State<Boolean>,
-       val typeFontSizeSelected: State<FontSizeType>,
-       val typeMaximumCustomTextLength: Int,
-       val typeLeftSelected: State<EditArtTypeType>,
-       val typeLeftCustomText: State<String>,
-       val typeCenterSelected: State<EditArtTypeType>,
-       val typeCenterCustomText: State<String>,
-       val typeRightSelected: State<EditArtTypeType>,
-       val typeRightCustomText: State<String>,
+        val bitmap: State<Bitmap?>,
+        override val dialogActive: State<EditArtDialog>,
+        val filterActivitiesCountDate: State<Int>,
+        val filterActivitiesCountDistance: State<Int>,
+        val filterActivitiesCountType: State<Int>,
+        val filterDateSelections: SnapshotStateList<DateSelection>,
+        val filterDateSelectionIndex: State<Int>,
+        val filterDistanceSelectedStart: State<Double?>,
+        val filterDistanceSelectedEnd: State<Double?>,
+        val filterDistanceTotalStart: State<Double?>,
+        val filterDistanceTotalEnd: State<Double?>,
+        val filterDistancePendingChangeStart: State<String?>,
+        val filterDistancePendingChangeEnd: State<String?>,
+        val filterTypes: SnapshotStateMap<SportType, Boolean>,
+        override val pagerStateWrapper: PagerStateWrapper,
+        val listStateFilter: LazyListState = LazyListState(),
+        val listStateStyle: LazyListState = LazyListState(),
+        val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val sizeResolutionList: SnapshotStateList<Resolution>,
+        val sizeResolutionListSelectedIndex: State<Int>,
+        val sortTypeSelected: State<EditArtSortType>,
+        val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
+        val styleActivities: State<ColorWrapper>,
+        val styleBackgroundList: SnapshotStateList<ColorWrapper>,
+        val styleBackgroundAngleType: State<AngleType>,
+        val styleBackgroundGradientColorCount: State<Int>,
+        val styleBackgroundType: State<BackgroundType>,
+        val styleFont: State<ColorWrapper?>,
+        val styleStrokeWidthType: State<StrokeWidthType>,
+        val typeActivitiesDistanceMetersSummed: State<Int>,
+        val typeFontSelected: State<FontType>,
+        val typeFontWeightSelected: State<FontWeightType>,
+        val typeFontItalicized: State<Boolean>,
+        val typeFontSizeSelected: State<FontSizeType>,
+        val typeMaximumCustomTextLength: Int,
+        val typeLeftSelected: State<EditArtTypeType>,
+        val typeLeftCustomText: State<String>,
+        val typeCenterSelected: State<EditArtTypeType>,
+        val typeCenterCustomText: State<String>,
+        val typeRightSelected: State<EditArtTypeType>,
+        val typeRightCustomText: State<String>,
     ) : EditArtViewState {
 
         companion object {
@@ -226,8 +217,9 @@ sealed interface EditArtViewState : ViewState {
         }
 
         @Inject
-        @IgnoredOnParcel
         lateinit var resolutionListFactory: ResolutionListFactory
+
+
     }
 }
 
@@ -246,11 +238,13 @@ data class FilterStateWrapper(
 ) : Parcelable
 
 @Parcelize
+// https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable
+@Immutable
 data class ColorWrapper(
-    var alpha: Float,
-    var blue: Float,
-    var green: Float,
-    var red: Float,
+    val alpha: Float,
+    val blue: Float,
+    val green: Float,
+    val red: Float,
     @IgnoredOnParcel val pendingAlpha: String? = null,
     @IgnoredOnParcel val pendingBlue: String? = null,
     @IgnoredOnParcel val pendingGreen: String? = null,

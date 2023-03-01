@@ -1,10 +1,8 @@
 package com.activityartapp.presentation.editArtScreen.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -15,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,6 +44,7 @@ fun TextFieldSliders(
             val interactionSource = remember { MutableInteractionSource() }
             ColumnSmallSpacing {
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(spacing.small)
                 ) {
@@ -71,6 +71,7 @@ fun TextFieldSliders(
                         interactionSource = interactionSource,
                     )
                     Slider(
+                        modifier = Modifier.weight(1f, true),
                         value = spec.sliderValue,
                         onValueChange = spec.onSliderChanged,
                         valueRange = spec.sliderRange

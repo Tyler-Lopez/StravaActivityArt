@@ -24,11 +24,9 @@ import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtType
 import com.activityartapp.util.*
 import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -213,6 +211,7 @@ class EditArtViewModel @Inject constructor(
 
     /** region States unobserved in View */
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    private var imageJob: Job? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     /** endregion **/
 
@@ -270,10 +269,20 @@ class EditArtViewModel @Inject constructor(
     private val _typeCenterCustomText = mutableStateOf("")
     private val _typeRightSelected = mutableStateOf(EditArtTypeType.NONE)
     private val _typeRightCustomText = mutableStateOf("")
+
     /** endregion **/
 
     init {
-        Loading().push()
+        val loadingState = Loading(
+            dialogActive = _dialogActive,
+            pagerStateWrapper = PagerStateWrapper(
+                pagerHeaders = EditArtHeaderType.values().toList(),
+                pagerState = PagerState(EditArtHeaderType.values().toList().size),
+                fadeLengthMs = 1000
+            )
+        )
+        loadingState.push()
+
         viewModelScope.launch(Dispatchers.Default) {
             activities = getActivitiesFromDisk(athleteId)
 
@@ -284,6 +293,7 @@ class EditArtViewModel @Inject constructor(
             Standby(
                 bitmap = _bitmap,
                 dialogActive = _dialogActive,
+                pagerStateWrapper = loadingState.pagerStateWrapper,
                 filterActivitiesCountDate = _filterActivitiesCountDate,
                 filterActivitiesCountDistance = _filterActivitiesCountDistance,
                 filterActivitiesCountType = _filterActivitiesCountType,
@@ -345,22 +355,20 @@ class EditArtViewModel @Inject constructor(
     }
 
     override fun onEvent(event: EditArtViewEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is ArtMutatingEvent -> onArtMutatingEvent(event)
-                is ClickedRemoveGradientColor -> onClickedRemoveGradientColor(event)
-                is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
-                is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
-                is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
-                is DialogDismissed -> onDialogDismissed()
-                is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
-                is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
-                is NavigateUpClicked -> onNavigateUpClicked()
-                is SaveClicked -> onSaveClicked()
-                is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
-                is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
-                is PageHeaderClicked -> onPageHeaderClicked(event)
-            }
+        when (event) {
+            is ArtMutatingEvent -> onArtMutatingEvent(event)
+            is ClickedRemoveGradientColor -> onClickedRemoveGradientColor(event)
+            is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
+            is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
+            is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
+            is DialogDismissed -> onDialogDismissed()
+            is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
+            is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
+            is NavigateUpClicked -> onNavigateUpClicked()
+            is SaveClicked -> onSaveClicked()
+            is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
+            is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
+            is PageHeaderClicked -> onPageHeaderClicked(event)
         }
     }
 
@@ -610,7 +618,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onSizeChanged(event: SizeChanged) {
         _sizeResolutionListSelectedIndex.value = event.changedIndex
     }
@@ -685,11 +692,11 @@ class EditArtViewModel @Inject constructor(
             ?: return
         for (i in removedIndex until _styleBackgroundList.lastIndex) {
             val newColor = _styleBackgroundList[i + 1]
-            _styleBackgroundList[i] = _styleBackgroundList[i].apply {
-                red = newColor.red
-                green = newColor.green
+            _styleBackgroundList[i] = _styleBackgroundList[i].copy(
+                red = newColor.red,
+                green = newColor.green,
                 blue = newColor.blue
-            }
+            )
         }
         _dialogActive.value = EditArtDialog.None
         _styleBackgroundGradientColorCount.value = prevCount.dec()
@@ -847,9 +854,10 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun updateBitmap() {
-        imageProcessingDispatcher.cancelChildren()
-        viewModelScope.launch(imageProcessingDispatcher) {
-            _bitmap.value = visualizationUtils.createBitmap(
+        imageJob?.cancel()
+        imageJob = viewModelScope.launch(imageProcessingDispatcher) {
+            _bitmap.value = null
+            val newBitmap = visualizationUtils.createBitmap(
                 activities = activitiesFiltered,
                 backgroundAngleType = _styleBackgroundAngleType.value,
                 backgroundType = _styleBackgroundType.value,
@@ -880,6 +888,7 @@ class EditArtViewModel @Inject constructor(
                 textCenter = EditArtTypeSection.CENTER.text,
                 textRight = EditArtTypeSection.RIGHT.text
             )
+            _bitmap.value = newBitmap
         }
     }
 

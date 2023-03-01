@@ -15,6 +15,7 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.*
+import com.activityartapp.presentation.editArtScreen.subscreens.style.sections.*
 import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.enums.AngleType
 import com.activityartapp.util.enums.BackgroundType
@@ -23,6 +24,7 @@ import com.activityartapp.util.enums.BackgroundType
 fun EditArtStyleScreen(
     backgroundType: State<BackgroundType>,
     backgroundGradientAngleType: State<AngleType>,
+    backgroundGradientColorCount: State<Int>,
     colorBackgroundList: SnapshotStateList<ColorWrapper>,
     colorActivities: State<ColorWrapper>,
     colorText: State<ColorWrapper?>,
@@ -52,7 +54,8 @@ fun EditArtStyleScreen(
         items(sections) { section ->
             Section(
                 header = stringResource(section.headerStrRes),
-                description = section.descriptionStrRes?.let { stringResource(it) }
+                description = section.descriptionStrRes?.let { stringResource(it) },
+                excludePadding = section == EditArtStyleSectionType.GRADIENT_COLORS
             ) {
                 when (section) {
                     EditArtStyleSectionType.BACKGROUND_TYPE -> SectionBackgroundType(
@@ -63,11 +66,12 @@ fun EditArtStyleScreen(
                     )
                     EditArtStyleSectionType.GRADIENT_ANGLE -> SectionGradientAngle(
                         angleType = backgroundGradientAngleType.value,
-                        colorList = colorBackgroundList,
+                        colorList = colorBackgroundList.take(backgroundGradientColorCount.value),
                         onGradientAngleTypeChanged = eventReceiver::onEvent
                     )
                     EditArtStyleSectionType.GRADIENT_COLORS -> SectionColorBackgroundGradient(
                         colorList = colorBackgroundList,
+                        colorsCount = backgroundGradientColorCount,
                         onColorChanged = eventReceiver::onEvent,
                         onColorAdded = eventReceiver::onEvent,
                         onColorRemoved = eventReceiver::onEvent,
