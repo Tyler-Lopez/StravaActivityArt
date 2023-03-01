@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import com.activityartapp.R
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,18 +31,18 @@ import kotlin.math.roundToInt
 
 @Composable
 fun EditArtTypeScreen(
-    activitiesDistanceMetersSummed: Int,
-    customTextCenter: String,
-    customTextLeft: String,
-    customTextRight: String,
-    fontSelected: FontType,
-    fontWeightSelected: FontWeightType,
-    fontItalicized: Boolean,
-    fontSizeSelected: FontSizeType,
+    activitiesDistanceMetersSummed: State<Int>,
+    customTextCenter: State<String>,
+    customTextLeft: State<String>,
+    customTextRight: State<String>,
+    fontSelected: State<FontType>,
+    fontWeightSelected: State<FontWeightType>,
+    fontItalicized: State<Boolean>,
+    fontSizeSelected: State<FontSizeType>,
     maximumCustomTextLength: Int,
-    selectedEditArtTypeTypeCenter: EditArtTypeType,
-    selectedEditArtTypeTypeLeft: EditArtTypeType,
-    selectedEditArtTypeTypeRight: EditArtTypeType,
+    selectedEditArtTypeTypeCenter: State<EditArtTypeType>,
+    selectedEditArtTypeTypeLeft: State<EditArtTypeType>,
+    selectedEditArtTypeTypeRight: State<EditArtTypeType>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val focusManager = LocalFocusManager.current
@@ -55,18 +56,18 @@ fun EditArtTypeScreen(
             EditArtTypeType.values().forEach { type ->
                 RadioButtonContentRow(
                     isSelected = type == when (section) {
-                        EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft
-                        EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter
-                        EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight
+                        EditArtTypeSection.LEFT -> selectedEditArtTypeTypeLeft.value
+                        EditArtTypeSection.CENTER -> selectedEditArtTypeTypeCenter.value
+                        EditArtTypeSection.RIGHT -> selectedEditArtTypeTypeRight.value
                     },
                     content = type.takeIf { it == EditArtTypeType.CUSTOM }?.let {
                         {
                             ColumnSmallSpacing(horizontalAlignment = Alignment.Start) {
                                 OutlinedTextField(
                                     value = when (section) {
-                                        EditArtTypeSection.LEFT -> customTextLeft
-                                        EditArtTypeSection.CENTER -> customTextCenter
-                                        EditArtTypeSection.RIGHT -> customTextRight
+                                        EditArtTypeSection.LEFT -> customTextLeft.value
+                                        EditArtTypeSection.CENTER -> customTextCenter.value
+                                        EditArtTypeSection.RIGHT -> customTextRight.value
                                     },
                                     onValueChange = {
                                         eventReceiver.onEvent(
@@ -91,9 +92,9 @@ fun EditArtTypeScreen(
                                 Text(
                                     text = "${
                                         when (section) {
-                                            EditArtTypeSection.LEFT -> customTextLeft.length
-                                            EditArtTypeSection.CENTER -> customTextCenter.length
-                                            EditArtTypeSection.RIGHT -> customTextRight.length
+                                            EditArtTypeSection.LEFT -> customTextLeft.value.length
+                                            EditArtTypeSection.CENTER -> customTextCenter.value.length
+                                            EditArtTypeSection.RIGHT -> customTextRight.value.length
                                         }
                                     } / $maximumCustomTextLength",
                                     style = MaterialTheme.typography.caption
@@ -103,8 +104,8 @@ fun EditArtTypeScreen(
                     },
                     text = stringResource(type.header),
                     subtext = when (type) {
-                        EditArtTypeType.DISTANCE_MILES -> activitiesDistanceMetersSummed.meterToMilesStr()
-                        EditArtTypeType.DISTANCE_KILOMETERS -> activitiesDistanceMetersSummed.meterToKilometerStr()
+                        EditArtTypeType.DISTANCE_MILES -> activitiesDistanceMetersSummed.value.meterToMilesStr()
+                        EditArtTypeType.DISTANCE_KILOMETERS -> activitiesDistanceMetersSummed.value.meterToKilometerStr()
                         else -> null
                     }
                 ) {
@@ -128,7 +129,7 @@ fun EditArtTypeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = it == fontSelected,
+                    selected = it == fontSelected.value,
                     onClick = { eventReceiver.onEvent(TypeFontChanged(changedTo = it)) }
                 )
                 Text(
@@ -146,23 +147,23 @@ fun EditArtTypeScreen(
             }
         }
     }
-    if (fontSelected.fontWeightTypes.containsMultipleTypes) {
+    if (fontSelected.value.fontWeightTypes.containsMultipleTypes) {
         Section(
             header = stringResource(R.string.edit_art_type_font_weight_header),
             description = stringResource(R.string.edit_art_type_font_weight_description)
         ) {
-            fontSelected.fontWeightTypes.forEach {
+            fontSelected.value.fontWeightTypes.forEach {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButtonContentRow(
-                        isSelected = fontWeightSelected == it,
+                        isSelected = fontWeightSelected.value == it,
                         text = stringResource(it.stringRes),
                         fontFamily = FontFamily(
                             Typeface.createFromAsset(
                                 context.assets,
-                                fontSelected.getAssetPath(it)
+                                fontSelected.value.getAssetPath(it)
                             )
                         )
                     ) { eventReceiver.onEvent(TypeFontWeightChanged(changedTo = it)) }
@@ -170,7 +171,7 @@ fun EditArtTypeScreen(
             }
         }
     }
-    if (fontSelected.isItalic) {
+    if (fontSelected.value.isItalic) {
         Section(
             header = stringResource(R.string.edit_art_type_font_italic_header),
             description = stringResource(R.string.edit_art_type_font_italic_description)
@@ -179,12 +180,12 @@ fun EditArtTypeScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Switch(checked = fontItalicized, onCheckedChange = {
+                Switch(checked = fontItalicized.value, onCheckedChange = {
                     eventReceiver.onEvent(TypeFontItalicChanged(changedTo = it))
                 })
                 Text(
                     text = stringResource(
-                        if (fontItalicized) {
+                        if (fontItalicized.value) {
                             R.string.edit_art_type_font_italic_enabled
                         } else {
                             R.string.edit_art_type_font_italic_disabled
@@ -193,7 +194,7 @@ fun EditArtTypeScreen(
                     fontFamily = FontFamily(
                         Typeface.createFromAsset(
                             context.assets,
-                            fontSelected.getAssetPath(fontWeightSelected, fontItalicized)
+                            fontSelected.value.getAssetPath(fontWeightSelected.value, fontItalicized.value)
                         )
                     )
                 )
@@ -211,7 +212,7 @@ fun EditArtTypeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButtonContentRow(
-                    isSelected = fontSizeSelected == it,
+                    isSelected = fontSizeSelected.value == it,
                     text = stringResource(it.strRes)
                 ) {
                     eventReceiver.onEvent(

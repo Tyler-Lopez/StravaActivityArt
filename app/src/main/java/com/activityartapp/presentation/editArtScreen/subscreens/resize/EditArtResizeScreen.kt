@@ -6,6 +6,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RotateRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,8 +26,8 @@ import com.activityartapp.util.ext.toFloatRange
 
 @Composable
 fun EditArtResizeScreen(
-    resolutionList: List<Resolution>,
-    selectedResolutionIndex: Int,
+    resolutionList: SnapshotStateList<Resolution>,
+    selectedResolutionIndex: State<Int>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     Section(
@@ -33,7 +35,7 @@ fun EditArtResizeScreen(
         description = stringResource(R.string.edit_art_resize_description),
     ) {
         resolutionList.forEachIndexed { index, res ->
-            val isSelected = selectedResolutionIndex == index
+            val isSelected = selectedResolutionIndex.value == index
             Row(
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium)

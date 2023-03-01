@@ -69,7 +69,7 @@ class EditArtViewModel @Inject constructor(
         private const val SSH_STYLE_FONT = "styleFont"
         private const val SSH_STYLE_STROKE_WIDTH_TYPE = "strokeWidthType"
         private const val SSH_TYPE_ACTIVITIES_DISTANCE_METERS_SUMMED =
-            "typeActivitiesDistanceMetersSummed" // Todo, determine if need to be saved
+            "typeActivitiesDistanceMetersSummed"
         private const val SSH_TYPE_FONT_SELECTED = "typeFontSelected"
         private const val SSH_TYPE_FONT_WEIGHT_SELECTED = "typeFontWeightSelected"
         private const val SSH_TYPE_FONT_ITALICIZED = "typeFontItalicized"
@@ -200,7 +200,6 @@ class EditArtViewModel @Inject constructor(
     private val EditArtFilterType.activitiesCount: Int
         get() = activitiesFilteredByFilterType[this]?.size ?: 0
 
-    // DONE
     private fun EditArtFilterType.pushUpdatedFilteredActivityCountToView() {
         when (this@pushUpdatedFilteredActivityCountToView) {
             DATE -> _filterActivitiesCountDate.value = DATE.activitiesCount
@@ -212,16 +211,12 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    /** region Unsaved States unobserved in View */
+    /** region States unobserved in View */
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     /** endregion **/
 
-    /** region Saved States unobserved in View */
-
-    /** endregion **/
-
-    /** region Saved States observed in View */
+    /** region States observed in View */
     // GLOBAL
     private val _dialogActive = mutableStateOf<EditArtDialog>(EditArtDialog.None) // not save
 
@@ -275,7 +270,6 @@ class EditArtViewModel @Inject constructor(
     private val _typeCenterCustomText = mutableStateOf("")
     private val _typeRightSelected = mutableStateOf(EditArtTypeType.NONE)
     private val _typeRightCustomText = mutableStateOf("")
-
     /** endregion **/
 
     init {
@@ -351,20 +345,22 @@ class EditArtViewModel @Inject constructor(
     }
 
     override fun onEvent(event: EditArtViewEvent) {
-        when (event) {
-            is ArtMutatingEvent -> onArtMutatingEvent(event)
-            is ClickedRemoveGradientColor -> onClickedRemoveGradientColor(event)
-            is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
-            is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
-            is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
-            is DialogDismissed -> onDialogDismissed()
-            is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
-            is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
-            is NavigateUpClicked -> onNavigateUpClicked()
-            is SaveClicked -> onSaveClicked()
-            is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
-            is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
-            is PageHeaderClicked -> onPageHeaderClicked(event)
+        viewModelScope.launch {
+            when (event) {
+                is ArtMutatingEvent -> onArtMutatingEvent(event)
+                is ClickedRemoveGradientColor -> onClickedRemoveGradientColor(event)
+                is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
+                is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
+                is ClickedInfoTransparentBackground -> onClickedInfoTransparentBackground()
+                is DialogDismissed -> onDialogDismissed()
+                is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
+                is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
+                is NavigateUpClicked -> onNavigateUpClicked()
+                is SaveClicked -> onSaveClicked()
+                is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
+                is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
+                is PageHeaderClicked -> onPageHeaderClicked(event)
+            }
         }
     }
 
@@ -393,7 +389,7 @@ class EditArtViewModel @Inject constructor(
             is TypeSelectionChanged -> onTypeSelectionChanged(event)
         }
         if (event !is FilterChanged) {
-            // updateBitmap()
+            updateBitmap()
         }
     }
 
@@ -428,45 +424,37 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onClickedRemoveGradientColor(event: ClickedRemoveGradientColor) {
         _dialogActive.value = EditArtDialog.ConfirmDeleteGradientColor(
             toDeleteIndex = event.removedIndex
         )
     }
 
-    // DONE
     private fun onClickedInfoCheckeredBackground() {
         _dialogActive.value = EditArtDialog.InfoCheckeredBackground
     }
 
-    // DONE
     private fun onClickedInfoGradientBackground() {
         _dialogActive.value = EditArtDialog.InfoGradientBackground
     }
 
-    // DONE
     private fun onClickedInfoTransparentBackground() {
         _dialogActive.value = EditArtDialog.InfoTransparent
     }
 
-    // DONE
     private fun onDialogDismissed() {
         _dialogActive.value = EditArtDialog.None
     }
 
-    // DONE
     private fun onDialogNavigateUpConfirmed() {
         _dialogActive.value = EditArtDialog.None
         viewModelScope.launch { routeTo(NavigateUp) }
     }
 
-    // DONE
     private fun onFilterDateSelectionChanged(event: FilterChanged.FilterDateSelectionChanged) {
         _filterDateSelectionIndex.value = event.index
     }
 
-    // DONE
     private fun onFilterDateCustomChanged(event: FilterChanged.FilterDateCustomChanged) {
         val customIndex = _filterDateSelections.indexOfFirst { it is DateSelection.Custom }
         val updatedDateSelection =
@@ -494,7 +482,6 @@ class EditArtViewModel @Inject constructor(
         _filterDateSelections[customIndex] = updatedDateSelection
     }
 
-    // DONE
     private fun onFilterDistanceChanged(event: FilterChanged.FilterDistanceChanged) {
         _filterDistanceSelectedStart.value = event.changedTo.start
         _filterDistanceSelectedEnd.value = event.changedTo.endInclusive
@@ -502,7 +489,6 @@ class EditArtViewModel @Inject constructor(
         _filterDistancePendingChangeEnd.value = null
     }
 
-    // DONE
     private fun onFilterDistancePendingChange(event: FilterDistancePendingChange) {
         if (event is FilterDistancePendingChange.FilterDistancePendingChangeShortest) {
             _filterDistancePendingChangeStart.value = event.changedTo
@@ -511,7 +497,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onFilterDistancePendingChangeConfirmed(event: FilterChanged.FilterDistancePendingChangeConfirmed) {
         val totalValueSmallest = _filterDistanceTotalStart.value ?: 0.0
         val totalValueLargest = _filterDistanceTotalEnd.value ?: Double.MAX_VALUE
@@ -542,12 +527,10 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
         _filterTypes[event.type] = _filterTypes[event.type]!!.not()
     }
 
-    //  DONE
     private fun onNavigateUpClicked() {
         _dialogActive.value = EditArtDialog.NavigateUp
     }
@@ -601,7 +584,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
         when (event.style) {
             is StyleIdentifier.Activities -> {
@@ -633,7 +615,6 @@ class EditArtViewModel @Inject constructor(
         _sizeResolutionListSelectedIndex.value = event.changedIndex
     }
 
-    // DONE
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
         val customRes = _sizeResolutionList[event.customIndex] as Resolution.CustomResolution
         _sizeResolutionList[event.customIndex] = if (event.heightChanged) {
@@ -644,7 +625,6 @@ class EditArtViewModel @Inject constructor(
         _sizeResolutionListSelectedIndex.value = event.customIndex
     }
 
-    // DONE
     private fun onSizeCustomPendingChangeConfirmed(event: SizeCustomPendingChangeConfirmed) {
         val customRes = _sizeResolutionList[event.customIndex] as Resolution.CustomResolution
         val range = customRes.sizeRangePx
@@ -663,7 +643,6 @@ class EditArtViewModel @Inject constructor(
         _sizeResolutionListSelectedIndex.value = event.customIndex
     }
 
-    // DONE
     private fun onSizeCustomPendingChanged(event: SizeCustomPendingChanged) {
         _sizeResolutionList.apply {
             val tarIndex = indexOfFirst { it is Resolution.CustomResolution }
@@ -676,7 +655,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onSizeRotated(event: SizeRotated) {
         val prevRes = _sizeResolutionList[event.rotatedIndex]
         val adjRes = (prevRes as? Resolution.RotatingResolution
@@ -685,24 +663,20 @@ class EditArtViewModel @Inject constructor(
         _sizeResolutionList[event.rotatedIndex] = adjRes
     }
 
-    // DONE
     private fun onSortDirectionChanged(event: SortDirectionChanged) {
         _sortDirectionTypeSelected.value = event.changedTo
     }
 
-    // DONE
     private fun onSortTypeChanged(event: SortTypeChanged) {
         _sortTypeSelected.value = event.changedTo
     }
 
-    // DONE
     private fun onStyleBackgroundColorAdded() {
         val prevCount = _styleBackgroundGradientColorCount.value
         if (prevCount >= 7) return // todo
         _styleBackgroundGradientColorCount.value = prevCount.inc()
     }
 
-    // DONE
     private fun onStyleBackgroundColorRemoveConfirmed() {
         val prevCount = _styleBackgroundGradientColorCount.value
         if (prevCount <= 2) return // todo
@@ -721,12 +695,10 @@ class EditArtViewModel @Inject constructor(
         _styleBackgroundGradientColorCount.value = prevCount.dec()
     }
 
-    // DONE
     private fun onStyleBackgroundTypeChanged(event: StyleBackgroundTypeChanged) {
         _styleBackgroundType.value = event.changedTo
     }
 
-    // DONE
     private fun onStyleColorChanged(event: StyleColorChanged) {
         when (event.style) {
             is StyleIdentifier.Activities -> _styleActivities.value =
@@ -749,7 +721,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
         when (event.style) {
             is StyleIdentifier.Activities -> _styleActivities.value =
@@ -762,7 +733,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
         _styleFont.value = if (event.useCustom) {
             _styleFont.value ?: _styleActivities.value
@@ -771,17 +741,14 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onStyleGradientAngleTypeChanged(event: StyleGradientAngleTypeChanged) {
         _styleBackgroundAngleType.value = event.changedTo
     }
 
-    // DONE
     private fun onStyleStrokeWidthChanged(event: StyleStrokeWidthChanged) {
         _styleStrokeWidthType.value = event.changedTo
     }
 
-    // DONE
     private fun onTypeCustomTextChanged(event: TypeCustomTextChanged) {
         val newText = event.changedTo.takeIf { it.length <= _typeMaximumCustomTextLength }
         when (event.section) {
@@ -801,7 +768,6 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onTypeFontChanged(event: TypeFontChanged) {
         event.changedTo.run {
             _typeFontItalicized.value = _typeFontItalicized.value && isItalic
@@ -815,12 +781,10 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onTypeFontSizeChanged(event: TypeFontSizeChanged) {
         _typeFontSizeSelected.value = event.changedTo
     }
 
-    // DONE
     private fun onTypeSelectionChanged(event: TypeSelectionChanged) {
         when (event.section) {
             EditArtTypeSection.LEFT -> _typeLeftSelected.value = event.typeSelected
@@ -829,12 +793,10 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    // DONE
     private fun onTypeFontWeightChanged(event: TypeFontWeightChanged) {
         _typeFontWeightSelected.value = event.changedTo
     }
 
-    // DONE
     private fun onTypeFontItalicChanged(event: TypeFontItalicChanged) {
         _typeFontItalicized.value = event.changedTo
     }

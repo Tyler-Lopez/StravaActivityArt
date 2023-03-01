@@ -171,7 +171,6 @@ sealed interface EditArtViewState : ViewState {
         )
     ) : EditArtViewState
 
-   // @Parcelize
     data class Standby(
        val bitmap: State<Bitmap?>,
        override val dialogActive: State<EditArtDialog>,
@@ -187,17 +186,17 @@ sealed interface EditArtViewState : ViewState {
        val filterDistancePendingChangeStart: State<String?>,
        val filterDistancePendingChangeEnd: State<String?>,
        val filterTypes: SnapshotStateMap<SportType, Boolean>,
-       @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
+       override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
            pagerHeaders = EditArtHeaderType.values().toList(),
            pagerState = PagerState(EditArtHeaderType.values().toList().size),
             fadeLengthMs = FADE_LENGTH_MS
         ),
-       @IgnoredOnParcel val listStateFilter: LazyListState = LazyListState(),
-       @IgnoredOnParcel val listStateStyle: LazyListState = LazyListState(),
-       @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-       @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-       @IgnoredOnParcel val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-       val sizeResolutionList: List<Resolution>,
+       val listStateFilter: LazyListState = LazyListState(),
+       val listStateStyle: LazyListState = LazyListState(),
+       val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+       val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+       val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+       val sizeResolutionList: SnapshotStateList<Resolution>,
        val sizeResolutionListSelectedIndex: State<Int>,
        val sortTypeSelected: State<EditArtSortType>,
        val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
@@ -213,7 +212,7 @@ sealed interface EditArtViewState : ViewState {
        val typeFontWeightSelected: State<FontWeightType>,
        val typeFontItalicized: State<Boolean>,
        val typeFontSizeSelected: State<FontSizeType>,
-       @IgnoredOnParcel val typeMaximumCustomTextLength: Int,
+       val typeMaximumCustomTextLength: Int,
        val typeLeftSelected: State<EditArtTypeType>,
        val typeLeftCustomText: State<String>,
        val typeCenterSelected: State<EditArtTypeType>,
@@ -229,31 +228,6 @@ sealed interface EditArtViewState : ViewState {
         @Inject
         @IgnoredOnParcel
         lateinit var resolutionListFactory: ResolutionListFactory
-
-        /*
-        @IgnoredOnParcel
-        val atLeastOneActivitySelected
-            get() = minOf(
-                filterActivitiesCountDate,
-                filterActivitiesCountDistance,
-                filterActivitiesCountType
-            ) != NO_ACTIVITIES_COUNT
-
-        @IgnoredOnParcel
-        val filteredTypes: List<SportType>
-            get() = filterTypes?.entries?.filter { it.value }?.map { it.key } ?: emptyList()
-
-        val filteredDistanceRangeMeters: IntRange
-            get() = (filterDistanceSelectedStart
-                ?.roundToInt()
-                ?: Int.MIN_VALUE)
-                .rangeTo(
-                    filterDistanceSelectedEnd
-                        ?.roundToInt()
-                        ?: Int.MAX_VALUE
-                )
-
-         */
     }
 }
 

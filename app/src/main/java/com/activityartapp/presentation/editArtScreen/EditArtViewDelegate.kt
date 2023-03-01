@@ -127,28 +127,28 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 viewModel
                             )
                             TYPE -> EditArtTypeScreen(
-                                typeActivitiesDistanceMetersSummed.value,
-                                typeCenterCustomText.value,
-                                typeLeftCustomText.value,
-                                typeRightCustomText.value,
-                                typeFontSelected.value,
-                                typeFontWeightSelected.value,
-                                typeFontItalicized.value,
-                                typeFontSizeSelected.value,
+                                typeActivitiesDistanceMetersSummed,
+                                typeCenterCustomText,
+                                typeLeftCustomText,
+                                typeRightCustomText,
+                                typeFontSelected,
+                                typeFontWeightSelected,
+                                typeFontItalicized,
+                                typeFontSizeSelected,
                                 typeMaximumCustomTextLength,
-                                typeCenterSelected.value,
-                                typeLeftSelected.value,
-                                typeRightSelected.value,
+                                typeCenterSelected,
+                                typeLeftSelected,
+                                typeRightSelected,
                                 viewModel
                             )
                             SORT -> EditArtSortScreen(
-                                sortTypeSelected = sortTypeSelected.value,
-                                sortDirectionSelected = sortDirectionTypeSelected.value,
+                                sortTypeSelected = sortTypeSelected,
+                                sortDirectionSelected = sortDirectionTypeSelected,
                                 eventReceiver = viewModel
                             )
                             RESIZE -> EditArtResizeScreen(
                                 sizeResolutionList,
-                                sizeResolutionListSelectedIndex.value,
+                                sizeResolutionListSelectedIndex,
                                 viewModel
                             )
                             null -> error("Invalid pagerState current page.")
