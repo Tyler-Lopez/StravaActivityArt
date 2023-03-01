@@ -31,6 +31,7 @@ import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorPreview
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorSlidersRGB
 import com.activityartapp.presentation.ui.theme.spacing
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -44,7 +45,6 @@ fun SectionColorBackgroundGradient(
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
     LazyRow(
         state = lazyListState,
         modifier = Modifier
@@ -89,9 +89,6 @@ fun SectionColorBackgroundGradient(
                 leadingIcon = Icons.Outlined.Add,
                 leadingIconContentDescription = stringResource(R.string.edit_art_style_background_gradient_add_color_button_cd)
             ) {
-                scope.launch {
-                    lazyListState.animateScrollToItem(colorsCount.value - 1)
-                }
                 onColorAdded(StyleBackgroundColorAdded)
             }
         }
@@ -115,14 +112,12 @@ private fun ListItem(
                 .padding(spacing.small)
         ) {
             Text(
-                text = "Color ${index + 1}",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.subtitle1
+                text = "COLOR ${index + 1} / $colorsCount",
+                style = MaterialTheme.typography.overline
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
+                horizontalArrangement = Arrangement.spacedBy(spacing.small),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ColorPreview(
