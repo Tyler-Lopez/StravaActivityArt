@@ -250,6 +250,7 @@ class EditArtViewModel @Inject constructor(
     private val _styleBackgroundList = (0 until 7).map {
         if (it % 2 == 0) ColorWrapper.Black else ColorWrapper.White
     }.toMutableStateList()
+
     private val _styleBackgroundAngleType = mutableStateOf(AngleType.CW90)
     private val _styleBackgroundGradientColorCount = mutableStateOf(2)
     private val _styleBackgroundType = mutableStateOf(BackgroundType.SOLID)
