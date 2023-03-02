@@ -44,7 +44,7 @@ fun EditArtFiltersScreen(
         if (typesWithSelectedFlag.isNotEmpty()) {
             add(EditArtFiltersSectionType.ACTIVITY_TYPE)
         }
-        if (distanceTotalStart.value != null) { // todo add back start != end case
+        if (distanceTotalStart.value != null) { // todo add back start != end case reminder
             add(EditArtFiltersSectionType.DISTANCE)
         }
     }
@@ -59,9 +59,9 @@ fun EditArtFiltersScreen(
             ) {
                 when (section) {
                     EditArtFiltersSectionType.DATE -> SectionDate(
-                        count = activitiesCountDate.value,
+                        count = activitiesCountDate,
                         dateSelections = filterDateSelections,
-                        dateSelectionSelectedIndex = filterDateSelectionIndex.value,
+                        dateSelectionSelectedIndex = filterDateSelectionIndex,
                         eventReceiver = eventReceiver
                     )
                     EditArtFiltersSectionType.ACTIVITY_TYPE -> SectionActivityType(
@@ -88,7 +88,6 @@ fun EditArtFiltersScreen(
         }
     }
 }
-
 
 private enum class EditArtFiltersSectionType(
     override val headerStrRes: Int,

@@ -295,14 +295,18 @@ data class ColorWrapper(
     fun alphaToEightBitString() = ratioToEightBit(alpha).toString()
 }
 
+@Stable
 sealed interface DateSelection : Parcelable {
     @Parcelize
+    @Stable
     object All : DateSelection
 
     @Parcelize
+    @Stable
     data class Year(val year: Int) : DateSelection
 
     @Parcelize
+    @Stable
     data class Custom(
         val dateSelectedStartUnixMs: Long,
         val dateSelectedEndUnixMs: Long,
