@@ -112,8 +112,8 @@ private fun ListItem(
                 .padding(spacing.small)
         ) {
             Text(
-                text = "COLOR ${index + 1} / $colorsCount",
-                style = MaterialTheme.typography.overline
+                text = "${index + 1} / $colorsCount",
+                style = MaterialTheme.typography.subtitle1
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
