@@ -338,7 +338,7 @@ enum class StrokeWidthType(val headerId: Int) {
     THICK(R.string.edit_art_style_stroke_thick);
 }
 
-
+@Stable
 sealed interface Resolution : Parcelable {
 
     val widthPx: Int
@@ -348,6 +348,7 @@ sealed interface Resolution : Parcelable {
     @Composable
     fun displayTextResolution(): String
 
+    @Stable
     interface RotatingResolution : Resolution {
         val isRotated: Boolean
         val swappingChangesSize: Boolean
@@ -374,6 +375,7 @@ sealed interface Resolution : Parcelable {
     }
 
     @Parcelize
+    @Stable
     data class ComputerResolution(
         override val stringResourceId: Int,
         override val origWidthPx: Int,
@@ -423,13 +425,14 @@ sealed interface Resolution : Parcelable {
     }
 
     @Parcelize
+    @Stable
     data class CustomResolution(
         override val widthPx: Int,
         override val heightPx: Int,
         private val sizeMaximumPx: Int,
         private val sizeMinimumPx: Int,
-        @IgnoredOnParcel var pendingWidth: String? = null,
-        @IgnoredOnParcel var pendingHeight: String? = null
+        @IgnoredOnParcel val pendingWidth: String? = null,
+        @IgnoredOnParcel val pendingHeight: String? = null
     ) : Resolution {
 
         @IgnoredOnParcel

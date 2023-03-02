@@ -100,10 +100,9 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                         scrollState = when (it) {
                             TYPE -> scrollStateType
                             SORT -> scrollStateSort
-                            RESIZE -> scrollStateResize
                             else -> null
                         },
-                        scrollingEnabled = it != PREVIEW && it != STYLE && it != FILTERS
+                        scrollingEnabled = it != PREVIEW && it != STYLE && it != FILTERS && it != RESIZE
                     ) {
                         when (it) {
                             PREVIEW -> EditArtPreview(
