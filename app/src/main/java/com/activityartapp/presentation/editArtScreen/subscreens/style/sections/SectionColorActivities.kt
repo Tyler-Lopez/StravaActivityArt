@@ -1,14 +1,14 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import com.activityartapp.R
+import androidx.compose.runtime.State
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorChanged
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorPendingChangeConfirmed
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
 import com.activityartapp.presentation.editArtScreen.StyleIdentifier
-import com.activityartapp.presentation.editArtScreen.composables.Section
+import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorPreview
+import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorSlidersRGB
 
 @Composable
 fun SectionColorActivities(

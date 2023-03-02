@@ -1,4 +1,4 @@
-package com.activityartapp.presentation.editArtScreen.subscreens.style.composables
+package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -9,7 +9,8 @@ import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatin
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.StyleColorPendingChanged
 import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.composables.RadioButtonContentRow
-import com.activityartapp.presentation.editArtScreen.composables.Section
+import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorPreview
+import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorSlidersRGB
 
 @Composable
 fun SectionColorText(

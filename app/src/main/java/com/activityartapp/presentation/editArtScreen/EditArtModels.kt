@@ -7,7 +7,10 @@ import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotMutableState
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
@@ -151,149 +154,71 @@ sealed interface EditArtViewEvent : ViewEvent {
 sealed interface EditArtViewState : ViewState {
 
     companion object {
-        private const val FADE_LENGTH_MS = 1000
         const val MAX_GRADIENT_BG_COLORS = 7
         const val MIN_GRADIENT_BG_COLORS = 2
     }
 
-    val dialogActive: EditArtDialog
+    val dialogActive: State<EditArtDialog>
     val pagerStateWrapper: PagerStateWrapper
 
     data class Loading(
-        override val dialogActive: EditArtDialog = EditArtDialog.None,
-        override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
-            pagerHeaders = EditArtHeaderType.values().toList(),
-            pagerState = PagerState(EditArtHeaderType.values().toList().size),
-            fadeLengthMs = FADE_LENGTH_MS // todo
-        )
+        override val dialogActive: State<EditArtDialog>,
+        override val pagerStateWrapper: PagerStateWrapper
     ) : EditArtViewState
 
-    @Parcelize
     data class Standby(
-        @IgnoredOnParcel val bitmap: Bitmap? = null,
-        @IgnoredOnParcel override val dialogActive: EditArtDialog = EditArtDialog.None,
-        val filterActivitiesCountDate: Int = 0,
-        val filterActivitiesCountDistance: Int = 0,
-        val filterActivitiesCountType: Int = 0,
-        val filterDateSelections: List<DateSelection>? = null,
-        val filterDateSelectionIndex: Int = INIT_SELECTION_INDEX,
-        val filterDistanceSelectedStart: Double? = null,
-        val filterDistanceSelectedEnd: Double? = null,
-        val filterDistanceTotalStart: Double? = null,
-        val filterDistanceTotalEnd: Double? = null,
-        @IgnoredOnParcel val filterDistancePendingChangeStart: String? = null,
-        @IgnoredOnParcel val filterDistancePendingChangeEnd: String? = null,
-        val filterTypes: Map<SportType, Boolean>? = null,
-        @IgnoredOnParcel override val pagerStateWrapper: PagerStateWrapper = PagerStateWrapper(
-            pagerHeaders = EditArtHeaderType.values().toList(),
-            pagerState = PagerState(EditArtHeaderType.values().toList().size),
-            fadeLengthMs = FADE_LENGTH_MS
-        ),
-        @IgnoredOnParcel val listStateFilter: LazyListState = LazyListState(),
-        @IgnoredOnParcel val listStateStyle: LazyListState = LazyListState(),
-        @IgnoredOnParcel val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-        @IgnoredOnParcel val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-        @IgnoredOnParcel val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
-        val sizeResolutionList: List<Resolution> = ResolutionListFactoryImpl().create(),
-        val sizeResolutionListSelectedIndex: Int = INITIAL_SELECTED_RES_INDEX,
-        val sortTypeSelected: EditArtSortType = EditArtSortType.DATE,
-        val sortDirectionTypeSelected: EditArtSortDirectionType = EditArtSortDirectionType.ASCENDING,
-        val styleActivities: ColorWrapper = ColorWrapper(
-            alpha = INIT_ACTIVITIES_ALPHA,
-            blue = INIT_ACTIVITIES_BLUE,
-            green = INIT_ACTIVITIES_GREEN,
-            red = INIT_ACTIVITIES_RED
-        ),
-        val styleBackgroundList: List<ColorWrapper> = (0 until MAX_GRADIENT_BG_COLORS).map {
-            if (it % 2 == 0) {
-                ColorWrapper(
-                    alpha = INIT_BACKGROUND_ALPHA,
-                    blue = INIT_BACKGROUND_BLUE,
-                    green = INIT_BACKGROUND_GREEN,
-                    red = INIT_BACKGROUND_RED
-                )
-            } else {
-                ColorWrapper(
-                    alpha = INIT_ACTIVITIES_ALPHA,
-                    blue = INIT_ACTIVITIES_BLUE,
-                    green = INIT_ACTIVITIES_GREEN,
-                    red = INIT_ACTIVITIES_RED
-                )
-            }
-        },
-        val styleBackgroundAngleType: AngleType = AngleType.CW90,
-        val styleBackgroundGradientColorCount: Int = MIN_GRADIENT_BG_COLORS,
-        val styleBackgroundType: BackgroundType = BackgroundType.SOLID,
-        val styleFont: ColorWrapper? = null,
-        val styleStrokeWidthType: StrokeWidthType = INIT_STROKE_WIDTH,
-        val typeActivitiesDistanceMetersSummed: Int = -1,
-        val typeFontSelected: FontType = INIT_TYPE_FONT_SELECTION,
-        val typeFontWeightSelected: FontWeightType = INIT_TYPE_FONT_WEIGHT_SELECTION,
-        val typeFontItalicized: Boolean = INIT_TYPE_IS_ITALICIZED,
-        val typeFontSizeSelected: FontSizeType = INIT_TYPE_FONT_SIZE_SELECTION,
-        @IgnoredOnParcel val typeMaximumCustomTextLength: Int = CUSTOM_TEXT_MAXIMUM_LENGTH,
-        val typeLeftSelected: EditArtTypeType = INIT_TYPE_TYPE,
-        val typeLeftCustomText: String = INIT_TYPE_CUSTOM_TEXT,
-        val typeCenterSelected: EditArtTypeType = INIT_TYPE_TYPE,
-        val typeCenterCustomText: String = INIT_TYPE_CUSTOM_TEXT,
-        val typeRightSelected: EditArtTypeType = INIT_TYPE_TYPE,
-        val typeRightCustomText: String = INIT_TYPE_CUSTOM_TEXT,
-    ) : EditArtViewState, Parcelable {
+        val bitmap: State<Bitmap?>,
+        override val dialogActive: State<EditArtDialog>,
+        val filterActivitiesCountDate: State<Int>,
+        val filterActivitiesCountDistance: State<Int>,
+        val filterActivitiesCountType: State<Int>,
+        val filterDateSelections: SnapshotStateList<DateSelection>,
+        val filterDateSelectionIndex: State<Int>,
+        val filterDistanceSelectedStart: State<Double?>,
+        val filterDistanceSelectedEnd: State<Double?>,
+        val filterDistanceTotalStart: State<Double?>,
+        val filterDistanceTotalEnd: State<Double?>,
+        val filterDistancePendingChangeStart: State<String?>,
+        val filterDistancePendingChangeEnd: State<String?>,
+        val filterTypes: SnapshotStateMap<SportType, Boolean>,
+        override val pagerStateWrapper: PagerStateWrapper,
+        val listStateFilter: LazyListState = LazyListState(),
+        val listStateStyle: LazyListState = LazyListState(),
+        val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
+        val sizeResolutionList: SnapshotStateList<Resolution>,
+        val sizeResolutionListSelectedIndex: State<Int>,
+        val sortTypeSelected: State<EditArtSortType>,
+        val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
+        val styleActivities: State<ColorWrapper>,
+        val styleBackgroundList: SnapshotStateList<ColorWrapper>,
+        val styleBackgroundAngleType: State<AngleType>,
+        val styleBackgroundGradientColorCount: State<Int>,
+        val styleBackgroundType: State<BackgroundType>,
+        val styleFont: State<ColorWrapper?>,
+        val styleStrokeWidthType: State<StrokeWidthType>,
+        val typeActivitiesDistanceMetersSummed: State<Int>,
+        val typeFontSelected: State<FontType>,
+        val typeFontWeightSelected: State<FontWeightType>,
+        val typeFontItalicized: State<Boolean>,
+        val typeFontSizeSelected: State<FontSizeType>,
+        val typeMaximumCustomTextLength: Int,
+        val typeLeftSelected: State<EditArtTypeType>,
+        val typeLeftCustomText: State<String>,
+        val typeCenterSelected: State<EditArtTypeType>,
+        val typeCenterCustomText: State<String>,
+        val typeRightSelected: State<EditArtTypeType>,
+        val typeRightCustomText: State<String>,
+    ) : EditArtViewState {
 
         companion object {
             private const val INITIAL_SCROLL_STATE = 0
-            private const val INITIAL_SELECTED_RES_INDEX = 0
-
-            /** Initial Style settings **/
-            private const val INIT_ACTIVITIES_ALPHA = 1f
-            private const val INIT_ACTIVITIES_BLUE = 1f
-            private const val INIT_ACTIVITIES_GREEN = 1f
-            private const val INIT_ACTIVITIES_RED = 1f
-            private const val INIT_BACKGROUND_ALPHA = 1f
-            private const val INIT_BACKGROUND_BLUE = 0f
-            private const val INIT_BACKGROUND_GREEN = 0f
-            private const val INIT_BACKGROUND_RED = 0f
-            private val INIT_STROKE_WIDTH = StrokeWidthType.MEDIUM
-
-            /** Initial Type settings **/
-            private const val CUSTOM_TEXT_MAXIMUM_LENGTH = 30
-            private const val INIT_TYPE_CUSTOM_TEXT = ""
-            private val INIT_TYPE_FONT_SELECTION = FontType.JOSEFIN_SANS
-            private val INIT_TYPE_FONT_WEIGHT_SELECTION = FontWeightType.REGULAR
-            private val INIT_TYPE_FONT_SIZE_SELECTION = FontSizeType.MEDIUM
-            private const val INIT_TYPE_IS_ITALICIZED = false
-            private val INIT_TYPE_TYPE = EditArtTypeType.NONE
-
-            private const val NO_ACTIVITIES_COUNT = 0
-
-            private const val INIT_SELECTION_INDEX = 0
         }
 
         @Inject
-        @IgnoredOnParcel
         lateinit var resolutionListFactory: ResolutionListFactory
 
-        @IgnoredOnParcel
-        val atLeastOneActivitySelected
-            get() = minOf(
-                filterActivitiesCountDate,
-                filterActivitiesCountDistance,
-                filterActivitiesCountType
-            ) != NO_ACTIVITIES_COUNT
-
-        @IgnoredOnParcel
-        val filteredTypes: List<SportType>
-            get() = filterTypes?.entries?.filter { it.value }?.map { it.key } ?: emptyList()
-
-        val filteredDistanceRangeMeters: IntRange
-            get() = (filterDistanceSelectedStart
-                ?.roundToInt()
-                ?: Int.MIN_VALUE)
-                .rangeTo(
-                    filterDistanceSelectedEnd
-                        ?.roundToInt()
-                        ?: Int.MAX_VALUE
-                )
 
     }
 }
@@ -313,11 +238,13 @@ data class FilterStateWrapper(
 ) : Parcelable
 
 @Parcelize
+// https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable
+@Immutable
 data class ColorWrapper(
-    var alpha: Float,
-    var blue: Float,
-    var green: Float,
-    var red: Float,
+    val alpha: Float,
+    val blue: Float,
+    val green: Float,
+    val red: Float,
     @IgnoredOnParcel val pendingAlpha: String? = null,
     @IgnoredOnParcel val pendingBlue: String? = null,
     @IgnoredOnParcel val pendingGreen: String? = null,
@@ -340,6 +267,20 @@ data class ColorWrapper(
 
         val RATIO_RANGE = RATIO_LIMIT_LOWER..RATIO_LIMIT_UPPER
         val EIGHT_BIT_RANGE = EIGHT_BIT_LIMIT_LOWER..EIGHT_BIT_LIMIT_UPPER
+
+        val Black = ColorWrapper(
+            alpha = 1f,
+            blue = 0f,
+            green = 0f,
+            red = 0f
+        )
+
+        val White = ColorWrapper(
+            alpha = 1f,
+            blue = 1f,
+            green = 1f,
+            red = 1f
+        )
     }
 
     fun toInvertedLuminanceGrayscaleColor() = (RATIO_LIMIT_UPPER - toColor().luminance()).let {
