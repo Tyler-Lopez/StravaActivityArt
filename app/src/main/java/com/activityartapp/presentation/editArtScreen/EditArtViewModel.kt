@@ -158,9 +158,12 @@ class EditArtViewModel @Inject constructor(
                             .takeIf { prevIndex -> prevIndex in INDEX_FIRST..it.lastIndex }
                             ?: INDEX_FIRST
                     }
-                _filterDateSelections.clear()
                 if (selections != null) {
-                    _filterDateSelections.addAll(selections)
+                    val difference = selections.subtract(_filterDateSelections)
+                    _filterDateSelections.removeIf { !selections.contains(it) }
+                    _filterDateSelections.addAll(difference)
+                } else {
+                    _filterDateSelections.clear()
                 }
                 _filterDateSelectionIndex.value = selectionIndex
             }
