@@ -56,7 +56,7 @@ fun SectionColorBackgroundGradient(
                 }
             )
             .background(MaterialTheme.colors.background)
-            .padding(vertical = spacing.xSmall),
+            .padding(vertical = spacing.small),
         horizontalArrangement = Arrangement.spacedBy(spacing.xSmall)
     ) {
         item { Spacer(modifier = Modifier.width(spacing.xSmall)) }
