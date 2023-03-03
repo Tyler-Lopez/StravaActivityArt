@@ -180,7 +180,7 @@ sealed interface EditArtViewState : ViewState {
         val filterDistanceTotalEnd: State<Double?>,
         val filterDistancePendingChangeStart: State<String?>,
         val filterDistancePendingChangeEnd: State<String?>,
-        val filterTypes: SnapshotStateMap<SportType, Boolean>,
+        val filterTypes: SnapshotStateList<Pair<SportType, Boolean>>,
         override val pagerStateWrapper: PagerStateWrapper,
         val listStateFilter: LazyListState = LazyListState(),
         val listStateStyle: LazyListState = LazyListState(),

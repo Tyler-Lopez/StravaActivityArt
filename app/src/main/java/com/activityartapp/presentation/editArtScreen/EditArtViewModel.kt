@@ -2,8 +2,10 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.util.Size
-import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -27,6 +29,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import okhttp3.internal.toImmutableList
+import java.util.stream.Collectors.toList
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -170,11 +174,22 @@ class EditArtViewModel @Inject constructor(
             TYPE -> {
                 val newFilterTypes = activityFilterUtils.getPossibleActivityTypes(
                     activities = filteredActivities,
-                    filterTypesPrevious = _filterTypes
-                )
-                _filterTypes.clear()
+                    filterTypesPrevious = _filterTypes.toMap() // todo
+                )?.toMutableMap()
+
                 if (newFilterTypes != null) {
-                    _filterTypes.putAll(newFilterTypes)
+                    val iterator = _filterTypes.iterator()
+                    while (iterator.hasNext()) {
+                        val filterType: Pair<SportType, Boolean> = iterator.next()
+                        if (newFilterTypes.contains(filterType.first)) {
+                            newFilterTypes.remove(filterType.first)
+                        } else {
+                            iterator.remove()
+                        }
+                    }
+                    _filterTypes.addAll(newFilterTypes.toList())
+                } else {
+                    _filterTypes.clear()
                 }
             }
             DISTANCE -> {
@@ -237,7 +252,7 @@ class EditArtViewModel @Inject constructor(
     private val _filterDistanceTotalEnd = mutableStateOf<Double?>(null)
     private val _filterDistancePendingChangeStart = mutableStateOf<String?>(null) // not save
     private val _filterDistancePendingChangeEnd = mutableStateOf<String?>(null) // not save
-    private val _filterTypes: SnapshotStateMap<SportType, Boolean> = mutableStateMapOf()
+    private val _filterTypes = mutableStateListOf<Pair<SportType, Boolean>>()
 
     // SIZE
     private val _sizeResolutionList =
@@ -406,19 +421,19 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterChangeEvent(event: FilterChanged) {
-        /** Updates UI in response to adjustment without adjusted filtered activities **/
-        when (event) {
-            is FilterChanged.FilterDateSelectionChanged -> onFilterDateSelectionChanged(event)
-            is FilterChanged.FilterDateCustomChanged -> onFilterDateCustomChanged(event)
-            is FilterChanged.FilterDistanceChanged -> onFilterDistanceChanged(event)
-            is FilterChanged.FilterDistancePendingChangeConfirmed -> onFilterDistancePendingChangeConfirmed(
-                event
-            )
-            is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
-        }
-
         /** Run all operations which require many linear scans of activities off of the main thread **/
         viewModelScope.launch(activitiesProcessingDispatcher) {
+            /** Updates UI in response to adjustment without adjusted filtered activities **/
+            when (event) {
+                is FilterChanged.FilterDateSelectionChanged -> onFilterDateSelectionChanged(event)
+                is FilterChanged.FilterDateCustomChanged -> onFilterDateCustomChanged(event)
+                is FilterChanged.FilterDistanceChanged -> onFilterDistanceChanged(event)
+                is FilterChanged.FilterDistancePendingChangeConfirmed -> onFilterDistancePendingChangeConfirmed(
+                    event
+                )
+                is FilterChanged.FilterTypeToggled -> onFilterTypeToggled(event)
+            }
+
             event.filterType.apply {
                 /** In response to [EditArtViewState.Standby] changes relevant to this
                  * [EditArtFilterType] which just occurred, update its filtered activities **/
@@ -540,7 +555,17 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onFilterTypeToggled(event: FilterChanged.FilterTypeToggled) {
-        _filterTypes[event.type] = _filterTypes[event.type]!!.not()
+        /** If an athlete clicks on a previous filter to TYPE which will result in [_filterTypes]
+         * becoming smaller, then rapidly clicks on the last index before the list resizes,
+         * there would be an [IndexOutOfBoundsException] if this logic was not used. **/
+        _filterTypes
+            .indexOfFirst { it.first == event.type }
+            .takeIf { it != -1 }
+            ?.let {
+                _filterTypes[it] = _filterTypes[it].run {
+                    copy(second = second.not())
+                }
+            }
     }
 
     private fun onNavigateUpClicked() {
@@ -556,9 +581,19 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSaveClicked() {
-        viewModelScope.launch {
+        viewModelScope.launch(activitiesProcessingDispatcher) {
+            /** Prevent rapid-click after changing a filter from routing to SaveArt when
+             * no activities are selected.
+             *
+             * Clicking SaveArt rapidly and then changing a filter will not cause issue on
+             * SaveArt, but on back-press that filter will have taken effect. */
+            if (activitiesFiltered.isEmpty()) {
+                return@launch
+            }
+
             val targetSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value]
             val filterRange = activitiesDateRangeUnixMs
+
             routeTo(
                 MainDestination.NavigateSaveArt(
                     activityTypes = filteredTypes,
@@ -918,7 +953,28 @@ class EditArtViewModel @Inject constructor(
     private fun Double.milesToMeters(): Double = this / 0.000621371192
 
     private val filteredTypes: List<SportType>
-        get() = _filterTypes.entries.filter { it.value }.map { it.key }
+        get() = _filterTypes.filter { it.second }.map { it.first }
+    /*
+
+    .takemutableListOf<SportType>().apply {
+    /** [_filterTypes] must NOT be iterated over using an [Iterator] or a
+     * [ConcurrentModificationException] will occur when rapidly toggling a filter type.
+     *
+     * Though it might seem this may cause an issue where the result of [filteredTypes]
+     * does not reflect the UI, it does not seem to by manual test.
+     *
+     * If it does cause issue, an alternative solution is to move access of this
+     * variable into the [activitiesProcessingDispatcher] thread - or just remove that thread. **/
+    for (i in 0.._filterTypes.lastIndex) {
+        _filterTypes
+            .getOrNull(i)
+            ?.takeIf { it.second }
+            ?.let { add(it.first) }
+    }
+
+     */
+
+
     private val filteredDistanceRangeMeters: IntRange
         get() = (_filterDistanceSelectedStart.value
             ?.roundToInt()
@@ -958,9 +1014,9 @@ class EditArtViewModel @Inject constructor(
         ssh.get<Double?>(SSH_FILTER_DISTANCE_TOTAL_END)?.let {
             _filterDistanceTotalEnd.value = it
         }
-        ssh.get<Map<SportType, Boolean>>(SSH_FILTER_TYPES)?.let {
+        ssh.get<List<Pair<SportType, Boolean>>>(SSH_FILTER_TYPES)?.let {
             _filterTypes.clear()
-            _filterTypes.putAll(it)
+            _filterTypes.addAll(it)
         }
         ssh.get<List<Resolution>>(SSH_SIZE_RESOLUTION_LIST)?.let {
             _sizeResolutionList.clear()
@@ -1047,7 +1103,7 @@ class EditArtViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            snapshotFlow { _filterTypes.toMap() }.collect {
+            snapshotFlow { _filterTypes.toList() }.collect {
                 ssh[SSH_FILTER_TYPES] = it
             }
         }

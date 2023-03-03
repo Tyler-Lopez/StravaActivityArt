@@ -2,11 +2,13 @@ package com.activityartapp.util.enums
 
 import androidx.annotation.StringRes
 import com.activityartapp.R
+import javax.annotation.concurrent.Immutable
 
 /**
  * Last updated 2/15/2023
  * https://developers.strava.com/docs/reference/#api-models-SportType
   */
+@Immutable
 enum class SportType(@StringRes val stringRes: Int) {
     ALPINE_SKI(R.string.sport_type_alpine_ski),
     BACKCOUNTRY_SKI(R.string.sport_type_backcountry_ski),

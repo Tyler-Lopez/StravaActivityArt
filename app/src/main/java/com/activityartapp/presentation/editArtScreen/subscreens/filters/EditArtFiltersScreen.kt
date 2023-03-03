@@ -34,7 +34,7 @@ fun EditArtFiltersScreen(
     distancePendingChangeStart: State<String?>,
     distancePendingChangeEnd: State<String?>,
     listState: LazyListState,
-    typesWithSelectedFlag: SnapshotStateMap<SportType, Boolean>,
+    typesWithSelectedFlag: SnapshotStateList<Pair<SportType, Boolean>>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val sections = mutableListOf<EditArtFiltersSectionType>().apply {
@@ -44,7 +44,7 @@ fun EditArtFiltersScreen(
         if (typesWithSelectedFlag.isNotEmpty()) {
             add(EditArtFiltersSectionType.ACTIVITY_TYPE)
         }
-        if (distanceTotalStart.value != null) { // todo add back start != end case reminder
+        if (distanceTotalStart.value != null && distanceTotalStart.value != distanceTotalEnd.value) { // todo add back start != end case reminder
             add(EditArtFiltersSectionType.DISTANCE)
         }
     }
@@ -66,7 +66,7 @@ fun EditArtFiltersScreen(
                     )
                     EditArtFiltersSectionType.ACTIVITY_TYPE -> SectionActivityType(
                         count = activitiesCountType.value,
-                        typesWithSelectedFlag = typesWithSelectedFlag.toList(),
+                        typesWithSelectedFlag = typesWithSelectedFlag,
                         eventReceiver = eventReceiver
                     )
                     EditArtFiltersSectionType.DISTANCE -> distanceTotalEnd.value?.let {
