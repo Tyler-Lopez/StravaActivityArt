@@ -2,10 +2,7 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.util.Size
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.*
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -28,14 +25,16 @@ import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import okhttp3.internal.toImmutableList
-import java.util.stream.Collectors.toList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagerApi::class)
 @HiltViewModel
+@Stable
 class EditArtViewModel @Inject constructor(
     private val getActivitiesFromDisk: GetActivitiesFromDisk,
     private val activityFilterUtils: ActivityFilterUtils,
@@ -231,6 +230,7 @@ class EditArtViewModel @Inject constructor(
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private var imageJob: Job? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    private var screenSize: Size? = null
     /** endregion **/
 
     /** region States observed in View */
@@ -385,6 +385,7 @@ class EditArtViewModel @Inject constructor(
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is SaveClicked -> onSaveClicked()
+            is ScreenMeasured -> onScreenMeasured(event)
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
@@ -657,6 +658,10 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
+    private fun onScreenMeasured(event: ScreenMeasured) {
+        screenSize = event.size
+    }
+
     private fun onSizeChanged(event: SizeChanged) {
         _sizeResolutionListSelectedIndex.value = event.changedIndex
     }
@@ -896,38 +901,38 @@ class EditArtViewModel @Inject constructor(
         imageJob?.cancel()
         imageJob = viewModelScope.launch(imageProcessingDispatcher) {
             _bitmap.value = null
-            val newBitmap = visualizationUtils.createBitmap(
-                activities = activitiesFiltered,
-                backgroundAngleType = _styleBackgroundAngleType.value,
-                backgroundType = _styleBackgroundType.value,
-                backgroundColorsArgb = _styleBackgroundList
-                    .take(_styleBackgroundGradientColorCount.value)
-                    .map { it.toColorArgb() }, // TODO
-                colorActivitiesArgb = _styleActivities.value.toColorArgb(),
-                colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
-                strokeWidth = _styleStrokeWidthType.value,
-                bitmapSize = imageSizeUtils.sizeToMaximumSize(
-                    actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
-                        Size(widthPx, heightPx)
-                    },
-                    maximumSize = Size( // todo this needs to be screen measured
-                        2000,
-                        2000
-                    )
-                ),
-                fontAssetPath = _typeFontSelected.value.getAssetPath(
-                    fontWeightType = _typeFontWeightSelected.value,
-                    italicized = _typeFontItalicized.value
-                ),
-                fontSize = _typeFontSizeSelected.value,
-                isPreview = true,
-                sortType = _sortTypeSelected.value,
-                sortDirectionType = _sortDirectionTypeSelected.value,
-                textLeft = EditArtTypeSection.LEFT.text,
-                textCenter = EditArtTypeSection.CENTER.text,
-                textRight = EditArtTypeSection.RIGHT.text
-            )
-            _bitmap.value = newBitmap
+            screenSize?.let {
+                val newBitmap = visualizationUtils.createBitmap(
+                    activities = activitiesFiltered,
+                    backgroundAngleType = _styleBackgroundAngleType.value,
+                    backgroundType = _styleBackgroundType.value,
+                    backgroundColorsArgb = _styleBackgroundList
+                        .take(_styleBackgroundGradientColorCount.value)
+                        .map { it.toColorArgb() }, // TODO
+                    colorActivitiesArgb = _styleActivities.value.toColorArgb(),
+                    colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
+                    strokeWidth = _styleStrokeWidthType.value,
+                    bitmapSize = imageSizeUtils.sizeToMaximumSize(
+                        actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
+                            Size(widthPx, heightPx)
+                        },
+                        maximumSize = it
+                    ),
+                    fontAssetPath = _typeFontSelected.value.getAssetPath(
+                        fontWeightType = _typeFontWeightSelected.value,
+                        italicized = _typeFontItalicized.value
+                    ),
+                    fontSize = _typeFontSizeSelected.value,
+                    isPreview = true,
+                    sortType = _sortTypeSelected.value,
+                    sortDirectionType = _sortDirectionTypeSelected.value,
+                    textLeft = EditArtTypeSection.LEFT.text,
+                    textCenter = EditArtTypeSection.CENTER.text,
+                    textRight = EditArtTypeSection.RIGHT.text
+                )
+                _bitmap.value = newBitmap
+            }
+
         }
     }
 

@@ -4,6 +4,7 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import android.util.Size
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
@@ -52,6 +53,7 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
+    data class ScreenMeasured(val size: Size) : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
         val changedTo: String
 
