@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotMutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
@@ -52,6 +53,12 @@ sealed interface EditArtViewEvent : ViewEvent {
 
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
+    data class PreviewGesture(
+        val centroid: Offset,
+        val pan: Offset,
+        val zoom: Float
+    ) : EditArtViewEvent
+
     object SaveClicked : EditArtViewEvent
     data class ScreenMeasured(val size: Size) : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
