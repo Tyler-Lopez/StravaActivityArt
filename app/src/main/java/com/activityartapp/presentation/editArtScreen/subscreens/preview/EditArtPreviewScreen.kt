@@ -2,12 +2,14 @@ package com.activityartapp.presentation.editArtScreen.subscreens.preview
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
@@ -36,7 +38,28 @@ fun EditArtPreview(
             Image(
                 bitmap = it.asImageBitmap(),
                 contentDescription = stringResource(R.string.edit_art_preview_image_content_description),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTransformGestures(
+                            onGesture = { centroid, pan, gestureZoom, _ ->
+                                eventReceiver.onEvent(
+                                    EditArtViewEvent.PreviewGesture(
+                                        centroid,
+                                        pan,
+                                        gestureZoom
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    .graphicsLayer {
+                        translationX = -offset.x * zoom
+                        translationY = -offset.y * zoom
+                        scaleX = zoom
+                        scaleY = zoom
+                        transformOrigin = TransformOrigin(0f, 0f)
+                    },
                 contentScale = ContentScale.Fit,
             )
             /*
