@@ -21,11 +21,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.architecture.StatePusher
 import com.activityartapp.presentation.common.AppBarScaffold
 import com.activityartapp.presentation.common.ScreenBackground
+import com.activityartapp.presentation.common.ScreenMeasurer
 import com.activityartapp.presentation.editArtScreen.EditArtHeaderType.*
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.NavigateUpClicked
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.SaveClicked
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.*
 import com.activityartapp.presentation.editArtScreen.composables.EditArtDialogInfo
 import com.activityartapp.presentation.editArtScreen.subscreens.filters.EditArtFiltersScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.preview.EditArtPreview
@@ -38,10 +39,24 @@ import com.activityartapp.util.classes.YearMonthDay
 import com.activityartapp.util.enums.BackgroundType
 import com.google.accompanist.pager.ExperimentalPagerApi
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun EditArtViewDelegate(viewModel: EditArtViewModel) {
-    viewModel.viewState.collectAsState().value?.apply {
+    ScreenMeasurer {
+        viewModel.onEvent(ScreenMeasured(size = it))
+    }
+    CollectViewState(
+        flow = viewModel,
+        eventReceiver = viewModel
+    )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun CollectViewState(
+    flow: StatePusher<EditArtViewState>,
+    eventReceiver: EventReceiver<EditArtViewEvent>
+) {
+    flow.viewState.collectAsState().value?.apply {
         /* Triggers a recomposition only when all activity counts do not equal zero
         or at least one does. */
         val atLeastOneActivitySelected = derivedStateOf {
@@ -54,10 +69,10 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
 
         AppBarScaffold(
             text = stringResource(R.string.action_bar_edit_art_header),
-            onNavigateUp = { viewModel.onEventDebounced(NavigateUpClicked) },
+            onNavigateUp = { eventReceiver.onEventDebounced(NavigateUpClicked) },
             actions = {
                 IconButton(
-                    onClick = { viewModel.onEventDebounced(SaveClicked) },
+                    onClick = { eventReceiver.onEventDebounced(SaveClicked) },
                     enabled = atLeastOneActivitySelected.value
                 ) {
                     Text(
@@ -77,7 +92,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                     EditArtTabLayout(
                         pagerHeaders = pagerHeaders,
                         pagerState = pagerState,
-                        eventReceiver = viewModel
+                        eventReceiver = eventReceiver
                     )
                 }
             }
@@ -109,7 +124,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 atLeastOneActivitySelected,
                                 backgroundIsTransparent,
                                 bitmap,
-                                viewModel
+                                eventReceiver
                             )
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
@@ -126,7 +141,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                     filterDistancePendingChangeEnd,
                                     listStateFilter,
                                     filterTypes,
-                                    viewModel
+                                    eventReceiver
                                 )
                             }
                             STYLE -> EditArtStyleScreen(
@@ -138,7 +153,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 styleFont,
                                 listStateStyle,
                                 styleStrokeWidthType,
-                                viewModel
+                                eventReceiver
                             )
                             TYPE -> EditArtTypeScreen(
                                 typeActivitiesDistanceMetersSummed,
@@ -153,17 +168,17 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
                                 typeCenterSelected,
                                 typeLeftSelected,
                                 typeRightSelected,
-                                viewModel
+                                eventReceiver
                             )
                             SORT -> EditArtSortScreen(
                                 sortTypeSelected = sortTypeSelected,
                                 sortDirectionSelected = sortDirectionTypeSelected,
-                                eventReceiver = viewModel
+                                eventReceiver = eventReceiver
                             )
                             RESIZE -> EditArtResizeScreen(
                                 sizeResolutionList,
                                 sizeResolutionListSelectedIndex,
-                                viewModel
+                                eventReceiver
                             )
                             null -> error("Invalid pagerState current page.")
                         }
@@ -174,7 +189,7 @@ fun EditArtViewDelegate(viewModel: EditArtViewModel) {
 
         DialogHandler(
             dialogActive = dialogActive,
-            eventReceiver = viewModel
+            eventReceiver = eventReceiver
         )
     }
 }
