@@ -8,7 +8,10 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -23,6 +26,8 @@ fun EditArtPreview(
     atLeastOneActivitySelected: State<Boolean>,
     backgroundIsTransparent: State<Boolean>,
     bitmap: State<Bitmap?>,
+    offset: State<Offset>,
+    scale: State<Float>,
     eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     if (!atLeastOneActivitySelected.value) {
@@ -54,10 +59,10 @@ fun EditArtPreview(
                         )
                     }
                     .graphicsLayer {
-                        translationX = -offset.x * zoom
-                        translationY = -offset.y * zoom
-                        scaleX = zoom
-                        scaleY = zoom
+                        translationX = -offset.value.x * scale.value
+                        translationY = -offset.value.y * scale.value
+                        scaleX = scale.value
+                        scaleY = scale.value
                         transformOrigin = TransformOrigin(0f, 0f)
                     },
                 contentScale = ContentScale.Fit,

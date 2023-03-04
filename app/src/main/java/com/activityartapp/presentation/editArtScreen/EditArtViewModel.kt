@@ -239,6 +239,8 @@ class EditArtViewModel @Inject constructor(
 
     // PREVIEW
     private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
+    private val _previewOffset = mutableStateOf(0f)
+    private val _previewScale = mutableStateOf(1f)
 
     // FILTERS
     private val _filterActivitiesCountDate = mutableStateOf(0)
@@ -325,6 +327,8 @@ class EditArtViewModel @Inject constructor(
                 filterDistancePendingChangeStart = _filterDistancePendingChangeStart,
                 filterDistancePendingChangeEnd = _filterDistancePendingChangeEnd,
                 filterTypes = _filterTypes,
+                previewOffset = _previewOffset,
+                previewScale = _previewScale,
                 sizeResolutionList = _sizeResolutionList,
                 sizeResolutionListSelectedIndex = _sizeResolutionListSelectedIndex,
                 sortDirectionTypeSelected = _sortDirectionTypeSelected,
@@ -384,6 +388,7 @@ class EditArtViewModel @Inject constructor(
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
+            is PreviewGesture -> onPreviewGesture(event)
             is SaveClicked -> onSaveClicked()
             is ScreenMeasured -> onScreenMeasured(event)
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
@@ -571,6 +576,10 @@ class EditArtViewModel @Inject constructor(
 
     private fun onNavigateUpClicked() {
         _dialogActive.value = EditArtDialog.NavigateUp
+    }
+
+    private fun onPreviewGesture(event: PreviewGesture) {
+
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {

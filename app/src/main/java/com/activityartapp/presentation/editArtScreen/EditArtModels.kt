@@ -193,6 +193,8 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper,
         val listStateFilter: LazyListState = LazyListState(),
         val listStateStyle: LazyListState = LazyListState(),
+        val previewOffset: State<Float>,
+        val previewScale: State<Float>,
         val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
