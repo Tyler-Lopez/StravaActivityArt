@@ -3,6 +3,7 @@ package com.activityartapp.presentation.editArtScreen
 import android.graphics.Bitmap
 import android.util.Size
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -230,7 +231,9 @@ class EditArtViewModel @Inject constructor(
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private var imageJob: Job? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
-    private var screenSize: Size? = null
+
+    // The size of the screen excluding the top bar
+    private var previewScreenSize: Size? = null
     /** endregion **/
 
     /** region States observed in View */
@@ -239,7 +242,7 @@ class EditArtViewModel @Inject constructor(
 
     // PREVIEW
     private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
-    private val _previewOffset = mutableStateOf(0f)
+    private val _previewOffset = mutableStateOf(Offset.Zero)
     private val _previewScale = mutableStateOf(1f)
 
     // FILTERS
@@ -390,7 +393,6 @@ class EditArtViewModel @Inject constructor(
             is NavigateUpClicked -> onNavigateUpClicked()
             is PreviewGesture -> onPreviewGesture(event)
             is SaveClicked -> onSaveClicked()
-            is ScreenMeasured -> onScreenMeasured(event)
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
@@ -400,6 +402,7 @@ class EditArtViewModel @Inject constructor(
     private fun onArtMutatingEvent(event: ArtMutatingEvent) {
         when (event) {
             is FilterChanged -> onFilterChangeEvent(event)
+            is PreviewSpaceMeasured -> onScreenMeasured(event)
             is SizeChanged -> onSizeChanged(event)
             is SizeCustomChanged -> onSizeCustomChanged(event)
             is SizeCustomPendingChangeConfirmed -> onSizeCustomPendingChangeConfirmed(event)
@@ -579,7 +582,84 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onPreviewGesture(event: PreviewGesture) {
+        val oldScale = _previewScale.value
+        val newScale = (oldScale * event.zoom).coerceIn(1f..3f)
 
+        val bitmapWidth = _bitmap.value?.width ?: 0
+        val bitmapHeight = _bitmap.value?.height ?: 0
+
+        val screenWidth = previewScreenSize?.width ?: 0
+        val screenHeight = previewScreenSize?.height ?: 0
+
+        val screenExcessWidth = screenWidth - bitmapWidth
+        val screenExcessHeight = screenHeight - bitmapHeight
+
+        val scaledScreenExcessWidth = screenExcessWidth * newScale
+        val scaledScreenExcessHeight = screenExcessHeight * newScale
+
+        val scaledBitmapWidth = bitmapWidth * newScale
+        val scaledBitmapHeight = bitmapHeight * newScale
+
+        val largestWidth = maxOf(scaledBitmapWidth, screenWidth.toFloat())
+        val largestHeight = maxOf(scaledBitmapHeight, screenHeight.toFloat())
+
+        val smallestWidth = minOf(scaledBitmapWidth, screenWidth.toFloat())
+        val smallestHeight = minOf(scaledBitmapHeight, screenHeight.toFloat())
+
+        //
+        val trueScaledExcessX = (screenWidth - scaledBitmapWidth).coerceAtLeast(0f) / 2f
+        val trueScaledExcessY = (screenHeight - scaledBitmapHeight).coerceAtLeast(0f) / 2f
+        val decayedExcessX = screenExcessWidth - (screenExcessWidth - trueScaledExcessX)
+        val decayedExcessY = screenExcessHeight - (screenExcessHeight - trueScaledExcessY)
+        println("True Scaled Excess X: $trueScaledExcessX")
+        println("True Scaled Excess Y: $trueScaledExcessY")
+        println("Decayed Excess X: $decayedExcessX")
+        println("Decayed Excess Y: $decayedExcessY")
+
+        //
+
+        //   val scaledExcessX = (largestWidth) - smallestWidth
+        val scaledExcessX = (scaledBitmapWidth) - smallestWidth
+        val maximumOffsetX: Float = scaledExcessX / newScale
+   //     val scaledExcessY = (largestHeight) - smallestHeight
+        val scaledExcessY = (scaledBitmapHeight) - smallestHeight
+
+        val maximumOffsetY: Float = scaledExcessY / newScale
+
+        val oldCentroid = event.centroid / oldScale
+        val newCentroid = event.centroid / newScale
+        println("oldScale: $oldScale")
+        println("newScale: $newScale")
+        println("bitmapWidth: $bitmapWidth")
+        println("bitmapHeight: $bitmapHeight")
+        println("screenWidth: $screenWidth")
+        println("screenHeight: $screenHeight")
+        println("screenExcessWidth: $screenExcessWidth")
+        println("screenExcessHeight: $screenExcessHeight")
+        println("scaledScreenExcessWidth: $scaledScreenExcessWidth")
+        println("scaledScreenExcessHeight: $scaledScreenExcessHeight")
+        println("scaledBitmapWidth: $scaledBitmapWidth")
+        println("scaledBitmapHeight: $scaledBitmapHeight")
+        println("largestWidth: $largestWidth")
+        println("largestHeight: $largestHeight")
+        println("scaledExcessX: $scaledExcessX")
+        println("maximumOffsetX: $maximumOffsetX")
+        println("scaledExcessY: $scaledExcessY")
+        println("maximumOffsetY: $maximumOffsetY")
+        println("oldCentroid: $oldCentroid")
+        println("newCentroid: $newCentroid")
+
+
+        val newOffset =
+            (_previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
+                copy(
+                   x = x.coerceIn(0f..maximumOffsetX) - decayedExcessX,
+                    y = y.coerceIn(0f..maximumOffsetY) - decayedExcessY
+                )
+            }
+        println("newOffset: $newOffset")
+        _previewOffset.value = newOffset
+        _previewScale.value = newScale
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -667,8 +747,8 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun onScreenMeasured(event: ScreenMeasured) {
-        screenSize = event.size
+    private fun onScreenMeasured(event: PreviewSpaceMeasured) {
+        previewScreenSize = event.size
     }
 
     private fun onSizeChanged(event: SizeChanged) {
@@ -910,7 +990,7 @@ class EditArtViewModel @Inject constructor(
         imageJob?.cancel()
         imageJob = viewModelScope.launch(imageProcessingDispatcher) {
             _bitmap.value = null
-            screenSize?.let {
+            previewScreenSize?.let {
                 val newBitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered,
                     backgroundAngleType = _styleBackgroundAngleType.value,

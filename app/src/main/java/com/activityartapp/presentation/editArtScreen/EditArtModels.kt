@@ -59,8 +59,8 @@ sealed interface EditArtViewEvent : ViewEvent {
         val zoom: Float
     ) : EditArtViewEvent
 
+    data class PreviewSpaceMeasured(val size: Size) : ArtMutatingEvent
     object SaveClicked : EditArtViewEvent
-    data class ScreenMeasured(val size: Size) : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
         val changedTo: String
 
@@ -193,7 +193,7 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper,
         val listStateFilter: LazyListState = LazyListState(),
         val listStateStyle: LazyListState = LazyListState(),
-        val previewOffset: State<Float>,
+        val previewOffset: State<Offset>,
         val previewScale: State<Float>,
         val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
@@ -229,8 +229,6 @@ sealed interface EditArtViewState : ViewState {
 
         @Inject
         lateinit var resolutionListFactory: ResolutionListFactory
-
-
     }
 }
 

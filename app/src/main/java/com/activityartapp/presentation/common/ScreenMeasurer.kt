@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 fun ScreenMeasurer(onMeasured: (Size) -> Unit) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val localDensity = LocalDensity.current
+        // Not sure derived state is necessary here: perhaps remove later
         val maxSize = derivedStateOf {
             localDensity.run {
                 Size(

@@ -18,7 +18,7 @@ import com.activityartapp.util.enums.EditArtSortType
 
 
 @Composable
-fun ColumnScope.EditArtSortScreen(
+fun EditArtSortScreen(
     sortTypeSelected: State<EditArtSortType>,
     sortDirectionSelected: State<EditArtSortDirectionType>,
     eventReceiver: EventReceiver<EditArtViewEvent>
