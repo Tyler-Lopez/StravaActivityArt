@@ -31,6 +31,27 @@ class VisualizationUtils @Inject constructor(
         private const val TRANSPARENT_GRID_SIZE_PX = 50
     }
 
+    fun createArtOnCanvas(
+        backgroundAngleType: AngleType,
+        backgroundType: BackgroundType,
+        backgroundColorsArgb: List<Int>,
+        canvas: Canvas,
+        colorActivitiesArgb: Int,
+        colorFontArgb: Int,
+        fontAssetPath: String,
+        fontSize: FontSizeType,
+        isPreview: Boolean,
+        sortType: EditArtSortType,
+        sortDirectionType: EditArtSortDirectionType,
+        strokeWidth: StrokeWidthType,
+        @Px paddingFraction: Float = 0.1f,
+        textLeft: String? = null,
+        textCenter: String? = null,
+        textRight: String? = null
+    ) {
+
+    }
+    
     fun createBitmap(
         activities: List<Activity>,
         backgroundAngleType: AngleType,
