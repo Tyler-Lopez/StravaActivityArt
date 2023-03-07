@@ -621,7 +621,7 @@ class EditArtViewModel @Inject constructor(
         //   val scaledExcessX = (largestWidth) - smallestWidth
         val scaledExcessX = (scaledBitmapWidth) - smallestWidth
         val maximumOffsetX: Float = scaledExcessX / newScale
-   //     val scaledExcessY = (largestHeight) - smallestHeight
+        //     val scaledExcessY = (largestHeight) - smallestHeight
         val scaledExcessY = (scaledBitmapHeight) - smallestHeight
 
         val maximumOffsetY: Float = scaledExcessY / newScale
@@ -653,7 +653,7 @@ class EditArtViewModel @Inject constructor(
         val newOffset =
             (_previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
                 copy(
-                   x = x.coerceIn(0f..maximumOffsetX) - decayedExcessX,
+                    x = x.coerceIn(0f..maximumOffsetX) - decayedExcessX,
                     y = y.coerceIn(0f..maximumOffsetY) - decayedExcessY
                 )
             }
@@ -748,7 +748,20 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onScreenMeasured(event: PreviewSpaceMeasured) {
-        previewScreenSize = event.size
+        println("here, screen measured")
+        previewScreenSize = event.size.apply {
+            _previewOffset.value = imageSizeUtils.offsetToCenterImageInContainer(
+                container = this,
+                image = imageSizeUtils.sizeToMaximumSize(
+                    actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
+                        Size(widthPx, heightPx)
+                    },
+                    maximumSize = this
+                )
+            )
+            println("changing offset to ${_previewOffset.value}")
+            _previewScale.value = 1f
+        }
     }
 
     private fun onSizeChanged(event: SizeChanged) {
@@ -1048,25 +1061,25 @@ class EditArtViewModel @Inject constructor(
 
     private val filteredTypes: List<SportType>
         get() = _filterTypes.filter { it.second }.map { it.first }
-    /*
+/*
 
-    .takemutableListOf<SportType>().apply {
-    /** [_filterTypes] must NOT be iterated over using an [Iterator] or a
-     * [ConcurrentModificationException] will occur when rapidly toggling a filter type.
-     *
-     * Though it might seem this may cause an issue where the result of [filteredTypes]
-     * does not reflect the UI, it does not seem to by manual test.
-     *
-     * If it does cause issue, an alternative solution is to move access of this
-     * variable into the [activitiesProcessingDispatcher] thread - or just remove that thread. **/
-    for (i in 0.._filterTypes.lastIndex) {
-        _filterTypes
-            .getOrNull(i)
-            ?.takeIf { it.second }
-            ?.let { add(it.first) }
-    }
+.takemutableListOf<SportType>().apply {
+/** [_filterTypes] must NOT be iterated over using an [Iterator] or a
+ * [ConcurrentModificationException] will occur when rapidly toggling a filter type.
+ *
+ * Though it might seem this may cause an issue where the result of [filteredTypes]
+ * does not reflect the UI, it does not seem to by manual test.
+ *
+ * If it does cause issue, an alternative solution is to move access of this
+ * variable into the [activitiesProcessingDispatcher] thread - or just remove that thread. **/
+for (i in 0.._filterTypes.lastIndex) {
+    _filterTypes
+        .getOrNull(i)
+        ?.takeIf { it.second }
+        ?.let { add(it.first) }
+}
 
-     */
+ */
 
 
     private val filteredDistanceRangeMeters: IntRange

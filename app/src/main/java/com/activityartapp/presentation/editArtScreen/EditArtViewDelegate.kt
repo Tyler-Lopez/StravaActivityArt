@@ -95,9 +95,6 @@ fun CollectViewState(
             }
         ) {
             if (this@apply is EditArtViewState.Standby) {
-                ScreenMeasurer {
-                    eventReceiver.onEvent(PreviewSpaceMeasured(size = it))
-                }
 
                 val activeHeader = EditArtHeaderType
                     .fromOrdinal(pagerStateWrapper.pagerState.currentPage)
@@ -187,7 +184,11 @@ fun CollectViewState(
                         }
                     }
                 }
+                ScreenMeasurer {
+                    eventReceiver.onEvent(PreviewSpaceMeasured(size = it))
+                }
             }
+
         }
 
         DialogHandler(
