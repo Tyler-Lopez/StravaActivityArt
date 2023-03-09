@@ -312,8 +312,6 @@ class EditArtViewModel @Inject constructor(
 
             /** Restore any previous state **/
             stateRestore()
-            /** Observe any changes to all states and save them into ssh **/
-            stateObserveAndSave()
             Standby(
                 bitmap = _bitmap,
                 dialogActive = _dialogActive,
@@ -377,6 +375,9 @@ class EditArtViewModel @Inject constructor(
 
             /** Finally, update the bitmap of the current Standby state **/
             updateBitmap()
+
+            /** Observe any changes to all states and save them into ssh **/
+            stateObserveAndSave()
         }
     }
 
@@ -582,84 +583,51 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onPreviewGesture(event: PreviewGesture) {
-        val oldScale = _previewScale.value
-        val newScale = (oldScale * event.zoom).coerceIn(1f..3f)
+        previewScreenSize?.let { screenSize ->
+            val oldScale = _previewScale.value
+            val newScale = (oldScale * event.zoom).coerceIn(1f..3f)
 
-        val bitmapWidth = _bitmap.value?.width ?: 0
-        val bitmapHeight = _bitmap.value?.height ?: 0
+            val bitmapWidth = _bitmap.value?.width ?: 0
+            val bitmapHeight = _bitmap.value?.height ?: 0
 
-        val screenWidth = previewScreenSize?.width ?: 0
-        val screenHeight = previewScreenSize?.height ?: 0
+            val screenWidth = screenSize.width
+            val screenHeight = screenSize.height
 
-        val screenExcessWidth = screenWidth - bitmapWidth
-        val screenExcessHeight = screenHeight - bitmapHeight
+            val screenExcessWidth = screenWidth - bitmapWidth
+            val screenExcessHeight = screenHeight - bitmapHeight
 
-        val scaledScreenExcessWidth = screenExcessWidth * newScale
-        val scaledScreenExcessHeight = screenExcessHeight * newScale
+            val scaledBitmapWidth = bitmapWidth * newScale
+            val scaledBitmapHeight = bitmapHeight * newScale
 
-        val scaledBitmapWidth = bitmapWidth * newScale
-        val scaledBitmapHeight = bitmapHeight * newScale
+            val trueScaledExcessX = (screenWidth - scaledBitmapWidth).coerceAtLeast(0f) / 2f
+            val trueScaledExcessY = (screenHeight - scaledBitmapHeight).coerceAtLeast(0f) / 2f
+            val decayedExcessX = screenExcessWidth - (screenExcessWidth - trueScaledExcessX)
+            val decayedExcessY = screenExcessHeight - (screenExcessHeight - trueScaledExcessY)
+            println("True Scaled Excess X: $trueScaledExcessX")
+            println("True Scaled Excess Y: $trueScaledExcessY")
+            println("Decayed Excess X: $decayedExcessX")
+            println("Decayed Excess Y: $decayedExcessY")
 
-        val largestWidth = maxOf(scaledBitmapWidth, screenWidth.toFloat())
-        val largestHeight = maxOf(scaledBitmapHeight, screenHeight.toFloat())
+            val a: Float = scaledBitmapWidth - screenWidth
+            val b: Float = scaledBitmapHeight - screenHeight
 
-        val smallestWidth = minOf(scaledBitmapWidth, screenWidth.toFloat())
-        val smallestHeight = minOf(scaledBitmapHeight, screenHeight.toFloat())
+            val maximumOffsetX: Float = (scaledBitmapWidth - screenWidth).coerceAtLeast(0f)
+            val maximumOffsetY: Float = (scaledBitmapHeight - screenHeight).coerceAtLeast(0f)
 
-        //
-        val trueScaledExcessX = (screenWidth - scaledBitmapWidth).coerceAtLeast(0f) / 2f
-        val trueScaledExcessY = (screenHeight - scaledBitmapHeight).coerceAtLeast(0f) / 2f
-        val decayedExcessX = screenExcessWidth - (screenExcessWidth - trueScaledExcessX)
-        val decayedExcessY = screenExcessHeight - (screenExcessHeight - trueScaledExcessY)
-        println("True Scaled Excess X: $trueScaledExcessX")
-        println("True Scaled Excess Y: $trueScaledExcessY")
-        println("Decayed Excess X: $decayedExcessX")
-        println("Decayed Excess Y: $decayedExcessY")
+            val oldCentroid = event.centroid / oldScale
+            val newCentroid = event.centroid / newScale
 
-        //
-
-        //   val scaledExcessX = (largestWidth) - smallestWidth
-        val scaledExcessX = (scaledBitmapWidth) - smallestWidth
-        val maximumOffsetX: Float = scaledExcessX / newScale
-        //     val scaledExcessY = (largestHeight) - smallestHeight
-        val scaledExcessY = (scaledBitmapHeight) - smallestHeight
-
-        val maximumOffsetY: Float = scaledExcessY / newScale
-
-        val oldCentroid = event.centroid / oldScale
-        val newCentroid = event.centroid / newScale
-        println("oldScale: $oldScale")
-        println("newScale: $newScale")
-        println("bitmapWidth: $bitmapWidth")
-        println("bitmapHeight: $bitmapHeight")
-        println("screenWidth: $screenWidth")
-        println("screenHeight: $screenHeight")
-        println("screenExcessWidth: $screenExcessWidth")
-        println("screenExcessHeight: $screenExcessHeight")
-        println("scaledScreenExcessWidth: $scaledScreenExcessWidth")
-        println("scaledScreenExcessHeight: $scaledScreenExcessHeight")
-        println("scaledBitmapWidth: $scaledBitmapWidth")
-        println("scaledBitmapHeight: $scaledBitmapHeight")
-        println("largestWidth: $largestWidth")
-        println("largestHeight: $largestHeight")
-        println("scaledExcessX: $scaledExcessX")
-        println("maximumOffsetX: $maximumOffsetX")
-        println("scaledExcessY: $scaledExcessY")
-        println("maximumOffsetY: $maximumOffsetY")
-        println("oldCentroid: $oldCentroid")
-        println("newCentroid: $newCentroid")
-
-
-        val newOffset =
-            (_previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
-                copy(
-                    x = x.coerceIn(0f..maximumOffsetX) - decayedExcessX,
-                    y = y.coerceIn(0f..maximumOffsetY) - decayedExcessY
-                )
-            }
-        println("newOffset: $newOffset")
-        _previewOffset.value = newOffset
-        _previewScale.value = newScale
+            val newOffset =
+                (_previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
+                    copy(
+                        x = x.coerceIn(0f..a.coerceAtLeast(0f)),
+                        y = y.coerceIn(0f..a.coerceAtLeast(0f))
+                    )
+                }
+            println("newOffset: $newOffset")
+            _previewOffset.value = newOffset
+            _previewScale.value = newScale
+        }
     }
 
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
@@ -1201,6 +1169,7 @@ for (i in 0.._filterTypes.lastIndex) {
     private suspend fun stateObserveAndSave() {
         viewModelScope.launch {
             snapshotFlow { _styleBackgroundList.toList() }.collect {
+                println("In the snapshot flow here for $it")
                 ssh[SSH_STYLE_BACKGROUND_LIST] = it
             }
         }
