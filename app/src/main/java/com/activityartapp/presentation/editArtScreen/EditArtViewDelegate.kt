@@ -41,9 +41,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 
 @Composable
 fun EditArtViewDelegate(viewModel: EditArtViewModel) {
-    ScreenMeasurer {
-        viewModel.onEvent(ScreenMeasured(size = it))
-    }
     CollectViewState(
         flow = viewModel,
         eventReceiver = viewModel
@@ -98,6 +95,7 @@ fun CollectViewState(
             }
         ) {
             if (this@apply is EditArtViewState.Standby) {
+
                 val activeHeader = EditArtHeaderType
                     .fromOrdinal(pagerStateWrapper.pagerState.currentPage)
 
@@ -124,6 +122,8 @@ fun CollectViewState(
                                 atLeastOneActivitySelected,
                                 backgroundIsTransparent,
                                 bitmap,
+                                previewOffset,
+                                previewScale,
                                 eventReceiver
                             )
                             FILTERS -> YearMonthDay.run {
@@ -184,7 +184,11 @@ fun CollectViewState(
                         }
                     }
                 }
+                ScreenMeasurer {
+                    eventReceiver.onEvent(PreviewSpaceMeasured(size = it))
+                }
             }
+
         }
 
         DialogHandler(

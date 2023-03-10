@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotMutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
@@ -52,8 +53,19 @@ sealed interface EditArtViewEvent : ViewEvent {
 
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
+    data class PreviewGestureDrag(
+        val pan: Offset,
+        val pressed: Boolean
+    ) : EditArtViewEvent
+
+    data class PreviewGestureZoom(
+        val centroid: Offset,
+        val pan: Offset,
+        val zoom: Float
+    ) : EditArtViewEvent
+
+    data class PreviewSpaceMeasured(val size: Size) : ArtMutatingEvent
     object SaveClicked : EditArtViewEvent
-    data class ScreenMeasured(val size: Size) : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
         val changedTo: String
 
@@ -186,6 +198,8 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper,
         val listStateFilter: LazyListState = LazyListState(),
         val listStateStyle: LazyListState = LazyListState(),
+        val previewOffset: State<Offset>,
+        val previewScale: State<Float>,
         val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
@@ -220,8 +234,6 @@ sealed interface EditArtViewState : ViewState {
 
         @Inject
         lateinit var resolutionListFactory: ResolutionListFactory
-
-
     }
 }
 
