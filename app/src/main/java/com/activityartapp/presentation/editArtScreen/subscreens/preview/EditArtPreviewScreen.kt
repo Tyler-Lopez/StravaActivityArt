@@ -56,7 +56,12 @@ fun EditArtPreview(
                                     zoom
                                 ))
                             },
-                            { _, released -> println("here, drag released $released") }
+                            { pan, released ->
+                                eventReceiver.onEvent(EditArtViewEvent.PreviewGestureDrag(
+                                   pan,
+                                   !released
+                                ))
+                            }
                         )
                     }
             ) {

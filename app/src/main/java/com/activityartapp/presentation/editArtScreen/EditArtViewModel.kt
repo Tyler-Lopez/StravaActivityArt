@@ -392,7 +392,6 @@ class EditArtViewModel @Inject constructor(
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
-            is PreviewGesture -> onPreviewGesture(event)
             is PreviewGestureDrag -> onPreviewGestureDrag(event)
             is PreviewGestureZoom -> onPreviewGestureZoom(event)
             is SaveClicked -> onSaveClicked()
@@ -584,50 +583,35 @@ class EditArtViewModel @Inject constructor(
         _dialogActive.value = EditArtDialog.NavigateUp
     }
 
-    private fun onPreviewGesture(event: PreviewGesture) {
+    private fun onPreviewGestureDrag(event: PreviewGestureDrag) {
         previewScreenSize?.let { screenSize ->
-            val oldScale = _previewScale.value
-            val newScale = (oldScale * event.zoom).coerceIn(1f..3f)
-
             val bitmapWidth = _bitmap.value?.width ?: 0
             val bitmapHeight = _bitmap.value?.height ?: 0
 
-            val scaledBitmapWidth = bitmapWidth * newScale
-            val scaledBitmapHeight = bitmapHeight * newScale
+            val scaledBitmapWidth = bitmapWidth * _previewScale.value
+            val scaledBitmapHeight = bitmapHeight * _previewScale.value
 
+            val scaledRequestedOffset = _previewOffset.value - event.pan
+
+            /* Compute the float range which the new offset must be coerced within */
             val scaledExcessToScreenWidth: Float = scaledBitmapWidth - screenSize.width
             val scaledExcessToScreenHeight: Float = scaledBitmapHeight - screenSize.height
-
             val maxOffsetX: Float = scaledExcessToScreenWidth.coerceAtLeast(minimumValue = 0f)
             val maxOffsetY: Float = scaledExcessToScreenHeight.coerceAtLeast(minimumValue = 0f)
+            val offsetRangeX = 0f.rangeTo(maxOffsetX)
+            val offsetRangeY = 0f.rangeTo(maxOffsetY)
+            val offsetToCenter = Offset(
+                scaledExcessToScreenWidth.div(2f).coerceAtMost(0f),
+                scaledExcessToScreenHeight.div(2f).coerceAtMost(0f)
+            )
 
-            //val oldCentroid = event.centroid / oldScale
-            //val newCentroid = event.centroid / newScale
+            /* Adjust offset within maximum range */
+            val newOffset = scaledRequestedOffset.run {
+                copy(x = x.coerceIn(offsetRangeX), y = y.coerceIn(offsetRangeY))
+            } + offsetToCenter
 
-
-            /*
-            val newOffset =
-                (_previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
-                    copy(
-                        x = x.coerceIn(0f..a.coerceAtLeast(0f)),
-                        y = y.coerceIn(0f..a.coerceAtLeast(0f))
-                    )
-                }
-
-             */
-            //     println("newOffset: $newOffset")
-            println("yo, centroid is ${event.centroid}")
-            /*
-            _previewOffset.value = (_previewOffset.value
-                    + event.centroid) - (event.centroid / newScale + event.pan)
-
-             */
-            _previewScale.value = newScale
+            _previewOffset.value = newOffset
         }
-    }
-
-    private fun onPreviewGestureDrag(event: PreviewGestureDrag) {
-        println("Drag event. Released ${event.pressed}")
     }
 
     private fun onPreviewGestureZoom(event: PreviewGestureZoom) {

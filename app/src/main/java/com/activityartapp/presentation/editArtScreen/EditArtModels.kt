@@ -53,10 +53,9 @@ sealed interface EditArtViewEvent : ViewEvent {
 
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
-    data class PreviewGesture(
-        val centroid: Offset,
+    data class PreviewGestureDrag(
         val pan: Offset,
-        val zoom: Float
+        val pressed: Boolean
     ) : EditArtViewEvent
 
     data class PreviewGestureZoom(
@@ -64,12 +63,6 @@ sealed interface EditArtViewEvent : ViewEvent {
         val pan: Offset,
         val zoom: Float
     ) : EditArtViewEvent
-
-    data class PreviewGestureDrag(
-        val pan: Offset,
-        val pressed: Boolean
-    ) : EditArtViewEvent
-
 
     data class PreviewSpaceMeasured(val size: Size) : ArtMutatingEvent
     object SaveClicked : EditArtViewEvent
