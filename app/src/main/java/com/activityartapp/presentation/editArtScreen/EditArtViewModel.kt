@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.util.Size
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -231,6 +232,7 @@ class EditArtViewModel @Inject constructor(
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private var imageJob: Job? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    private val velocityTracker = VelocityTracker()
 
     // The size of the screen excluding the top bar
     private var previewScreenSize: Size? = null
@@ -611,6 +613,7 @@ class EditArtViewModel @Inject constructor(
             } + offsetToCenter
 
             _previewOffset.value = newOffset
+            velocityTracker.addPosition(System.currentTimeMillis(), newOffset)
         }
     }
 
