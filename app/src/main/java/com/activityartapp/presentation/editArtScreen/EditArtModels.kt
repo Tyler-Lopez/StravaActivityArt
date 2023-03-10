@@ -59,6 +59,18 @@ sealed interface EditArtViewEvent : ViewEvent {
         val zoom: Float
     ) : EditArtViewEvent
 
+    data class PreviewGestureZoom(
+        val centroid: Offset,
+        val pan: Offset,
+        val zoom: Float
+    ) : EditArtViewEvent
+
+    data class PreviewGestureDrag(
+        val pan: Offset,
+        val pressed: Boolean
+    ) : EditArtViewEvent
+
+
     data class PreviewSpaceMeasured(val size: Size) : ArtMutatingEvent
     object SaveClicked : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {

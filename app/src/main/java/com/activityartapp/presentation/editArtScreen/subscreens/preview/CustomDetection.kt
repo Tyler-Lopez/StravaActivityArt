@@ -7,11 +7,12 @@ import androidx.compose.ui.input.pointer.positionChanged
 import kotlin.math.PI
 import kotlin.math.abs
 import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastFirstOrNull
 import androidx.compose.ui.util.fastForEach
 
 suspend fun PointerInputScope.detectZoomPanGesture(
     onZoom: (centroid: Offset, pan: Offset, zoom: Float) -> Unit,
-    onPan: (pan: Offset) -> Unit
+    onPan: (pan: Offset, pressed: Boolean) -> Unit
 ) {
     forEachGesture {
         awaitPointerEventScope {
@@ -20,9 +21,11 @@ suspend fun PointerInputScope.detectZoomPanGesture(
             var pastTouchSlop = false
             val touchSlop = viewConfiguration.touchSlop
 
-            awaitFirstDown(requireUnconsumed = false)
+            val down = awaitFirstDown(requireUnconsumed = false)
             do {
                 val event = awaitPointerEvent()
+                val wasNotReleased = event.changes.fastAny { it.id == down.id }
+                println("here  $wasNotReleased was not released")
                 val canceled = event.changes.fastAny { it.isConsumed }
                 if (!canceled) {
                     val zoomChange = event.calculateZoom()
@@ -48,7 +51,7 @@ suspend fun PointerInputScope.detectZoomPanGesture(
                         if (zoomChange != 1f) {
                             onZoom(centroid, panChange, zoomChange)
                         } else if (panChange != Offset.Zero) {
-                            onPan(panChange)
+                            onPan(panChange, event.changes.fastAny { it.id == down.id })
                         }
                         event.changes.fastForEach {
                             if (it.positionChanged()) {
@@ -57,7 +60,9 @@ suspend fun PointerInputScope.detectZoomPanGesture(
                         }
                     }
                 }
-            } while (!canceled && event.changes.fastAny { it.pressed })
+            } while (!canceled && event.changes.fastAny { it.pressed }.also {
+                println("all was pressed? $it")
+                })
         }
     }
 }

@@ -49,8 +49,14 @@ fun EditArtPreview(
                     .fillMaxSize()
                     .pointerInput(Unit) {
                         detectZoomPanGesture(
-                            { _, _, _ -> println("here, zoom") },
-                            { _ -> println("here, drag") }
+                            { centroid, pan, zoom ->
+                                eventReceiver.onEvent(EditArtViewEvent.PreviewGestureZoom(
+                                    centroid,
+                                    pan,
+                                    zoom
+                                ))
+                            },
+                            { _, released -> println("here, drag released $released") }
                         )
                     }
             ) {

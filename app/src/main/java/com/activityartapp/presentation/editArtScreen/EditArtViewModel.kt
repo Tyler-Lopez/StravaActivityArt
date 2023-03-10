@@ -393,6 +393,8 @@ class EditArtViewModel @Inject constructor(
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
             is PreviewGesture -> onPreviewGesture(event)
+            is PreviewGestureDrag -> onPreviewGestureDrag(event)
+            is PreviewGestureZoom -> onPreviewGestureZoom(event)
             is SaveClicked -> onSaveClicked()
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
@@ -590,33 +592,20 @@ class EditArtViewModel @Inject constructor(
             val bitmapWidth = _bitmap.value?.width ?: 0
             val bitmapHeight = _bitmap.value?.height ?: 0
 
-            val screenWidth = screenSize.width
-            val screenHeight = screenSize.height
-
-            val screenExcessWidth = screenWidth - bitmapWidth
-            val screenExcessHeight = screenHeight - bitmapHeight
-
             val scaledBitmapWidth = bitmapWidth * newScale
             val scaledBitmapHeight = bitmapHeight * newScale
 
-            val trueScaledExcessX = (screenWidth - scaledBitmapWidth).coerceAtLeast(0f) / 2f
-            val trueScaledExcessY = (screenHeight - scaledBitmapHeight).coerceAtLeast(0f) / 2f
-            val decayedExcessX = screenExcessWidth - (screenExcessWidth - trueScaledExcessX)
-            val decayedExcessY = screenExcessHeight - (screenExcessHeight - trueScaledExcessY)
-            println("True Scaled Excess X: $trueScaledExcessX")
-            println("True Scaled Excess Y: $trueScaledExcessY")
-            println("Decayed Excess X: $decayedExcessX")
-            println("Decayed Excess Y: $decayedExcessY")
+            val scaledExcessToScreenWidth: Float = scaledBitmapWidth - screenSize.width
+            val scaledExcessToScreenHeight: Float = scaledBitmapHeight - screenSize.height
 
-            val a: Float = scaledBitmapWidth - screenWidth
-            val b: Float = scaledBitmapHeight - screenHeight
+            val maxOffsetX: Float = scaledExcessToScreenWidth.coerceAtLeast(minimumValue = 0f)
+            val maxOffsetY: Float = scaledExcessToScreenHeight.coerceAtLeast(minimumValue = 0f)
 
-            val maximumOffsetX: Float = (scaledBitmapWidth - screenWidth).coerceAtLeast(0f)
-            val maximumOffsetY: Float = (scaledBitmapHeight - screenHeight).coerceAtLeast(0f)
+            //val oldCentroid = event.centroid / oldScale
+            //val newCentroid = event.centroid / newScale
 
-            val oldCentroid = event.centroid / oldScale
-            val newCentroid = event.centroid / newScale
 
+            /*
             val newOffset =
                 (_previewOffset.value + oldCentroid - (newCentroid + event.pan / oldScale)).run {
                     copy(
@@ -624,7 +613,60 @@ class EditArtViewModel @Inject constructor(
                         y = y.coerceIn(0f..a.coerceAtLeast(0f))
                     )
                 }
-            println("newOffset: $newOffset")
+
+             */
+            //     println("newOffset: $newOffset")
+            println("yo, centroid is ${event.centroid}")
+            /*
+            _previewOffset.value = (_previewOffset.value
+                    + event.centroid) - (event.centroid / newScale + event.pan)
+
+             */
+            _previewScale.value = newScale
+        }
+    }
+
+    private fun onPreviewGestureDrag(event: PreviewGestureDrag) {
+        println("Drag event. Released ${event.pressed}")
+    }
+
+    private fun onPreviewGestureZoom(event: PreviewGestureZoom) {
+        previewScreenSize?.let { screenSize ->
+            val oldScale = _previewScale.value
+            val newScale = (oldScale * event.zoom).coerceIn(1f..5f)
+
+            val bitmapWidth = _bitmap.value?.width ?: 0
+            val bitmapHeight = _bitmap.value?.height ?: 0
+
+            val scaledBitmapWidth = bitmapWidth * newScale
+            val scaledBitmapHeight = bitmapHeight * newScale
+
+            /* Compute a new offset which would perfectly center the image within the user's
+            fingers; may be out-of-bounds. */
+            val scaledPrevOffset = _previewOffset.value / oldScale
+            val scaledPrevCent = event.centroid / oldScale
+            val scaledPrevPan = event.pan / oldScale
+            val scaledNewCent = event.centroid / newScale
+            val requestedOffset = scaledPrevOffset + scaledPrevCent - scaledNewCent + scaledPrevPan
+            val scaledRequestedOffset = requestedOffset * newScale
+
+            /* Compute the float range which the new offset must be coerced within */
+            val scaledExcessToScreenWidth: Float = scaledBitmapWidth - screenSize.width
+            val scaledExcessToScreenHeight: Float = scaledBitmapHeight - screenSize.height
+            val maxOffsetX: Float = scaledExcessToScreenWidth.coerceAtLeast(minimumValue = 0f)
+            val maxOffsetY: Float = scaledExcessToScreenHeight.coerceAtLeast(minimumValue = 0f)
+            val offsetRangeX = 0f.rangeTo(maxOffsetX)
+            val offsetRangeY = 0f.rangeTo(maxOffsetY)
+            val offsetToCenter = Offset(
+                scaledExcessToScreenWidth.div(2f).coerceAtMost(0f),
+                scaledExcessToScreenHeight.div(2f).coerceAtMost(0f)
+            )
+
+            /* Adjust offset within maximum range */
+            val newOffset = scaledRequestedOffset.run {
+                copy(x = x.coerceIn(offsetRangeX), y = y.coerceIn(offsetRangeY))
+            } + offsetToCenter
+
             _previewOffset.value = newOffset
             _previewScale.value = newScale
         }
@@ -716,7 +758,6 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onScreenMeasured(event: PreviewSpaceMeasured) {
-        println("here, screen measured")
         previewScreenSize = event.size.apply {
             _previewOffset.value = imageSizeUtils.offsetToCenterImageInContainer(
                 container = this,
@@ -727,7 +768,6 @@ class EditArtViewModel @Inject constructor(
                     maximumSize = this
                 )
             )
-            println("changing offset to ${_previewOffset.value}")
             _previewScale.value = 1f
         }
     }
