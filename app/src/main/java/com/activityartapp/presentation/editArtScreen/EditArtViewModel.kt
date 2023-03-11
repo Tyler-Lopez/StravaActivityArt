@@ -5,6 +5,7 @@ import android.util.Size
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -246,6 +247,7 @@ class EditArtViewModel @Inject constructor(
     private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
     private val _previewOffset = mutableStateOf(Offset.Zero)
     private val _previewScale = mutableStateOf(1f)
+    private val _previewVelocity = mutableStateOf(Velocity(0f, 0f))
 
     // FILTERS
     private val _filterActivitiesCountDate = mutableStateOf(0)
@@ -330,8 +332,6 @@ class EditArtViewModel @Inject constructor(
                 filterDistancePendingChangeStart = _filterDistancePendingChangeStart,
                 filterDistancePendingChangeEnd = _filterDistancePendingChangeEnd,
                 filterTypes = _filterTypes,
-                previewOffset = _previewOffset,
-                previewScale = _previewScale,
                 sizeResolutionList = _sizeResolutionList,
                 sizeResolutionListSelectedIndex = _sizeResolutionListSelectedIndex,
                 sortDirectionTypeSelected = _sortDirectionTypeSelected,
@@ -609,11 +609,13 @@ class EditArtViewModel @Inject constructor(
 
             /* Adjust offset within maximum range */
             val newOffset = scaledRequestedOffset.run {
-                copy(x = x.coerceIn(offsetRangeX), y = y.coerceIn(offsetRangeY))
+
+                   copy(x = x, y = y.coerceIn(offsetRangeY))
             } + offsetToCenter
 
             _previewOffset.value = newOffset
             velocityTracker.addPosition(System.currentTimeMillis(), newOffset)
+            _previewVelocity.value = velocityTracker.calculateVelocity()
         }
     }
 
@@ -651,7 +653,8 @@ class EditArtViewModel @Inject constructor(
 
             /* Adjust offset within maximum range */
             val newOffset = scaledRequestedOffset.run {
-                copy(x = x.coerceIn(offsetRangeX), y = y.coerceIn(offsetRangeY))
+                copy()
+                copy(x = x, y = y.coerceIn(offsetRangeY))
             } + offsetToCenter
 
             _previewOffset.value = newOffset

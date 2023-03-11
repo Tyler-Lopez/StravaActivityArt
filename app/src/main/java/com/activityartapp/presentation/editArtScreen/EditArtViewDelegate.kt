@@ -122,8 +122,6 @@ fun CollectViewState(
                                 atLeastOneActivitySelected,
                                 backgroundIsTransparent,
                                 bitmap,
-                                previewOffset,
-                                previewScale,
                                 eventReceiver
                             )
                             FILTERS -> YearMonthDay.run {
