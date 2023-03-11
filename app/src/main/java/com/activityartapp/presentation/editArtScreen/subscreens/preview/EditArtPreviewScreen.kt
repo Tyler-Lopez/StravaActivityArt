@@ -1,13 +1,12 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.preview
 
 import android.graphics.Bitmap
+import android.util.Size
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,23 +20,23 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
+import com.activityartapp.util.ImageSizeUtils
 import kotlinx.coroutines.launch
 
 @Composable
 fun EditArtPreview(
     atLeastOneActivitySelected: State<Boolean>,
-    backgroundIsTransparent: State<Boolean>,
     bitmap: State<Bitmap?>,
-    //  offset: State<Offset>,
-    //   scale: State<Float>,
-    //  velocity: State<Velocity>,
-    eventReceiver: EventReceiver<EditArtViewEvent>
+    desiredSize: Size
 ) {
+    val imageSizeUtils = ImageSizeUtils()
+
     if (!atLeastOneActivitySelected.value) {
         ScreenBackground {
             ErrorComposable(
@@ -47,19 +46,23 @@ fun EditArtPreview(
             )
         }
     } else {
-        bitmap.value?.let {
+        bitmap.value?.let { bitmapValue ->
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
                 val localDensity = LocalDensity.current
+
+                val adjustedWidthDp = remember { mutableStateOf(0.dp) }
+                val adjustedHeightDp = remember { mutableStateOf(0.dp) }
+
                 val scale = remember { mutableStateOf(1f) }
                 val velocityDecay: DecayAnimationSpec<Float> = exponentialDecay()
-                val velocityTracker: VelocityTracker = VelocityTracker()
+                val velocityTracker = VelocityTracker()
 
                 val computeScaledExcess: () -> Offset = {
-                    val scaledBitmapWidth = it.width * scale.value
-                    val scaledBitmapHeight = it.height * scale.value
+                    val scaledBitmapWidth = localDensity.run { adjustedWidthDp.value.toPx() } * scale.value
+                    val scaledBitmapHeight = localDensity.run { adjustedHeightDp.value.toPx() } * scale.value
                     Offset(
                         x = scaledBitmapWidth - localDensity.run { maxWidth.toPx() },
                         y = scaledBitmapHeight - localDensity.run { maxHeight.toPx() }
@@ -95,6 +98,19 @@ fun EditArtPreview(
                         lowerBound = forcedOffsetY ?: 0f,
                         upperBound = forcedOffsetY ?: scaledExcess.y
                     )
+                }
+
+                LaunchedEffect(key1 = maxWidth, key2 = maxHeight) {
+                    val screenWidthAsPx = localDensity.run { maxWidth.toPx().toInt() }
+                    val screenHeightAsPx = localDensity.run { maxHeight.toPx().toInt() }
+                    val adjustedSize = imageSizeUtils.sizeToMaximumSize(
+                        actualSize = desiredSize,
+                        maximumSize = Size(screenWidthAsPx, screenHeightAsPx)
+                    )
+                    adjustedWidthDp.value = localDensity.run { adjustedSize.width.toDp() }
+                    adjustedHeightDp.value = localDensity.run { adjustedSize.height.toDp() }
+                    scale.value = 1f
+                    updateBounds()
                 }
 
                 updateBounds()
@@ -167,23 +183,16 @@ fun EditArtPreview(
                         }
                 ) {
                     Image(
-                        bitmap = it.asImageBitmap(),
+                        bitmap = bitmapValue.asImageBitmap(),
                         contentDescription = stringResource(R.string.edit_art_preview_image_content_description),
-                        modifier = Modifier,
-                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(
+                            width = adjustedWidthDp.value,
+                            height = adjustedHeightDp.value
+                        ),
+                        contentScale = ContentScale.Crop,
                     )
                 }
             }
-            /*
-            if (backgroundIsTransparent.value) {
-                Button(
-                    emphasis = ButtonEmphasis.LOW,
-                    text = "Why is there a checkered pattern?",
-                    size = ButtonSize.SMALL
-                ) { eventReceiver.onEvent(EditArtViewEvent.ClickedInfoCheckeredBackground) }
-            }
-
-             */
         } ?: run {
             Box(
                 modifier = Modifier.fillMaxSize(),
