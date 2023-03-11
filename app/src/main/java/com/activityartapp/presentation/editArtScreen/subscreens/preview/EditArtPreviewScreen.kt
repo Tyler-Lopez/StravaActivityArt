@@ -1,12 +1,10 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.preview
 
 import android.graphics.Bitmap
-import android.util.Size
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +21,6 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Velocity
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ErrorComposable
@@ -85,6 +82,22 @@ fun EditArtPreview(
                     Animatable(initialValue = centerFromScaledExcess().y)
                 }
 
+                val updateBounds: () -> Unit = {
+                    /* Compute the float range which the new offset must be coerced within */
+                    val scaledExcess = computeScaledExcess()
+                    val forcedOffsetX = scaledExcess.x.takeIf { it < 0f }?.div(other = 2f)
+                    val forcedOffsetY = scaledExcess.y.takeIf { it < 0f }?.div(other = 2f)
+                    animatableOffsetX.updateBounds(
+                        lowerBound = forcedOffsetX ?: 0f,
+                        upperBound = forcedOffsetX ?: scaledExcess.x
+                    )
+                    animatableOffsetY.updateBounds(
+                        lowerBound = forcedOffsetY ?: 0f,
+                        upperBound = forcedOffsetY ?: scaledExcess.y
+                    )
+                }
+
+                updateBounds()
                 val scope = rememberCoroutineScope()
 
                 Box(
@@ -109,73 +122,24 @@ fun EditArtPreview(
                                         scaledPrevOffset + scaledPrevCent - scaledNewCent + scaledPrevPan
                                     val scaledRequestedOffset = requestedOffset * scale.value
 
-                                    /* Compute the float range which the new offset must be coerced within */
-                                    val scaledExcess = computeScaledExcess()
-
-                                    /* Adjust offset within maximum range */
-                                    val newOffset = scaledRequestedOffset// + offsetToCenter
-
-                                    val halfX = (scaledExcess.x / 2f).coerceAtMost(0f)
-                                    if (scaledExcess.x >= 0f) {
-                                        animatableOffsetX.updateBounds(
-                                            lowerBound = 0f,
-                                            upperBound = scaledExcess.x
-                                        )
-                                    } else {
-                                        animatableOffsetX.updateBounds(
-                                            lowerBound = halfX,
-                                            upperBound = halfX
-                                        )
-                                    }
-                                    val halfY = (scaledExcess.y / 2f).coerceAtMost(0f)
-                                    if (scaledExcess.y >= 0f) {
-                                        animatableOffsetY.updateBounds(
-                                            lowerBound = 0f,
-                                            upperBound = scaledExcess.y
-                                        )
-                                    } else {
-                                        animatableOffsetY.updateBounds(
-                                            lowerBound = halfY,
-                                            upperBound = halfY
-                                        )
-                                    }
+                                    updateBounds()
                                     velocityTracker.resetTracking()
 
                                     scope.launch {
-                                        animatableOffsetX.snapTo(targetValue = newOffset.x)
-                                        animatableOffsetY.snapTo(targetValue = newOffset.y)
+                                        animatableOffsetX.snapTo(targetValue = scaledRequestedOffset.x)
+                                        animatableOffsetY.snapTo(targetValue = scaledRequestedOffset.y)
                                     }
                                 },
                                 onPan = { pan ->
-                                    /* Compute the float range which the new offset must be coerced within */
-                                    val scaledExcess = computeScaledExcess()
-                                    val offsetToCenter = Offset(
-                                        scaledExcess.x
-                                            .div(2f)
-                                            .coerceAtMost(0f),
-                                        scaledExcess.y
-                                            .div(2f)
-                                            .coerceAtMost(0f)
-                                    )
-
-                                    val maxOffsetX: Float =
-                                        scaledExcess.x.coerceAtLeast(minimumValue = 0f)
-                                    val maxOffsetY: Float =
-                                        scaledExcess.y.coerceAtLeast(minimumValue = 0f)
-
                                     /* Adjust offset within maximum range */
                                     val newOffsetX = animatableOffsetX.value - pan.x
                                     val newOffsetY = animatableOffsetY.value - pan.y
 
-
-                                    println("new offset is $newOffsetX plus offset to center ${offsetToCenter.x}")
                                     velocityTracker.addPosition(
                                         System.currentTimeMillis(),
                                         Offset(newOffsetX, newOffsetY)
                                     )
-                                    println("velocity tracker added position...")
-                                    val velocity = velocityTracker.calculateVelocity()
-                                    println("velocity was $velocity")
+
                                     scope.launch {
                                         animatableOffsetX.snapTo(newOffsetX)
                                         animatableOffsetY.snapTo(newOffsetY)

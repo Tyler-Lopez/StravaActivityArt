@@ -22,7 +22,7 @@ suspend fun PointerInputScope.detectZoomPanGesture(
             var pastTouchSlop = false
             val touchSlop = viewConfiguration.touchSlop
 
-            val down = awaitFirstDown(requireUnconsumed = false)
+            awaitFirstDown(requireUnconsumed = false)
             do {
                 val event = awaitPointerEvent()
                 val canceled = event.changes.fastAny { it.isConsumed }
