@@ -61,8 +61,10 @@ fun EditArtPreview(
                 val velocityTracker = VelocityTracker()
 
                 val computeScaledExcess: () -> Offset = {
-                    val scaledBitmapWidth = localDensity.run { adjustedWidthDp.value.toPx() } * scale.value
-                    val scaledBitmapHeight = localDensity.run { adjustedHeightDp.value.toPx() } * scale.value
+                    val scaledBitmapWidth =
+                        localDensity.run { adjustedWidthDp.value.toPx() } * scale.value
+                    val scaledBitmapHeight =
+                        localDensity.run { adjustedHeightDp.value.toPx() } * scale.value
                     Offset(
                         x = scaledBitmapWidth - localDensity.run { maxWidth.toPx() },
                         y = scaledBitmapHeight - localDensity.run { maxHeight.toPx() }
@@ -78,9 +80,8 @@ fun EditArtPreview(
                     }
                 }
 
-                val animatableOffsetX = remember {
-                    Animatable(initialValue = centerFromScaledExcess().x)
-                }
+                val animatableOffsetX =
+                    remember { Animatable(initialValue = centerFromScaledExcess().x) }
                 val animatableOffsetY = remember {
                     Animatable(initialValue = centerFromScaledExcess().y)
                 }
