@@ -5,6 +5,7 @@ import android.util.Size
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -232,7 +233,6 @@ class EditArtViewModel @Inject constructor(
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private var imageJob: Job? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
-    private val velocityTracker = VelocityTracker()
 
     // The size of the screen excluding the top bar
     private var previewScreenSize: Size? = null
@@ -244,8 +244,6 @@ class EditArtViewModel @Inject constructor(
 
     // PREVIEW
     private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
-    private val _previewOffset = mutableStateOf(Offset.Zero)
-    private val _previewScale = mutableStateOf(1f)
 
     // FILTERS
     private val _filterActivitiesCountDate = mutableStateOf(0)
@@ -330,8 +328,6 @@ class EditArtViewModel @Inject constructor(
                 filterDistancePendingChangeStart = _filterDistancePendingChangeStart,
                 filterDistancePendingChangeEnd = _filterDistancePendingChangeEnd,
                 filterTypes = _filterTypes,
-                previewOffset = _previewOffset,
-                previewScale = _previewScale,
                 sizeResolutionList = _sizeResolutionList,
                 sizeResolutionListSelectedIndex = _sizeResolutionListSelectedIndex,
                 sortDirectionTypeSelected = _sortDirectionTypeSelected,
@@ -394,8 +390,6 @@ class EditArtViewModel @Inject constructor(
             is DialogNavigateUpConfirmed -> onDialogNavigateUpConfirmed()
             is FilterDistancePendingChange -> onFilterDistancePendingChange(event)
             is NavigateUpClicked -> onNavigateUpClicked()
-            is PreviewGestureDrag -> onPreviewGestureDrag(event)
-            is PreviewGestureZoom -> onPreviewGestureZoom(event)
             is SaveClicked -> onSaveClicked()
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
@@ -585,80 +579,6 @@ class EditArtViewModel @Inject constructor(
         _dialogActive.value = EditArtDialog.NavigateUp
     }
 
-    private fun onPreviewGestureDrag(event: PreviewGestureDrag) {
-        previewScreenSize?.let { screenSize ->
-            val bitmapWidth = _bitmap.value?.width ?: 0
-            val bitmapHeight = _bitmap.value?.height ?: 0
-
-            val scaledBitmapWidth = bitmapWidth * _previewScale.value
-            val scaledBitmapHeight = bitmapHeight * _previewScale.value
-
-            val scaledRequestedOffset = _previewOffset.value - event.pan
-
-            /* Compute the float range which the new offset must be coerced within */
-            val scaledExcessToScreenWidth: Float = scaledBitmapWidth - screenSize.width
-            val scaledExcessToScreenHeight: Float = scaledBitmapHeight - screenSize.height
-            val maxOffsetX: Float = scaledExcessToScreenWidth.coerceAtLeast(minimumValue = 0f)
-            val maxOffsetY: Float = scaledExcessToScreenHeight.coerceAtLeast(minimumValue = 0f)
-            val offsetRangeX = 0f.rangeTo(maxOffsetX)
-            val offsetRangeY = 0f.rangeTo(maxOffsetY)
-            val offsetToCenter = Offset(
-                scaledExcessToScreenWidth.div(2f).coerceAtMost(0f),
-                scaledExcessToScreenHeight.div(2f).coerceAtMost(0f)
-            )
-
-            /* Adjust offset within maximum range */
-            val newOffset = scaledRequestedOffset.run {
-                copy(x = x.coerceIn(offsetRangeX), y = y.coerceIn(offsetRangeY))
-            } + offsetToCenter
-
-            _previewOffset.value = newOffset
-            velocityTracker.addPosition(System.currentTimeMillis(), newOffset)
-        }
-    }
-
-    private fun onPreviewGestureZoom(event: PreviewGestureZoom) {
-        previewScreenSize?.let { screenSize ->
-            val oldScale = _previewScale.value
-            val newScale = (oldScale * event.zoom).coerceIn(1f..5f)
-
-            val bitmapWidth = _bitmap.value?.width ?: 0
-            val bitmapHeight = _bitmap.value?.height ?: 0
-
-            val scaledBitmapWidth = bitmapWidth * newScale
-            val scaledBitmapHeight = bitmapHeight * newScale
-
-            /* Compute a new offset which would perfectly center the image within the user's
-            fingers; may be out-of-bounds. */
-            val scaledPrevOffset = _previewOffset.value / oldScale
-            val scaledPrevCent = event.centroid / oldScale
-            val scaledPrevPan = event.pan / oldScale
-            val scaledNewCent = event.centroid / newScale
-            val requestedOffset = scaledPrevOffset + scaledPrevCent - scaledNewCent + scaledPrevPan
-            val scaledRequestedOffset = requestedOffset * newScale
-
-            /* Compute the float range which the new offset must be coerced within */
-            val scaledExcessToScreenWidth: Float = scaledBitmapWidth - screenSize.width
-            val scaledExcessToScreenHeight: Float = scaledBitmapHeight - screenSize.height
-            val maxOffsetX: Float = scaledExcessToScreenWidth.coerceAtLeast(minimumValue = 0f)
-            val maxOffsetY: Float = scaledExcessToScreenHeight.coerceAtLeast(minimumValue = 0f)
-            val offsetRangeX = 0f.rangeTo(maxOffsetX)
-            val offsetRangeY = 0f.rangeTo(maxOffsetY)
-            val offsetToCenter = Offset(
-                scaledExcessToScreenWidth.div(2f).coerceAtMost(0f),
-                scaledExcessToScreenHeight.div(2f).coerceAtMost(0f)
-            )
-
-            /* Adjust offset within maximum range */
-            val newOffset = scaledRequestedOffset.run {
-                copy(x = x.coerceIn(offsetRangeX), y = y.coerceIn(offsetRangeY))
-            } + offsetToCenter
-
-            _previewOffset.value = newOffset
-            _previewScale.value = newScale
-        }
-    }
-
     private fun onPageHeaderClicked(event: PageHeaderClicked) {
         viewModelScope.launch(Dispatchers.Main.immediate) {
             (lastPushedState as? Standby)?.run {
@@ -745,18 +665,7 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onScreenMeasured(event: PreviewSpaceMeasured) {
-        previewScreenSize = event.size.apply {
-            _previewOffset.value = imageSizeUtils.offsetToCenterImageInContainer(
-                container = this,
-                image = imageSizeUtils.sizeToMaximumSize(
-                    actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
-                        Size(widthPx, heightPx)
-                    },
-                    maximumSize = this
-                )
-            )
-            _previewScale.value = 1f
-        }
+        previewScreenSize = event.size
     }
 
     private fun onSizeChanged(event: SizeChanged) {
@@ -995,9 +904,9 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun updateBitmap() {
+        _bitmap.value = null
         imageJob?.cancel()
         imageJob = viewModelScope.launch(imageProcessingDispatcher) {
-            _bitmap.value = null
             previewScreenSize?.let {
                 val newBitmap = visualizationUtils.createBitmap(
                     activities = activitiesFiltered,
@@ -1056,26 +965,6 @@ class EditArtViewModel @Inject constructor(
 
     private val filteredTypes: List<SportType>
         get() = _filterTypes.filter { it.second }.map { it.first }
-/*
-
-.takemutableListOf<SportType>().apply {
-/** [_filterTypes] must NOT be iterated over using an [Iterator] or a
- * [ConcurrentModificationException] will occur when rapidly toggling a filter type.
- *
- * Though it might seem this may cause an issue where the result of [filteredTypes]
- * does not reflect the UI, it does not seem to by manual test.
- *
- * If it does cause issue, an alternative solution is to move access of this
- * variable into the [activitiesProcessingDispatcher] thread - or just remove that thread. **/
-for (i in 0.._filterTypes.lastIndex) {
-    _filterTypes
-        .getOrNull(i)
-        ?.takeIf { it.second }
-        ?.let { add(it.first) }
-}
-
- */
-
 
     private val filteredDistanceRangeMeters: IntRange
         get() = (_filterDistanceSelectedStart.value

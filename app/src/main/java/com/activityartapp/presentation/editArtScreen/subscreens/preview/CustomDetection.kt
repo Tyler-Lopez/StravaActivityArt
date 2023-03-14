@@ -12,7 +12,8 @@ import androidx.compose.ui.util.fastForEach
 
 suspend fun PointerInputScope.detectZoomPanGesture(
     onZoom: (centroid: Offset, pan: Offset, zoom: Float) -> Unit,
-    onPan: (pan: Offset, pressed: Boolean) -> Unit
+    onPan: (pan: Offset) -> Unit,
+    onRelease: () -> Unit
 ) {
     forEachGesture {
         awaitPointerEventScope {
@@ -21,11 +22,9 @@ suspend fun PointerInputScope.detectZoomPanGesture(
             var pastTouchSlop = false
             val touchSlop = viewConfiguration.touchSlop
 
-            val down = awaitFirstDown(requireUnconsumed = false)
+            awaitFirstDown(requireUnconsumed = false)
             do {
                 val event = awaitPointerEvent()
-                val wasNotReleased = event.changes.fastAny { it.id == down.id }
-                println("here  $wasNotReleased was not released")
                 val canceled = event.changes.fastAny { it.isConsumed }
                 if (!canceled) {
                     val zoomChange = event.calculateZoom()
@@ -51,7 +50,7 @@ suspend fun PointerInputScope.detectZoomPanGesture(
                         if (zoomChange != 1f) {
                             onZoom(centroid, panChange, zoomChange)
                         } else if (panChange != Offset.Zero) {
-                            onPan(panChange, event.changes.fastAny { it.id == down.id })
+                            onPan(panChange)
                         }
                         event.changes.fastForEach {
                             if (it.positionChanged()) {
@@ -60,8 +59,8 @@ suspend fun PointerInputScope.detectZoomPanGesture(
                         }
                     }
                 }
-            } while (!canceled && event.changes.fastAny { it.pressed }.also {
-                println("all was pressed? $it")
+            } while ((!canceled && event.changes.fastAny { it.pressed }).also {
+                    if (!it) onRelease()
                 })
         }
     }
