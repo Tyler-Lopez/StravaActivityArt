@@ -33,7 +33,8 @@ import kotlinx.coroutines.launch
 fun EditArtPreview(
     atLeastOneActivitySelected: State<Boolean>,
     bitmap: State<Bitmap?>,
-    desiredSize: Size
+    //  bitmapZoomedIn: State<Bitmap?>,
+    desiredSize: Size,
 ) {
     val imageSizeUtils = ImageSizeUtils()
 
@@ -47,16 +48,14 @@ fun EditArtPreview(
         }
     } else {
         bitmap.value?.let { bitmapValue ->
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 val localDensity = LocalDensity.current
 
                 val adjustedWidthDp = remember { mutableStateOf(0.dp) }
                 val adjustedHeightDp = remember { mutableStateOf(0.dp) }
 
                 val scale = remember { mutableStateOf(1f) }
+
                 val velocityDecay: DecayAnimationSpec<Float> = exponentialDecay()
                 val velocityTracker = VelocityTracker()
 
@@ -175,23 +174,33 @@ fun EditArtPreview(
                                 }
                             )
                         }
-                        .graphicsLayer {
-                            translationX = -animatableOffsetX.value
-                            translationY = -animatableOffsetY.value
-                            scaleX = scale.value
-                            scaleY = scale.value
-                            transformOrigin = TransformOrigin(0f, 0f)
-                        }
+
                 ) {
                     Image(
                         bitmap = bitmapValue.asImageBitmap(),
                         contentDescription = stringResource(R.string.edit_art_preview_image_content_description),
-                        modifier = Modifier.size(
-                            width = adjustedWidthDp.value,
-                            height = adjustedHeightDp.value
-                        ),
+                        modifier = Modifier
+                            .size(
+                                width = adjustedWidthDp.value,
+                                height = adjustedHeightDp.value
+                            )
+                            .graphicsLayer {
+                                translationX = -animatableOffsetX.value
+                                translationY = -animatableOffsetY.value
+                                scaleX = scale.value
+                                scaleY = scale.value
+                                transformOrigin = TransformOrigin(0f, 0f)
+                            },
                         contentScale = ContentScale.Crop,
                     )
+                    if (scale.value > 1f) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
                 }
             }
         } ?: run {
