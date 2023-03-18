@@ -1,7 +1,6 @@
 package com.activityartapp.util
 
-import android.util.Size
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 
 class ImageSizeUtils {
 
@@ -22,7 +21,7 @@ class ImageSizeUtils {
     ): Size {
         /** Determine width to height aspect ratio **/
         val widthHeightAspectRatio = actualSize.run {
-            width.toFloat() / height.toFloat()
+            width / height
         }
 
         /** If the width of a theoretical size is scaled to the full
@@ -33,26 +32,10 @@ class ImageSizeUtils {
          * with respect to height. */
         val heightWhenWidthScaled = maximumSize.width / widthHeightAspectRatio
         return if (heightWhenWidthScaled <= maximumSize.height) {
-            Size(maximumSize.width, heightWhenWidthScaled.toInt())
+            Size(maximumSize.width, heightWhenWidthScaled)
         } else {
             val widthWhenHeightScaled = maximumSize.height * widthHeightAspectRatio
-            Size(widthWhenHeightScaled.toInt(), maximumSize.height)
+            Size(widthWhenHeightScaled, maximumSize.height)
         }
-    }
-
-    /**
-     * Given an image within a container, returns the [Offset] necessary to center
-     * the image within its container.
-     *
-     * Assumes the image offset with [Offset.Zero] is left-aligned.
-     */
-    fun offsetToCenterImageInContainer(
-        container: Size,
-        image: Size
-    ): Offset {
-        return Offset(
-            (image.width.toFloat() - container.width) / 2F,
-            (image.height.toFloat() - container.height) / 2F
-        )
     }
 }

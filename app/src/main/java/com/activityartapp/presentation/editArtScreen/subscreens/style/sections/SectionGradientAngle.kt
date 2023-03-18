@@ -1,12 +1,12 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 
-import android.util.Size
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
@@ -30,8 +30,8 @@ fun SectionGradientAngle(
         Card(modifier = Modifier.size(96.dp)) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val offsets = utils.getStartAndEndOffsets(
-                    angleType,
-                    Size(this.size.width.toInt(), this.size.height.toInt())
+                    angleType = angleType,
+                    size = Size(this.size.width, this.size.height)
                 )
                 drawRect(
                     brush = Brush.linearGradient(

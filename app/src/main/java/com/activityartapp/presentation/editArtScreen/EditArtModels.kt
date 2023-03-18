@@ -4,23 +4,24 @@ package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
 import android.os.Parcelable
-import android.util.Size
+import androidx.annotation.Px
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotMutableState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Velocity
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 import com.activityartapp.domain.models.ResolutionListFactory
-import com.activityartapp.presentation.editArtScreen.subscreens.resize.ResolutionListFactoryImpl
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.util.enums.*
@@ -30,7 +31,6 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 annotation class UnixMS
 
@@ -55,6 +55,14 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     data class PreviewSpaceMeasured(val size: Size) : ArtMutatingEvent
+    data class PreviewGestureZoom(
+        val newScale: Float,
+        val visibleFractionTop: Float,
+        val visibleFractionBottom: Float,
+        val visibleFractionLeft: Float,
+        val visibleFractionRight: Float
+    ) : EditArtViewEvent
+
     object SaveClicked : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
         val changedTo: String
@@ -117,9 +125,9 @@ sealed interface EditArtViewEvent : ViewEvent {
 
         data class SizeChanged(val changedIndex: Int) : ArtMutatingEvent
         data class SizeCustomChanged(
-            val customIndex: Int,
-            val changedToPx: Int,
-            val heightChanged: Boolean
+            @Px val changedTo: Float,
+            val heightChanged: Boolean,
+            val index: Int
         ) : ArtMutatingEvent
 
         data class SizeCustomPendingChangeConfirmed(val customIndex: Int) : ArtMutatingEvent
@@ -171,7 +179,6 @@ sealed interface EditArtViewState : ViewState {
     ) : EditArtViewState
 
     data class Standby(
-        val bitmap: State<Bitmap?>,
         override val dialogActive: State<EditArtDialog>,
         val filterActivitiesCountDate: State<Int>,
         val filterActivitiesCountDistance: State<Int>,
@@ -188,6 +195,8 @@ sealed interface EditArtViewState : ViewState {
         override val pagerStateWrapper: PagerStateWrapper,
         val listStateFilter: LazyListState = LazyListState(),
         val listStateStyle: LazyListState = LazyListState(),
+        val previewBitmap: State<Bitmap?>,
+        val previewBitmapZoomed: State<Bitmap?>,
         val scrollStateType: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateResize: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
         val scrollStateSort: ScrollState = ScrollState(INITIAL_SCROLL_STATE),
@@ -347,8 +356,8 @@ enum class StrokeWidthType(val headerId: Int) {
 @Stable
 sealed interface Resolution : Parcelable {
 
-    val widthPx: Int
-    val heightPx: Int
+    val sizeHeightPx: Float
+    val sizeWidthPx: Float
     val stringResourceId: Int
 
     @Composable
@@ -358,15 +367,15 @@ sealed interface Resolution : Parcelable {
     interface RotatingResolution : Resolution {
         val isRotated: Boolean
         val swappingChangesSize: Boolean
-            get() = widthPx != heightPx
-        val origWidthPx: Int
-        val origHeightPx: Int
+            get() = (sizeHeightInitialPx == sizeWidthInitialPx).not()
+        val sizeHeightInitialPx: Float
+        val sizeWidthInitialPx: Float
 
-        override val heightPx: Int
-            get() = if (isRotated) origWidthPx else origHeightPx
+        override val sizeHeightPx: Float
+            get() = if (isRotated) sizeWidthInitialPx else sizeHeightInitialPx
 
-        override val widthPx: Int
-            get() = if (isRotated) origHeightPx else origWidthPx
+        override val sizeWidthPx: Float
+            get() = if (isRotated) sizeHeightInitialPx else sizeWidthInitialPx
 
         fun copyWithRotation(): RotatingResolution
 
@@ -374,8 +383,8 @@ sealed interface Resolution : Parcelable {
         fun displayTextPixels(): String {
             return stringResource(
                 R.string.edit_art_resize_pixels_placeholder,
-                if (isRotated) origHeightPx else origWidthPx,
-                if (isRotated) origWidthPx else origHeightPx,
+                if (isRotated) sizeHeightInitialPx else sizeWidthInitialPx,
+                if (isRotated) sizeWidthInitialPx else sizeHeightInitialPx,
             )
         }
     }
@@ -384,8 +393,8 @@ sealed interface Resolution : Parcelable {
     @Stable
     data class ComputerResolution(
         override val stringResourceId: Int,
-        override val origWidthPx: Int,
-        override val origHeightPx: Int,
+        override val sizeWidthInitialPx: Float,
+        override val sizeHeightInitialPx: Float,
         override val isRotated: Boolean = false
     ) : RotatingResolution {
         @Composable
@@ -400,8 +409,8 @@ sealed interface Resolution : Parcelable {
 
     @Parcelize
     data class PrintResolution(
-        override val origWidthPx: Int,
-        override val origHeightPx: Int,
+        override val sizeWidthInitialPx: Float,
+        override val sizeHeightInitialPx: Float,
         val widthMeasurementValue: Int,
         val heightMeasurementValue: Int,
         override val isRotated: Boolean = false
@@ -433,10 +442,10 @@ sealed interface Resolution : Parcelable {
     @Parcelize
     @Stable
     data class CustomResolution(
-        override val widthPx: Int,
-        override val heightPx: Int,
-        private val sizeMaximumPx: Int,
-        private val sizeMinimumPx: Int,
+        override val sizeHeightPx: Float,
+        override val sizeWidthPx: Float,
+        private val sizeMaximumPx: Float,
+        private val sizeMinimumPx: Float,
         @IgnoredOnParcel val pendingWidth: String? = null,
         @IgnoredOnParcel val pendingHeight: String? = null
     ) : Resolution {
@@ -446,7 +455,7 @@ sealed interface Resolution : Parcelable {
             get() = R.string.edit_art_resize_option_custom
 
         @IgnoredOnParcel
-        val sizeRangePx: IntRange = sizeMinimumPx..sizeMaximumPx
+        val sizeRangePx: ClosedFloatingPointRange<Float> = sizeMinimumPx..sizeMaximumPx
 
         @Composable
         override fun displayTextResolution(): String {

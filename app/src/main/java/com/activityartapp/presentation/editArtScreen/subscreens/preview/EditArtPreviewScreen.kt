@@ -1,7 +1,6 @@
 package com.activityartapp.presentation.editArtScreen.subscreens.preview
 
 import android.graphics.Bitmap
-import android.util.Size
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.exponentialDecay
@@ -12,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
-import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
@@ -33,8 +32,9 @@ import kotlinx.coroutines.launch
 fun EditArtPreview(
     atLeastOneActivitySelected: State<Boolean>,
     bitmap: State<Bitmap?>,
-    //  bitmapZoomedIn: State<Bitmap?>,
+    bitmapZoomedIn: State<Bitmap?>,
     desiredSize: Size,
+    onPreviewGestureZoom: (EditArtViewEvent.PreviewGestureZoom) -> Unit
 ) {
     val imageSizeUtils = ImageSizeUtils()
 
@@ -59,14 +59,18 @@ fun EditArtPreview(
                 val velocityDecay: DecayAnimationSpec<Float> = exponentialDecay()
                 val velocityTracker = VelocityTracker()
 
+                val computeScaledSize: () -> Size = {
+                    Size(
+                        width = localDensity.run { adjustedWidthDp.value.toPx() } * scale.value,
+                        height = localDensity.run { adjustedHeightDp.value.toPx() } * scale.value,
+                    )
+                }
+
                 val computeScaledExcess: () -> Offset = {
-                    val scaledBitmapWidth =
-                        localDensity.run { adjustedWidthDp.value.toPx() } * scale.value
-                    val scaledBitmapHeight =
-                        localDensity.run { adjustedHeightDp.value.toPx() } * scale.value
+                    val scaledSize = computeScaledSize()
                     Offset(
-                        x = scaledBitmapWidth - localDensity.run { maxWidth.toPx() },
-                        y = scaledBitmapHeight - localDensity.run { maxHeight.toPx() }
+                        x = scaledSize.width - localDensity.run { maxWidth.toPx() },
+                        y = scaledSize.height - localDensity.run { maxHeight.toPx() }
                     )
                 }
 
@@ -101,8 +105,8 @@ fun EditArtPreview(
                 }
 
                 LaunchedEffect(key1 = maxWidth, key2 = maxHeight) {
-                    val screenWidthAsPx = localDensity.run { maxWidth.toPx().toInt() }
-                    val screenHeightAsPx = localDensity.run { maxHeight.toPx().toInt() }
+                    val screenWidthAsPx = localDensity.run { maxWidth.toPx() }
+                    val screenHeightAsPx = localDensity.run { maxHeight.toPx() }
                     val adjustedSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = desiredSize,
                         maximumSize = Size(screenWidthAsPx, screenHeightAsPx)
@@ -145,6 +149,23 @@ fun EditArtPreview(
                                         animatableOffsetX.snapTo(targetValue = scaledRequestedOffset.x)
                                         animatableOffsetY.snapTo(targetValue = scaledRequestedOffset.y)
                                     }
+
+                                    /*
+                                    val scaledSize = computeScaledSize()
+
+                                    // todo figure out
+                                    onPreviewGestureZoom(
+                                        EditArtViewEvent.PreviewGestureZoom(
+                                            newScale = scale.value,
+                                            visibleFractionLeft = scaledRequestedOffset.x / scaledExcess.x,
+                                            visibleFractionBottom = scaledRequestedOffset.y / scaledExcess.y,
+                                            visibleFractionTop = scaledRequestedOffset.x
+
+                                        )
+                                    )
+
+                                     */
+
                                 },
                                 onPan = { pan ->
                                     /* Adjust offset within maximum range */
@@ -198,16 +219,20 @@ fun EditArtPreview(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            CircularProgressIndicator()
+                            bitmapZoomedIn.value?.let {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = stringResource(R.string.edit_art_preview_image_content_description)
+                                )
+                            } ?: CircularProgressIndicator()
                         }
                     }
                 }
             }
-        } ?: run {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
-        }
+        } ?: Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator() }
+
     }
 }

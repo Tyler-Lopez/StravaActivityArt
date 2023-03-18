@@ -1,9 +1,9 @@
 package com.activityartapp.presentation.saveArtScreen
 
 import android.graphics.Bitmap
+import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import android.util.Size
 import com.activityartapp.architecture.BaseRoutingViewModel
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.domain.repository.FileRepository
@@ -59,8 +59,8 @@ class SaveArtViewModel @Inject constructor(
     private val filterDateBeforeMs = FilterDateBeforeMsArg.rawArg(ssh).toLong()
     private val filterDistanceLessThanMeters = FilterDistanceLessThanMetersArg.rawArg(ssh).toInt()
     private val filterDistanceMoreThanMeters = FilterDistanceMoreThanMetersArg.rawArg(ssh).toInt()
-    private val sizeHeightPx = SizeHeightPxArg.rawArg(ssh).toInt()
-    private val sizeWidthPx = SizeWidthPxArg.rawArg(ssh).toInt()
+    private val sizeHeightPx = SizeHeightPxArg.rawArg(ssh).toFloat()
+    private val sizeWidthPx = SizeWidthPxArg.rawArg(ssh).toFloat()
     private val sizePx: Size get() = Size(sizeWidthPx, sizeHeightPx)
     private val sortDirectionType =
         EditArtSortDirectionType.valueOf(SortDirectionTypeArg.rawArg(ssh))

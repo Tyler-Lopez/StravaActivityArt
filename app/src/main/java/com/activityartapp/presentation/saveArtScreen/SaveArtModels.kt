@@ -1,8 +1,8 @@
 package com.activityartapp.presentation.saveArtScreen
 
 import android.graphics.Bitmap
-import android.util.Size
 import androidx.annotation.StringRes
+import androidx.compose.ui.geometry.Size
 import com.activityartapp.R
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
