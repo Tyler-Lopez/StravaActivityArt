@@ -1,6 +1,7 @@
 package com.activityartapp.presentation
 
 import android.net.Uri
+import androidx.annotation.Px
 import com.activityartapp.architecture.Destination
 import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
@@ -41,8 +42,8 @@ sealed interface MainDestination : Destination {
         val filterAfterMs: Long,
         val filterDistanceLessThanMeters: Int,
         val filterDistanceMoreThanMeters: Int,
-        val sizeHeightPx: Int,
-        val sizeWidthPx: Int,
+        @Px val sizeHeight: Float,
+        @Px val sizeWidth: Float,
         val sortType: EditArtSortType,
         val sortDirectionType: EditArtSortDirectionType,
         val strokeWidthType: StrokeWidthType,

@@ -1,7 +1,7 @@
 package com.activityartapp.util
 
-import android.util.Size
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import com.activityartapp.util.enums.AngleType
 import com.activityartapp.util.enums.AngleType.*
 
@@ -10,8 +10,8 @@ class GradientAngleUtils {
         angleType: AngleType,
         size: Size
     ): Pair<Offset, Offset> {
-        val width = size.width.toFloat()
-        val height = size.height.toFloat()
+        val width = size.width
+        val height = size.height
         return when (angleType) {
             CW0 -> Offset.Zero to Offset(width, 0f)
             CW45 -> Offset.Zero to Offset(width, height)

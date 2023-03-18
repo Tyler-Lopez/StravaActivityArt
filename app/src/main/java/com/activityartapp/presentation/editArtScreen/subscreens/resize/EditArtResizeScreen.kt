@@ -25,7 +25,6 @@ import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliderSpecification
 import com.activityartapp.presentation.editArtScreen.composables.TextFieldSliders
 import com.activityartapp.presentation.ui.theme.spacing
-import com.activityartapp.util.ext.toFloatRange
 
 @Composable
 fun EditArtResizeScreen(
@@ -112,7 +111,7 @@ private fun ListItem(
                 },
             content = (res as? Resolution.CustomResolution)?.let {
                 {
-                    val range = it.sizeRangePx.toFloatRange()
+                    val range = it.sizeRangePx
                     val onTextFieldDone = {
                         onSizeCustomPendingChangeConfirmed(
                             SizeCustomPendingChangeConfirmed(
@@ -128,15 +127,14 @@ private fun ListItem(
                                 },
                                 keyboardType = KeyboardType.Number,
                                 textFieldLabel = stringResource(R.string.edit_art_resize_pixels_width),
-                                textFieldValue = it.pendingWidth
-                                    ?: it.widthPx.toString(),
-                                sliderValue = it.widthPx.toFloat(),
+                                textFieldValue = it.pendingWidth ?: it.sizeWidthPx.toString(),
+                                sliderValue = it.sizeWidthPx,
                                 sliderRange = range,
                                 onSliderChanged = {
                                     onSizeCustomChanged(
                                         SizeCustomChanged(
-                                            customIndex = index,
-                                            changedToPx = it.toInt(),
+                                            index = index,
+                                            changedTo = it,
                                             heightChanged = false
                                         )
                                     )
@@ -156,15 +154,14 @@ private fun ListItem(
                                 },
                                 keyboardType = KeyboardType.Number,
                                 textFieldLabel = stringResource(R.string.edit_art_resize_pixels_height),
-                                textFieldValue = it.pendingHeight
-                                    ?: it.heightPx.toString(),
-                                sliderValue = it.heightPx.toFloat(),
+                                textFieldValue = it.pendingHeight ?: it.sizeHeightPx.toString(),
+                                sliderValue = it.sizeHeightPx,
                                 sliderRange = range,
                                 onSliderChanged = {
                                     onSizeCustomChanged(
                                         SizeCustomChanged(
-                                            customIndex = index,
-                                            changedToPx = it.toInt(),
+                                            index = index,
+                                            changedTo = it,
                                             heightChanged = true
                                         )
                                     )

@@ -1,11 +1,8 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
-import android.util.Size
 import androidx.compose.runtime.*
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.activityartapp.architecture.BaseRoutingViewModel
@@ -244,6 +241,7 @@ class EditArtViewModel @Inject constructor(
 
     // PREVIEW
     private val _bitmap = mutableStateOf<Bitmap?>(null) // not save
+    private val _bitmapZoomed = mutableStateOf<Bitmap?>(null) // not save
 
     // FILTERS
     private val _filterActivitiesCountDate = mutableStateOf(0)
@@ -313,7 +311,6 @@ class EditArtViewModel @Inject constructor(
             /** Restore any previous state **/
             stateRestore()
             Standby(
-                bitmap = _bitmap,
                 dialogActive = _dialogActive,
                 pagerStateWrapper = loadingState.pagerStateWrapper,
                 filterActivitiesCountDate = _filterActivitiesCountDate,
@@ -328,6 +325,8 @@ class EditArtViewModel @Inject constructor(
                 filterDistancePendingChangeStart = _filterDistancePendingChangeStart,
                 filterDistancePendingChangeEnd = _filterDistancePendingChangeEnd,
                 filterTypes = _filterTypes,
+                previewBitmap = _bitmap,
+                previewBitmapZoomed = _bitmapZoomed,
                 sizeResolutionList = _sizeResolutionList,
                 sizeResolutionListSelectedIndex = _sizeResolutionListSelectedIndex,
                 sortDirectionTypeSelected = _sortDirectionTypeSelected,
@@ -371,7 +370,7 @@ class EditArtViewModel @Inject constructor(
                 }
             }
 
-            /** Finally, update the bitmap of the current Standby state **/
+            /** Finally, update the previewBitmap of the current Standby state **/
             updateBitmap()
 
             /** Observe any changes to all states and save them into ssh **/
@@ -394,6 +393,7 @@ class EditArtViewModel @Inject constructor(
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
+            is PreviewGestureZoom -> onPreviewGestureZoom(event)
         }
     }
 
@@ -587,6 +587,10 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
+    private fun onPreviewGestureZoom(event: PreviewGestureZoom) {
+
+    }
+
     private fun onSaveClicked() {
         viewModelScope.launch(activitiesProcessingDispatcher) {
             /** Prevent rapid-click after changing a filter from routing to SaveArt when
@@ -620,8 +624,8 @@ class EditArtViewModel @Inject constructor(
                     filterDistanceMoreThanMeters = _filterDistanceSelectedStart.value
                         ?.roundToInt()
                         ?: Int.MIN_VALUE,
-                    sizeHeightPx = targetSize.heightPx,
-                    sizeWidthPx = targetSize.widthPx,
+                    sizeHeight = targetSize.sizeHeightPx,
+                    sizeWidth = targetSize.sizeWidthPx,
                     sortType = _sortTypeSelected.value,
                     sortDirectionType = _sortDirectionTypeSelected.value,
                     strokeWidthType = _styleStrokeWidthType.value,
@@ -673,13 +677,16 @@ class EditArtViewModel @Inject constructor(
     }
 
     private fun onSizeCustomChanged(event: SizeCustomChanged) {
-        val customRes = _sizeResolutionList[event.customIndex] as Resolution.CustomResolution
-        _sizeResolutionList[event.customIndex] = if (event.heightChanged) {
-            customRes.copy(heightPx = event.changedToPx, pendingHeight = null)
-        } else {
-            customRes.copy(widthPx = event.changedToPx, pendingWidth = null)
+        val newRes = (_sizeResolutionList[event.index] as Resolution.CustomResolution).run {
+            copy(
+                pendingHeight = if (event.heightChanged) null else pendingHeight,
+                pendingWidth = if (event.heightChanged) pendingWidth else null,
+                sizeHeightPx = if (event.heightChanged) event.changedTo else sizeHeightPx,
+                sizeWidthPx = if (event.heightChanged) sizeWidthPx else event.changedTo
+            )
         }
-        _sizeResolutionListSelectedIndex.value = event.customIndex
+        _sizeResolutionList[event.index] = newRes
+        _sizeResolutionListSelectedIndex.value = event.index
     }
 
     private fun onSizeCustomPendingChangeConfirmed(event: SizeCustomPendingChangeConfirmed) {
@@ -687,14 +694,14 @@ class EditArtViewModel @Inject constructor(
         val range = customRes.sizeRangePx
         _sizeResolutionList[event.customIndex] = customRes.run {
             copy(
-                widthPx = pendingWidth?.let {
-                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
-                } ?: widthPx,
-                heightPx = pendingHeight?.let {
-                    parseNumberFromStringUtils.parse(it).toInt().coerceIn(range)
-                } ?: heightPx,
+                pendingHeight = null,
                 pendingWidth = null,
-                pendingHeight = null
+                sizeHeightPx = pendingHeight?.let {
+                    parseNumberFromStringUtils.parse(it).toFloat().coerceIn(range)
+                } ?: sizeHeightPx,
+                sizeWidthPx = pendingWidth?.let {
+                    parseNumberFromStringUtils.parse(it).toFloat().coerceIn(range)
+                } ?: sizeWidthPx
             )
         }
         _sizeResolutionListSelectedIndex.value = event.customIndex
@@ -920,7 +927,7 @@ class EditArtViewModel @Inject constructor(
                     strokeWidth = _styleStrokeWidthType.value,
                     bitmapSize = imageSizeUtils.sizeToMaximumSize(
                         actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
-                            Size(widthPx, heightPx)
+                            Size(width = sizeWidthPx, height = sizeHeightPx)
                         },
                         maximumSize = it
                     ),

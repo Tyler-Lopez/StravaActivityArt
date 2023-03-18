@@ -2,9 +2,9 @@ package com.activityartapp.util
 
 import android.content.Context
 import android.graphics.*
-import android.util.Size
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.compose.ui.geometry.Size
 import com.activityartapp.domain.models.Activity
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.util.enums.*
@@ -31,27 +31,6 @@ class VisualizationUtils @Inject constructor(
         private const val TRANSPARENT_GRID_SIZE_PX = 50
     }
 
-    fun createArtOnCanvas(
-        backgroundAngleType: AngleType,
-        backgroundType: BackgroundType,
-        backgroundColorsArgb: List<Int>,
-        canvas: Canvas,
-        colorActivitiesArgb: Int,
-        colorFontArgb: Int,
-        fontAssetPath: String,
-        fontSize: FontSizeType,
-        isPreview: Boolean,
-        sortType: EditArtSortType,
-        sortDirectionType: EditArtSortDirectionType,
-        strokeWidth: StrokeWidthType,
-        @Px paddingFraction: Float = 0.1f,
-        textLeft: String? = null,
-        textCenter: String? = null,
-        textRight: String? = null
-    ) {
-
-    }
-    
     fun createBitmap(
         activities: List<Activity>,
         backgroundAngleType: AngleType,
@@ -100,8 +79,8 @@ class VisualizationUtils @Inject constructor(
         ).max()
 
         return Bitmap.createBitmap(
-            bitmapSize.width,
-            bitmapSize.height,
+            bitmapSize.width.roundToInt(),
+            bitmapSize.height.roundToInt(),
             Bitmap.Config.ARGB_8888
         ).also { bitmap ->
             Canvas(bitmap).apply {
@@ -119,8 +98,8 @@ class VisualizationUtils @Inject constructor(
                 val padding = paddingFraction * minOf(width, height)
                 val paddingOnEachSide = (padding * 2f).toInt()
 
-                val height = bitmapSize.height
-                val width = bitmapSize.width
+                val height = bitmap.height
+                val width = bitmap.width
                 val centerX = width / 2f
 
                 computeDrawingSpecification(
@@ -250,7 +229,7 @@ class VisualizationUtils @Inject constructor(
     ) {
         val offsets = gradientAngleUtils.getStartAndEndOffsets(
             angleType = angleType,
-            size = Size(width, height)
+            size = Size(width.toFloat(), height.toFloat())
         )
         drawRect(
             OFFSET_ZERO_PX,

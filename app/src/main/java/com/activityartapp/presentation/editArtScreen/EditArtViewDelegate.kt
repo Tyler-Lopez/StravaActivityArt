@@ -1,6 +1,5 @@
 package com.activityartapp.presentation.editArtScreen
 
-import android.util.Size
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -16,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -121,11 +121,12 @@ fun CollectViewState(
                         when (it) {
                             PREVIEW -> EditArtPreview(
                                 atLeastOneActivitySelected,
-                                bitmap,
+                                previewBitmap,
+                                previewBitmapZoomed,
                                 sizeResolutionList[sizeResolutionListSelectedIndex.value].run {
-                                    Size(widthPx, heightPx)
+                                    Size(width = sizeWidthPx, height = sizeHeightPx)
                                 }
-                            )
+                            ) { zoomEvent -> eventReceiver.onEvent(zoomEvent) }
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
                                     filterActivitiesCountDate,
