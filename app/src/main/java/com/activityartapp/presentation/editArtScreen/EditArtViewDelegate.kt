@@ -125,8 +125,9 @@ fun CollectViewState(
                                 previewBitmapZoomed,
                                 sizeResolutionList[sizeResolutionListSelectedIndex.value].run {
                                     Size(width = sizeWidthPx, height = sizeHeightPx)
-                                }
-                            ) { zoomEvent -> eventReceiver.onEvent(zoomEvent) }
+                                },
+                                eventReceiver
+                            )
                             FILTERS -> YearMonthDay.run {
                                 EditArtFiltersScreen(
                                     filterActivitiesCountDate,

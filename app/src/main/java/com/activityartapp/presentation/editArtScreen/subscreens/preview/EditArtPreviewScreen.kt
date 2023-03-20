@@ -22,10 +22,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
+import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PreviewGestureClearZoom
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PreviewGestureRenderZoom
 import com.activityartapp.util.ImageSizeUtils
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 @Composable
@@ -34,7 +39,7 @@ fun EditArtPreview(
     bitmap: State<Bitmap?>,
     bitmapZoomedIn: State<Bitmap?>,
     desiredSize: Size,
-    onPreviewGestureZoom: (EditArtViewEvent.PreviewGestureZoom) -> Unit
+    eventReceiver: EventReceiver<EditArtViewEvent>
 ) {
     val imageSizeUtils = ImageSizeUtils()
 
@@ -150,22 +155,12 @@ fun EditArtPreview(
                                         animatableOffsetY.snapTo(targetValue = scaledRequestedOffset.y)
                                     }
 
-                                    /*
-                                    val scaledSize = computeScaledSize()
-
-                                    // todo figure out
-                                    onPreviewGestureZoom(
-                                        EditArtViewEvent.PreviewGestureZoom(
-                                            newScale = scale.value,
-                                            visibleFractionLeft = scaledRequestedOffset.x / scaledExcess.x,
-                                            visibleFractionBottom = scaledRequestedOffset.y / scaledExcess.y,
-                                            visibleFractionTop = scaledRequestedOffset.x
-
+                                    eventReceiver.onEvent(
+                                        // todo
+                                        PreviewGestureRenderZoom(
+                                            0f, 0f, 0f, 0f, 0f
                                         )
                                     )
-
-                                     */
-
                                 },
                                 onPan = { pan ->
                                     /* Adjust offset within maximum range */
@@ -175,6 +170,11 @@ fun EditArtPreview(
                                     velocityTracker.addPosition(
                                         System.currentTimeMillis(),
                                         Offset(newOffsetX, newOffsetY)
+                                    )
+
+                                    eventReceiver.onEvent(
+                                        // todo
+                                        PreviewGestureClearZoom
                                     )
 
                                     scope.launch {
@@ -187,10 +187,25 @@ fun EditArtPreview(
                                     velocityTracker.resetTracking()
 
                                     scope.launch {
-                                        animatableOffsetX.animateDecay(velocity.x, velocityDecay)
-                                    }
-                                    scope.launch {
-                                        animatableOffsetY.animateDecay(velocity.y, velocityDecay)
+                                        val moveX = async {
+                                            animatableOffsetX.animateDecay(
+                                                initialVelocity = velocity.x,
+                                                animationSpec = velocityDecay
+                                            )
+                                        }
+                                        val moveY = async {
+                                            animatableOffsetY.animateDecay(
+                                                initialVelocity = velocity.y,
+                                                animationSpec = velocityDecay
+                                            )
+                                        }
+                                        awaitAll(moveX, moveY)
+                                        eventReceiver.onEvent(
+                                            // todo
+                                            PreviewGestureRenderZoom(
+                                                0f, 0f, 0f, 0f, 0f
+                                            )
+                                        )
                                     }
                                 }
                             )
