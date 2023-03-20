@@ -1,6 +1,9 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.SavedStateHandle
@@ -25,10 +28,7 @@ import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -229,7 +229,9 @@ class EditArtViewModel @Inject constructor(
     /** region States unobserved in View */
     private val activitiesProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
     private var imageJob: Job? = null
+    private var imageZoomedJob: Job? = null
     private val imageProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
+    private val imageZoomedProcessingDispatcher by lazy { Dispatchers.Default.limitedParallelism(1) }
 
     // The size of the screen excluding the top bar
     private var previewScreenSize: Size? = null
@@ -393,7 +395,8 @@ class EditArtViewModel @Inject constructor(
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
-            is PreviewGestureZoom -> onPreviewGestureZoom(event)
+            is PreviewGestureClearZoom -> onPreviewGestureClearZoom()
+            is PreviewGestureRenderZoom -> onPreviewGestureRenderZoom(event)
         }
     }
 
@@ -587,8 +590,32 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun onPreviewGestureZoom(event: PreviewGestureZoom) {
+    private fun onPreviewGestureClearZoom() {
+        imageZoomedJob?.cancel()
+        _bitmapZoomed.value = null
+    }
 
+    private fun onPreviewGestureRenderZoom(event: PreviewGestureRenderZoom) {
+        _bitmapZoomed.value = null
+        imageZoomedJob?.cancel()
+        imageZoomedJob = viewModelScope.launch(imageZoomedProcessingDispatcher) {
+            delay(1000L)
+            _bitmapZoomed.value = Bitmap.createBitmap(
+                (previewScreenSize?.width ?: 0f).toInt(),
+                (previewScreenSize?.height ?: 0f).toInt(),
+                Bitmap.Config.ARGB_8888
+            ).also { bitmap ->
+                Canvas(bitmap).apply {
+                    drawRect(
+                        0f,
+                        0f,
+                        width.toFloat(),
+                        height.toFloat(),
+                        Paint().apply { color = Color.DKGRAY }
+                    )
+                }
+            }
+        }
     }
 
     private fun onSaveClicked() {
@@ -912,6 +939,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun updateBitmap() {
         _bitmap.value = null
+        _bitmapZoomed.value = null
         imageJob?.cancel()
         imageJob = viewModelScope.launch(imageProcessingDispatcher) {
             previewScreenSize?.let {
