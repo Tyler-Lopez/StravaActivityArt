@@ -1,9 +1,6 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.SavedStateHandle
@@ -600,20 +597,8 @@ class EditArtViewModel @Inject constructor(
         imageZoomedJob?.cancel()
         imageZoomedJob = viewModelScope.launch(imageZoomedProcessingDispatcher) {
             delay(1000L)
-            _bitmapZoomed.value = Bitmap.createBitmap(
-                (previewScreenSize?.width ?: 0f).toInt(),
-                (previewScreenSize?.height ?: 0f).toInt(),
-                Bitmap.Config.ARGB_8888
-            ).also { bitmap ->
-                Canvas(bitmap).apply {
-                    drawRect(
-                        0f,
-                        0f,
-                        width.toFloat(),
-                        height.toFloat(),
-                        Paint().apply { color = Color.DKGRAY }
-                    )
-                }
+            previewScreenSize?.let {
+                _bitmapZoomed.value = createBitmapToMaximumSize(maxSize = it * event.scale)
             }
         }
     }
@@ -943,38 +928,40 @@ class EditArtViewModel @Inject constructor(
         imageJob?.cancel()
         imageJob = viewModelScope.launch(imageProcessingDispatcher) {
             previewScreenSize?.let {
-                val newBitmap = visualizationUtils.createBitmap(
-                    activities = activitiesFiltered,
-                    backgroundAngleType = _styleBackgroundAngleType.value,
-                    backgroundType = _styleBackgroundType.value,
-                    backgroundColorsArgb = _styleBackgroundList
-                        .take(_styleBackgroundGradientColorCount.value)
-                        .map { it.toColorArgb() }, // TODO
-                    colorActivitiesArgb = _styleActivities.value.toColorArgb(),
-                    colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
-                    strokeWidth = _styleStrokeWidthType.value,
-                    bitmapSize = imageSizeUtils.sizeToMaximumSize(
-                        actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
-                            Size(width = sizeWidthPx, height = sizeHeightPx)
-                        },
-                        maximumSize = it
-                    ),
-                    fontAssetPath = _typeFontSelected.value.getAssetPath(
-                        fontWeightType = _typeFontWeightSelected.value,
-                        italicized = _typeFontItalicized.value
-                    ),
-                    fontSize = _typeFontSizeSelected.value,
-                    isPreview = true,
-                    sortType = _sortTypeSelected.value,
-                    sortDirectionType = _sortDirectionTypeSelected.value,
-                    textLeft = EditArtTypeSection.LEFT.text,
-                    textCenter = EditArtTypeSection.CENTER.text,
-                    textRight = EditArtTypeSection.RIGHT.text
-                )
-                _bitmap.value = newBitmap
+                _bitmap.value = createBitmapToMaximumSize(maxSize = it)
             }
-
         }
+    }
+
+    private fun createBitmapToMaximumSize(maxSize: Size): Bitmap {
+        return visualizationUtils.createBitmap(
+            activities = activitiesFiltered,
+            backgroundAngleType = _styleBackgroundAngleType.value,
+            backgroundType = _styleBackgroundType.value,
+            backgroundColorsArgb = _styleBackgroundList
+                .take(_styleBackgroundGradientColorCount.value)
+                .map { it.toColorArgb() }, // TODO
+            colorActivitiesArgb = _styleActivities.value.toColorArgb(),
+            colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
+            strokeWidth = _styleStrokeWidthType.value,
+            bitmapSize = imageSizeUtils.sizeToMaximumSize(
+                actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
+                    Size(width = sizeWidthPx, height = sizeHeightPx)
+                },
+                maximumSize = maxSize
+            ),
+            fontAssetPath = _typeFontSelected.value.getAssetPath(
+                fontWeightType = _typeFontWeightSelected.value,
+                italicized = _typeFontItalicized.value
+            ),
+            fontSize = _typeFontSizeSelected.value,
+            isPreview = true,
+            sortType = _sortTypeSelected.value,
+            sortDirectionType = _sortDirectionTypeSelected.value,
+            textLeft = EditArtTypeSection.LEFT.text,
+            textCenter = EditArtTypeSection.CENTER.text,
+            textRight = EditArtTypeSection.RIGHT.text
+        )
     }
 
     private val EditArtTypeSection.text: String?

@@ -158,7 +158,7 @@ fun EditArtPreview(
                                     eventReceiver.onEvent(
                                         // todo
                                         PreviewGestureRenderZoom(
-                                            0f, 0f, 0f, 0f, 0f
+                                            scale.value, 0f, 0f, 0f, 0f
                                         )
                                     )
                                 },
@@ -203,7 +203,7 @@ fun EditArtPreview(
                                         eventReceiver.onEvent(
                                             // todo
                                             PreviewGestureRenderZoom(
-                                                0f, 0f, 0f, 0f, 0f
+                                                scale.value, 0f, 0f, 0f, 0f
                                             )
                                         )
                                     }
@@ -237,6 +237,7 @@ fun EditArtPreview(
                             bitmapZoomedIn.value?.let {
                                 Image(
                                     bitmap = it.asImageBitmap(),
+                                    contentScale = ContentScale.None,
                                     contentDescription = stringResource(R.string.edit_art_preview_image_content_description)
                                 )
                             } ?: CircularProgressIndicator()
