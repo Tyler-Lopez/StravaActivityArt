@@ -1,23 +1,5 @@
 <resources>
-
-    <style name="Theme.AthleteApiArt" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/primary_color</item>
-        <item name="colorPrimaryVariant">@color/primary_dark_color</item>
-        <item name="colorOnPrimary">@color/on_primary_color</item>
-        <item name="colorSecondary">@color/secondary_color</item>
-        <item name="colorSecondaryVariant">@color/secondary_dark_color</item>
-        <item name="colorOnSecondary">@color/on_secondary_color</item>
+    <style name="Theme.AthleteApiArt" parent="Theme.AppCompat.Light">
         <item name="android:statusBarColor">@color/primary_dark_color</item>
-        <item name="android:colorBackground">@color/background_color</item>
-        <item name="android:fontFamily">@font/maison_neue</item>
     </style>
-
-    <style name="Theme.AthleteApiArt.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.AthleteApiArt.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.AthleteApiArt.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
