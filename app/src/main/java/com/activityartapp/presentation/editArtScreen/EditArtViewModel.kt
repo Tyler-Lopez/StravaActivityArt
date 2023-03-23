@@ -392,8 +392,8 @@ class EditArtViewModel @Inject constructor(
             is SizeCustomPendingChanged -> onSizeCustomPendingChanged(event)
             is StyleColorPendingChanged -> onStyleColorPendingChanged(event)
             is PageHeaderClicked -> onPageHeaderClicked(event)
-            is PreviewGestureClearZoom -> onPreviewGestureClearZoom()
-            is PreviewGestureRenderZoom -> onPreviewGestureRenderZoom(event)
+            is PreviewZoom -> onPreviewZoom(event)
+            is PreviewZoomClear -> onPreviewZoomClear()
         }
     }
 
@@ -587,18 +587,23 @@ class EditArtViewModel @Inject constructor(
         }
     }
 
-    private fun onPreviewGestureClearZoom() {
+    private fun onPreviewZoomClear() {
         imageZoomedJob?.cancel()
         _bitmapZoomed.value = null
     }
 
-    private fun onPreviewGestureRenderZoom(event: PreviewGestureRenderZoom) {
+    private fun onPreviewZoom(event: PreviewZoom) {
         _bitmapZoomed.value = null
         imageZoomedJob?.cancel()
         imageZoomedJob = viewModelScope.launch(imageZoomedProcessingDispatcher) {
-            delay(1000L)
             previewScreenSize?.let {
-                _bitmapZoomed.value = createBitmapToMaximumSize(maxSize = it * event.scale)
+                val zoomedIn = createBitmapToMaximumSize(maxSize = it * event.scale)
+                _bitmapZoomed.value = zoomedIn
+            }
+        }
+        imageZoomedJob?.invokeOnCompletion {
+            if (it != null) {
+                _bitmapZoomed.value = null
             }
         }
     }

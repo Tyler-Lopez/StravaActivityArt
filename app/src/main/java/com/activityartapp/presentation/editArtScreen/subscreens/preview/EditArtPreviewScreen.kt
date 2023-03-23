@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -26,8 +28,7 @@ import com.activityartapp.architecture.EventReceiver
 import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PreviewGestureClearZoom
-import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PreviewGestureRenderZoom
+import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PreviewZoom
 import com.activityartapp.util.ImageSizeUtils
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -155,12 +156,7 @@ fun EditArtPreview(
                                         animatableOffsetY.snapTo(targetValue = scaledRequestedOffset.y)
                                     }
 
-                                    eventReceiver.onEvent(
-                                        // todo
-                                        PreviewGestureRenderZoom(
-                                            scale.value, 0f, 0f, 0f, 0f
-                                        )
-                                    )
+                                    eventReceiver.onEvent(PreviewZoom(scale.value))
                                 },
                                 onPan = { pan ->
                                     /* Adjust offset within maximum range */
@@ -170,11 +166,6 @@ fun EditArtPreview(
                                     velocityTracker.addPosition(
                                         System.currentTimeMillis(),
                                         Offset(newOffsetX, newOffsetY)
-                                    )
-
-                                    eventReceiver.onEvent(
-                                        // todo
-                                        PreviewGestureClearZoom
                                     )
 
                                     scope.launch {
@@ -200,12 +191,6 @@ fun EditArtPreview(
                                             )
                                         }
                                         awaitAll(moveX, moveY)
-                                        eventReceiver.onEvent(
-                                            // todo
-                                            PreviewGestureRenderZoom(
-                                                scale.value, 0f, 0f, 0f, 0f
-                                            )
-                                        )
                                     }
                                 }
                             )
@@ -235,10 +220,24 @@ fun EditArtPreview(
                             modifier = Modifier.fillMaxSize()
                         ) {
                             bitmapZoomedIn.value?.let {
+
+                                val actualWidth = localDensity.run { ((it.width) * scale.value).toDp() }
+                                val actualHeight = localDensity.run { ((it.height) * scale.value).toDp() }
+                                val excess = computeScaledExcess()
                                 Image(
                                     bitmap = it.asImageBitmap(),
                                     contentScale = ContentScale.None,
-                                    contentDescription = stringResource(R.string.edit_art_preview_image_content_description)
+                                    contentDescription = stringResource(R.string.edit_art_preview_image_content_description),
+                                    alignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .requiredSize(
+                                            width = actualWidth,
+                                            height = actualHeight
+                                        )
+                                        .graphicsLayer {
+                                            translationX = (-animatableOffsetX.value) + (excess.x / 2f)
+                                             translationY = -animatableOffsetY.value + (excess.y / 2f)
+                                        }
                                 )
                             } ?: CircularProgressIndicator()
                         }
