@@ -26,7 +26,7 @@ fun AthleteApiArtTheme(content: @Composable () -> Unit) {
         onSecondary = colorResource(R.color.on_secondary_color),
         onBackground = colorResource(R.color.on_background_color),
         onSurface = colorResource(R.color.on_surface_color),
-        onError = colorResource(R.color.on_error_color)
+        onError = colorResource(R.color.on_error_color),
     )
 
     CompositionLocalProvider(

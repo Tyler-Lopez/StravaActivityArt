@@ -6,9 +6,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -68,11 +74,17 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
                         Login.route
                     }
                     AthleteApiArtTheme {
-                        MainNavHost(
-                            navController = navController,
-                            startRoute = startScreen,
-                            router = this@MainActivity,
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.background)
+                        ) {
+                            MainNavHost(
+                                navController = navController,
+                                startRoute = startScreen,
+                                router = this@MainActivity,
+                            )
+                        }
                     }
                 }
             }
@@ -135,10 +147,6 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             if (destination.clearNavigationHistory) {
                 popUpTo(route = Welcome.route) {
                     inclusive = true
-                }
-                val a = ""
-                val b: List<String> = a.mapIndexed { index, _ ->
-                    a.substring(index, a.lastIndex)
                 }
             }
         }
