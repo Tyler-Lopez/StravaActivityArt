@@ -55,18 +55,8 @@ sealed interface EditArtViewEvent : ViewEvent {
     object NavigateUpClicked : EditArtViewEvent
     data class PageHeaderClicked(val position: Int) : EditArtViewEvent
     data class PreviewSpaceMeasured(val size: Size) : ArtMutatingEvent
-    data class PreviewGestureRenderZoom(
-        val scale: Float,
-        val visibleFractionTop: Float,
-        val visibleFractionBottom: Float,
-        val visibleFractionLeft: Float,
-        val visibleFractionRight: Float
-    ) : EditArtViewEvent
-
-    object PreviewGestureClearZoom : EditArtViewEvent
-
-
-
+    data class PreviewZoom(val scale: Float) : EditArtViewEvent
+    object PreviewZoomClear : EditArtViewEvent
     object SaveClicked : EditArtViewEvent
     sealed interface SizeCustomPendingChanged : EditArtViewEvent {
         val changedTo: String
