@@ -124,7 +124,6 @@ fun SectionDistances(
     FilterCount(count)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun RowScope.DistanceTextField(
     textFieldValue: String,
@@ -133,32 +132,27 @@ private fun RowScope.DistanceTextField(
     onValueChanged: (String) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    BasicTextField(
+    val focusManager = LocalFocusManager.current
+    OutlinedTextField(
         value = textFieldValue,
         onValueChange = onValueChanged,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Decimal,
             imeAction = ImeAction.Done
         ),
-        modifier = Modifier.weight(1f, true),
-        keyboardActions = KeyboardActions(onDone = { onDone() }),
-        interactionSource = interactionSource,
-        decorationBox = {
-            TextFieldDefaults.OutlinedTextFieldDecorationBox(
-                value = textFieldValue,
-                visualTransformation = VisualTransformation.None,
-                innerTextField = it,
-                singleLine = true,
-                enabled = true,
-                label = {
-                    Text(
-                        text = labelString,
-                        style = MaterialTheme.typography.overline
-                    )
-                },
-                interactionSource = interactionSource,
+        modifier = Modifier.weight(weight = 1f, fill = true),
+        keyboardActions = KeyboardActions(onDone = {
+            onDone()
+            focusManager.clearFocus()
+        }),
+        label = {
+            Text(
+                text = labelString,
+                style = MaterialTheme.typography.overline
             )
-        }
+        },
+        singleLine = true,
+        interactionSource = interactionSource,
     )
 }
 

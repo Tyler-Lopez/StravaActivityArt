@@ -1,7 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.AthleteApiArt" parent="Theme.AppCompat">
-        <!-- Todo, remove this when implemented night theme -->
-        <item name="android:statusBarColor">@color/primary_dark_color</item>
     </style>
 </resources>
