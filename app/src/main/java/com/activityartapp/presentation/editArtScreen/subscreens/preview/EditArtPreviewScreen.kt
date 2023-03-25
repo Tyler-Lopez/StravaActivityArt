@@ -5,15 +5,13 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -29,7 +27,9 @@ import com.activityartapp.presentation.common.ErrorComposable
 import com.activityartapp.presentation.common.ScreenBackground
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.PreviewZoom
+import com.activityartapp.presentation.ui.theme.spacing
 import com.activityartapp.util.ImageSizeUtils
+import com.activityartapp.util.ext.halve
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -98,8 +98,8 @@ fun EditArtPreview(
                 val updateBounds: () -> Unit = {
                     /* Compute the float range which the new offset must be coerced within */
                     val scaledExcess = computeScaledExcess()
-                    val forcedOffsetX = scaledExcess.x.takeIf { it < 0f }?.div(other = 2f)
-                    val forcedOffsetY = scaledExcess.y.takeIf { it < 0f }?.div(other = 2f)
+                    val forcedOffsetX = scaledExcess.x.takeIf { it < 0f }?.halve()
+                    val forcedOffsetY = scaledExcess.y.takeIf { it < 0f }?.halve()
                     animatableOffsetX.updateBounds(
                         lowerBound = forcedOffsetX ?: 0f,
                         upperBound = forcedOffsetX ?: scaledExcess.x
@@ -132,17 +132,19 @@ fun EditArtPreview(
                         .pointerInput(Unit) {
                             detectZoomPanGesture(
                                 onZoom = { centroid, pan, zoom ->
-                                    val oldScale = scale.value
-                                    scale.value = (oldScale * zoom).coerceIn(1f..5f)
+                                    val scaleOld = scale.value
+                                    val scaleNew = (scaleOld * zoom).coerceIn(1f..5f)
+                                    if (scaleOld == scaleNew) return@detectZoomPanGesture
+                                    scale.value = scaleNew
 
                                     /* Compute a new offset which would perfectly center the image within the user's
                                     fingers; may be out-of-bounds. */
                                     val scaledPrevOffset = Offset(
                                         animatableOffsetX.value,
                                         animatableOffsetY.value
-                                    ) / oldScale
-                                    val scaledPrevCent = centroid / oldScale
-                                    val scaledPrevPan = pan / oldScale
+                                    ) / scaleOld
+                                    val scaledPrevCent = centroid / scaleOld
+                                    val scaledPrevPan = pan / scaleOld
                                     val scaledNewCent = centroid / scale.value
                                     val requestedOffset =
                                         scaledPrevOffset + scaledPrevCent - scaledNewCent + scaledPrevPan
@@ -221,9 +223,10 @@ fun EditArtPreview(
                         ) {
                             bitmapZoomedIn.value?.let {
 
-                                val actualWidth = localDensity.run { ((it.width) * scale.value).toDp() }
-                                val actualHeight = localDensity.run { ((it.height) * scale.value).toDp() }
-                                val excess = computeScaledExcess()
+                                val actualWidth =
+                                    localDensity.run { ((it.width) * scale.value).toDp() }
+                                val actualHeight =
+                                    localDensity.run { ((it.height) * scale.value).toDp() }
                                 Image(
                                     bitmap = it.asImageBitmap(),
                                     contentScale = ContentScale.None,
@@ -235,11 +238,33 @@ fun EditArtPreview(
                                             height = actualHeight
                                         )
                                         .graphicsLayer {
-                                            translationX = (-animatableOffsetX.value) + (excess.x / 2f)
-                                             translationY = -animatableOffsetY.value + (excess.y / 2f)
+                                            val excess = computeScaledExcess()
+                                            val shiftX = excess.x.halve()
+                                            val shiftY = excess.y.halve()
+                                            translationX = -animatableOffsetX.value + shiftX
+                                            translationY = -animatableOffsetY.value + shiftY
                                         }
                                 )
-                            } ?: CircularProgressIndicator()
+                            } ?: Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(spacing.medium),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Card {
+                                    Column(
+                                        modifier = Modifier.padding(all = spacing.medium),
+                                        verticalArrangement = Arrangement.spacedBy(space = spacing.medium),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.edit_art_preview_loading_enhance),
+                                            style = MaterialTheme.typography.body2
+                                        )
+                                        LinearProgressIndicator()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -248,6 +273,5 @@ fun EditArtPreview(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) { CircularProgressIndicator() }
-
     }
 }
