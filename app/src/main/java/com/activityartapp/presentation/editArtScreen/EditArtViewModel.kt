@@ -550,11 +550,11 @@ class EditArtViewModel @Inject constructor(
             is FilterChanged.FilterDistancePendingChangeConfirmed.EndConfirmed -> {
                 _filterDistancePendingChangeEnd.value?.let { pendingEnd ->
                     val coerceAtLeast = _filterDistanceSelectedStart.value ?: totalValueSmallest
-                    _filterDistanceSelectedStart.value = parseNumberFromStringUtils
+                    _filterDistanceSelectedStart.value = coerceAtLeast
+                    _filterDistanceSelectedEnd.value = parseNumberFromStringUtils
                         .parse(pendingEnd)
                         .milesToMeters()
                         .coerceIn(coerceAtLeast.rangeTo(totalValueLargest))
-                    _filterDistanceSelectedEnd.value = coerceAtLeast
                     _filterDistancePendingChangeEnd.value = null
                 }
             }
