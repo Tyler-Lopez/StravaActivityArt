@@ -118,7 +118,6 @@ private fun ListItem(
                 {
                     val range = it.sizeRangePx
                     val onTextFieldDone = {
-                        println("here, on text field done...")
                         onSizeCustomPendingChangeConfirmed(
                             SizeCustomPendingChangeConfirmed(
                                 customIndex = index
