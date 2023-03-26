@@ -2,6 +2,8 @@ package com.activityartapp.presentation.editArtScreen.subscreens.resize
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,10 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.editArtScreen.DateSelection
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.*
 import com.activityartapp.presentation.editArtScreen.Resolution
@@ -66,18 +71,18 @@ private fun ResolutionLazyList(
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
         itemsIndexed(resolutionList) { index, resolution ->
-            ListItem(
-                isSelected = selectedResolutionIndex == index,
-                index = index,
-                res = resolution,
-                onSizeRotated,
-                onSizeCustomPendingChangeConfirmed,
-                onSizeCustomChanged,
-                onSizeCustomPendingWidthChanged,
-                onSizeCustomPendingHeightChanged,
-                onSizeChanged
-            )
-        }
+                ListItem(
+                    isSelected = selectedResolutionIndex == index,
+                    index = index,
+                    res = resolution,
+                    onSizeRotated,
+                    onSizeCustomPendingChangeConfirmed,
+                    onSizeCustomChanged,
+                    onSizeCustomPendingWidthChanged,
+                    onSizeCustomPendingHeightChanged,
+                    onSizeChanged
+                )
+            }
     }
 
 }
@@ -113,6 +118,7 @@ private fun ListItem(
                 {
                     val range = it.sizeRangePx
                     val onTextFieldDone = {
+                        println("here, on text field done...")
                         onSizeCustomPendingChangeConfirmed(
                             SizeCustomPendingChangeConfirmed(
                                 customIndex = index
@@ -127,7 +133,7 @@ private fun ListItem(
                                 },
                                 keyboardType = KeyboardType.Number,
                                 textFieldLabel = stringResource(R.string.edit_art_resize_pixels_width),
-                                textFieldValue = it.pendingWidth ?: it.sizeWidthPx.toString(),
+                                textFieldValue = it.pendingWidth ?: "%.0f".format(it.sizeWidthPx),
                                 sliderValue = it.sizeWidthPx,
                                 sliderRange = range,
                                 onSliderChanged = {
@@ -154,7 +160,7 @@ private fun ListItem(
                                 },
                                 keyboardType = KeyboardType.Number,
                                 textFieldLabel = stringResource(R.string.edit_art_resize_pixels_height),
-                                textFieldValue = it.pendingHeight ?: it.sizeHeightPx.toString(),
+                                textFieldValue = it.pendingHeight ?: "%.0f".format(it.sizeHeightPx),
                                 sliderValue = it.sizeHeightPx,
                                 sliderRange = range,
                                 onSliderChanged = {
