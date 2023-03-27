@@ -1,6 +1,7 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.SavedStateHandle
@@ -21,6 +22,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.resize.Resolutio
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
 import com.activityartapp.util.*
+import com.activityartapp.util.classes.ActivityColorRule
 import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
@@ -266,6 +268,9 @@ class EditArtViewModel @Inject constructor(
     private val _sortDirectionTypeSelected = mutableStateOf(EditArtSortDirectionType.ASCENDING)
 
     // STYLE
+    private val _styleActivityColorRules = mutableStateListOf(
+        ActivityColorRule.Any(colorArgb = Color.WHITE)
+    )
     private val _styleActivities = mutableStateOf(ColorWrapper.White)
     private val _styleBackgroundList = (0 until 7).map {
         if (it % 2 == 0) ColorWrapper.Black else ColorWrapper.White
@@ -631,6 +636,7 @@ class EditArtViewModel @Inject constructor(
                         .map { it.toColorArgb() }, // TODO
                     backgroundAngleType = _styleBackgroundAngleType.value,
                     backgroundType = _styleBackgroundType.value,
+                    activityColorRules = _styleActivityColorRules,
                     colorActivitiesArgb = _styleActivities.value.toColorArgb(),
                     colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
                     filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,

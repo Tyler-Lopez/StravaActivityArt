@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 sealed interface NavArgSpecification {
 
     companion object {
+        private const val ACTIVITY_COLOR_RULES = "activityColorRules"
         private const val ACTIVITY_TYPES_KEY = "activityTypes"
         private const val ATHLETE_ID_KEY = "athleteId"
         private const val BACKGROUND_GRADIENT_ANGLE_TYPE_KEY = "backgroundAngleType"
@@ -47,6 +48,10 @@ sealed interface NavArgSpecification {
 
     fun rawArg(handle: SavedStateHandle): String {
         return handle[key] ?: error(ERROR_MISSING_KEY.format(key))
+    }
+
+    object ActivityColorRulesArg : NavArgSpecification {
+        override val name: String = ACTIVITY_COLOR_RULES
     }
 
     object ActivityTypesArg : NavArgSpecification {

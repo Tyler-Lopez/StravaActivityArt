@@ -66,6 +66,7 @@ fun MainNavHost(
         swipingInOutComposable(
             screen = SaveArt,
             navArgSpecifications = listOf(
+                ActivityColorRulesArg,
                 ActivityTypesArg,
                 AthleteIdArg,
                 BackgroundGradientAngleTypeArg,

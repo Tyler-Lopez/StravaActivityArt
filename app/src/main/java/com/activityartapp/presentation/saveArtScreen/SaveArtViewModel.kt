@@ -18,6 +18,7 @@ import com.activityartapp.presentation.saveArtScreen.SaveArtViewState.Standby.Do
 import com.activityartapp.presentation.saveArtScreen.SaveArtViewEvent.*
 import com.activityartapp.util.*
 import com.activityartapp.util.NavArgSpecification.*
+import com.activityartapp.util.classes.ActivityColorRule
 import com.activityartapp.util.enums.*
 import com.activityartapp.util.enums.BackgroundType
 import com.google.gson.Gson
@@ -25,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +47,10 @@ class SaveArtViewModel @Inject constructor(
         )
         .map { SportType.valueOf(it) }
     private lateinit var activities: List<Activity>
+    private val activityColorRules = gson.fromJson<List<String>>(
+        ActivityColorRulesArg.rawArg(ssh),
+        List::class.java
+    ).map { Json.decodeFromString(ActivityColorRule.serializer(), it) }
     private val athleteId = AthleteIdArg.rawArg(ssh).toLong()
     private val backgroundAngleType =
         AngleType.valueOf(BackgroundGradientAngleTypeArg.rawArg(ssh))

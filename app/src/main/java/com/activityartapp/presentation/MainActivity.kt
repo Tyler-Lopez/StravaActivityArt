@@ -24,10 +24,12 @@ import com.activityartapp.presentation.MainViewState.Authenticated
 import com.activityartapp.presentation.ui.theme.AthleteApiArtTheme
 import com.activityartapp.util.NavArgSpecification.*
 import com.activityartapp.util.Screen.*
+import com.activityartapp.util.classes.ActivityColorRule
 import com.activityartapp.util.constants.TokenConstants.authUri
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -165,6 +167,9 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
             navController.navigate(
                 route = SaveArt.withArgs(
                     args = arrayOf(
+                        ActivityColorRulesArg to gson.toJson(activityColorRules.map {
+                            Json.encodeToString(ActivityColorRule.serializer(), it)
+                        }),
                         ActivityTypesArg to gson.toJson(activityTypes.map { it.toString() }),
                         AthleteIdArg to athleteId.toString(),
                         BackgroundGradientAngleTypeArg to backgroundAngleType.toString(),

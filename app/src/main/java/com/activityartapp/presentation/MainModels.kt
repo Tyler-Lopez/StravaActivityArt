@@ -7,6 +7,7 @@ import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.errorScreen.ErrorScreenType
+import com.activityartapp.util.classes.ActivityColorRule
 import com.activityartapp.util.enums.*
 
 sealed interface MainViewState : ViewState {
@@ -35,6 +36,7 @@ sealed interface MainDestination : Destination {
         val backgroundAngleType: AngleType,
         val backgroundType: BackgroundType,
         val backgroundColorsArgb: List<Int>,
+        val activityColorRules: List<ActivityColorRule>,
         val colorActivitiesArgb: Int,
         val colorFontArgb: Int,
         val filterBeforeMs: Long,

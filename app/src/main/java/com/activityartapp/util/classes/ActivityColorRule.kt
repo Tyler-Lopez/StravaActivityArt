@@ -7,12 +7,12 @@ import kotlinx.serialization.Serializable
 /** Provides a specification to attempt to match an [Activity] based on its properties
  * and what to color it with if it matches. **/
 @Serializable
-sealed interface ActivitiesColorRule {
+sealed interface ActivityColorRule {
     val colorArgb: Int
 
     /** Matches all activities. **/
     @Serializable
-    data class Any(override val colorArgb: Int) : ActivitiesColorRule
+    data class Any(override val colorArgb: Int) : ActivityColorRule
 
     /** Matches any activities which satisfy the [ComparisonType] for the specified [meters]. **/
     @Serializable
@@ -20,5 +20,5 @@ sealed interface ActivitiesColorRule {
         override val colorArgb: Int,
         val comparison: ComparisonType,
         val meters: Float
-    ) : ActivitiesColorRule
+    ) : ActivityColorRule
 }
