@@ -4,19 +4,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.res.stringResource
 import com.activityartapp.R
 import com.activityartapp.architecture.EventReceiver
+import com.activityartapp.presentation.common.button.Button
+import com.activityartapp.presentation.common.button.ButtonEmphasis
+import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.editArtScreen.ColorWrapper
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
+import com.activityartapp.presentation.editArtScreen.EditArtViewState
 import com.activityartapp.presentation.editArtScreen.StrokeWidthType
 import com.activityartapp.presentation.editArtScreen.composables.Section
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.*
 import com.activityartapp.presentation.editArtScreen.subscreens.style.sections.*
 import com.activityartapp.presentation.ui.theme.spacing
+import com.activityartapp.util.classes.ActivityColorRule
 import com.activityartapp.util.enums.AngleType
 import com.activityartapp.util.enums.BackgroundType
 
@@ -26,7 +33,7 @@ fun EditArtStyleScreen(
     backgroundGradientAngleType: State<AngleType>,
     backgroundGradientColorCount: State<Int>,
     colorBackgroundList: SnapshotStateList<ColorWrapper>,
-    colorActivities: State<ColorWrapper>,
+    colorActivityRules: SnapshotStateList<ActivityColorRule>,
     colorText: State<ColorWrapper?>,
     listState: LazyListState,
     strokeWidthType: State<StrokeWidthType>,
@@ -55,7 +62,35 @@ fun EditArtStyleScreen(
             Section(
                 header = stringResource(section.headerStrRes),
                 description = section.descriptionStrRes?.let { stringResource(it) },
-                excludePadding = section == EditArtStyleSectionType.GRADIENT_COLORS
+                excludePadding = (section == EditArtStyleSectionType.GRADIENT_COLORS)
+                    .or(other = section == EditArtStyleSectionType.ACTIVITIES_COLOR),
+                actionButton = {
+                    if (section == EditArtStyleSectionType.GRADIENT_COLORS &&
+                        backgroundGradientColorCount.value < EditArtViewState.MAX_GRADIENT_BG_COLORS
+                    ) {
+                        Button(
+                            emphasis = ButtonEmphasis.HIGH,
+                            size = ButtonSize.SMALL,
+                            text = stringResource(R.string.edit_art_style_background_gradient_add_color_button),
+                            leadingIcon = Icons.Outlined.Add,
+                            leadingIconContentDescription = stringResource(R.string.edit_art_style_background_gradient_add_color_button_cd)
+                        ) {
+                            eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.StyleBackgroundColorAdded)
+                        }
+                    } else if (section == EditArtStyleSectionType.ACTIVITIES_COLOR &&
+                        colorActivityRules.size < EditArtViewState.MAX_ACTIVITY_COLOR_RULES
+                    ) {
+                        Button(
+                            emphasis = ButtonEmphasis.HIGH,
+                            size = ButtonSize.SMALL,
+                            text = stringResource(R.string.edit_art_style_activities_add_color_button),
+                            leadingIcon = Icons.Outlined.Add,
+                            leadingIconContentDescription = stringResource(R.string.edit_art_style_activities_add_color_button_cd)
+                        ) {
+                            eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.StyleActivityColorAdded)
+                        }
+                    }
+                }
             ) {
                 when (section) {
                     EditArtStyleSectionType.BACKGROUND_TYPE -> SectionBackgroundType(
@@ -73,7 +108,6 @@ fun EditArtStyleScreen(
                         colorList = colorBackgroundList,
                         colorsCount = backgroundGradientColorCount,
                         onColorChanged = eventReceiver::onEvent,
-                        onColorAdded = eventReceiver::onEvent,
                         onColorRemoved = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent,
                         onColorPendingChanged = eventReceiver::onEvent
@@ -85,19 +119,23 @@ fun EditArtStyleScreen(
                         onColorPendingChanged = eventReceiver::onEvent
                     )
                     EditArtStyleSectionType.ACTIVITIES_COLOR -> SectionColorActivities(
-                        color = colorActivities.value,
+                        colorRules = colorActivityRules,
                         onColorChanged = eventReceiver::onEvent,
                         onColorPendingChanged = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent
                     )
-                    EditArtStyleSectionType.FONT_COLOR -> SectionColorText(
-                        color = colorText.value,
-                        colorActivities = colorActivities.value,
-                        onColorChanged = eventReceiver::onEvent,
-                        onUseFontChanged = eventReceiver::onEvent,
-                        onColorPendingChanged = eventReceiver::onEvent,
-                        onColorPendingChangeConfirmed = eventReceiver::onEvent
-                    )
+
+                    EditArtStyleSectionType.FONT_COLOR -> {} // todo
+                    /*SectionColorText(
+                    color = colorText.value,
+                    colorActivities = colorActivities.value,
+                    onColorChanged = eventReceiver::onEvent,
+                    onUseFontChanged = eventReceiver::onEvent,
+                    onColorPendingChanged = eventReceiver::onEvent,
+                    onColorPendingChangeConfirmed = eventReceiver::onEvent
+                )
+
+                     */
                     EditArtStyleSectionType.ACTIVITY_WEIGHT -> SectionActivityWidth(
                         strokeWidthType = strokeWidthType.value,
                         onStyleStrokeWidthChanged = eventReceiver::onEvent
@@ -130,7 +168,7 @@ private enum class EditArtStyleSectionType(
     ),
     ACTIVITIES_COLOR(
         headerStrRes = R.string.edit_art_style_activities_header,
-        descriptionStrRes = R.string.edit_art_style_activities_description
+        descriptionStrRes = null
     ),
     FONT_COLOR(
         headerStrRes = R.string.edit_art_style_text_header,

@@ -268,7 +268,7 @@ class EditArtViewModel @Inject constructor(
     private val _sortDirectionTypeSelected = mutableStateOf(EditArtSortDirectionType.ASCENDING)
 
     // STYLE
-    private val _styleActivityColorRules = mutableStateListOf(
+    private val _styleActivityColorRules = mutableStateListOf<ActivityColorRule>(
         ActivityColorRule.Any(colorArgb = Color.WHITE)
     )
     private val _styleActivities = mutableStateOf(ColorWrapper.White)
@@ -336,6 +336,7 @@ class EditArtViewModel @Inject constructor(
                 sortDirectionTypeSelected = _sortDirectionTypeSelected,
                 sortTypeSelected = _sortTypeSelected,
                 styleActivities = _styleActivities,
+                styleActivityColorRules = _styleActivityColorRules,
                 styleBackgroundAngleType = _styleBackgroundAngleType,
                 styleBackgroundGradientColorCount = _styleBackgroundGradientColorCount,
                 styleBackgroundList = _styleBackgroundList,
@@ -412,6 +413,8 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
+            is StyleActivityColorAdded -> TODO()
+            is StyleActivityColorRemoveConfirmed -> TODO()
             is StyleBackgroundColorAdded -> onStyleBackgroundColorAdded()
             is StyleBackgroundColorRemoveConfirmed -> onStyleBackgroundColorRemoveConfirmed()
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
@@ -756,6 +759,14 @@ class EditArtViewModel @Inject constructor(
 
     private fun onSortTypeChanged(event: SortTypeChanged) {
         _sortTypeSelected.value = event.changedTo
+    }
+
+    private fun onStyleActivityColorToggleMultiple() {
+        // todo
+    }
+
+    private fun onStyleActivityColorToggleSingle() {
+        // todo
     }
 
     private fun onStyleBackgroundColorAdded() {

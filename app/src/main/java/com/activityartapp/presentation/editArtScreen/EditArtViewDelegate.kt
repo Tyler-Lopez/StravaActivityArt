@@ -151,7 +151,7 @@ fun CollectViewState(
                                 styleBackgroundAngleType,
                                 styleBackgroundGradientColorCount,
                                 styleBackgroundList,
-                                styleActivities,
+                                styleActivityColorRules,
                                 styleFont,
                                 listStateStyle,
                                 styleStrokeWidthType,

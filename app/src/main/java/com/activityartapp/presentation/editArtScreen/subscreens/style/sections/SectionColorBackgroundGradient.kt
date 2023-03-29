@@ -39,7 +39,6 @@ fun SectionColorBackgroundGradient(
     colorList: List<ColorWrapper>,
     colorsCount: State<Int>,
     onColorChanged: (StyleColorChanged) -> Unit,
-    onColorAdded: (StyleBackgroundColorAdded) -> Unit,
     onColorRemoved: (ClickedRemoveGradientColor) -> Unit,
     onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit
@@ -48,13 +47,7 @@ fun SectionColorBackgroundGradient(
     LazyRow(
         state = lazyListState,
         modifier = Modifier
-            .padding(
-                bottom = if ((colorsCount.value >= EditArtViewState.MAX_GRADIENT_BG_COLORS)) {
-                    spacing.medium
-                } else {
-                    0.dp
-                }
-            )
+            .fillMaxWidth()
             .background(MaterialTheme.colors.background)
             .padding(vertical = spacing.small),
         horizontalArrangement = Arrangement.spacedBy(spacing.xSmall)
@@ -73,25 +66,6 @@ fun SectionColorBackgroundGradient(
             )
         }
         item { Spacer(modifier = Modifier.width(spacing.xSmall)) }
-    }
-
-    if (colorsCount.value < EditArtViewState.MAX_GRADIENT_BG_COLORS) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = spacing.medium, end = spacing.medium),
-            horizontalAlignment = Alignment.End,
-        ) {
-            Button(
-                emphasis = ButtonEmphasis.HIGH,
-                size = ButtonSize.MEDIUM,
-                text = stringResource(R.string.edit_art_style_background_gradient_add_color_button),
-                leadingIcon = Icons.Outlined.Add,
-                leadingIconContentDescription = stringResource(R.string.edit_art_style_background_gradient_add_color_button_cd)
-            ) {
-                onColorAdded(StyleBackgroundColorAdded)
-            }
-        }
     }
 }
 
@@ -112,8 +86,8 @@ private fun ListItem(
                 .padding(spacing.small)
         ) {
             Text(
-                text = "${index + 1} / $colorsCount",
-                style = MaterialTheme.typography.subtitle1
+                text = "COLOR  ${index + 1} / $colorsCount",
+                style = MaterialTheme.typography.subtitle2
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

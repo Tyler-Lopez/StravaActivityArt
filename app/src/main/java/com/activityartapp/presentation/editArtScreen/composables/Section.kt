@@ -23,6 +23,7 @@ interface Section {
 fun Section(
     header: String,
     description: String? = null,
+    actionButton: @Composable (() -> Unit)? = {},
     excludePadding: Boolean = false,
     includeDivider: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
@@ -52,10 +53,17 @@ fun Section(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = header,
-                    style = MaterialTheme.typography.h5
-                )
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = header,
+                        style = MaterialTheme.typography.h5
+                    )
+                    actionButton?.invoke()
+                }
                 Divider()
             }
             description?.let {

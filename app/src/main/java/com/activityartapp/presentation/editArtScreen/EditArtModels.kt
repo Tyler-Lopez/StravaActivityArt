@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -24,6 +25,7 @@ import com.activityartapp.architecture.ViewState
 import com.activityartapp.domain.models.ResolutionListFactory
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeSection
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeType
+import com.activityartapp.util.classes.ActivityColorRule
 import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
@@ -128,6 +130,8 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
+        object StyleActivityColorAdded : ArtMutatingEvent
+        object StyleActivityColorRemoveConfirmed : ArtMutatingEvent
         data class StyleGradientAngleTypeChanged(val changedTo: AngleType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
         object StyleBackgroundColorAdded : ArtMutatingEvent
@@ -160,6 +164,7 @@ sealed interface EditArtViewEvent : ViewEvent {
 sealed interface EditArtViewState : ViewState {
 
     companion object {
+        const val MAX_ACTIVITY_COLOR_RULES = 7
         const val MAX_GRADIENT_BG_COLORS = 7
         const val MIN_GRADIENT_BG_COLORS = 2
     }
@@ -199,6 +204,7 @@ sealed interface EditArtViewState : ViewState {
         val sortTypeSelected: State<EditArtSortType>,
         val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
         val styleActivities: State<ColorWrapper>,
+        val styleActivityColorRules: SnapshotStateList<ActivityColorRule>,
         val styleBackgroundList: SnapshotStateList<ColorWrapper>,
         val styleBackgroundAngleType: State<AngleType>,
         val styleBackgroundGradientColorCount: State<Int>,
