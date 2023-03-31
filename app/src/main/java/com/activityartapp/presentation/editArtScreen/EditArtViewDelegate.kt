@@ -36,6 +36,7 @@ import com.activityartapp.presentation.editArtScreen.subscreens.sort.EditArtSort
 import com.activityartapp.presentation.editArtScreen.subscreens.style.EditArtStyleScreen
 import com.activityartapp.presentation.editArtScreen.subscreens.type.EditArtTypeScreen
 import com.activityartapp.presentation.ui.theme.spacing
+import com.activityartapp.util.Screen
 import com.activityartapp.util.classes.YearMonthDay
 import com.activityartapp.util.enums.BackgroundType
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -211,13 +212,16 @@ private fun DialogHandler(
     }
 
     when (dialogActive.value) {
-        is EditArtDialog.ConfirmDeleteGradientColor -> {
-            EditArtDialogInfo(
+        is EditArtDialog.ConfirmDeleteActivityColorRule -> EditArtDialogInfo(
+            body = stringArrayResource(id = R.array.edit_art_dialog_info_remove_activity_color_rule),
+            eventReceiver = eventReceiver,
+            type = EditArtDialogType.REMOVE_ACTIVITY_COLOR_RULE_AND_DISMISS_BY_CANCEL
+        )
+        is EditArtDialog.ConfirmDeleteGradientColor -> EditArtDialogInfo(
                 body = stringArrayResource(id = R.array.edit_art_dialog_info_remove_gradient_color),
                 eventReceiver = eventReceiver,
-                type = EditArtDialogType.REMOVE_AND_DISMISS_BY_CANCEL
+                type = EditArtDialogType.REMOVE_GRADIENT_AND_DISMISS_BY_CANCEL
             )
-        }
         is EditArtDialog.InfoCheckeredBackground -> EditArtDialogInfo(
             body = stringArrayResource(id = R.array.edit_art_dialog_info_background_checkered),
             eventReceiver = eventReceiver,

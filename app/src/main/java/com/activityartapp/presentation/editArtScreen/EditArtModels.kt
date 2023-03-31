@@ -32,12 +32,14 @@ import com.google.accompanist.pager.PagerState
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 annotation class UnixMS
 
 sealed interface EditArtViewEvent : ViewEvent {
 
+    data class ClickedRemoveActivityColorRule(val removedIndex: Int) : EditArtViewEvent
     data class ClickedRemoveGradientColor(val removedIndex: Int) : EditArtViewEvent
     object ClickedInfoCheckeredBackground : EditArtViewEvent
     object ClickedInfoGradientBackground : EditArtViewEvent
@@ -130,8 +132,8 @@ sealed interface EditArtViewEvent : ViewEvent {
         data class SizeRotated(val rotatedIndex: Int) : ArtMutatingEvent
         data class SortDirectionChanged(val changedTo: EditArtSortDirectionType) : ArtMutatingEvent
         data class SortTypeChanged(val changedTo: EditArtSortType) : ArtMutatingEvent
-        object StyleActivityColorAdded : ArtMutatingEvent
-        object StyleActivityColorRemoveConfirmed : ArtMutatingEvent
+        object StyleActivityColorRuleAdded : ArtMutatingEvent
+        object StyleActivityColorRuleRemoveConfirmed : ArtMutatingEvent
         data class StyleGradientAngleTypeChanged(val changedTo: AngleType) : ArtMutatingEvent
         data class StyleBackgroundTypeChanged(val changedTo: BackgroundType) : ArtMutatingEvent
         object StyleBackgroundColorAdded : ArtMutatingEvent
@@ -203,7 +205,6 @@ sealed interface EditArtViewState : ViewState {
         val sizeResolutionListSelectedIndex: State<Int>,
         val sortTypeSelected: State<EditArtSortType>,
         val sortDirectionTypeSelected: State<EditArtSortDirectionType>,
-        val styleActivities: State<ColorWrapper>,
         val styleActivityColorRules: SnapshotStateList<ActivityColorRule>,
         val styleBackgroundList: SnapshotStateList<ColorWrapper>,
         val styleBackgroundAngleType: State<AngleType>,
@@ -249,6 +250,7 @@ data class FilterStateWrapper(
 ) : Parcelable
 
 @Parcelize
+@Serializable
 // https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable
 @Immutable
 data class ColorWrapper(
@@ -261,6 +263,13 @@ data class ColorWrapper(
     @IgnoredOnParcel val pendingGreen: String? = null,
     @IgnoredOnParcel val pendingRed: String? = null
 ) : Parcelable {
+
+    constructor(argb: Int) : this(
+        alpha = (argb shr 24 and 0xff) / 255f,
+        blue = (argb shr 16 and 0xff) / 255f,
+        green = (argb shr 8 and 0xff) / 255f,
+        red = (argb and 0xff) / 255f,
+    )
 
     companion object {
         private const val RATIO_LIMIT_LOWER = 0f
@@ -293,6 +302,7 @@ data class ColorWrapper(
             red = 1f
         )
     }
+
 
     fun toInvertedLuminanceGrayscaleColor() = (RATIO_LIMIT_UPPER - toColor().luminance()).let {
         Color(it, it, it)
@@ -335,7 +345,7 @@ sealed interface DateSelection : Parcelable {
 }
 
 sealed interface StyleIdentifier {
-    object Activities : StyleIdentifier
+    data class Activities(val index: Int) : StyleIdentifier
     data class Background(val index: Int) : StyleIdentifier
     object Font : StyleIdentifier
 }

@@ -87,7 +87,7 @@ fun EditArtStyleScreen(
                             leadingIcon = Icons.Outlined.Add,
                             leadingIconContentDescription = stringResource(R.string.edit_art_style_activities_add_color_button_cd)
                         ) {
-                            eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.StyleActivityColorAdded)
+                            eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.StyleActivityColorRuleAdded)
                         }
                     }
                 }
@@ -122,20 +122,17 @@ fun EditArtStyleScreen(
                         colorRules = colorActivityRules,
                         onColorChanged = eventReceiver::onEvent,
                         onColorPendingChanged = eventReceiver::onEvent,
+                        onColorPendingChangeConfirmed = eventReceiver::onEvent,
+                        onColorRemoved = eventReceiver::onEvent
+                    )
+                    EditArtStyleSectionType.FONT_COLOR -> SectionColorText(
+                        color = colorText.value,
+                        colorActivities = colorActivityRules.find { it is ActivityColorRule.Any }!!.color, // todo clean
+                        onColorChanged = eventReceiver::onEvent,
+                        onUseFontChanged = eventReceiver::onEvent,
+                        onColorPendingChanged = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent
                     )
-
-                    EditArtStyleSectionType.FONT_COLOR -> {} // todo
-                    /*SectionColorText(
-                    color = colorText.value,
-                    colorActivities = colorActivities.value,
-                    onColorChanged = eventReceiver::onEvent,
-                    onUseFontChanged = eventReceiver::onEvent,
-                    onColorPendingChanged = eventReceiver::onEvent,
-                    onColorPendingChangeConfirmed = eventReceiver::onEvent
-                )
-
-                     */
                     EditArtStyleSectionType.ACTIVITY_WEIGHT -> SectionActivityWidth(
                         strokeWidthType = strokeWidthType.value,
                         onStyleStrokeWidthChanged = eventReceiver::onEvent

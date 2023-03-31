@@ -63,14 +63,36 @@ fun EditArtDialogInfo(
                                         style = MaterialTheme.typography.button
                                     )
                                 }
-                            EditArtDialogType.REMOVE_AND_DISMISS_BY_CANCEL -> {
+                            EditArtDialogType.REMOVE_ACTIVITY_COLOR_RULE_AND_DISMISS_BY_CANCEL -> {
                                 TextButton(onClick = { eventReceiver.onEvent(DialogDismissed) }) {
                                     Text(
                                         text = stringResource(R.string.edit_art_dialog_exit_remove_no),
                                         style = MaterialTheme.typography.button
                                     )
                                 }
-                                TextButton(onClick = { eventReceiver.onEvent(ArtMutatingEvent.StyleBackgroundColorRemoveConfirmed) }) {
+                                TextButton(onClick = {
+                                    eventReceiver.onEvent(
+                                        ArtMutatingEvent.StyleActivityColorRuleRemoveConfirmed
+                                    )
+                                }) {
+                                    Text(
+                                        text = stringResource(R.string.edit_art_dialog_exit_remove_yes),
+                                        style = MaterialTheme.typography.button
+                                    )
+                                }
+                            }
+                            EditArtDialogType.REMOVE_GRADIENT_AND_DISMISS_BY_CANCEL -> {
+                                TextButton(onClick = { eventReceiver.onEvent(DialogDismissed) }) {
+                                    Text(
+                                        text = stringResource(R.string.edit_art_dialog_exit_remove_no),
+                                        style = MaterialTheme.typography.button
+                                    )
+                                }
+                                TextButton(onClick = {
+                                    eventReceiver.onEvent(
+                                        ArtMutatingEvent.StyleBackgroundColorRemoveConfirmed
+                                    )
+                                }) {
                                     Text(
                                         text = stringResource(R.string.edit_art_dialog_exit_remove_yes),
                                         style = MaterialTheme.typography.button
@@ -84,7 +106,11 @@ fun EditArtDialogInfo(
                                         style = MaterialTheme.typography.button
                                     )
                                 }
-                                TextButton(onClick = { eventReceiver.onEvent(DialogNavigateUpConfirmed) }) {
+                                TextButton(onClick = {
+                                    eventReceiver.onEvent(
+                                        DialogNavigateUpConfirmed
+                                    )
+                                }) {
                                     Text(
                                         text = stringResource(R.string.edit_art_dialog_exit_confirmation_yes),
                                         style = MaterialTheme.typography.button

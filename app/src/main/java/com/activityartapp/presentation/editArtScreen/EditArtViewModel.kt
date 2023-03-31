@@ -1,7 +1,6 @@
 package com.activityartapp.presentation.editArtScreen
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.SavedStateHandle
@@ -27,7 +26,10 @@ import com.activityartapp.util.enums.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -269,9 +271,8 @@ class EditArtViewModel @Inject constructor(
 
     // STYLE
     private val _styleActivityColorRules = mutableStateListOf<ActivityColorRule>(
-        ActivityColorRule.Any(colorArgb = Color.WHITE)
+        ActivityColorRule.Any(color = ColorWrapper.White)
     )
-    private val _styleActivities = mutableStateOf(ColorWrapper.White)
     private val _styleBackgroundList = (0 until 7).map {
         if (it % 2 == 0) ColorWrapper.Black else ColorWrapper.White
     }.toMutableStateList()
@@ -335,7 +336,6 @@ class EditArtViewModel @Inject constructor(
                 sizeResolutionListSelectedIndex = _sizeResolutionListSelectedIndex,
                 sortDirectionTypeSelected = _sortDirectionTypeSelected,
                 sortTypeSelected = _sortTypeSelected,
-                styleActivities = _styleActivities,
                 styleActivityColorRules = _styleActivityColorRules,
                 styleBackgroundAngleType = _styleBackgroundAngleType,
                 styleBackgroundGradientColorCount = _styleBackgroundGradientColorCount,
@@ -386,6 +386,7 @@ class EditArtViewModel @Inject constructor(
     override fun onEvent(event: EditArtViewEvent) {
         when (event) {
             is ArtMutatingEvent -> onArtMutatingEvent(event)
+            is ClickedRemoveActivityColorRule -> onClickedRemoveActivityColorRule(event)
             is ClickedRemoveGradientColor -> onClickedRemoveGradientColor(event)
             is ClickedInfoCheckeredBackground -> onClickedInfoCheckeredBackground()
             is ClickedInfoGradientBackground -> onClickedInfoGradientBackground()
@@ -413,8 +414,8 @@ class EditArtViewModel @Inject constructor(
             is SizeRotated -> onSizeRotated(event)
             is SortDirectionChanged -> onSortDirectionChanged(event)
             is SortTypeChanged -> onSortTypeChanged(event)
-            is StyleActivityColorAdded -> TODO()
-            is StyleActivityColorRemoveConfirmed -> TODO()
+            is StyleActivityColorRuleAdded -> onStyleActivityColorRuleAdded()
+            is StyleActivityColorRuleRemoveConfirmed -> onStyleActivityColorRuleRemoveConfirmed()
             is StyleBackgroundColorAdded -> onStyleBackgroundColorAdded()
             is StyleBackgroundColorRemoveConfirmed -> onStyleBackgroundColorRemoveConfirmed()
             is StyleBackgroundTypeChanged -> onStyleBackgroundTypeChanged(event)
@@ -464,6 +465,12 @@ class EditArtViewModel @Inject constructor(
             }
             updateBitmap()
         }
+    }
+
+    private fun onClickedRemoveActivityColorRule(event: ClickedRemoveActivityColorRule) {
+        _dialogActive.value = EditArtDialog.ConfirmDeleteActivityColorRule(
+            toDeleteIndex = event.removedIndex
+        )
     }
 
     private fun onClickedRemoveGradientColor(event: ClickedRemoveGradientColor) {
@@ -640,8 +647,8 @@ class EditArtViewModel @Inject constructor(
                     backgroundAngleType = _styleBackgroundAngleType.value,
                     backgroundType = _styleBackgroundType.value,
                     activityColorRules = _styleActivityColorRules,
-                    colorActivitiesArgb = _styleActivities.value.toColorArgb(),
-                    colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
+                    colorActivitiesArgb = defaultActivityColor.toColorArgb(), // todo //_styleActivities.value.toColorArgb(),
+                    colorFontArgb = (_styleFont.value ?: defaultActivityColor).toColorArgb(),
                     filterAfterMs = filterRange?.first ?: Long.MIN_VALUE,
                     filterBeforeMs = filterRange?.last ?: Long.MAX_VALUE,
                     filterDistanceLessThanMeters = _filterDistanceSelectedEnd.value
@@ -671,11 +678,20 @@ class EditArtViewModel @Inject constructor(
     private fun onStyleColorPendingChanged(event: StyleColorPendingChanged) {
         when (event.style) {
             is StyleIdentifier.Activities -> {
-                val color = _styleActivities.value
-                _styleActivities.value = color.copyPendingChange(
-                    colorType = event.colorType,
-                    changedTo = event.changedTo
-                )
+                val colorRule = _styleActivityColorRules[event.style.index]
+                val newColorRule = colorRule
+                    .color
+                    .copyPendingChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                _styleActivityColorRules[event.style.index] = colorRule.run {
+                    when (this) {
+                        is ActivityColorRule.Any -> copy(color = newColorRule)
+                        //   is ActivityColorRule.Distance -> copy(color = newColorRule)
+                        is ActivityColorRule.Type -> copy(color = newColorRule)
+                    }
+                }
             }
             is StyleIdentifier.Background -> {
                 val color = _styleBackgroundList[event.style.index]
@@ -685,7 +701,7 @@ class EditArtViewModel @Inject constructor(
                 )
             }
             is StyleIdentifier.Font -> {
-                val color = _styleFont.value ?: _styleActivities.value
+                val color = _styleFont.value ?: defaultActivityColor
                 _styleFont.value = color.copyPendingChange(
                     colorType = event.colorType,
                     changedTo = event.changedTo
@@ -761,12 +777,26 @@ class EditArtViewModel @Inject constructor(
         _sortTypeSelected.value = event.changedTo
     }
 
-    private fun onStyleActivityColorToggleMultiple() {
-        // todo
+    private fun onStyleActivityColorRuleAdded() {
+        val prevCount = _styleActivityColorRules.size
+        if (prevCount >= EditArtViewState.MAX_ACTIVITY_COLOR_RULES) return
+        _styleActivityColorRules.add(
+            _styleActivityColorRules.lastIndex,
+            ActivityColorRule.Type(
+                color = ColorWrapper.White,
+                type = SportType.RUN
+            )
+        )
     }
 
-    private fun onStyleActivityColorToggleSingle() {
-        // todo
+    private fun onStyleActivityColorRuleRemoveConfirmed() {
+        val prevCount = _styleActivityColorRules.size
+        if (prevCount <= 1) return // todo
+        val removedIndex = (_dialogActive.value as? EditArtDialog.ConfirmDeleteActivityColorRule)
+            ?.toDeleteIndex
+            ?: return
+        _styleActivityColorRules.removeAt(index = removedIndex)
+        _dialogActive.value = EditArtDialog.None
     }
 
     private fun onStyleBackgroundColorAdded() {
@@ -799,11 +829,22 @@ class EditArtViewModel @Inject constructor(
 
     private fun onStyleColorChanged(event: StyleColorChanged) {
         when (event.style) {
-            is StyleIdentifier.Activities -> _styleActivities.value =
-                _styleActivities.value.copyWithChange(
-                    colorType = event.colorType,
-                    changedTo = event.changedTo
-                )
+            is StyleIdentifier.Activities -> {
+                val colorRule = _styleActivityColorRules[event.style.index]
+                val newColor = colorRule
+                    .color
+                    .copyWithChange(
+                        colorType = event.colorType,
+                        changedTo = event.changedTo
+                    )
+                _styleActivityColorRules[event.style.index] = colorRule.run {
+                    when (this) {
+                        is ActivityColorRule.Any -> copy(color = newColor)
+                        //   is ActivityColorRule.Distance -> copy(color = newColorRule)
+                        is ActivityColorRule.Type -> copy(color = newColor)
+                    }
+                }
+            }
             is StyleIdentifier.Background -> {
                 val color = _styleBackgroundList[event.style.index]
                 _styleBackgroundList[event.style.index] = color.copyWithChange(
@@ -812,7 +853,7 @@ class EditArtViewModel @Inject constructor(
                 )
             }
             is StyleIdentifier.Font -> _styleFont.value =
-                (_styleFont.value ?: _styleActivities.value).copyWithChange(
+                (_styleFont.value ?: defaultActivityColor).copyWithChange(
                     colorType = event.colorType,
                     changedTo = event.changedTo
                 )
@@ -821,8 +862,19 @@ class EditArtViewModel @Inject constructor(
 
     private fun onStyleColorPendingChangeConfirmed(event: StyleColorPendingChangeConfirmed) {
         when (event.style) {
-            is StyleIdentifier.Activities -> _styleActivities.value =
-                _styleActivities.value.confirmPendingChanges()
+            is StyleIdentifier.Activities -> {
+                val colorRule = _styleActivityColorRules[event.style.index]
+                val newColor = colorRule
+                    .color
+                    .confirmPendingChanges()
+                _styleActivityColorRules[event.style.index] = colorRule.run {
+                    when (this) {
+                        is ActivityColorRule.Any -> copy(color = newColor)
+                        //   is ActivityColorRule.Distance -> copy(color = newColorRule)
+                        is ActivityColorRule.Type -> copy(color = newColor)
+                    }
+                }
+            }
             is StyleIdentifier.Background -> {
                 val color = _styleBackgroundList[event.style.index]
                 _styleBackgroundList[event.style.index] = color.confirmPendingChanges()
@@ -833,7 +885,7 @@ class EditArtViewModel @Inject constructor(
 
     private fun onStyleColorFontUseCustomChanged(event: StyleColorFontUseCustomChanged) {
         _styleFont.value = if (event.useCustom) {
-            _styleFont.value ?: _styleActivities.value
+            _styleFont.value ?: defaultActivityColor
         } else {
             null
         }
@@ -963,8 +1015,8 @@ class EditArtViewModel @Inject constructor(
             backgroundColorsArgb = _styleBackgroundList
                 .take(_styleBackgroundGradientColorCount.value)
                 .map { it.toColorArgb() }, // TODO
-            colorActivitiesArgb = _styleActivities.value.toColorArgb(),
-            colorFontArgb = (_styleFont.value ?: _styleActivities.value).toColorArgb(),
+            colorActivitiesArgb = defaultActivityColor.toColorArgb(), // todo actually bad
+            colorFontArgb = (_styleFont.value ?: defaultActivityColor).toColorArgb(),
             strokeWidth = _styleStrokeWidthType.value,
             bitmapSize = imageSizeUtils.sizeToMaximumSize(
                 actualSize = _sizeResolutionList[_sizeResolutionListSelectedIndex.value].run {
@@ -1006,6 +1058,13 @@ class EditArtViewModel @Inject constructor(
     private fun Double.meterToMilesStr(): String = "${(this * 0.000621371192).roundToInt()} mi"
     private fun Double.meterToKilometerStr(): String = "${(this / 1000f).roundToInt()} km"
     private fun Double.milesToMeters(): Double = this / 0.000621371192
+
+    private val defaultActivityColor: ColorWrapper
+        get() = _styleActivityColorRules
+            .find { it is ActivityColorRule.Any }
+            ?.color
+            ?: error("Missing default color!")
+
 
     private val filteredTypes: List<SportType>
         get() = _filterTypes.filter { it.second }.map { it.first }
@@ -1066,9 +1125,12 @@ class EditArtViewModel @Inject constructor(
         ssh.get<EditArtSortDirectionType>(SSH_SORT_DIRECTION_TYPE_SELECTED)?.let {
             _sortDirectionTypeSelected.value = it
         }
+        /* todo
         ssh.get<ColorWrapper>(SSH_STYLE_ACTIVITIES)?.let {
             _styleActivities.value = it
         }
+
+         */
         ssh.get<List<ColorWrapper>>(SSH_STYLE_BACKGROUND_LIST)?.let {
             _styleBackgroundList.clear()
             _styleBackgroundList.addAll(it)
@@ -1201,11 +1263,14 @@ class EditArtViewModel @Inject constructor(
                 ssh[SSH_SORT_DIRECTION_TYPE_SELECTED] = it
             }
         }
+        /* todo
         viewModelScope.launch {
             snapshotFlow { _styleActivities.value }.collect {
                 ssh[SSH_STYLE_ACTIVITIES] = it
             }
         }
+
+         */
         viewModelScope.launch {
             snapshotFlow { _styleBackgroundAngleType.value }.collect {
                 ssh[SSH_STYLE_BACKGROUND_ANGLE_TYPE] = it

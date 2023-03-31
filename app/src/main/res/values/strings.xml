@@ -189,13 +189,13 @@
     <string name="edit_art_style_activities_description">What colors should the activities of the art be?</string>
     <string name="edit_art_style_activities_description_additional_1">You can add rules to make activities that meet a certain criteria, like shorter than 5K, a different color!</string>
     <string name="edit_art_style_activities_description_additional_2">Rules are applied sequentially, so if an activity meets all of your rule criteria, it\'s color will be determined by the first one.</string>
-    <string name="edit_art_style_activities_default">DEFAULT</string>
-    <string name="edit_art_style_activities_default_description">If an activity doesn\'t match any of your rules, it\;  be this color.</string>
+    <string name="edit_art_style_activities_default">DEFAULT COLOR</string>
+    <string name="edit_art_style_activities_default_description">If an activity doesn\'t match any of your rules, it\'ll be this color.</string>
     <string name="edit_art_style_activities_add_color_button">Add Color Rule</string>
     <string name="edit_art_style_activities_add_color_button_cd">Add a Color Rule</string>
     <string name="edit_art_style_text_header">Font Color</string>
     <string name="edit_art_style_font_description">What color should any text be?</string>
-    <string name="edit_art_style_font_use_activities">Use the default activity oclor</string>
+    <string name="edit_art_style_font_use_activities">Use the default activity color</string>
     <string name="edit_art_style_font_use_custom">Choose a different color</string>
     <string name="edit_art_style_color_red">RED</string>
     <string name="edit_art_style_color_green">GREEN</string>
@@ -277,6 +277,9 @@
     <string-array name="edit_art_dialog_info_background_checkered">
         <item>We added a checkerboard pattern to help you see your art with a transparent background.</item>
         <item>Don\'t worry - we\'ll remove it when you download or share it!</item>
+    </string-array>
+    <string-array name="edit_art_dialog_info_remove_activity_color_rule">
+        <item>Are you sure you want to remove this color rule?</item>
     </string-array>
     <string-array name="edit_art_dialog_info_remove_gradient_color">
         <item>Are you sure you want to remove this color from the gradient?</item>
