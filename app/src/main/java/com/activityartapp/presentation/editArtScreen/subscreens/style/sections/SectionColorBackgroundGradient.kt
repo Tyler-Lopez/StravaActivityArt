@@ -3,7 +3,6 @@ package com.activityartapp.presentation.editArtScreen.subscreens.style.sections
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,11 +10,9 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
 import com.activityartapp.presentation.common.button.Button
@@ -31,19 +28,31 @@ import com.activityartapp.presentation.editArtScreen.StyleIdentifier
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorPreview
 import com.activityartapp.presentation.editArtScreen.subscreens.style.composables.ColorSlidersRGB
 import com.activityartapp.presentation.ui.theme.spacing
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun SectionColorBackgroundGradient(
     colorList: List<ColorWrapper>,
     colorsCount: State<Int>,
+    onColorAdded: (StyleBackgroundColorAdded) -> Unit,
     onColorChanged: (StyleColorChanged) -> Unit,
     onColorRemoved: (ClickedRemoveGradientColor) -> Unit,
     onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
+    if (colorsCount.value < EditArtViewState.MAX_GRADIENT_BG_COLORS) {
+        Box(modifier = Modifier.padding(start = spacing.medium, bottom = spacing.medium)) {
+            Button(
+                emphasis = ButtonEmphasis.HIGH,
+                size = ButtonSize.SMALL,
+                text = stringResource(R.string.edit_art_style_background_gradient_add_color_button),
+                leadingIcon = Icons.Outlined.Add,
+                leadingIconContentDescription = stringResource(R.string.edit_art_style_background_gradient_add_color_button_cd)
+            ) {
+                onColorAdded(StyleBackgroundColorAdded)
+            }
+        }
+    }
     LazyRow(
         state = lazyListState,
         modifier = Modifier
@@ -82,12 +91,12 @@ private fun ListItem(
     Card {
         ColumnMediumSpacing(
             modifier = Modifier
-                .width(360.dp)
+                .width(320.dp)
                 .padding(spacing.small)
         ) {
             Text(
                 text = "COLOR  ${index + 1} / $colorsCount",
-                style = MaterialTheme.typography.subtitle2
+                style = MaterialTheme.typography.subtitle1
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

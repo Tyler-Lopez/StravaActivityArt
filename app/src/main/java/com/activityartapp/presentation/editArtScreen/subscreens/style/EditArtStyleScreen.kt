@@ -63,34 +63,7 @@ fun EditArtStyleScreen(
                 header = stringResource(section.headerStrRes),
                 description = section.descriptionStrRes?.let { stringResource(it) },
                 excludePadding = (section == EditArtStyleSectionType.GRADIENT_COLORS)
-                    .or(other = section == EditArtStyleSectionType.ACTIVITIES_COLOR),
-                actionButton = {
-                    if (section == EditArtStyleSectionType.GRADIENT_COLORS &&
-                        backgroundGradientColorCount.value < EditArtViewState.MAX_GRADIENT_BG_COLORS
-                    ) {
-                        Button(
-                            emphasis = ButtonEmphasis.HIGH,
-                            size = ButtonSize.SMALL,
-                            text = stringResource(R.string.edit_art_style_background_gradient_add_color_button),
-                            leadingIcon = Icons.Outlined.Add,
-                            leadingIconContentDescription = stringResource(R.string.edit_art_style_background_gradient_add_color_button_cd)
-                        ) {
-                            eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.StyleBackgroundColorAdded)
-                        }
-                    } else if (section == EditArtStyleSectionType.ACTIVITIES_COLOR &&
-                        colorActivityRules.size < EditArtViewState.MAX_ACTIVITY_COLOR_RULES
-                    ) {
-                        Button(
-                            emphasis = ButtonEmphasis.HIGH,
-                            size = ButtonSize.SMALL,
-                            text = stringResource(R.string.edit_art_style_activities_add_color_button),
-                            leadingIcon = Icons.Outlined.Add,
-                            leadingIconContentDescription = stringResource(R.string.edit_art_style_activities_add_color_button_cd)
-                        ) {
-                            eventReceiver.onEvent(EditArtViewEvent.ArtMutatingEvent.StyleActivityColorRuleAdded)
-                        }
-                    }
-                }
+                    .or(other = section == EditArtStyleSectionType.ACTIVITIES_COLOR)
             ) {
                 when (section) {
                     EditArtStyleSectionType.BACKGROUND_TYPE -> SectionBackgroundType(
@@ -107,6 +80,7 @@ fun EditArtStyleScreen(
                     EditArtStyleSectionType.GRADIENT_COLORS -> SectionColorBackgroundGradient(
                         colorList = colorBackgroundList,
                         colorsCount = backgroundGradientColorCount,
+                        onColorAdded = eventReceiver::onEvent,
                         onColorChanged = eventReceiver::onEvent,
                         onColorRemoved = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent,
@@ -120,6 +94,7 @@ fun EditArtStyleScreen(
                     )
                     EditArtStyleSectionType.ACTIVITIES_COLOR -> SectionColorActivities(
                         colorRules = colorActivityRules,
+                        onColorAdded = eventReceiver::onEvent,
                         onColorChanged = eventReceiver::onEvent,
                         onColorPendingChanged = eventReceiver::onEvent,
                         onColorPendingChangeConfirmed = eventReceiver::onEvent,

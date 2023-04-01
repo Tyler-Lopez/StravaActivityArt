@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.activityartapp.R
+import com.activityartapp.presentation.common.button.ButtonEmphasis
+import com.activityartapp.presentation.common.button.ButtonSize
 import com.activityartapp.presentation.common.layout.ColumnMediumSpacing
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent
 import com.activityartapp.presentation.editArtScreen.EditArtViewEvent.ArtMutatingEvent.StyleColorChanged
@@ -34,6 +37,7 @@ import com.activityartapp.util.classes.ActivityColorRule
 @Composable
 fun SectionColorActivities(
     colorRules: List<ActivityColorRule>,
+    onColorAdded: (EditArtViewEvent.ArtMutatingEvent.StyleActivityColorRuleAdded) -> Unit,
     onColorChanged: (StyleColorChanged) -> Unit,
     onColorPendingChangeConfirmed: (StyleColorPendingChangeConfirmed) -> Unit,
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit,
@@ -46,10 +50,6 @@ fun SectionColorActivities(
         verticalArrangement = Arrangement.spacedBy(spacing.medium)
     ) {
         Text(
-            text = stringResource(R.string.edit_art_style_activities_description),
-            style = MaterialTheme.typography.body1
-        )
-        Text(
             text = stringResource(R.string.edit_art_style_activities_description_additional_1),
             style = MaterialTheme.typography.body1
         )
@@ -57,6 +57,15 @@ fun SectionColorActivities(
             text = stringResource(R.string.edit_art_style_activities_description_additional_2),
             style = MaterialTheme.typography.body1
         )
+        com.activityartapp.presentation.common.button.Button(
+            emphasis = ButtonEmphasis.HIGH,
+            size = ButtonSize.SMALL,
+            text = stringResource(R.string.edit_art_style_activities_add_color_button),
+            leadingIcon = Icons.Outlined.Add,
+            leadingIconContentDescription = stringResource(R.string.edit_art_style_activities_add_color_button_cd)
+        ) {
+            onColorAdded(EditArtViewEvent.ArtMutatingEvent.StyleActivityColorRuleAdded)
+        }
     }
 
     val lazyListState = rememberLazyListState()
@@ -201,7 +210,7 @@ private fun ColorRuleItem(
                         }
                     }
                 }
-                ColumnMediumSpacing(modifier = Modifier.width(360.dp)) {
+                ColumnMediumSpacing(modifier = Modifier.width(320.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(spacing.small),
