@@ -5,8 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.activityartapp.architecture.Router
-import com.activityartapp.presentation.aboutScreen.AboutScreen
-import com.activityartapp.presentation.aboutScreen.AboutViewModel
 import com.activityartapp.presentation.editArtScreen.EditArtViewDelegate
 import com.activityartapp.presentation.editArtScreen.EditArtViewModel
 import com.activityartapp.presentation.errorScreen.ErrorScreen
@@ -43,11 +41,6 @@ fun MainNavHost(
         }
         swipingOutComposable(Welcome) {
             WelcomeScreen(hiltViewModel<WelcomeViewModel>().apply {
-                attachRouter(router)
-            })
-        }
-        swipingInOutComposable(About) {
-            AboutScreen(hiltViewModel<AboutViewModel>().apply {
                 attachRouter(router)
             })
         }

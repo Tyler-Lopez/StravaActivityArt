@@ -20,7 +20,6 @@ sealed interface MainViewEvent : ViewEvent {
 
 sealed interface MainDestination : Destination {
     object ConnectWithStrava : MainDestination
-    object NavigateAbout : MainDestination
     object NavigateLogin : MainDestination
     object NavigateLoadActivities : MainDestination
 

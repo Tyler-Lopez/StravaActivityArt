@@ -98,7 +98,6 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
     override fun routeTo(destination: MainDestination) {
         when (destination) {
             is ConnectWithStrava -> connectWithStrava()
-            is NavigateAbout -> navigateAbout()
             is NavigateLoadActivities -> navigateLoadActivities(destination)
             is NavigateLogin -> navigateLogin()
             is NavigateError -> onNavigateError(destination)
@@ -113,10 +112,6 @@ class MainActivity : ComponentActivity(), Router<MainDestination> {
         finish()
         println("Connecting with Strava, authUri is $authUri")
         startActivity(Intent(ACTION_VIEW, authUri))
-    }
-
-    private fun navigateAbout() {
-        navController.navigate(About.route)
     }
 
     private fun navigateLoadActivities(destination: NavigateLoadActivities) {

@@ -55,11 +55,6 @@ fun WelcomeScreen(viewModel: WelcomeViewModel) {
                                     text = stringResource(id = R.string.welcome_button_make_art)
                                 ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedMakeArt) }
                                 Button(
-                                    emphasis = ButtonEmphasis.MEDIUM,
-                                    size = ButtonSize.LARGE,
-                                    text = stringResource(id = R.string.welcome_button_about),
-                                ) { viewModel.onEventDebounced(WelcomeViewEvent.ClickedAbout) }
-                                Button(
                                     emphasis = ButtonEmphasis.LOW,
                                     size = ButtonSize.LARGE,
                                     text = stringResource(id = R.string.welcome_button_logout),

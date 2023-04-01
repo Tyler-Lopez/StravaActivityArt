@@ -50,15 +50,8 @@ class WelcomeViewModel @Inject constructor(
 
     override fun onEvent(event: WelcomeViewEvent) {
         when (event) {
-            is ClickedAbout -> onClickedAbout()
             is ClickedMakeArt -> onClickedMakeArt()
             is ClickedLogout -> onClickedLogout()
-        }
-    }
-
-    private fun onClickedAbout() {
-        viewModelScope.launch {
-            routeTo(NavigateAbout)
         }
     }
 
