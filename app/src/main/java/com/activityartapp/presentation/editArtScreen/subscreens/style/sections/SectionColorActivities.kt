@@ -4,10 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -113,6 +117,7 @@ fun SectionColorActivities(
      */
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ColorRuleItem(
     index: Int,
@@ -124,10 +129,12 @@ private fun ColorRuleItem(
     onColorPendingChanged: (StyleColorPendingChanged) -> Unit
 ) {
     val colorWrapper = color.color
+    var isContextMenuVisible = remember { mutableStateOf(false) }
     Card {
-        ColumnMediumSpacing(modifier = Modifier
-            .fillMaxWidth()
-            .padding(spacing.small)
+        ColumnMediumSpacing(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(spacing.small)
         ) {
             // Header information, either RULE 1 / 2 or DEFAULT
             if (color is ActivityColorRule.Any) {
@@ -141,7 +148,59 @@ private fun ColorRuleItem(
                     style = MaterialTheme.typography.subtitle2,
                 )
             }
-            Row {
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing.medium)) {
+                if (color !is ActivityColorRule.Any) {
+                    Column(
+                        modifier = Modifier.width(254.dp),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.spacedBy(space = spacing.small)
+                    ) {
+                        var expanded = false // todo
+                        for (i in 0..3) {
+                            Text(
+                                text = "RULE TYPE",
+                                style = MaterialTheme.typography.subtitle2
+                            )
+                            ExposedDropdownMenuBox(
+                                expanded = false,//
+                                onExpandedChange = {
+                                    //  expanded = !expanded
+                                }
+                            ) {
+                                TextField(
+                                    value = "Distance",
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = false
+                                        )
+                                    }, //
+                                    //  modifier = Modifier.menu
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    /*
+                                    coffeeDrinks.forEach { item ->
+                                        DropdownMenuItem(
+                                            text = { Text(text = item) },
+                                            onClick = {
+                                                selectedText = item
+                                                expanded = false
+                                                Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                                            }
+                                        )
+                                    }
+
+                                     */
+                                }
+                            }
+                        }
+                    }
+                }
                 ColumnMediumSpacing(modifier = Modifier.width(360.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -195,6 +254,10 @@ private fun ColorRuleItem(
     }
 }
 
+
+private enum class DropdownRuleType {
+    DISTANCE, TYPE
+}
 /**
 @Composable
 fun SectionColorBackgroundGradient(
