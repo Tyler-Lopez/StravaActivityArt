@@ -4,7 +4,6 @@ import com.activityartapp.architecture.ViewEvent
 import com.activityartapp.architecture.ViewState
 
 sealed interface WelcomeViewEvent : ViewEvent {
-    object ClickedAbout : WelcomeViewEvent
     object ClickedMakeArt : WelcomeViewEvent
     object ClickedLogout : WelcomeViewEvent
 }
