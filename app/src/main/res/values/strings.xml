@@ -4,6 +4,8 @@
     <string name="app_name">Activity Art</string>
     <!-- Content description of the image of the app logo -->
     <string name="app_logo_content_description">Activity Art Logo</string>
+    <!-- Informs the user that the application is using the Strava API -->
+    <string name="powered_by_strava">Powered by Strava</string>
     <!-- The current version of the application -->
     <string name="app_version">Version %s</string>
     <!-- A brief description of the application presented to the athlete -->
